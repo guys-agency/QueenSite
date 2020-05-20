@@ -64,7 +64,7 @@ const MainScreen = observer(
       //     console.log("err", err);
       //   });
 
-      fetch("http://127.0.0.1:3010/sort-names", {
+      fetch("http://134.122.81.119/sort-names", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

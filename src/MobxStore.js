@@ -90,7 +90,7 @@ class Store {
 
     if (!filterArray.length) {
       console.log("this");
-      fetch("http://127.0.0.1:3010", {
+      fetch("http://134.122.81.119", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -118,7 +118,7 @@ class Store {
           console.log("err", err);
         });
 
-      fetch("http://127.0.0.1:3010/sort-names", {
+      fetch("http://134.122.81.119/sort-names", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -156,7 +156,7 @@ class Store {
         });
     } else {
       console.log("filterArray2", filterArray);
-      fetch("http://127.0.0.1:3010", {
+      fetch("http://134.122.81.119", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -189,7 +189,7 @@ class Store {
           console.log("err", err);
         });
 
-      fetch("http://127.0.0.1:3010/sort-names", {
+      fetch("http://134.122.81.119/sort-names", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
