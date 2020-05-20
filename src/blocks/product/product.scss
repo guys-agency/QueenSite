@@ -1,0 +1,19 @@
+@import "./__brand/product__brand.scss";
+@import "./__image/product__image.scss";
+@import "./__name/product__name.scss";
+@import "./__price/product__price.scss";
+
+.product {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 368px;
+  width: 263px;
+  margin-right: 20px;
+  margin-bottom: 15px;
+
+  &:nth-child(3n) {
+    margin-right: 0px;
+  }
+}

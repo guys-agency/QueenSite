@@ -1,0 +1,46 @@
+.filters-block {
+  display: flex;
+  flex-direction: column;
+  width: 263px;
+  margin-right: 20px;
+
+  .filter__name {
+    font-family: Excentra Pro;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 15px;
+    line-height: 15px;
+    /* identical to box height */
+
+    /* Blue/Dark */
+
+    color: #00094d;
+  }
+
+  .filter__container {
+    padding-left: 15px;
+    max-height: 0px;
+    overflow: hidden;
+
+    transition: max-height 0.5s linear;
+
+    &.active {
+      max-height: 1000px;
+      margin-bottom: 15px;
+    }
+
+    .filter__point {
+      font-family: Excentra Pro;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 15px;
+      line-height: 15px;
+
+      color: #00094d;
+
+      &.active {
+        font-weight: bold;
+      }
+    }
+  }
+}
