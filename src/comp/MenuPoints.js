@@ -84,7 +84,7 @@ const MenuPoints = observer(
               </div>
               <div className="second-header">
                 <div className="left">
-                  <button className="catalog">Каталог </button>
+                  <button className="btn btn_primary">Каталог </button>
                   <Link className="menu-point">Коллекции</Link>
                   <Link className="menu-point">Премиум</Link>
                   <Link className="menu-point">Милениум</Link>

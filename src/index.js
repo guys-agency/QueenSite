@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import "semantic-ui-css/semantic.min.css";
 import "./test.scss";
 import { MainScreen } from "./App";
 import * as serviceWorker from "./serviceWorker";
@@ -13,12 +14,12 @@ const WooCommerceRestApi = require("@woocommerce/woocommerce-rest-api").default;
 // let json = csvToJson.fieldDelimiter("~").getJsonFromCsv("all.csv");
 // console.log("json", json);
 
-const api = new WooCommerceRestApi({
-  url: "http://qsand.guys.agency",
-  consumerKey: "ck_940e5ddb20e0679cb240a65585385eee26e776cb",
-  consumerSecret: "cs_9d12aa9b415063636cb6b2a4de94bb1c0037254e",
-  version: "wc/v3",
-});
+// const api = new WooCommerceRestApi({
+//   url: "http://qsand.guys.agency",
+//   consumerKey: "ck_940e5ddb20e0679cb240a65585385eee26e776cb",
+//   consumerSecret: "cs_9d12aa9b415063636cb6b2a4de94bb1c0037254e",
+//   version: "wc/v3",
+// });
 
 // api
 //   .put("products?filter[q]=red")
@@ -48,14 +49,14 @@ const api = new WooCommerceRestApi({
 //     console.log("Response Data:", error.response.data);
 //   });
 
-api
-  .get("products?category=54")
-  .then((response) => {
-    console.log(response.data);
-  })
-  .catch((error) => {
-    console.log(error.response.data);
-  });
+// api
+//   .get("products?category=54")
+//   .then((response) => {
+//     console.log(response.data);
+//   })
+//   .catch((error) => {
+//     console.log(error.response.data);
+//   });
 
 // fetch("http://127.0.0.1:3010", {
 //   method: "POST",

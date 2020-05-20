@@ -1,21 +1,24 @@
-$color_product_title: #00094d;
-$color_product_price: #00007d;
+//SETTINGS
+@import "./vars/colors.scss"; 
+@import "./vars/shadows.scss"; 
+@import "./fonts/font.scss"; 
+@import "./fonts/typo.scss"; 
 
+//ELEMENTS
+@import "./blocks/button/button.scss";
+@import "./blocks/header/header.scss";
 @import "./blocks/product/product.scss";
 @import "./blocks/main-screen/main-screen.scss";
 @import "./blocks/filters-block/filters-block.scss";
 @import "./blocks/product-container/product-container.scss";
-@import "./blocks/header/header.scss";
-@import "./fonts/fonts.scss";
 @import "./blocks/pop-catalog/pop-catalog.scss";
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
+  font-family: "Excentra Pro", 'Times New Roman', Times, serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  color: $b_dark;
 }
 
 code {

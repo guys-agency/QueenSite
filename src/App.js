@@ -1,6 +1,5 @@
 import React from "react";
 import "./App.css";
-import "semantic-ui-css/semantic.min.css";
 import { observer } from "mobx-react";
 import { Router, Route, Switch } from "react-router";
 import { Link, NavLink } from "react-router-dom";
