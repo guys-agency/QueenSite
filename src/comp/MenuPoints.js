@@ -14,7 +14,7 @@ const MenuPoints = observer(
     menuContainer = [];
 
     createMenu = () => {
-      fetch("http://127.0.0.1:3010/categories", {
+      fetch("http://134.122.81.119/categories", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
