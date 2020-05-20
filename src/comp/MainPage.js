@@ -21,7 +21,7 @@ const MainPage = observer(
       const hitContTime = [];
       const newContTime = [];
       const allContTime = [];
-      fetch("http://127.0.0.1:3010/main-page", {
+      fetch("http://134.122.81.119/main-page", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
