@@ -114,21 +114,24 @@ const MainPage = observer(
               <Slider {...settings}></Slider>
             </div>
           )}
+          <div className="head head_big">
+            <div className="head-banner"></div>
+          </div>
           <div className="container">
-            <div className="hit-block">
+            <div className="carousel carousel_product">
               <div className="title">
                 <a href=""><h2 className="tilda">Хиты продаж <span className="link">Ко всем хитам <span className="ic i_right"></span></span></h2></a>
+                <p className="subtitle">Сложно определиться? Мы поможем</p>
               </div>
-              <p className="subtitle">Сложно определиться? Мы поможем</p>
 
               <div className="slider-cont">
                 <Slider {...settingsMulti}>{hitCont}</Slider>
               </div>
             </div>
           </div>
-          <div className="line"></div>
-          <div className="container">
-            <div className="hit-block">
+
+          <div className="carousel carousel_brand">
+            <div className="container">
               <div className="title">
                 <h2>Бренды</h2>
               </div>
@@ -175,17 +178,18 @@ const MainPage = observer(
               </div>
             </div>
           </div>
+
           <div className="main-background">
             <div className="container">
               <div className="title">
                 <h2 className="tilda">Идеи:</h2>
               </div>
               <div className="ideas-block">
-                <div className="main-idea"></div>
+                <div className="banner main-idea"></div>
                 <div className="ideas">
-                  <div className="small"></div>
-                  <div className="small"></div>
-                  <div className="large"></div>
+                  <div className="banner small"></div>
+                  <div className="banner small"></div>
+                  <div className="banner large"></div>
                 </div>
               </div>
               <div className="title">
@@ -204,6 +208,19 @@ const MainPage = observer(
                   <img src="/image/gifts/3.jpg" />
                   <p>До 1 500₽</p>
                 </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="container">
+            <div className="carousel carousel_product">
+              <div className="title">
+                <a href=""><h2 className="tilda">Новинки <span className="link">Все новинки <span className="ic i_right"></span></span></h2></a>
+                <p className="subtitle">Сложно определиться? Мы поможем</p>
+              </div>
+
+              <div className="slider-cont">
+                <Slider {...settingsMulti}>{hitCont}</Slider>
               </div>
             </div>
           </div>

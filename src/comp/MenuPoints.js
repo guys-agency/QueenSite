@@ -1,5 +1,6 @@
 import { observer } from "mobx-react";
 import React from "react";
+import $ from "jquery";
 import { Link, NavLink } from "react-router-dom";
 import { Dropdown, Menu } from "semantic-ui-react";
 import Cart from "./Cart";
@@ -12,6 +13,26 @@ const MenuPoints = observer(
     };
 
     menuContainer = [];
+
+    toggleMenu = (e) => {
+      $('.menu_mega').toggleClass('visible');
+      e.stopPropagation();
+    }
+
+    closeAll = (e) => {
+      $('.menu_mega').removeClass('visible');
+    }
+
+    componentDidMount() {
+      this.createMenu();
+    }
+
+    componentDidUpdate(){
+      $('.btn-menu').off('click', this.toggleMenu);
+      $('.btn-menu').on('click', this.toggleMenu);
+      $('html').off('click', this.closeAll);
+      $('html').on('click', this.closeAll);
+    }
 
     createMenu = () => {
       fetch("http://134.122.81.119/categories", {
@@ -69,25 +90,25 @@ const MenuPoints = observer(
               <div className="header">
                 <div className="container container_f">
                   <div className="left">
-                    <Link className="point">О нас</Link>
-                    <Link className="point">Магазины</Link>
-                    <Link className="point">Помощь</Link>
-                    <Link className="point">Бонусы</Link>
-                    <div className="point">город</div>
+                    <Link>О нас</Link>
+                    <Link>Магазины</Link>
+                    <Link>Помощь <span className="ic i_drop"></span></Link>
+                    <Link>Бонусы</Link>
+                    <button className="link dotted">Москва <span className="ic i_drop"></span></button>
                   </div>
                   <Link className="logo" to="/">
                     <img src="/image/logo.svg" />
                   </Link>
                   <div className="right">
-                    <Link className="bold-point">Задать вопрос</Link>
-                    <a className="phone">+7 495 744-00-50</a>
+                    <button className="link dotted ask">Задать вопрос</button>
+                    <a href="tel:+7 495 744-00-50" className="phone">+7 495 744-00-50</a>
                   </div>
                 </div>
               </div>
               <div className="navigation">
                 <div className="container container_f">
                   <div className="left">
-                    <button className="btn btn_primary"> <span className="ic i_menu"></span> Каталог</button>
+                    <button className="btn btn_primary btn-menu"> <span className="ic i_menu"></span> Каталог</button>
                     <Link className="menu-point">Коллекции</Link>
                     <Link className="menu-point">Премиум</Link>
                     <Link className="menu-point">Милениум</Link>
@@ -97,47 +118,88 @@ const MenuPoints = observer(
                   </div>
                   <div className="right">
                     <input className="search" placeholder="Поиск"></input>
-                    <div className="liked">L</div>
-                    <div className="cart">C</div>
-                    <div className="profile">P</div>
+                    <button className="liked ic i_fav"></button>
+                    <button className="cart ic i_bag"></button>
+                    <button className="profile ic i_user"></button>
+                  </div>
+                  <div className="menu menu_mega">
+                    <div className="container container_f">
+                      <div className="column">
+                        <div>
+                          <h5>Сервировка стола</h5>
+                          <ul>
+                            <li><a href="">Блюда</a></li>
+                            <li><a href="">Блюда для сервировки</a></li>
+                            <li><a href="">Горки</a></li>
+                            <li><a href="">Тест</a></li>
+                            <li><a href="">Тест</a></li>
+                            <li><a href="">Тест</a></li>
+                            <li><a href="">Тест</a></li>
+                            <li><a href="">Тест</a></li>
+                            <li><a href="">Тест</a></li>
+                            <li><a href="">Тест</a></li>
+                            <li><a href="">Тест</a></li>
+                            <li><a href="">Тест</a></li>
+                          </ul>
+                        </div>
+                        <div>
+                          <h5>Кофе и чай</h5>
+                          <ul>
+                            <li><a href="">Тест</a></li>
+                            <li><a href="">Тест</a></li>
+                            <li><a href="">Тест</a></li>
+                            <li><a href="">Тест</a></li>
+                            <li><a href="">Тест</a></li>
+                          </ul>
+                        </div>
+                      </div>
+
+                      <div className="column">
+                        <div>
+                          <h5>Напитки</h5>
+                          <ul>
+                            <li><a href="">Тест</a></li>
+                            <li><a href="">Тест</a></li>
+                            <li><a href="">Тест</a></li>
+                            <li><a href="">Тест</a></li>
+                            <li><a href="">Тест</a></li>
+                            <li><a href="">Тест</a></li>
+                            <li><a href="">Тест</a></li>
+                          </ul>
+                        </div>
+                        <div>
+                          <h5>Интерьер</h5>
+                          <ul>
+                            <li><a href="">Тест</a></li>
+                            <li><a href="">Тест</a></li>
+                            <li><a href="">Тест</a></li>
+                            <li><a href="">Тест</a></li>
+                            <li><a href="">Тест</a></li>
+                            <li><a href="">Тест</a></li>
+                            <li><a href="">Тест</a></li>
+                          </ul>
+                        </div>
+                      </div>
+                      <div className="column">
+                        <div>
+                          <h5>Хранение</h5>
+                        </div>
+                        <div>
+                          <h5>Для приготовления</h5>
+                        </div>
+                      </div>
+                      <div className="column">
+                        <div>
+                          <h5>Наборы</h5>
+                        </div>
+                        <div>
+                          <h5>Сервизы</h5>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            <div className="pop-catalog">
-              <div className="colum">
-                <div>
-                  <h5 className="catalog-title">Сервировка стола</h5>
-                </div>
-                <div>
-                  <h5 className="catalog-title">Кофе и чай</h5>
-                </div>
-              </div>
-
-              <div className="colum">
-                <div>
-                  <h5 className="catalog-title">Напитки</h5>
-                </div>
-                <div>
-                  <h5 className="catalog-title">Интерьер</h5>
-                </div>
-              </div>
-              <div className="colum">
-                <div>
-                  <h5 className="catalog-title">Хранение</h5>
-                </div>
-                <div>
-                  <h5 className="catalog-title">Для приготовления</h5>
-                </div>
-              </div>
-              <div className="colum">
-                <div>
-                  <h5 className="catalog-title">Наборы</h5>
-                </div>
-                <div>
-                  <h5 className="catalog-title">Сервизы</h5>
-                </div>
-              </div>
-            </div>
           </>
         )
       );

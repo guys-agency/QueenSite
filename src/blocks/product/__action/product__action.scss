@@ -1,0 +1,14 @@
+.product__action{
+    position: absolute;
+    bottom: 10px;
+    right: 2px;
+    button{
+        font-size: 20px;
+        color: $b_light;
+        margin-right: 10px;
+        transition: all 0.2s;
+        &:hover{
+            color: $g_middle;
+        }
+    }
+}

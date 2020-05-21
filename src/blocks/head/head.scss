@@ -1,0 +1,11 @@
+.head{
+    width: 100%;
+    background: $a_gradient;
+    margin-top: -120px;
+    margin-bottom: 230px;
+    position: relative;
+    padding-top: 150px;
+    &_big{
+        height: 500px;
+    }
+}

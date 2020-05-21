@@ -17,11 +17,17 @@ const ProductCard = observer(function ProductCard(props) {
   return (
     <div className="product" onClick={clickHandler}>
       <div className="product__image">
-        <img src="/image/Category/Product-card/Placeholder.jpg" />
-        <div className="product__attr-cont">
-          <div className="product__hit">Хит</div>
-          <div className="product__sale">Акция</div>
-          <div className="product__new">Новинка</div>
+        <div className="product__image-wrp">
+          <img src="/image/Category/Product-card/Placeholder.png" />
+          <div className="product__attr-cont">
+            <div className="product__hit">Хит</div>
+            <div className="product__sale">Акция</div>
+            <div className="product__new">Новинка</div>
+          </div>
+        </div>
+        <div className="product__action">
+          <button className="ic i_fav"></button>
+          <button className="ic i_bag"></button>
         </div>
       </div>
       <h3 className="product__name">{data.name}</h3>

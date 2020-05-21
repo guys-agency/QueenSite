@@ -2,8 +2,11 @@
 @import "./__image/product__image.scss";
 @import "./__name/product__name.scss";
 @import "./__price/product__price.scss";
+@import "./__attr/product__attr.scss";
+@import "./__action/product__action.scss";
 
 .product {
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -12,8 +15,36 @@
   width: 263px;
   margin-right: 20px;
   margin-bottom: 15px;
-
+  transition: all 0.3s;
   &:nth-child(3n) {
     margin-right: 0px;
+  }
+  &__action{
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s;
+  }
+  &__image{
+    transition: all 0.3s;
+  }
+  &:hover{
+    cursor: pointer;
+    .product{
+      &__action{
+        visibility: visible;
+        opacity: 1;
+        bottom: 10px;
+        transform: translateY(0px);
+      }
+      &__name{
+        color: $b_light;
+        text-decoration: underline;
+      }
+      &__image{
+        box-shadow: $sh_bottom;
+        transform: translateY(-2px);
+      }
+    }
   }
 }
