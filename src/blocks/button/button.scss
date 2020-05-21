@@ -6,7 +6,19 @@
     font-weight: 500;
     font-size: 16px;
     color: $b_dark;
+    transition: all 0.3s;
+    cursor: pointer;
     &_primary{
         border: 1px solid $g_middle;
+    }
+    .ic{
+        &:before{
+            position: relative;
+            top: 1px;
+        }
+    }
+    &:hover{
+        box-shadow: $sh_no;
+        transform: translateY(1px);
     }
 }

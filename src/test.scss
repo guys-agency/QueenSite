@@ -1,7 +1,10 @@
 //SETTINGS
 @import "./vars/colors.scss"; 
 @import "./vars/shadows.scss"; 
+@import "./vars/icons.scss"; 
+@import "./vars/mix.scss"; 
 @import "./fonts/font.scss"; 
+@import "./fonts/icons.scss"; 
 @import "./fonts/typo.scss"; 
 
 //ELEMENTS
@@ -34,11 +37,13 @@ code {
   }
 }
 
-.main-page-container {
-  max-width: 1112px;
+.container {
+  max-width: 1110px;
   margin-right: auto;
   margin-left: auto;
-  margin-bottom: 50px;
+  &_f{
+    display: flex;
+  }
 }
 
 .label {

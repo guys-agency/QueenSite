@@ -1,0 +1,143 @@
+@font-face {
+  font-family: '#{$icomoon-font-family}';
+  src:  url('#{$icomoon-font-path}/#{$icomoon-font-family}.eot?ey37ev');
+  src:  url('#{$icomoon-font-path}/#{$icomoon-font-family}.eot?ey37ev#iefix') format('embedded-opentype'),
+    url('#{$icomoon-font-path}/#{$icomoon-font-family}.ttf?ey37ev') format('truetype'),
+    url('#{$icomoon-font-path}/#{$icomoon-font-family}.woff?ey37ev') format('woff'),
+    url('#{$icomoon-font-path}/#{$icomoon-font-family}.svg?ey37ev##{$icomoon-font-family}') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="i_"], [class*=" i_"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: '#{$icomoon-font-family}' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.i_queen {
+  &:before {
+    content: $i_queen;
+  }
+}
+.i_of {
+  &:before {
+    content: $i_of;
+  }
+}
+.i_bohemia {
+  &:before {
+    content: $i_bohemia;
+  }
+}
+.i_line-h {
+  &:before {
+    content: $i_line-h; 
+  }
+}
+.i_line-v {
+  &:before {
+    content: $i_line-v;
+  }
+}
+.i_qr {
+  &:before {
+    content: $i_qr;
+  }
+}
+.i_qf {
+  &:before {
+    content: $i_qf;
+  }
+}
+.i_qd {
+  &:before {
+    content: $i_qd;
+  }
+}
+.i_drop {
+  &:before {
+    content: $i_drop;
+  }
+}
+.i_minus {
+  &:before {
+    content: $i_minus;
+  }
+}
+.i_plus {
+  &:before {
+    content: $i_plus;
+  }
+}
+.i_search {
+  &:before {
+    content: $i_search;
+  }
+}
+.i_filter {
+  &:before {
+    content: $i_filter;
+  }
+}
+.i_close {
+  &:before {
+    content: $i_close; 
+  }
+}
+.i_menu {
+  &:before {
+    content: $i_menu;
+  }
+}
+.i_fav-filled {
+  &:before {
+    content: $i_fav-filled;
+  }
+}
+.i_fav {
+  &:before {
+    content: $i_fav;
+  }
+}
+.i_user-f {
+  &:before {
+    content: $i_user-f;
+  }
+}
+.i_user {
+  &:before {
+    content: $i_user;
+  }
+}
+.i_bag-f {
+  &:before {
+    content: $i_bag-f;
+  }
+}
+.i_bag {
+  &:before {
+    content: $i_bag;
+  }
+}
+.i_left {
+  &:before {
+    content: $i_left;
+  }
+}
+.i_right {
+  &:before {
+    content: $i_right;
+  }
+}
+

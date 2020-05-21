@@ -1,6 +1,38 @@
 h1, h2{
   font-family: "CaslonC 540 BT", 'Times New Roman', Times, serif;
   text-transform: uppercase;
+  a, .link{
+    font-family: "Excentra Pro", 'Times New Roman', Times, serif;
+    font-size: 16px;
+    font-weight: normal;
+    text-transform: none;
+    color: $b_light;
+    .ic{
+      position: relative;
+      top: 2px;
+      left: 0;
+      transition: all 0.2s;
+    }
+  }
+  &:hover{
+    a, .link{
+      opacity: 0.8;
+      .ic{
+        left: 3px;
+      }
+    }
+  }
+}
+
+h1, h2, h3, h4, h5, h6{
+  &.tilda{
+    &::before{
+      @include icon;
+      display: block;
+      content: $i_line-h;
+      @include gold-txt;
+    }
+  }
 }
 
 h3, h4, h5, h6, p, a, input, button{
@@ -13,6 +45,12 @@ h1{
 
 h2{
   font-size: 27px;
+  &.tilda{
+    &::before{
+      font-size: 70px;
+      margin-bottom: -20px;
+    }
+  }
 }
 
 h3{
@@ -31,6 +69,14 @@ h5{
   color: $a_dark;
 }
 
+a, .link{
+  transition: all 0.2s;
+  h1, h2, h3, h4, h5 , h6{
+    color: $b_dark;
+  }
+}
+
 p{
   font-size: 16px;
+  color: $b_dark;
 }

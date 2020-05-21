@@ -114,12 +114,10 @@ const MainPage = observer(
               <Slider {...settings}></Slider>
             </div>
           )}
-          <div className="main-page-container">
+          <div className="container">
             <div className="hit-block">
-              <div className="label"></div>
               <div className="title">
-                <h2>Хиты продаж</h2>
-                <p>Ко всем хитам</p>
+                <a href=""><h2 className="tilda">Хиты продаж <span className="link">Ко всем хитам <span className="ic i_right"></span></span></h2></a>
               </div>
               <p className="subtitle">Сложно определиться? Мы поможем</p>
 
@@ -129,7 +127,7 @@ const MainPage = observer(
             </div>
           </div>
           <div className="line"></div>
-          <div className="main-page-container">
+          <div className="container">
             <div className="hit-block">
               <div className="title">
                 <h2>Бренды</h2>
@@ -178,10 +176,9 @@ const MainPage = observer(
             </div>
           </div>
           <div className="main-background">
-            <div className="main-page-container">
-              <div className="label"></div>
+            <div className="container">
               <div className="title">
-                <h2>Идеи:</h2>
+                <h2 className="tilda">Идеи:</h2>
               </div>
               <div className="ideas-block">
                 <div className="main-idea"></div>

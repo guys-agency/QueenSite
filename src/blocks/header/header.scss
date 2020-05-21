@@ -1,11 +1,5 @@
 .header {
-  width: 1112px;
-  margin: 20px 0px;
-}
-
-.first-header {
-  display: flex;
-
+  width: 100%;
   .left {
     display: flex;
 
@@ -63,11 +57,14 @@
   }
 }
 
-.second-header {
-  display: flex;
+.navigation {
   align-items: center;
   justify-content: space-between;
-
+  width: 100%;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 98;
   .left {
     .btn:first-child {
       margin-right: 20px;
@@ -104,6 +101,7 @@
   .right {
     display: flex;
     align-items: center;
+    margin-left: auto;
 
     .search {
       background: #ffffff;
