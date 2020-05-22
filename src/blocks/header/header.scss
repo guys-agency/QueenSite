@@ -1,12 +1,14 @@
 @import "./__left/header__left.scss";
 @import "./__right/header__right.scss";
+@import "./__drop/header__drop.scss";
 
 
 .header {
   width: 100%;
-  z-index: 98;
+  z-index: 99;
   padding: {
     top: 20px;
+    bottom: 10px;
   };
   transition: all 0.3s;
 

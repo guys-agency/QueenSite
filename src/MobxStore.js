@@ -6,7 +6,7 @@ import React from "react";
 
 //134.122.81.119
 //127.0.0.1:3010
-const mainAdressServ = "http://127.0.0.1:3010";
+const mainAdressServ = "http://134.122.81.119";
 
 class Store {
   productsToRender = [];
