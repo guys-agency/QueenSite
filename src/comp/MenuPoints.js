@@ -338,7 +338,10 @@ const MenuPoints = observer(
                   </span>
                 </div>
                 <div className="navigation__right">
-                  <input className="search" placeholder="Поиск"></input>
+                  <form className="search-wrp">
+                    <input type="text" className="search" placeholder="Поиск"></input>
+                    <button className="ic i_search"></button>
+                  </form>
                   <button className="liked ic i_fav"></button>
                   <button className="cart ic i_bag"></button>
                   <button

@@ -9,12 +9,20 @@
   position: sticky;
   top: 0;
   z-index: 98;
-  padding-bottom: 10px;
-  padding-top: 10px;
   transition: all 0.3s;
+  .container{
+    padding-bottom: 10px;
+    padding-top: 10px;
+  }
   &_scroll{
     background: #fff;
     box-shadow: $sh_bottom;
+    .search {
+      &:focus{
+        box-shadow: none;
+        border: 1px solid $gr_middle;
+      }
+    }
     .menu{
       top: 62px;
       box-shadow: $sh_bottom;
