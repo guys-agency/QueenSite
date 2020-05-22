@@ -27,12 +27,45 @@ const MenuPoints = observer(
     test2 = "";
 
     toggleMenu = (e) => {
-      $(".menu_mega").toggleClass("visible");
       e.stopPropagation();
+      $(".menu_sub").removeClass('visible');
+      $(".menu_mega").toggleClass("visible");
     };
+
+    toggleDrop = (e) => {
+      e.preventDefault();
+      $(".menu_mega").removeClass("visible");
+      $(".menu_sub").removeClass("visible");
+      $(".menu-point").removeClass("active");
+      $(e.target).addClass("active");
+      $(e.target).parent().find(".menu_sub").addClass("visible");
+    }
+
+    offDrop = () => {
+      $(".menu_sub").removeClass('visible');
+      $(".menu-point").removeClass("active");
+    }
 
     closeAll = (e) => {
       $(".menu_mega").removeClass("visible");
+      $(".menu_sub").removeClass("visible")
+    };
+
+    hoverMenuBtn = (e) => {
+      $(".menu-point").removeClass("active");
+      $(".menu_sub").removeClass("visible")
+    };
+
+    scrollNav = (e) =>{
+      var scroll = $(window).scrollTop();
+      if (scroll > 55) {
+        $(".header").addClass("header_scroll");
+        $(".navigation").addClass("navigation_scroll");
+      } 
+      if (scroll < 55) {
+        $(".header").removeClass("header_scroll");
+        $(".navigation").removeClass("navigation_scroll");
+      }
     };
 
     componentDidMount() {
@@ -42,8 +75,19 @@ const MenuPoints = observer(
     componentDidUpdate() {
       $(".btn-menu").off("click", this.toggleMenu);
       $(".btn-menu").on("click", this.toggleMenu);
+      $(".btn-menu").off("mouseenter", this.hoverMenuBtn);
+      $(".btn-menu").on("mouseenter", this.hoverMenuBtn);
+
+      $(".menu-point").off("mouseenter", this.toggleDrop);
+      $(".menu-point").on("mouseenter", this.toggleDrop);
+      $(".menu_sub").off("mouseleave", this.offDrop);
+      $(".menu_sub").on("mouseleave", this.offDrop);
+
       $("html").off("click", this.closeAll);
       $("html").on("click", this.closeAll);
+
+      $(window).off("scroll", this.scrollNav);
+      $(window).on("scroll", this.scrollNav);
     }
 
     createMenu = () => {
@@ -114,7 +158,7 @@ const MenuPoints = observer(
             {/* <Menu>{this.menuContainer}</Menu> */}
             <div className="header">
               <div className="container container_f">
-                <div className="left">
+                <div className="header__left">
                   <Link>О нас</Link>
                   <Link>Магазины</Link>
                   <Link>
@@ -128,7 +172,7 @@ const MenuPoints = observer(
                 <Link className="logo" to="/">
                   <img src="/image/logo.svg" />
                 </Link>
-                <div className="right">
+                <div className="header__right">
                   <button className="link dotted ask">Задать вопрос</button>
                   <a href="tel:+7 495 744-00-50" className="phone">
                     +7 495 744-00-50
@@ -138,19 +182,96 @@ const MenuPoints = observer(
             </div>
             <div className="navigation">
               <div className="container container_f">
-                <div className="left">
+                <div className="navigation__left">
                   <button className="btn btn_primary btn-menu">
                     {" "}
                     <span className="ic i_menu"></span> Каталог
                   </button>
-                  <Link className="menu-point">Коллекции</Link>
-                  <Link className="menu-point">Премиум</Link>
-                  <Link className="menu-point">Милениум</Link>
-                  <Link className="menu-point">Интерьер</Link>
-                  <Link className="menu-point">Подарки</Link>
-                  <Link className="sale-point">Акции</Link>
+                  <span className="menu__sub ">
+                   <Link className="menu-point">Коллекции</Link>
+                    <div className="menu menu_sub menu_collection">
+                      <div className="container container_f">
+                        <div className="column">
+                          <ul>
+                            <li><a href="">Тест</a></li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </span>
+
+                  <span className="menu__drop">
+                    <Link className="menu-point">Премиум</Link>
+                    <div className="menu menu_sub">
+                      <div className="container container_f">
+                        <div className="column">
+                          <ul>
+                            <li><a href="">Тест</a></li>
+                            <li><a href="">Тест</a></li>
+                            <li><a href="">Тест</a></li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </span>
+
+
+                  {/* <span className="menu__drop">
+                    <Link className="menu-point">Милениум</Link>
+                    <div className="menu menu_sub">
+                      <div className="container container_f">
+                        <div className="column">
+                          <ul>
+                            <li><a href="">Тест 2</a></li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </span> */}
+
+
+                  <span className="menu__drop">
+                    <Link className="menu-point">Интерьер</Link>
+                    <div className="menu menu_sub">
+                      <div className="container container_f">
+                        <div className="column">
+                          <ul>
+                            <li><a href="">Тест</a></li>
+                            <li><a href="">Тест</a></li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </span>
+
+                  <span className="menu__sub">
+                    <Link className="menu-point">Подарки</Link>
+                    <div className="menu menu_sub menu_gift">
+                      <div className="container container_f">
+                        <div className="column">
+                          <ul>
+                            <li><a href="">Тест 2</a></li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </span>
+
+                  <span className="menu__drop">
+                    <Link className="menu-point sale-point">Акции</Link>
+                    <div className="menu menu_sub">
+                      <div className="container container_f">
+                        <div className="column">
+                          <ul>
+                            <li><a href="">Тест</a></li>
+                            <li><a href="">Тест</a></li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </span>
                 </div>
-                <div className="right">
+                <div className="navigation__right">
                   <input className="search" placeholder="Поиск"></input>
                   <button className="liked ic i_fav"></button>
                   <button className="cart ic i_bag"></button>

@@ -1,0 +1,31 @@
+.navigation__right {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+
+    .search {
+      background: #ffffff;
+
+      border: 1px solid $gr_middle;
+      box-sizing: border-box;
+      border-radius: 25px;
+      padding-left: 20px;
+
+      width: 132px;
+      height: 36px;
+      margin-right: 10px;
+    }
+
+    button {
+      margin-right: 15px;
+      font-size: 20px;
+      color: $b_dark;
+      transition: all 0.3s;
+      &:last-child{
+        margin-right: 0;
+      }
+      &:hover{
+        color: $g_middle;
+      }
+    }
+  }

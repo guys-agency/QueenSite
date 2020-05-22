@@ -1,38 +1,17 @@
+@import "./__left/header__left.scss";
+@import "./__right/header__right.scss";
+
+
 .header {
   width: 100%;
   z-index: 98;
   padding: {
     top: 20px;
   };
+  transition: all 0.3s;
+
   .container{
     align-items: center;
-  }
-  .left {
-    display: flex;
-    align-items: baseline;
-    a, .link {
-      font-family: Excentra Pro;
-      font-style: normal;
-      font-weight: 500;
-      font-size: 13px;
-      line-height: 13px;
-      margin-right: 12px;
-      opacity: 0.8;
-      &:last-child{
-        font-weight: 600;
-      }
-      &:nth-last-child(2){
-        &:after{
-          @include icon;
-          content: $i_line-v;
-          margin-left: 12px;
-          font-size: 20px;
-          position: relative;
-          top: 6px;
-          opacity: 0.3;
-        }
-      }
-    }
   }
 
   .logo {
@@ -42,36 +21,8 @@
     margin-left: auto;
   }
 
-  .right {
-    display: flex;
-    align-items: center;
 
-    .ask {
-      font-size: 12px;
-      margin-right: 17px;
-      font-weight: 600;
-    }
-
-    .phone {
-      font-family: Excentra Pro;
-      font-style: normal;
-      font-weight: 600;
-      font-size: 18px;
-      line-height: 18px;
-      text-align: right;
-
-      /* Blue/Dark */
-      color: $b_dark;
-
-      &:before{
-        @include icon;
-        content: $i_line-v;
-        margin-right: 12px;
-        font-size: 20px;
-        position: relative;
-        top: 2px;
-        opacity: 0.3;
-      }
-    }
+  &_scroll{
+    background-color: #fff;
   }
 }

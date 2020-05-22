@@ -1,4 +1,7 @@
+@import "./__desc/banner__desc.scss";
+
 .banner{
+    position: relative;
     box-shadow: $sh_bottom;
     background-color: #fff;
     border-radius: 5px;

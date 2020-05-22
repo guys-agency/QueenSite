@@ -155,7 +155,7 @@ code {
 .gifts {
   display: flex;
 
-  .gift {
+  .banner {
     position: relative;
     width: 357px;
     height: 221px;
@@ -167,21 +167,6 @@ code {
 
     &:nth-child(3) {
       margin-right: 0px;
-    }
-
-    img {
-      width: 100%;
-    }
-
-    p {
-      position: absolute;
-      left: 20px;
-      bottom: 20px;
-
-      color: #00094d;
-      font-weight: 500;
-      font-size: 20px;
-      line-height: 19px;
     }
   }
 }

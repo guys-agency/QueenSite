@@ -1,0 +1,32 @@
+  .header__right {
+    display: flex;
+    align-items: center;
+
+    .ask {
+      font-size: 12px;
+      margin-right: 17px;
+      font-weight: 600;
+    }
+
+    .phone {
+      font-family: Excentra Pro;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 18px;
+      line-height: 18px;
+      text-align: right;
+
+      /* Blue/Dark */
+      color: $b_dark;
+
+      &:before{
+        @include icon;
+        content: $i_line-v;
+        margin-right: 12px;
+        font-size: 20px;
+        position: relative;
+        top: 2px;
+        opacity: 0.3;
+      }
+    }
+  }

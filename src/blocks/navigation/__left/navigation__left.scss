@@ -1,0 +1,27 @@
+.navigation__left {
+    .btn:first-child {
+      margin-right: 20px;
+    }
+
+    .menu-point {
+      font-family: Excentra Pro;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 16px;
+      line-height: 16px;
+      margin-right: 20px;
+      /* identical to box height */
+    }
+
+    .sale-point {
+      font-family: Excentra Pro;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 16px;
+      /* identical to box height, or 100% */
+
+      /* Blue/Dark */
+      color: $b_dark;
+    }
+}

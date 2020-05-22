@@ -85,7 +85,7 @@ a, .link{
     color: $b_light;
     border-bottom: 1px dotted $a_dark;
   }
-  &:hover{
+  &:hover, &.active{
     .i_drop{
       top: 3px;
     }

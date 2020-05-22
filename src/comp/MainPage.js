@@ -185,28 +185,49 @@ const MainPage = observer(
                 <h2 className="tilda">Идеи:</h2>
               </div>
               <div className="ideas-block">
-                <div className="banner main-idea"></div>
-                <div className="ideas">
-                  <div className="banner small"></div>
-                  <div className="banner small"></div>
-                  <div className="banner large"></div>
-                </div>
+                <a href="#" className="banner main-idea">
+                  <div className="banner__desc">
+                    Вкусное вино
+                  </div>
+                </a>
+                <a href="#" className="ideas">
+                  <div className="banner small">
+                    <div className="banner__desc">
+                      Виски
+                    </div>
+                  </div>
+                  <div className="banner small">
+                    <div className="banner__desc">
+                      Кружки со смыслом 
+                    </div>
+                  </div>
+                  <a href="#" className="banner large">
+                    <div className="banner__desc">
+                      На вечеринку
+                    </div>
+                  </a>
+                </a>
               </div>
               <div className="title">
                 <h2>Подарки:</h2>
               </div>
               <div className="gifts">
-                <div className="gift">
-                  <img src="/image/gifts/1.jpg" />
-                  <p>До 500₽</p>
+                <div className="banner" style={{
+                  backgroundImage: "url(" + "/image/gifts/1.jpg" + ")",
+                }}>
+                  <div className="banner__desc">До 500₽</div>
                 </div>
-                <div className="gift">
-                  <img src="/image/gifts/2.jpg" />
-                  <p>До 1 000₽</p>
+
+                <div className="banner" style={{
+                  backgroundImage: "url(" + "/image/gifts/2.jpg" + ")",
+                }}>
+                  <div className="banner__desc">До 1 000₽</div>
                 </div>
-                <div className="gift">
-                  <img src="/image/gifts/3.jpg" />
-                  <p>До 1 500₽</p>
+
+                <div className="banner" style={{
+                  backgroundImage: "url(" + "/image/gifts/3.jpg" + ")",
+                }}>
+                  <div className="banner__desc">До 2 000₽</div>
                 </div>
               </div>
             </div>

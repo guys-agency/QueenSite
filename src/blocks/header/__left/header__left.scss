@@ -1,0 +1,28 @@
+  .header__left {
+    display: flex;
+    align-items: baseline;
+    a, .link {
+      font-family: Excentra Pro;
+      font-style: normal;
+      font-weight: 500;
+      font-size: 13px;
+      line-height: 13px;
+      margin-right: 12px;
+      opacity: 0.8;
+      &:last-child{
+        font-weight: 600;
+      }
+      &:nth-last-child(2){
+        &:after{
+          @include icon;
+          content: $i_line-v;
+          margin-left: 12px;
+          font-size: 20px;
+          position: relative;
+          top: 6px;
+          opacity: 0.3;
+          color: $b_dark !important;
+        }
+      }
+    }
+  }

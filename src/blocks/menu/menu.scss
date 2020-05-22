@@ -1,7 +1,12 @@
+@import "./__column/column.scss";
+@import "./__container/container.scss";
+@import "./__drop/menu__drop.scss";
+
+
 .menu{
     position: absolute;
     z-index: 99;
-    top: 90px;
+    top: 80px;
     left: 0;
     width: 100%;
     background-color: #fff;
@@ -13,7 +18,7 @@
 
     opacity: 0;
     visibility: hidden;
-    transform: translateY(-20px);
+    transform: translateY(-10px);
     transition: all 0.3s;
 
     &.visible{
@@ -22,46 +27,24 @@
         transform: translateY(0px);
     }
 
-    .column{
-        margin-right: 120px;
-        min-width: 200px;
-        h5{
-            margin-bottom: 0;
-        }
-        ul{
-            margin-top: 0;
-            list-style: none;
-            padding-left: 0;
-            li{
-                a{
-                    font-size: 16px;
-                    display: block;
-                    padding: {
-                        top: 6px;
-                        bottom: 6px;
-                    };
-                     &::after{
-                        @include icon;
-                        content: $i_right;
-                        font-size: 14px;
-                        position: relative;
-                        top: 2px;
-                        margin-left: 4px;
-                        opacity: 0;
-                        transition: opacity 0.2s;
-                    }
-                    &:hover{
-                        transform: translateX(5px);
-                        &::after{
-                            opacity: 1;
-                        }
-                    }
-                }
+
+    &_collection{
+        .container{
+        position: relative;
+            &::before{
+                left: 152px;
             }
         }
     }
 
-
+    &_gift{
+        .container{
+        position: relative;
+            &::before{
+                left: 452px;
+            }
+        }
+    }
 
 
     &.ui{

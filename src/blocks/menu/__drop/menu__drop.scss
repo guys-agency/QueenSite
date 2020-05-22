@@ -1,0 +1,23 @@
+.menu__drop{
+    position: relative;
+    .menu{
+        width: initial;
+        border-radius: 3px;
+        top: 40px;
+        padding: 20px;
+        .column{
+            min-width: 100px;
+            margin-right: 0px;
+            ul{
+                margin-bottom: 0;
+            }
+        }
+        .container{
+            position: relative;
+            &::before{
+                top: -30px;
+                left: 10px;
+            }
+        }
+    }
+}
