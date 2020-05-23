@@ -28,12 +28,9 @@ const MainPage = observer(
         },
       })
         .then((res) => {
-          console.log("res", res);
           return res.json();
         })
         .then((data) => {
-          console.log("data 123", data);
-          console.log("object", Object.keys(data));
           Object.keys(data[0].hit).forEach((element) => {
             hitContTime.push(
               <ProductCard
@@ -120,7 +117,14 @@ const MainPage = observer(
           <div className="container">
             <div className="carousel carousel_product">
               <div className="title">
-                <a href=""><h2 className="tilda">Хиты продаж <span className="link">Ко всем хитам <span className="ic i_right"></span></span></h2></a>
+                <a href="">
+                  <h2 className="tilda">
+                    Хиты продаж{" "}
+                    <span className="link">
+                      Ко всем хитам <span className="ic i_right"></span>
+                    </span>
+                  </h2>
+                </a>
                 <p className="subtitle">Сложно определиться? Мы поможем</p>
               </div>
 
@@ -186,25 +190,17 @@ const MainPage = observer(
               </div>
               <div className="ideas-block">
                 <a href="#" className="banner main-idea">
-                  <div className="banner__desc">
-                    Вкусное вино
-                  </div>
+                  <div className="banner__desc">Вкусное вино</div>
                 </a>
                 <a href="#" className="ideas">
                   <div className="banner small">
-                    <div className="banner__desc">
-                      Виски
-                    </div>
+                    <div className="banner__desc">Виски</div>
                   </div>
                   <div className="banner small">
-                    <div className="banner__desc">
-                      Кружки со смыслом 
-                    </div>
+                    <div className="banner__desc">Кружки со смыслом</div>
                   </div>
                   <a href="#" className="banner large">
-                    <div className="banner__desc">
-                      На вечеринку
-                    </div>
+                    <div className="banner__desc">На вечеринку</div>
                   </a>
                 </a>
               </div>
@@ -212,21 +208,30 @@ const MainPage = observer(
                 <h2>Подарки:</h2>
               </div>
               <div className="gifts">
-                <div className="banner" style={{
-                  backgroundImage: "url(" + "/image/gifts/1.jpg" + ")",
-                }}>
+                <div
+                  className="banner"
+                  style={{
+                    backgroundImage: "url(" + "/image/gifts/1.jpg" + ")",
+                  }}
+                >
                   <div className="banner__desc">До 500₽</div>
                 </div>
 
-                <div className="banner" style={{
-                  backgroundImage: "url(" + "/image/gifts/2.jpg" + ")",
-                }}>
+                <div
+                  className="banner"
+                  style={{
+                    backgroundImage: "url(" + "/image/gifts/2.jpg" + ")",
+                  }}
+                >
                   <div className="banner__desc">До 1 000₽</div>
                 </div>
 
-                <div className="banner" style={{
-                  backgroundImage: "url(" + "/image/gifts/3.jpg" + ")",
-                }}>
+                <div
+                  className="banner"
+                  style={{
+                    backgroundImage: "url(" + "/image/gifts/3.jpg" + ")",
+                  }}
+                >
                   <div className="banner__desc">До 2 000₽</div>
                 </div>
               </div>
@@ -236,7 +241,14 @@ const MainPage = observer(
           <div className="container">
             <div className="carousel carousel_product">
               <div className="title">
-                <a href=""><h2 className="tilda">Новинки <span className="link">Все новинки <span className="ic i_right"></span></span></h2></a>
+                <a href="">
+                  <h2 className="tilda">
+                    Новинки{" "}
+                    <span className="link">
+                      Все новинки <span className="ic i_right"></span>
+                    </span>
+                  </h2>
+                </a>
                 <p className="subtitle">Сложно определиться? Мы поможем</p>
               </div>
 

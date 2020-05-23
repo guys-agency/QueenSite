@@ -28,7 +28,7 @@ const MenuPoints = observer(
 
     toggleMenu = (e) => {
       e.stopPropagation();
-      $(".menu_sub").removeClass('visible');
+      $(".menu_sub").removeClass("visible");
       $(".menu_mega").toggleClass("visible");
     };
 
@@ -39,29 +39,29 @@ const MenuPoints = observer(
       $(".menu-point").removeClass("active");
       $(e.target).addClass("active");
       $(e.target).parent().find(".menu_sub").addClass("visible");
-    }
+    };
 
     offDrop = () => {
-      $(".menu_sub").removeClass('visible');
+      $(".menu_sub").removeClass("visible");
       $(".menu-point").removeClass("active");
-    }
+    };
 
     closeAll = (e) => {
       $(".menu_mega").removeClass("visible");
-      $(".menu_sub").removeClass("visible")
+      $(".menu_sub").removeClass("visible");
     };
 
     hoverMenuBtn = (e) => {
       $(".menu-point").removeClass("active");
-      $(".menu_sub").removeClass("visible")
+      $(".menu_sub").removeClass("visible");
     };
 
-    scrollNav = (e) =>{
+    scrollNav = (e) => {
       var scroll = $(window).scrollTop();
       if (scroll > 55) {
         $(".header").addClass("header_scroll");
         $(".navigation").addClass("navigation_scroll");
-      } 
+      }
       if (scroll < 55) {
         $(".header").removeClass("header_scroll");
         $(".navigation").removeClass("navigation_scroll");
@@ -98,11 +98,9 @@ const MenuPoints = observer(
         },
       })
         .then((res) => {
-          console.log("res", res);
           return res.json();
         })
         .then((data) => {
-          console.log("dataCat", data);
           const menu = {};
           data.forEach((elem, i) => {
             const childsPoints = [];
@@ -143,7 +141,7 @@ const MenuPoints = observer(
               </div>
             );
           }
-          console.log("this.menuContainer :>> ", this.menuContainer);
+
           this.setState({ ready: true });
         })
         .catch((err) => {
@@ -188,12 +186,14 @@ const MenuPoints = observer(
                     <span className="ic i_menu"></span> Каталог
                   </button>
                   <span className="menu__sub ">
-                   <Link className="menu-point">Коллекции</Link>
+                    <Link className="menu-point">Коллекции</Link>
                     <div className="menu menu_sub menu_collection">
                       <div className="container container_f">
                         <div className="column">
                           <ul>
-                            <li><a href="">Тест</a></li>
+                            <li>
+                              <a href="">Тест</a>
+                            </li>
                           </ul>
                         </div>
                       </div>
@@ -206,15 +206,20 @@ const MenuPoints = observer(
                       <div className="container container_f">
                         <div className="column">
                           <ul>
-                            <li><a href="">Тест</a></li>
-                            <li><a href="">Тест</a></li>
-                            <li><a href="">Тест</a></li>
+                            <li>
+                              <a href="">Тест</a>
+                            </li>
+                            <li>
+                              <a href="">Тест</a>
+                            </li>
+                            <li>
+                              <a href="">Тест</a>
+                            </li>
                           </ul>
                         </div>
                       </div>
                     </div>
                   </span>
-
 
                   {/* <span className="menu__drop">
                     <Link className="menu-point">Милениум</Link>
@@ -229,15 +234,18 @@ const MenuPoints = observer(
                     </div>
                   </span> */}
 
-
                   <span className="menu__drop">
                     <Link className="menu-point">Интерьер</Link>
                     <div className="menu menu_sub">
                       <div className="container container_f">
                         <div className="column">
                           <ul>
-                            <li><a href="">Тест</a></li>
-                            <li><a href="">Тест</a></li>
+                            <li>
+                              <a href="">Тест</a>
+                            </li>
+                            <li>
+                              <a href="">Тест</a>
+                            </li>
                           </ul>
                         </div>
                       </div>
@@ -250,7 +258,9 @@ const MenuPoints = observer(
                       <div className="container container_f">
                         <div className="column">
                           <ul>
-                            <li><a href="">Тест 2</a></li>
+                            <li>
+                              <a href="">Тест 2</a>
+                            </li>
                           </ul>
                         </div>
                       </div>
@@ -263,8 +273,12 @@ const MenuPoints = observer(
                       <div className="container container_f">
                         <div className="column">
                           <ul>
-                            <li><a href="">Тест</a></li>
-                            <li><a href="">Тест</a></li>
+                            <li>
+                              <a href="">Тест</a>
+                            </li>
+                            <li>
+                              <a href="">Тест</a>
+                            </li>
                           </ul>
                         </div>
                       </div>

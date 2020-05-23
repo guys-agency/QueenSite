@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
 import React from "react";
 import ProductCard from "./ProductCard";
+import Paginat from "./paginat";
 
 const ProductCardContainer = observer(
   class ProductCardContainer extends React.Component {
@@ -21,7 +22,6 @@ const ProductCardContainer = observer(
         body: JSON.stringify({ start: 0, stop: 50 }),
       })
         .then((res) => {
-          console.log("res", res);
           return res.json();
         })
         .then((data) => {
@@ -48,7 +48,6 @@ const ProductCardContainer = observer(
         body: JSON.stringify({}),
       })
         .then((res) => {
-          console.log("res", res);
           return res.json();
         })
         .then((data) => {
@@ -60,10 +59,10 @@ const ProductCardContainer = observer(
     };
 
     render() {
-      console.log("test");
       return (
         <div className="product-container">
           {this.props.store.productsToRender}
+          {this.props.store.paginatCont}
         </div>
       );
     }

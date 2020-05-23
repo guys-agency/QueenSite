@@ -9,7 +9,6 @@ const CartPage = observer(
     state = {};
 
     deteleProduct = (i) => {
-      console.log("work?");
       this.props.store.productInCart = this.props.store.productInCart.splice(
         i,
         1
