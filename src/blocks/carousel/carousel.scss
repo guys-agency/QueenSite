@@ -3,6 +3,33 @@
     h2{
         display: inline-block;
     }
+    &_product{
+        // .swiper-slide{
+        //     width: 263px;
+        //     margin-right: 20px;
+        //     .product{
+        //         margin-right: 0;
+        //     }
+        // }
+        .container_s{
+            max-width: calc(1110px + 20px);
+            .swiper-container{
+                padding: 10px;
+            }
+        }
+
+        .swiper-button{
+            &-prev, &-next{
+                top: 40%;
+            }
+            &-prev{
+                left: 20px;
+            }
+            &-next{
+                right: 20px;
+            }
+        }
+    }
     &_brand{
         padding-top: 30px;
         border-top: 2px solid $gr_light;

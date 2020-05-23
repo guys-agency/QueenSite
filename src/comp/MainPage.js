@@ -1,5 +1,6 @@
 import { observer } from "mobx-react";
 import React from "react";
+import $ from "jquery";
 import { Link } from "react-router-dom";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
@@ -35,12 +36,15 @@ const MainPage = observer(
         .then((data) => {
           console.log("data 123", data);
           console.log("object", Object.keys(data));
-          Object.keys(data[0].hit).forEach((element) => {
+          Object.keys(data[0].hit).forEach((element, i) => {
             hitContTime.push(
-              <ProductCard
-                key={data[0].hit[element].slug}
-                data={data[0].hit[element]}
-              />
+              <div className="swiper-slide" key={i}>
+
+                <ProductCard
+                  key={data[0].hit[element].slug}
+                  data={data[0].hit[element]}
+                />
+              </div>
             );
           });
           Object.keys(data[0].new).forEach((element) => {
@@ -129,11 +133,12 @@ const MainPage = observer(
 
       const productCar = {
         slidesPerView: 4,
-        speed: 500,
+        slidesPerGroup: 4,
+        speed: 800,
         draggable: true,
-        autoplay: {
-          delay: 4000,
-        },
+        // autoplay: {
+        //   delay: 4000,
+        // },
         pagination: {
           el: '.swiper-pagination',
           type: 'bullets',
@@ -183,34 +188,20 @@ const MainPage = observer(
               </Swiper>
             </div>
           </div>
-          <div className="container">
-            <div className="carousel carousel_product">
+          <div className="carousel carousel_product">
+            <div className="container">
               <div className="title">
                 <a href=""><h2 className="tilda">Хиты продаж <span className="link">Ко всем хитам <span className="ic i_right"></span></span></h2></a>
                 <p className="subtitle">Сложно определиться? Мы поможем</p>
               </div>
-
+            </div>
+            <div className="container container_s">
               <div className="slider-cont">
-                <Slider {...settingsMulti}>{hitCont}</Slider>
+                {/* <Slider {...settingsMulti}>{hitCont}</Slider> */}
 
-                {/* <Swiper {...productCar}>
-                    <div className="swiper-slide">
-                      {hitCont}
-                    </div>
-                </Swiper> */}
-
-                {/* <Swiper {...params}>
-                  {edges.map(({ node: review }, index) => (
-                    <div className="swiper-slide" key={index}>
-                      <Review
-                        authorName={review.author.name}
-                        authorImage={review.author.image}
-                        rating={review.rating}
-                        comments={review.comments}
-                      />
-                    </div>
-                  ))}
-                </Swiper> */}
+                <Swiper {...productCar}>
+                  {hitCont}
+                </Swiper>
               </div>
             </div>
           </div>
@@ -334,24 +325,26 @@ const MainPage = observer(
               </div>
 
               <div className="slider-cont">
-                <Slider {...settingsMulti}>{hitCont}</Slider>
+                <Swiper {...productCar}>
+                  {hitCont}
+                </Swiper>
               </div>
             </div>
-            <div className="home-collections">
+            <div className="collections-h">
               <div className="title">
                 <a href=""><h2 className="dib">Новые коллекции <span className="link">Все новинки <span className="ic i_right"></span></span></h2></a>
                 <p className="subtitle">Готовые решения для вашего дома</p>
               </div>
 
-              <div className="ideas-block">
-                <a href="#" className="banner banner_overlay main-idea" style={{
+              <div className="collections-h__block">
+                <a href="#" className="banner banner_overlay main" style={{
                   backgroundImage: "url(" + "/image/ideas/1.jpg" + ")",
                 }}>
                   <div className="banner__desc">
                     Вкусное вино
                   </div>
                 </a>
-                <div className="ideas">
+                <div className="items">
                   <a href="#" className="banner banner_overlay small" style={{
                     backgroundImage: "url(" + "/image/ideas/2.jpg" + ")",
                   }}>
@@ -368,6 +361,53 @@ const MainPage = observer(
                   </a>
                 </div>
               </div>
+            </div>
+          </div>
+
+          <div className="actions">
+            <div className="action">
+              <div className="head head_sm head_list">
+                <a href="#" className="head-banner head-banner_action" style={{
+                  backgroundImage: "url(" + "/image/actions/1.jpg" + ")",
+                }}>
+                  <div className="text">
+                    <div className="label">Акция</div>
+                      <h1>Пасха <span className="ic i_right"></span></h1>
+                    <p>
+                      Подготовьтесь к любимому семейному празднику.
+                    </p>
+                  </div>
+                </a>
+              </div>
+              {/* <div className="actions_banner">
+              <div className="banner__desc">
+                  Вкусное вино
+                </div>
+            </div> */}
+              <div className="container container_f">
+                {newCont}
+                <button className="btn btn_primary">Посмотреть еще</button>
+              </div>
+            </div>
+          </div>
+          <div className="subscribe">
+            <div className="container">
+              <h3>Подпишитесь на новости</h3>
+              <p><b>Скидка 5%</b> на первую покупку</p>
+              <form className="">
+                <div className="input-field">
+                  <label className="required" htmlFor="emailSubs">E-mail</label>
+                  <input id="emailSubs" name="email" type="text" onFocus={(e) => {
+                    $(e.target).parent().find('label').addClass('active');
+                  }}
+                    onBlur={(e) => {
+                      if (e.target.value === "") {
+                        $(e.target).parent().find('label').removeClass('active');
+                      }
+                    }}
+                  />
+                </div>
+              </form>
             </div>
           </div>
         </div>

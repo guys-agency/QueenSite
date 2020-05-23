@@ -22,7 +22,8 @@
 @import "./blocks/main-screen/main-screen.scss";
 @import "./blocks/filters-block/filters-block.scss";
 @import "./blocks/product-container/product-container.scss";
-@import "./blocks/pop-catalog/pop-catalog.scss";
+@import "./blocks/collections/collections.scss";
+@import "./blocks/actions/actions.scss";
 
 body {
   margin: 0;
@@ -52,12 +53,6 @@ code {
   &_f{
     display: flex;
   }
-}
-
-.label {
-  background: linear-gradient(91.08deg, #dab958 -140.48%, #efd27e 99.78%);
-  width: 81px;
-  height: 16px;
 }
 
 .line {
@@ -152,10 +147,6 @@ code {
     width: 100%;
     height: 220px;
   }
-}
-
-.home-collections{
-  
 }
 
 .gifts {

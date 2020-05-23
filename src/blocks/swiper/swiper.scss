@@ -13,9 +13,19 @@
             border: 2px solid #E0E0E0;
             background-color: transparent;
             opacity: 1;
+            margin-right: 15px !important;
+            opacity: 0.5;
+            transition: all 0.2s;
+            &:last-child{
+                margin-right: 0 !important;
+            }
+            &:hover{
+                opacity: 1;
+            }
             &-active{
                 background-color: $g_middle;
                 border: 2px solid $g_middle;
+                opacity: 1;
             }
         }
     }
@@ -47,7 +57,8 @@
             &:hover{
                 color: $g_middle;
                 &::after{
-                    transform: translateY(-2px);
+                    transform: translateY(2px);
+                    box-shadow: $sh_sml;
                 }
                 &.swiper-button-disabled{
                     opacity: 0;
