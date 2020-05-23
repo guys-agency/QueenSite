@@ -14,7 +14,8 @@
 @import "./blocks/navigation/navigation.scss";
 @import "./blocks/menu/menu.scss";
 @import "./blocks/head/head.scss";
-@import "./blocks/head-banner/head-banner.scss";
+@import "./blocks/swiper/swiper.scss";
+
 @import "./blocks/carousel/carousel.scss";
 @import "./blocks/banner/banner.scss";
 @import "./blocks/product/product.scss";
@@ -69,8 +70,8 @@ code {
 .slider-brand {
   height: 95px;
   margin-right: 20px;
-  margin-bottom: 40px;
-
+  display: inline-block;
+  width: initial;
   img {
     height: 100%;
   }
@@ -151,6 +152,10 @@ code {
     width: 100%;
     height: 220px;
   }
+}
+
+.home-collections{
+  
 }
 
 .gifts {

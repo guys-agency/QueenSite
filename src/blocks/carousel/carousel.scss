@@ -7,5 +7,34 @@
         padding-top: 30px;
         border-top: 2px solid $gr_light;
         border-bottom: 2px solid $gr_light;
+        .swiper{
+            &-container{
+                padding-bottom: 50px;
+            }
+            &-pagination{
+                bottom: 10px;  
+            }
+            &-button{
+                &-next, &-prev{
+                    top: 47px;
+                    &::before{
+                        content: '';
+                        background-color: red;
+                        position: absolute;
+                        height: 96px;
+                        width: 30px;
+                        right: -10px;
+                        background: radial-gradient(100% 46.9% at 100% 50%, rgba(0, 9, 77, 0.64) 0%, rgba(0, 9, 77, 0) 100%);
+                        opacity: 0.2;
+                    }
+                }
+                &-prev{
+                    &::before{
+                        transform: scale(-1);
+                        right: 10px;
+                    }
+                }
+            }
+        }
     }
 }

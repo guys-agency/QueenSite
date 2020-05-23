@@ -8,4 +8,33 @@
     &_big{
         height: 500px;
     }
+    &-car{
+        max-width: 1300px;
+        box-shadow: $sh_bottom;
+        margin-left: auto;
+        margin-right: auto;
+        position: relative;
+        .swiper-pagination{
+            max-width: 1110px;
+            @include c(x);
+            bottom: 50px;
+            &-bullet{
+                box-shadow: $sh_btn;
+            }
+        }
+    }
+    &-banner{
+        background-color: #fff;
+        box-shadow: $sh_main;
+        border-radius: 5px;
+        max-width: 1300px;
+        height: 570px;
+        margin-left: auto;
+        margin-right: auto;
+        background-size: cover;
+        @include max(1440px){
+            margin-right: 20px;
+            margin-left: 20px;
+        }
+    }
 }
