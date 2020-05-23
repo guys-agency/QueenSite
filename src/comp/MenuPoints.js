@@ -28,7 +28,7 @@ const MenuPoints = observer(
 
     toggleMenu = (e) => {
       e.stopPropagation();
-      $(".menu_sub").removeClass('visible');
+      $(".menu_sub").removeClass("visible");
       $(".menu_mega").toggleClass("visible");
     };
 
@@ -45,7 +45,7 @@ const MenuPoints = observer(
     };
 
     offDrop = () => {
-      $(".menu_sub").removeClass('visible');
+      $(".menu_sub").removeClass("visible");
       $(".menu-point").removeClass("active");
     };
 
@@ -57,13 +57,12 @@ const MenuPoints = observer(
       $(".header__drop").removeClass("visible");
       $(".header__btn").removeClass("active");
 
-
       $(e.target).addClass("active");
       $(e.target).parent().find(".menu_sub").addClass("visible");
     };
 
     offDrop = () => {
-      $(".menu_sub").removeClass('visible');
+      $(".menu_sub").removeClass("visible");
       $(".menu-point").removeClass("active");
     };
 
@@ -75,7 +74,7 @@ const MenuPoints = observer(
       $(".header__btn").removeClass("active");
       var container = $(".header__drop");
       if (container.has(e.target).length === 0) {
-        container.removeClass('visible');
+        container.removeClass("visible");
       }
       // $(".header__drop").removeClass("visible");
     };
@@ -87,13 +86,13 @@ const MenuPoints = observer(
       $(".header__btn").removeClass("active");
     };
 
-    scrollNav = (e) =>{
+    scrollNav = (e) => {
       var scroll = $(window).scrollTop();
       if (scroll > 55) {
         $(".header__drop").removeClass("visible");
         $(".header").addClass("header_scroll");
         $(".navigation").addClass("navigation_scroll");
-      } 
+      }
       if (scroll < 55) {
         $(".header").removeClass("header_scroll");
         $(".navigation").removeClass("navigation_scroll");
@@ -133,11 +132,9 @@ const MenuPoints = observer(
         },
       })
         .then((res) => {
-          console.log("res", res);
           return res.json();
         })
         .then((data) => {
-          console.log("dataCat", data);
           const menu = {};
           data.forEach((elem, i) => {
             const childsPoints = [];
@@ -178,7 +175,7 @@ const MenuPoints = observer(
               </div>
             );
           }
-          console.log("this.menuContainer :>> ", this.menuContainer);
+
           this.setState({ ready: true });
         })
         .catch((err) => {
@@ -202,10 +199,18 @@ const MenuPoints = observer(
                     </span>
                     <div className="header__drop">
                       <ul>
-                        <li><a href="">Доставка</a></li>
-                        <li><a href="">Оплата</a></li>
-                        <li><a href="">Возврат</a></li>
-                        <li><a href="">Публичная оферта</a></li>
+                        <li>
+                          <a href="">Доставка</a>
+                        </li>
+                        <li>
+                          <a href="">Оплата</a>
+                        </li>
+                        <li>
+                          <a href="">Возврат</a>
+                        </li>
+                        <li>
+                          <a href="">Публичная оферта</a>
+                        </li>
                       </ul>
                     </div>
                   </span>
@@ -216,21 +221,37 @@ const MenuPoints = observer(
                     </button>
                     <form className="header__drop header__drop_city">
                       <div className="input-field">
-                        <label className="active" htmlFor="citySearch">Ваш город</label> 
-                        <input id="citySearch" value="Ка" placeholder="Поиск" type="text" onFocus={(e)=>{
-                            $(e.target).parent().find('label').addClass('active');
-                          }} 
-                          onBlur={(e)=>{
-                            if (e.target.value === ""){
+                        <label className="active" htmlFor="citySearch">
+                          Ваш город
+                        </label>
+                        <input
+                          id="citySearch"
+                          value="Ка"
+                          placeholder="Поиск"
+                          type="text"
+                          onFocus={(e) => {
+                            $(e.target)
+                              .parent()
+                              .find("label")
+                              .addClass("active");
+                          }}
+                          onBlur={(e) => {
+                            if (e.target.value === "") {
                               // $(e.target).parent().find('label').removeClass('active');
                             }
                           }}
-                          />
+                        />
                       </div>
                       <ul>
-                        <li><button type="submit">Казань</button></li>
-                        <li><button type="submit">Калининград</button></li>
-                        <li><button type="submit">Кабанск</button></li>
+                        <li>
+                          <button type="submit">Казань</button>
+                        </li>
+                        <li>
+                          <button type="submit">Калининград</button>
+                        </li>
+                        <li>
+                          <button type="submit">Кабанск</button>
+                        </li>
                       </ul>
                     </form>
                   </span>
@@ -254,12 +275,14 @@ const MenuPoints = observer(
                     <span className="ic i_menu"></span> Каталог
                   </button>
                   <span className="menu__sub ">
-                   <Link className="menu-point">Коллекции</Link>
+                    <Link className="menu-point">Коллекции</Link>
                     <div className="menu menu_sub menu_collection">
                       <div className="container container_f">
                         <div className="column">
                           <ul>
-                            <li><a href="">Тест</a></li>
+                            <li>
+                              <a href="">Тест</a>
+                            </li>
                           </ul>
                         </div>
                       </div>
@@ -272,15 +295,20 @@ const MenuPoints = observer(
                       <div className="container container_f">
                         <div className="column">
                           <ul>
-                            <li><a href="">Тест</a></li>
-                            <li><a href="">Тест</a></li>
-                            <li><a href="">Тест</a></li>
+                            <li>
+                              <a href="">Тест</a>
+                            </li>
+                            <li>
+                              <a href="">Тест</a>
+                            </li>
+                            <li>
+                              <a href="">Тест</a>
+                            </li>
                           </ul>
                         </div>
                       </div>
                     </div>
                   </span>
-
 
                   {/* <span className="menu__drop">
                     <Link className="menu-point">Милениум</Link>
@@ -295,15 +323,18 @@ const MenuPoints = observer(
                     </div>
                   </span> */}
 
-
                   <span className="menu__drop">
                     <Link className="menu-point">Интерьер</Link>
                     <div className="menu menu_sub">
                       <div className="container container_f">
                         <div className="column">
                           <ul>
-                            <li><a href="">Тест</a></li>
-                            <li><a href="">Тест</a></li>
+                            <li>
+                              <a href="">Тест</a>
+                            </li>
+                            <li>
+                              <a href="">Тест</a>
+                            </li>
                           </ul>
                         </div>
                       </div>
@@ -316,7 +347,9 @@ const MenuPoints = observer(
                       <div className="container container_f">
                         <div className="column">
                           <ul>
-                            <li><a href="">Тест 2</a></li>
+                            <li>
+                              <a href="">Тест 2</a>
+                            </li>
                           </ul>
                         </div>
                       </div>
@@ -329,8 +362,12 @@ const MenuPoints = observer(
                       <div className="container container_f">
                         <div className="column">
                           <ul>
-                            <li><a href="">Тест</a></li>
-                            <li><a href="">Тест</a></li>
+                            <li>
+                              <a href="">Тест</a>
+                            </li>
+                            <li>
+                              <a href="">Тест</a>
+                            </li>
                           </ul>
                         </div>
                       </div>
@@ -339,7 +376,11 @@ const MenuPoints = observer(
                 </div>
                 <div className="navigation__right">
                   <form className="search-wrp">
-                    <input type="text" className="search" placeholder="Поиск"></input>
+                    <input
+                      type="text"
+                      className="search"
+                      placeholder="Поиск"
+                    ></input>
                     <button className="ic i_search"></button>
                   </form>
                   <button className="liked ic i_fav"></button>

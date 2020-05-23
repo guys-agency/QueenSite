@@ -3,6 +3,7 @@ import $ from "jquery";
 import FilterPoint from "./comp/FilterPoint";
 import ProductCard from "./comp/ProductCard";
 import React from "react";
+import Paginat from "./comp/paginat";
 
 //134.122.81.119
 //127.0.0.1:3010
@@ -25,6 +26,8 @@ class Store {
     maxPrice: 0,
   };
 
+  productValue = 0;
+
   filtCount = 0;
 
   categoryFilter = {};
@@ -43,10 +46,14 @@ class Store {
   minPrice = 0;
   maxPrice = 0;
 
+  startPag = 0;
+  stopPag = 42;
+
+  paginatCont = [];
+
   getData = (filterArray, bodyJSON, bodyJSONFilter) => {
     const testContainer = [];
     if (!filterArray.length) {
-      console.log("this");
       fetch(mainAdressServ, {
         method: "POST",
         headers: {
@@ -56,11 +63,10 @@ class Store {
         body: JSON.stringify(bodyJSON),
       })
         .then((res) => {
-          console.log("res", res);
           return res.json();
         })
         .then((data) => {
-          console.log("data1", data);
+          console.log("dataData :>> ", data);
           Object.keys(data).forEach((element) => {
             testContainer.push(
               <ProductCard
@@ -89,14 +95,14 @@ class Store {
         })
         .then((data) => {
           const sortData = {};
-          console.log("data123", data);
 
           Object.keys(data).forEach((name) => {
             if (
               (name !== "_id") &
               (name !== "minPrice") &
               (name !== "maxPrice") &
-              (name !== "measure")
+              (name !== "measure") &
+              (name !== "count")
             ) {
               sortData[name] = data[name].sort();
             } else if (name == "measure") {
@@ -120,7 +126,7 @@ class Store {
                 }
               });
               sortObj.names.sort();
-              console.log("sortObj :>> ", sortObj);
+
               sortObj.names.forEach((sn) => {
                 newMeasure.push({
                   name: sn,
@@ -135,6 +141,8 @@ class Store {
               sortData[name] = data[name];
             }
           });
+          this.productValue = data.count;
+          this.paginatCont = [<Paginat store={this} />];
           this.categoryFilter = sortData;
 
           //временная заплатка
@@ -143,13 +151,13 @@ class Store {
           //   this.filtration();
           //   return;
           // }
+          console.log("data :>> ", data);
           this.createFilterPointsContainers(sortData);
         })
         .catch((err) => {
           console.log("err", err);
         });
     } else {
-      console.log("filterArray2", filterArray);
       fetch(mainAdressServ, {
         method: "POST",
         headers: {
@@ -163,11 +171,10 @@ class Store {
         ),
       })
         .then((res) => {
-          console.log("res", res);
           return res.json();
         })
         .then((data) => {
-          console.log("data2", data);
+          console.log("dataData :>> ", data);
           Object.keys(data).forEach((element) => {
             testContainer.push(
               <ProductCard
@@ -200,13 +207,7 @@ class Store {
           return res.json();
         })
         .then((data) => {
-          console.log("data123", data);
-          console.log(
-            "object111",
-            Object.assign(bodyJSONFilter, {
-              $and: filterArray,
-            })
-          );
+          console.log("data2 :>> ", data);
           const sortData = {};
 
           Object.keys(data).forEach((name) => {
@@ -214,7 +215,8 @@ class Store {
               (name !== "_id") &
               (name !== "minPrice") &
               (name !== "maxPrice") &
-              (name !== "measure")
+              (name !== "measure") &
+              (name !== "count")
             ) {
               sortData[name] = data[name].sort();
             } else if (name == "measure") {
@@ -238,7 +240,7 @@ class Store {
                 }
               });
               sortObj.names.sort();
-              console.log("sortObj :>> ", sortObj);
+
               sortObj.names.forEach((sn) => {
                 newMeasure.push({
                   name: sn,
@@ -253,7 +255,8 @@ class Store {
               sortData[name] = data[name];
             }
           });
-
+          this.productValue = data.count;
+          this.paginatCont.push(<Paginat store={this} />);
           this.createFilterPointsContainers(sortData);
         })
         .catch((err) => {
@@ -280,9 +283,13 @@ class Store {
   };
 
   filtration = autorun(() => {
+    console.log("this.props.store.startPag", this.startPag);
+    console.log("this.props.store.stopPag", this.stopPag);
     const filterArray = [];
-    console.log("this.activeFilters.count :>> ", this.activeFilters.count);
+
     if (this.activeFilters.count) {
+      this.startPag = 0;
+      this.stopPag = 42;
       this.activeFilters.choosePoint.forEach((filterName) => {
         const onePointFilter = [];
         if (filterName !== "choosePoint") {
@@ -299,7 +306,6 @@ class Store {
           } else {
             if (Object.keys(this.activeFilters[filterName]).length) {
               Object.keys(this.activeFilters[filterName]).forEach((name) => {
-                console.log("123 :>> ", this.activeFilters[filterName][name]);
                 onePointFilter.push({
                   "attributes.name": name,
                   "attributes.value": {
@@ -312,7 +318,6 @@ class Store {
         }
         if (onePointFilter.length) {
           filterArray.push({ $or: onePointFilter });
-          console.log("filterArray :>> ", filterArray);
         }
       });
       // console.log("onePointFilter :>> ", onePointFilter);
@@ -329,11 +334,9 @@ class Store {
       filterArray.push(price);
     }
 
-    console.log("filterArray1", filterArray);
-
     const bodyJSON = {
-      start: 0,
-      stop: 9,
+      start: this.startPag,
+      stop: this.stopPag,
     };
 
     const bodyJSONFilter = {};
@@ -344,31 +347,26 @@ class Store {
       this.nameMainCat !== undefined &&
       this.nameSecondCat !== undefined
     ) {
-      console.log("this.nameMainCat", this.nameMainCat);
       bodyJSON["categories.slugName"] = this.nameMainCat;
       bodyJSON["categories.childsSlug"] = this.nameSecondCat;
       bodyJSONFilter["categories.slugName"] = this.nameMainCat;
       bodyJSONFilter["categories.childsSlug"] = this.nameSecondCat;
     }
 
-    console.log("bodyJSON333", bodyJSON);
-
     //переделать, что бы не было лишних запросов
     this.getData(filterArray, bodyJSON, bodyJSONFilter);
   });
 
   createFilterPointsContainers = (availableFilters) => {
-    console.log(" activeFilters:>> ", this.activeFilters);
     this.minPrice = availableFilters.minPrice;
     this.maxPrice = availableFilters.maxPrice;
-    console.log("availableFilters123", availableFilters);
+
     const filterPoints = [];
     const measurePoints = [];
     const optPoints = [];
     Object.keys(availableFilters).forEach((filterType) => {
       if (filterType == "brand") {
         if (this.activeFilters.choosePoint.indexOf(filterType) != -1) {
-          console.log("categoryFilter", this.categoryFilter);
           Object.keys(this.categoryFilter).forEach((name) => {
             if (
               name !== filterType &&
@@ -399,7 +397,6 @@ class Store {
         }
       } else if (filterType == "material") {
         if (this.activeFilters.choosePoint.indexOf(filterType) != -1) {
-          console.log("categoryFilter", this.categoryFilter);
           Object.keys(this.categoryFilter).forEach((name) => {
             if (
               name !== filterType &&
@@ -430,7 +427,6 @@ class Store {
         }
       } else if (filterType == "country") {
         if (this.activeFilters.choosePoint.indexOf(filterType) != -1) {
-          console.log("categoryFilter", this.categoryFilter);
           Object.keys(this.categoryFilter).forEach((name) => {
             if (
               name !== filterType &&
@@ -461,7 +457,6 @@ class Store {
         }
       } else if (filterType == "color") {
         if (this.activeFilters.choosePoint.indexOf(filterType) != -1) {
-          console.log("categoryFilter", this.categoryFilter);
           Object.keys(this.categoryFilter).forEach((name) => {
             if (
               name !== filterType &&
@@ -491,8 +486,6 @@ class Store {
           );
         }
       } else if (filterType == "measure") {
-        console.log("availableFilters100", availableFilters);
-
         if (this.activeFilters.choosePoint.indexOf(filterType) != -1) {
           Object.keys(this.categoryFilter).forEach((name) => {
             if (
@@ -578,6 +571,10 @@ decorate(Store, {
   cardContainer: observable,
   minPrice: observable,
   maxPrice: observable,
+  paginatCont: observable,
+  startPag: observable,
+  stopPag: observable,
+  productValue: observable,
 });
 
 const store = new Store();

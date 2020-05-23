@@ -74,11 +74,9 @@ const MainScreen = observer(
         }),
       })
         .then((res) => {
-          console.log("res", res);
           return res.json();
         })
         .then((data) => {
-          console.log("first Filter", data);
           const sortData = {};
 
           Object.keys(data).forEach((name) => {
