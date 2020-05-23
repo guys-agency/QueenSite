@@ -9,9 +9,16 @@
       line-height: 13px;
       margin-right: 12px;
       opacity: 0.8;
+    }
+    span{
+      position: relative;
+    }
+    &>a, .link{
       &:last-child{
         font-weight: 600;
       }
+    }
+    &>a{
       &:nth-last-child(2){
         &:after{
           @include icon;
@@ -22,6 +29,14 @@
           top: 6px;
           opacity: 0.3;
           color: $b_dark !important;
+        }
+      }
+    }
+    .header__btn{
+      &.active{
+        .ic{
+            transform: scale(-1);
+            top: 1px;
         }
       }
     }

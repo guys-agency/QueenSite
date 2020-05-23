@@ -1,8 +1,10 @@
 button{
-  background-color: transparent;
-  border: 0;
-  padding: 0;
-  cursor: pointer;
+    background-color: transparent;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    color: $b_dark;
+    transition: all 0.3s;
 }
 
 .btn{

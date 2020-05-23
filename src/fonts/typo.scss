@@ -26,6 +26,9 @@ h1, h2{
 }
 
 h1, h2, h3, h4, h5, h6{
+  &.dib{
+    display: inline-block;
+  }
   &.tilda{
     &::before{
       @include icon;
@@ -73,6 +76,7 @@ h5{
 a, .link{
   transition: all 0.2s;
   color: $b_dark;
+  cursor: pointer;
   h1, h2, h3, h4, h5 , h6{
     color: $b_dark;
   }

@@ -32,11 +32,31 @@ const MenuPoints = observer(
       $(".menu_mega").toggleClass("visible");
     };
 
+    toggleHeader = (e) => {
+      e.stopPropagation();
+      $(".menu_mega").removeClass("visible");
+      $(".menu_sub").removeClass("visible");
+      $(".menu-point").removeClass("active");
+      $(".header__drop").removeClass("visible");
+      $(".header__btn").removeClass("active");
+
+      $(e.target).parent().find(".header__drop").addClass("visible");
+      $(e.target).addClass("active");
+    };
+
+    offDrop = () => {
+      $(".menu_sub").removeClass("visible");
+      $(".menu-point").removeClass("active");
+    };
+
     toggleDrop = (e) => {
       e.preventDefault();
       $(".menu_mega").removeClass("visible");
       $(".menu_sub").removeClass("visible");
       $(".menu-point").removeClass("active");
+      $(".header__drop").removeClass("visible");
+      $(".header__btn").removeClass("active");
+
       $(e.target).addClass("active");
       $(e.target).parent().find(".menu_sub").addClass("visible");
     };
@@ -47,18 +67,29 @@ const MenuPoints = observer(
     };
 
     closeAll = (e) => {
+      e.stopPropagation();
       $(".menu_mega").removeClass("visible");
       $(".menu_sub").removeClass("visible");
+      $(".menu-point").removeClass("active");
+      $(".header__btn").removeClass("active");
+      var container = $(".header__drop");
+      if (container.has(e.target).length === 0) {
+        container.removeClass("visible");
+      }
+      // $(".header__drop").removeClass("visible");
     };
 
     hoverMenuBtn = (e) => {
       $(".menu-point").removeClass("active");
       $(".menu_sub").removeClass("visible");
+      $(".header__drop").removeClass("visible");
+      $(".header__btn").removeClass("active");
     };
 
     scrollNav = (e) => {
       var scroll = $(window).scrollTop();
       if (scroll > 55) {
+        $(".header__drop").removeClass("visible");
         $(".header").addClass("header_scroll");
         $(".navigation").addClass("navigation_scroll");
       }
@@ -73,6 +104,9 @@ const MenuPoints = observer(
     }
 
     componentDidUpdate() {
+      $(".header__btn").off("click", this.toggleHeader);
+      $(".header__btn").on("click", this.toggleHeader);
+
       $(".btn-menu").off("click", this.toggleMenu);
       $(".btn-menu").on("click", this.toggleMenu);
       $(".btn-menu").off("mouseenter", this.hoverMenuBtn);
@@ -83,8 +117,8 @@ const MenuPoints = observer(
       $(".menu_sub").off("mouseleave", this.offDrop);
       $(".menu_sub").on("mouseleave", this.offDrop);
 
-      $("html").off("click", this.closeAll);
-      $("html").on("click", this.closeAll);
+      $(document).off("click", this.closeAll);
+      $(document).on("click", this.closeAll);
 
       $(window).off("scroll", this.scrollNav);
       $(window).on("scroll", this.scrollNav);
@@ -159,13 +193,68 @@ const MenuPoints = observer(
                 <div className="header__left">
                   <Link>О нас</Link>
                   <Link>Магазины</Link>
-                  <Link>
-                    Помощь <span className="ic i_drop"></span>
-                  </Link>
+                  <span>
+                    <span className="link header__btn">
+                      Помощь <span className="ic i_drop"></span>
+                    </span>
+                    <div className="header__drop">
+                      <ul>
+                        <li>
+                          <a href="">Доставка</a>
+                        </li>
+                        <li>
+                          <a href="">Оплата</a>
+                        </li>
+                        <li>
+                          <a href="">Возврат</a>
+                        </li>
+                        <li>
+                          <a href="">Публичная оферта</a>
+                        </li>
+                      </ul>
+                    </div>
+                  </span>
                   <Link>Бонусы</Link>
-                  <button className="link dotted">
-                    Москва <span className="ic i_drop"></span>
-                  </button>
+                  <span>
+                    <button className="link dotted header__btn">
+                      Москва <span className="ic i_drop"></span>
+                    </button>
+                    <form className="header__drop header__drop_city">
+                      <div className="input-field">
+                        <label className="active" htmlFor="citySearch">
+                          Ваш город
+                        </label>
+                        <input
+                          id="citySearch"
+                          value="Ка"
+                          placeholder="Поиск"
+                          type="text"
+                          onFocus={(e) => {
+                            $(e.target)
+                              .parent()
+                              .find("label")
+                              .addClass("active");
+                          }}
+                          onBlur={(e) => {
+                            if (e.target.value === "") {
+                              // $(e.target).parent().find('label').removeClass('active');
+                            }
+                          }}
+                        />
+                      </div>
+                      <ul>
+                        <li>
+                          <button type="submit">Казань</button>
+                        </li>
+                        <li>
+                          <button type="submit">Калининград</button>
+                        </li>
+                        <li>
+                          <button type="submit">Кабанск</button>
+                        </li>
+                      </ul>
+                    </form>
+                  </span>
                 </div>
                 <Link className="logo" to="/">
                   <img src="/image/logo.svg" />
@@ -286,7 +375,14 @@ const MenuPoints = observer(
                   </span>
                 </div>
                 <div className="navigation__right">
-                  <input className="search" placeholder="Поиск"></input>
+                  <form className="search-wrp">
+                    <input
+                      type="text"
+                      className="search"
+                      placeholder="Поиск"
+                    ></input>
+                    <button className="ic i_search"></button>
+                  </form>
                   <button className="liked ic i_fav"></button>
                   <button className="cart ic i_bag"></button>
                   <button

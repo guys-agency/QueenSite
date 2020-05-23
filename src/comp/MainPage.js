@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import Swiper from "react-id-swiper";
 import ProductCard from "./ProductCard";
 
 const { Component } = React;
@@ -98,12 +99,68 @@ const MainPage = observer(
       const settingsBrand = {
         className: "slider variable-width",
         dots: true,
-        infinite: true,
-        centerMode: true,
         slidesToShow: 1,
-        slidesToScroll: 5,
+        slidesToScroll: 6,
         variableWidth: true,
       };
+
+      const headCar = {
+        slidesPerView: 1,
+        effect: "fade",
+        speed: 500,
+        draggable: true,
+        autoplay: {
+          delay: 5000,
+        },
+        pagination: {
+          el: ".swiper-pagination",
+          type: "bullets",
+          clickable: true,
+        },
+        navigation: {
+          nextEl: ".swiper-button-next",
+          prevEl: ".swiper-button-prev",
+        },
+        spaceBetween: 20,
+      };
+
+      const productCar = {
+        slidesPerView: 4,
+        speed: 500,
+        draggable: true,
+        autoplay: {
+          delay: 4000,
+        },
+        pagination: {
+          el: ".swiper-pagination",
+          type: "bullets",
+          clickable: true,
+        },
+        navigation: {
+          nextEl: ".swiper-button-next",
+          prevEl: ".swiper-button-prev",
+        },
+        spaceBetween: 20,
+      };
+
+      const brandCar = {
+        slidesPerView: "auto",
+        speed: 500,
+        draggable: true,
+        autoplay: {
+          delay: 4000,
+        },
+        pagination: {
+          el: ".swiper-pagination",
+          type: "bullets",
+          clickable: true,
+        },
+        navigation: {
+          nextEl: ".swiper-button-next",
+          prevEl: ".swiper-button-prev",
+        },
+      };
+
       return (
         <div className="main-page">
           {!ready && (
@@ -112,7 +169,22 @@ const MainPage = observer(
             </div>
           )}
           <div className="head head_big">
-            <div className="head-banner"></div>
+            <div className="head-car">
+              <Swiper {...headCar}>
+                <Link
+                  className="head-banner"
+                  style={{
+                    backgroundImage: "url(" + "/image/hb/1.jpg" + ")",
+                  }}
+                ></Link>
+                <Link
+                  className="head-banner"
+                  style={{
+                    backgroundImage: "url(" + "/image/hb/2.jpg" + ")",
+                  }}
+                ></Link>
+              </Swiper>
+            </div>
           </div>
           <div className="container">
             <div className="carousel carousel_product">
@@ -130,6 +202,25 @@ const MainPage = observer(
 
               <div className="slider-cont">
                 <Slider {...settingsMulti}>{hitCont}</Slider>
+
+                {/* <Swiper {...productCar}>
+                    <div className="swiper-slide">
+                      {hitCont}
+                    </div>
+                </Swiper> */}
+
+                {/* <Swiper {...params}>
+                  {edges.map(({ node: review }, index) => (
+                    <div className="swiper-slide" key={index}>
+                      <Review
+                        authorName={review.author.name}
+                        authorImage={review.author.image}
+                        rating={review.rating}
+                        comments={review.comments}
+                      />
+                    </div>
+                  ))}
+                </Swiper> */}
               </div>
             </div>
           </div>
@@ -141,44 +232,44 @@ const MainPage = observer(
               </div>
 
               <div className="slider-cont slider-cont_brand">
-                <Slider {...settingsBrand}>
-                  <div className="slider-brand">
+                <Swiper {...brandCar}>
+                  <Link className="slider-brand">
                     <img src="/image/logos/Bohemia Crystall.png" />
-                  </div>
-                  <div className="slider-brand">
+                  </Link>
+                  <Link className="slider-brand">
                     <img src="/image/logos/Aurum design.jpg" />
-                  </div>
-                  <div className="slider-brand">
+                  </Link>
+                  <Link className="slider-brand">
                     <img src="/image/logos/Crystal Art.JPG" />
-                  </div>
-                  <div className="slider-brand">
+                  </Link>
+                  <Link className="slider-brand">
                     <img src="/image/logos/Czech_Gold_Hands_Logo_1(1).jpg" />
-                  </div>
-                  <div className="slider-brand">
+                  </Link>
+                  <Link className="slider-brand">
                     <img src="/image/logos/diva.jpg" />
-                  </div>
-                  <div className="slider-brand">
+                  </Link>
+                  <Link className="slider-brand">
                     <img src="/image/logos/easylife logo.jpg" />
-                  </div>
-                  <div className="slider-brand">
+                  </Link>
+                  <Link className="slider-brand">
                     <img src="/image/logos/G. Benedikt logo white on color.png" />
-                  </div>
-                  <div className="slider-brand">
+                  </Link>
+                  <Link className="slider-brand">
                     <img src="/image/logos/Lilien Austria logo white on color.png" />
-                  </div>
-                  <div className="slider-brand">
+                  </Link>
+                  <Link className="slider-brand">
                     <img src="/image/logos/MZ logo.jpg" />
-                  </div>
-                  <div className="slider-brand">
+                  </Link>
+                  <Link className="slider-brand">
                     <img src="/image/logos/queen anne.jpg" />
-                  </div>
-                  <div className="slider-brand">
+                  </Link>
+                  <Link className="slider-brand">
                     <img src="/image/logos/Queen of Bohemia NEW.jpg" />
-                  </div>
-                  <div className="slider-brand">
+                  </Link>
+                  <Link className="slider-brand">
                     <img src="/image/logos/Suisse Lagenthal logo white on color.png" />
-                  </div>
-                </Slider>
+                  </Link>
+                </Swiper>
               </div>
             </div>
           </div>
@@ -186,54 +277,78 @@ const MainPage = observer(
           <div className="main-background">
             <div className="container">
               <div className="title">
-                <h2 className="tilda">Идеи:</h2>
+                <h2 className="tilda">Идеи</h2>
               </div>
               <div className="ideas-block">
-                <a href="#" className="banner main-idea">
+                <a
+                  href="#"
+                  className="banner banner_overlay main-idea"
+                  style={{
+                    backgroundImage: "url(" + "/image/ideas/1.jpg" + ")",
+                  }}
+                >
                   <div className="banner__desc">Вкусное вино</div>
                 </a>
-                <a href="#" className="ideas">
-                  <div className="banner small">
+                <div className="ideas">
+                  <a
+                    href="#"
+                    className="banner banner_overlay small"
+                    style={{
+                      backgroundImage: "url(" + "/image/ideas/2.jpg" + ")",
+                    }}
+                  >
                     <div className="banner__desc">Виски</div>
-                  </div>
-                  <div className="banner small">
+                  </a>
+                  <a
+                    href="#"
+                    className="banner banner_overlay small"
+                    style={{
+                      backgroundImage: "url(" + "/image/ideas/3.jpg" + ")",
+                    }}
+                  >
                     <div className="banner__desc">Кружки со смыслом</div>
-                  </div>
-                  <a href="#" className="banner large">
+                  </a>
+                  <a
+                    href="#"
+                    className="banner banner_overlay large"
+                    style={{
+                      backgroundImage: "url(" + "/image/ideas/4.jpg" + ")",
+                    }}
+                  >
                     <div className="banner__desc">На вечеринку</div>
                   </a>
-                </a>
+                </div>
               </div>
               <div className="title">
-                <h2>Подарки:</h2>
+                <h2>Подарки</h2>
               </div>
               <div className="gifts">
-                <div
+                <a
                   className="banner"
                   style={{
                     backgroundImage: "url(" + "/image/gifts/1.jpg" + ")",
                   }}
                 >
                   <div className="banner__desc">До 500₽</div>
-                </div>
+                </a>
 
-                <div
+                <a
                   className="banner"
                   style={{
                     backgroundImage: "url(" + "/image/gifts/2.jpg" + ")",
                   }}
                 >
                   <div className="banner__desc">До 1 000₽</div>
-                </div>
+                </a>
 
-                <div
+                <a
                   className="banner"
                   style={{
                     backgroundImage: "url(" + "/image/gifts/3.jpg" + ")",
                   }}
                 >
                   <div className="banner__desc">До 2 000₽</div>
-                </div>
+                </a>
               </div>
             </div>
           </div>
@@ -254,6 +369,51 @@ const MainPage = observer(
 
               <div className="slider-cont">
                 <Slider {...settingsMulti}>{hitCont}</Slider>
+              </div>
+            </div>
+            <div className="home-collections">
+              <div className="title">
+                <a href="">
+                  <h2 className="dib">
+                    Новые коллекции{" "}
+                    <span className="link">
+                      Все новинки <span className="ic i_right"></span>
+                    </span>
+                  </h2>
+                </a>
+                <p className="subtitle">Готовые решения для вашего дома</p>
+              </div>
+
+              <div className="ideas-block">
+                <a
+                  href="#"
+                  className="banner banner_overlay main-idea"
+                  style={{
+                    backgroundImage: "url(" + "/image/ideas/1.jpg" + ")",
+                  }}
+                >
+                  <div className="banner__desc">Вкусное вино</div>
+                </a>
+                <div className="ideas">
+                  <a
+                    href="#"
+                    className="banner banner_overlay small"
+                    style={{
+                      backgroundImage: "url(" + "/image/ideas/2.jpg" + ")",
+                    }}
+                  >
+                    <div className="banner__desc">Виски</div>
+                  </a>
+                  <a
+                    href="#"
+                    className="banner banner_overlay small"
+                    style={{
+                      backgroundImage: "url(" + "/image/ideas/3.jpg" + ")",
+                    }}
+                  >
+                    <div className="banner__desc">Кружки со смыслом</div>
+                  </a>
+                </div>
               </div>
             </div>
           </div>
