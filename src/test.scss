@@ -17,18 +17,25 @@
 @import "./blocks/navigation/navigation.scss";
 @import "./blocks/menu/menu.scss";
 @import "./blocks/head/head.scss";
-@import "./blocks/swiper/swiper.scss";
-
-@import "./blocks/carousel/carousel.scss";
-@import "./blocks/banner/banner.scss";
 @import "./blocks/product/product.scss";
+@import "./blocks/swiper/swiper.scss";
+@import "./blocks/banner/banner.scss";
+@import "./blocks/footer/footer.scss";
+
+//HOME ELEMENTS
+@import "./blocks/carousel/carousel.scss";
 @import "./blocks/main-screen/main-screen.scss";
 @import "./blocks/filters-block/filters-block.scss";
 @import "./blocks/product-container/product-container.scss";
 @import "./blocks/collections/collections.scss";
 @import "./blocks/actions/actions.scss";
 @import "./blocks/subscribe/subscribe.scss";
-@import "./blocks/footer/footer.scss";
+
+//PAGES
+@import "./blocks/cart-page/cart-page.scss";
+
+
+
 
 body {
   margin: 0;
@@ -47,6 +54,13 @@ code {
   &.slider-cont_brand {
     height: 150px;
   }
+}
+
+.catalog{
+  display: flex;
+  max-width: 1112px;
+  margin-right: auto;
+  margin-left: auto;
 }
 
 .line {

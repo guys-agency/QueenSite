@@ -1,5 +1,7 @@
 import { observer } from "mobx-react";
 import React from "react";
+import $ from "jquery";
+
 import { Link } from "react-router-dom";
 const { Component } = React;
 
@@ -9,6 +11,7 @@ const CartPage = observer(
     state = {};
 
     deteleProduct = (i) => {
+      console.log("work?");
       this.props.store.productInCart = this.props.store.productInCart.splice(
         i,
         1
@@ -48,21 +51,98 @@ const CartPage = observer(
 
       return (
         <div className="cart-page">
-          <h3 className="cart-page__title">Оформление заказа</h3>
-          <p>
-            <Link to="/catalog">Закрыть</Link>
-          </p>
-          <div className="cart-page__container">
-            <div className="cart-page__table">{productList}</div>
-            <div className="cart-page__result">
-              <p>Итого</p>
-              <p>{totalPrice}</p>
+          <div className="container">
+            <p>
+              <Link className="btn" to="/catalog"> <span className="ic i_left"></span> Вернуться в магазин</Link>
+            </p>
+            <div className="row cart-page__wrp">
+              <div className="col col-7">
+                <div className="cart-page__cart">
+                  <h3>Оформление заказа</h3>
+                  <div>{productList}</div>
+                </div>
+
+                <div className="cart-page__delivery">
+                  <h3 className="tilda">Доставка
+                    <h5 className="dib">Ваш город:
+                      <span>
+                          <button className="link dotted cart-city__btn" onClick={(e) => {
+                          // $(".header__drop").addClass("visible");
+                          // console.log(
+                          //   $(e.target).parent()
+                          // );
+
+                          // $(e.target).addClass("active");
+                        }}>
+                          Москва <span className="ic i_drop"></span>
+                        </button>
+                        <form className="cart-city__drop header__drop header__drop_city">
+                          <div className="input-field">
+                            <label className="active" htmlFor="citySearch">
+                              Ваш город
+                        </label>
+                            <input
+                              id="citySearch"
+                              value="Ка"
+                              placeholder="Поиск"
+                              type="text"
+                              onFocus={(e) => {
+                                $(e.target)
+                                  .parent()
+                                  .find("label")
+                                  .addClass("active");
+                              }}
+                              onBlur={(e) => {
+                                if (e.target.value === "") {
+                                  // $(e.target).parent().find('label').removeClass('active');
+                                }
+                              }}
+                            />
+                          </div>
+                          <ul>
+                            <li>
+                              <button type="submit">Казань</button>
+                            </li>
+                            <li>
+                              <button type="submit">Калининград</button>
+                            </li>
+                            <li>
+                              <button type="submit">Кабанск</button>
+                            </li>
+                          </ul>
+                        </form>
+                      </span>
+                    </h5>
+                  </h3>
+
+                  <div className="btn btn_primary">
+                    Выбрать доставку
+                  </div>
+                  <div className="Ya-block" id="yaDeliveryWidget"></div>
+                </div>
+
+                <h3 className="tilda">Данные</h3>
+              </div>
+              <div className="col col-1"></div>
+              <div className="col col-4 cart-page__result-stick">
+              <div className="cart-page__result">
+                <ul>
+                  <li>
+                      <div><span>Итого</span> <span>{totalPrice} ₽</span></div>
+                      <div><span>Стоимость товаров</span> <span>{totalPrice} ₽</span></div>
+                      <div><span>Скидка</span> <span className="red">{totalPrice} ₽</span></div>
+                      <div><span>Доставка</span> <span>250 ₽ / <span className="b_gray"> 3 дня</span></span></div>
+                  </li>
+                </ul>
+
+                <div className="cart-page__result-address">
+                  г. Москва, Большая Андроньевская 23, 24, подъезд 1
+                </div>
+
+                <button className="btn btn_yellow">Зaказать</button>
+                </div>
+              </div>
             </div>
-            <button className="yaaaas">ЗАказать</button>
-          </div>
-          <div className="delivery-block">
-            <h4>Доставка</h4>
-            <div className="Ya-block" id="yaDeliveryWidget"></div>
           </div>
         </div>
       );
