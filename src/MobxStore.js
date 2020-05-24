@@ -5,7 +5,7 @@ import ProductCard from "./comp/ProductCard";
 import React from "react";
 import Paginat from "./comp/paginat";
 
-//134.122.81.119
+//1http://134.122.81.119/api
 //127.0.0.1:3010
 const mainAdressServ = "http://134.122.81.119";
 
