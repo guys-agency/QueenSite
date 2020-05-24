@@ -33,10 +33,9 @@ const MainPage = observer(
           return res.json();
         })
         .then((data) => {
-          Object.keys(data[0].hit).forEach((element) => {
+          Object.keys(data[0].hit).forEach((element, i) => {
             hitContTime.push(
               <div className="swiper-slide" key={i}>
-
                 <ProductCard
                   key={data[0].hit[element].slug}
                   data={data[0].hit[element]}
@@ -209,9 +208,7 @@ const MainPage = observer(
               <div className="slider-cont">
                 {/* <Slider {...settingsMulti}>{hitCont}</Slider> */}
 
-                <Swiper {...productCar}>
-                  {hitCont}
-                </Swiper>
+                {hitCont.length && <Swiper {...productCar}>{hitCont}</Swiper>}
               </div>
             </div>
           </div>
@@ -359,9 +356,7 @@ const MainPage = observer(
               </div>
 
               <div className="slider-cont">
-                <Swiper {...productCar}>
-                  {hitCont}
-                </Swiper>
+                <Swiper {...productCar}>{hitCont}</Swiper>
               </div>
             </div>
             <div className="collections-h">
@@ -378,20 +373,24 @@ const MainPage = observer(
               </div>
 
               <div className="collections-h__block">
-                <a href="#" className="banner banner_overlay main" style={{
-                  backgroundImage: "url(" + "/image/ideas/1.jpg" + ")",
-                }}>
-                  <div className="banner__desc">
-                    Вкусное вино
-                  </div>
+                <a
+                  href="#"
+                  className="banner banner_overlay main"
+                  style={{
+                    backgroundImage: "url(" + "/image/ideas/1.jpg" + ")",
+                  }}
+                >
+                  <div className="banner__desc">Вкусное вино</div>
                 </a>
                 <div className="items">
-                  <a href="#" className="banner banner_overlay small" style={{
-                    backgroundImage: "url(" + "/image/ideas/2.jpg" + ")",
-                  }}>
-                    <div className="banner__desc">
-                      Виски
-                    </div>
+                  <a
+                    href="#"
+                    className="banner banner_overlay small"
+                    style={{
+                      backgroundImage: "url(" + "/image/ideas/2.jpg" + ")",
+                    }}
+                  >
+                    <div className="banner__desc">Виски</div>
                   </a>
                   <a
                     href="#"
@@ -410,15 +409,19 @@ const MainPage = observer(
           <div className="actions">
             <div className="action">
               <div className="head head_sm head_list">
-                <a href="#" className="head-banner head-banner_action" style={{
-                  backgroundImage: "url(" + "/image/actions/1.jpg" + ")",
-                }}>
+                <a
+                  href="#"
+                  className="head-banner head-banner_action"
+                  style={{
+                    backgroundImage: "url(" + "/image/actions/1.jpg" + ")",
+                  }}
+                >
                   <div className="text">
                     <div className="label">Акция</div>
-                      <h1>Пасха <span className="ic i_right"></span></h1>
-                    <p>
-                      Подготовьтесь к любимому семейному празднику.
-                    </p>
+                    <h1>
+                      Пасха <span className="ic i_right"></span>
+                    </h1>
+                    <p>Подготовьтесь к любимому семейному празднику.</p>
                   </div>
                 </a>
               </div>
@@ -436,16 +439,27 @@ const MainPage = observer(
           <div className="subscribe">
             <div className="container">
               <h3>Подпишитесь на новости</h3>
-              <p><b>Скидка 5%</b> на первую покупку</p>
+              <p>
+                <b>Скидка 5%</b> на первую покупку
+              </p>
               <form className="">
                 <div className="input-field">
-                  <label className="required" htmlFor="emailSubs">E-mail</label>
-                  <input id="emailSubs" name="email" type="text" onFocus={(e) => {
-                    $(e.target).parent().find('label').addClass('active');
-                  }}
+                  <label className="required" htmlFor="emailSubs">
+                    E-mail
+                  </label>
+                  <input
+                    id="emailSubs"
+                    name="email"
+                    type="text"
+                    onFocus={(e) => {
+                      $(e.target).parent().find("label").addClass("active");
+                    }}
                     onBlur={(e) => {
                       if (e.target.value === "") {
-                        $(e.target).parent().find('label').removeClass('active');
+                        $(e.target)
+                          .parent()
+                          .find("label")
+                          .removeClass("active");
                       }
                     }}
                   />

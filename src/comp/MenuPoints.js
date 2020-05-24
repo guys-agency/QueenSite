@@ -153,13 +153,63 @@ const MenuPoints = observer(
                 </li>
               );
             });
-
-            menu[i] = (
-              <div>
-                <h5>{elem.name}</h5>
-                <ul>{childsPoints}</ul>
-              </div>
-            );
+            if (elem.name === "Сервировка стола") {
+              menu[0] = (
+                <div>
+                  <h5>{elem.name}</h5>
+                  <ul>{childsPoints}</ul>
+                </div>
+              );
+            } else if (elem.name === "Для приготовления") {
+              menu[1] = (
+                <div>
+                  <h5>{elem.name}</h5>
+                  <ul>{childsPoints}</ul>
+                </div>
+              );
+            } else if (elem.name === "Напитки") {
+              menu[2] = (
+                <div>
+                  <h5>{elem.name}</h5>
+                  <ul>{childsPoints}</ul>
+                </div>
+              );
+            } else if (elem.name === "Кофе и чай") {
+              menu[3] = (
+                <div>
+                  <h5>{elem.name}</h5>
+                  <ul>{childsPoints}</ul>
+                </div>
+              );
+            } else if (elem.name === "Акссесуары для стола") {
+              menu[4] = (
+                <div>
+                  <h5>{elem.name}</h5>
+                  <ul>{childsPoints}</ul>
+                </div>
+              );
+            } else if (elem.name === "Интерьер") {
+              menu[5] = (
+                <div>
+                  <h5>{elem.name}</h5>
+                  <ul>{childsPoints}</ul>
+                </div>
+              );
+            } else if (elem.name === "Наборы") {
+              menu[6] = (
+                <div>
+                  <h5>{elem.name}</h5>
+                  <ul>{childsPoints}</ul>
+                </div>
+              );
+            } else if (elem.name === "Сервизы") {
+              menu[7] = (
+                <div>
+                  <h5>{elem.name}</h5>
+                  <ul>{childsPoints}</ul>
+                </div>
+              );
+            }
 
             // this.menuContainer.push(
             //   <Dropdown key={i} text={elem.name} pointing className="link item">
