@@ -33,10 +33,9 @@ const MainPage = observer(
           return res.json();
         })
         .then((data) => {
-          Object.keys(data[0].hit).forEach((element) => {
+          Object.keys(data[0].hit).forEach((element, i) => {
             hitContTime.push(
               <div className="swiper-slide" key={i}>
-
                 <ProductCard
                   key={data[0].hit[element].slug}
                   data={data[0].hit[element]}
