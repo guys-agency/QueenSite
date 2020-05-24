@@ -86,9 +86,9 @@
     content: $i_search;
   }
 }
-.i_filter {
+.i_more {
   &:before {
-    content: $i_filter;
+    content: $i_more;
   }
 }
 .i_close {
@@ -101,9 +101,9 @@
     content: $i_menu;
   }
 }
-.i_fav-filled {
+.i_fav-f{
   &:before {
-    content: $i_fav-filled;
+    content: $i_fav-f;
   }
 }
 .i_fav {
@@ -141,4 +141,18 @@
     content: $i_right;
   }
 }
-
+.i_fb {
+  &:before {
+    content: $i_fb;
+  }
+}
+.i_inst {
+  &:before {
+    content: $i_inst;
+  }
+}
+.i_filter {
+  &:before {
+    content: $i_filter;
+  }
+}

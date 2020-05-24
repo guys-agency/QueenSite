@@ -2,7 +2,6 @@
     .container_f{
         flex-wrap: wrap;
         .product{
-            width: 262px;
             &:nth-child(3n){
                 margin-right: 20px;
             }

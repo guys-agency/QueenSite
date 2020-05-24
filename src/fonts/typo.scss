@@ -37,6 +37,9 @@ h1, h2, h3, h4, h5, h6{
       @include gold-txt;
     }
   }
+  &.white{
+    color: white;
+  }
 }
 
 h3, h4, h5, h6, p, a, input, button{
@@ -94,6 +97,9 @@ a, .link{
       top: 3px;
     }
     color: $g_middle;
+  }
+  &.underline{
+    text-decoration: underline;
   }
 }
 

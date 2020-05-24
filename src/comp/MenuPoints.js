@@ -306,9 +306,17 @@ const MenuPoints = observer(
                     </form>
                   </span>
                 </div>
-                <Link className="logo" to="/">
+                {/* <Link className="logo" to="/">
+
                   <img src="/image/logo.svg" />
+                </Link> */}
+                <Link className="logo logo_vl" to="/">
+                  <span className="i_queen"></span>
+                  <span className="i_of"></span>
+                  <span className="i_bohemia"></span>
+                  <span className="i_qd"></span>
                 </Link>
+                
                 <div className="header__right">
                   <button className="link dotted ask">Задать вопрос</button>
                   <a href="tel:+7 495 744-00-50" className="phone">

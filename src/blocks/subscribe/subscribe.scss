@@ -1,0 +1,36 @@
+.subscribe{
+    border-top: 1px solid $gr_light;
+    border-bottom: 1px solid $gr_light;
+    margin-top: 40px;
+    position: relative;
+    height: 230px;
+    &__form{
+        padding: {
+            top: 50px;
+            bottom: 50px;
+        }
+        position: relative;
+        &::after{
+            content: '';
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 230px 50px 0 0;
+            border-color: #ffffff transparent transparent transparent;
+
+            position: absolute;
+            right: -50px;
+            top: 0;
+            z-index: 1;
+        }
+    }
+    &__img{
+        height: 230px;
+        background-position: center;
+        background-size: cover;
+        width: 50%;
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+}

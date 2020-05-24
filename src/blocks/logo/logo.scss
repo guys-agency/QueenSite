@@ -1,0 +1,62 @@
+.logo{
+    &_vl{
+        // transform: scale(3);
+        .i{
+            &_queen{
+                font-size: 38px;
+            }
+            &_of{
+                font-size: 34px;
+                color: $g_middle;
+                position: relative;
+                top: 3px;
+            }
+            &_bohemia{
+                font-size: 40px;
+            }
+            &_qd{
+                margin-left: 3px;
+                font-size: 34px;
+            }
+        }
+    }
+    &_sq{
+        position: relative;
+        width: 122px;
+        height: 84px;
+        // transform: scale(1.05);
+        display: block;
+        .i{
+            &_queen{
+                font-size: 60px;
+            }
+            &_of{
+                position: absolute;
+                top: 33px;
+                left: 55px;
+                font-size: 40px;
+                color: $g_middle;
+            }
+            &_line-h{
+                position: absolute;
+                font-size: 60px;
+                left: 72px;
+                top: 21px;
+
+                color: $g_middle;
+            }
+            &_bohemia{
+                font-size: 53px;
+                position: absolute;
+                left: 0;
+                top: 46px;
+            }
+            &_qr{
+                font-size: 40px;
+                position: absolute;
+                right: -40px;
+                top: 0;
+            }
+        }
+    }
+}
