@@ -65,7 +65,7 @@ const CardView = observer(
       console.log("data120 :>> ", data);
 
       if (!this.fetchReady && data !== undefined) {
-        fetch("http://127.0.0.1:3010/product/" + this.props.sku, {
+        fetch("http://134.122.81.119/product/" + this.props.sku, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

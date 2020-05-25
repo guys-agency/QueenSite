@@ -1,15 +1,44 @@
 import { observer } from "mobx-react";
 import React from "react";
 import { useHistory } from "react-router-dom";
+import localStorage from "mobx-localstorage";
 
 const ProductCard = observer(function ProductCard(props) {
   let history = useHistory();
-  const clickHandler = () => {
+  const clickHandler = (e) => {
     const { data, store } = props;
-    store.cardContainer = data;
-    history.push(`/product/${data.slug}`);
-    store.productPage = true;
-    store.cartPage = false;
+    console.log("currentTarget :>> ", e.target);
+    if (e.target.classList.contains("i_bag")) {
+      const cardData = Object.assign(data, {
+        countInCart: 1,
+      });
+      if (
+        localStorage.get("productInCart") &&
+        Object.keys(localStorage.get("productInCart")).length
+      ) {
+        console.log("object :>> 123123123123123");
+        const pc = localStorage.get("productInCart");
+        console.log(
+          "Object.keys(pc).includes(this.cardData.slug) :>> ",
+          Object.keys(pc).includes(cardData.slug)
+        );
+        if (Object.keys(pc).includes(cardData.slug)) {
+          console.log("object :>> ");
+          pc[cardData.slug].countInCart += 1;
+        } else {
+          pc[cardData.slug] = cardData;
+        }
+        localStorage.setItem("productInCart", pc);
+      } else
+        localStorage.setItem("productInCart", {
+          [cardData.slug]: cardData,
+        });
+    } else {
+      store.cardContainer = data;
+      history.push(`/product/${data.slug}`);
+      store.productPage = true;
+      store.cartPage = false;
+    }
   };
 
   const { data } = props;
