@@ -1,0 +1,30 @@
+.tumbler{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    button{
+        padding: {
+            top: 10px;
+            bottom: 8px;
+        };
+        border: 1px solid $b_light;
+        border-right: 0px;
+        width: 100%;
+        text-align: center;
+        font-size: 16px;
+        color: $b_light;
+        &.active{
+            color: white;
+            background-color: $b_light;
+        }
+        &:first-child{
+            border-top-left-radius: 30px;
+            border-bottom-left-radius: 30px;    
+        }
+        &:last-child{
+            border-right: 1px solid $b_light;
+            border-top-right-radius: 30px;
+            border-bottom-right-radius: 30px;
+        }
+    }
+}

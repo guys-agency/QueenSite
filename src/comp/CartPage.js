@@ -254,47 +254,277 @@ const CartPage = observer(
                         </form>
                       </span>
                     </h5>
+                    <div className="cart-page__delivery-details">
+                      <div className="row">
+                        <div className="items col col-12">
+                          <div className="item">
+                            <h5>Тип доставки:</h5>
+                            <span>Курьером</span>
+                          </div>
+
+                          <div className="item">
+                            <h5>Служба доставки:</h5>
+                            <span>
+                              СДЭК (250 ₽/ <span className="b_gray">3 дня</span>
+                              )
+                            </span>
+                          </div>
+
+                          <div className="item">
+                            <h5>Адрес выдачи:</h5>
+                            <span>
+                              443063, Самарская обл., Самара, ул. Вольская, д.
+                              71/42, кв. 1 этаж
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <form className="row" action="">
+                        <div className="col col-8">
+                          <div className="input-field">
+                            <label className="required" htmlFor="address">
+                              Адрес
+                            </label>
+                            <input
+                              id="address"
+                              type="text"
+                              onFocus={(e) => {
+                                $(e.target)
+                                  .parent()
+                                  .find("label")
+                                  .addClass("active");
+                              }}
+                              onBlur={(e) => {
+                                if (e.target.value === "") {
+                                  $(e.target)
+                                    .parent()
+                                    .find("label")
+                                    .removeClass("active");
+                                }
+                              }}
+                            />
+                          </div>
+                        </div>
+
+                        <div className="col col-2">
+                          <div className="input-field">
+                            <label className="required" htmlFor="flat">
+                              Кв/Офис
+                            </label>
+                            <input
+                              id="flat"
+                              type="text"
+                              onFocus={(e) => {
+                                $(e.target)
+                                  .parent()
+                                  .find("label")
+                                  .addClass("active");
+                              }}
+                              onBlur={(e) => {
+                                if (e.target.value === "") {
+                                  $(e.target)
+                                    .parent()
+                                    .find("label")
+                                    .removeClass("active");
+                                }
+                              }}
+                            />
+                          </div>
+                        </div>
+
+                        <div className="col col-2">
+                          <div className="input-field">
+                            <label className="required" htmlFor="porch">
+                              Подъезд
+                            </label>
+                            <input
+                              id="porch"
+                              type="text"
+                              onFocus={(e) => {
+                                $(e.target)
+                                  .parent()
+                                  .find("label")
+                                  .addClass("active");
+                              }}
+                              onBlur={(e) => {
+                                if (e.target.value === "") {
+                                  $(e.target)
+                                    .parent()
+                                    .find("label")
+                                    .removeClass("active");
+                                }
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </form>
+                    </div>
                   </h3>
 
                   <div className="btn btn_primary">Выбрать доставку</div>
+                  <div className="btn">Изменить способ доставки</div>
                   <div className="Ya-block" id="yaDeliveryWidget"></div>
                 </div>
 
-                <h3 className="tilda">Данные</h3>
+                <div className="cart-page__data">
+                  <h3 className="tilda">Данные</h3>
+                  <p>Для получения потребуется паспорт с указанными данными</p>
+                  <p>
+                    <a className="link dotted">
+                      <span className="ic i_user"></span>{" "}
+                      <span className="fw_m b_dark">Войдите</span>
+                    </a>{" "}
+                    <span className="b_gray">
+                      (данные подгрузятся автоматически)
+                    </span>
+                  </p>
+
+                  <form className="cart-page__data-form row" action="">
+                    <div className="col col-6">
+                      <div className="input-field">
+                        <label className="required" htmlFor="firstname">
+                          Имя
+                        </label>
+                        <input
+                          id="firstname"
+                          type="text"
+                          name="firstname"
+                          onFocus={(e) => {
+                            $(e.target)
+                              .parent()
+                              .find("label")
+                              .addClass("active");
+                          }}
+                          onBlur={(e) => {
+                            if (e.target.value === "") {
+                              $(e.target)
+                                .parent()
+                                .find("label")
+                                .removeClass("active");
+                            }
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <div className="col col-6">
+                      <div className="input-field">
+                        <label className="required" htmlFor="lastname">
+                          Фамилия
+                        </label>
+                        <input
+                          id="lastname"
+                          name="lastname"
+                          type="text"
+                          onFocus={(e) => {
+                            $(e.target)
+                              .parent()
+                              .find("label")
+                              .addClass("active");
+                          }}
+                          onBlur={(e) => {
+                            if (e.target.value === "") {
+                              $(e.target)
+                                .parent()
+                                .find("label")
+                                .removeClass("active");
+                            }
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <div className="col col-6">
+                      <div className="input-field">
+                        <label className="required" htmlFor="email">
+                          E-mail
+                        </label>
+                        <input
+                          id="email"
+                          type="text"
+                          onFocus={(e) => {
+                            $(e.target)
+                              .parent()
+                              .find("label")
+                              .addClass("active");
+                          }}
+                          onBlur={(e) => {
+                            if (e.target.value === "") {
+                              $(e.target)
+                                .parent()
+                                .find("label")
+                                .removeClass("active");
+                            }
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <div className="col col-6">
+                      <div className="input-field">
+                        <label className="required" htmlFor="phone">
+                          Телефон
+                        </label>
+                        <input
+                          id="phone"
+                          type="text"
+                          onFocus={(e) => {
+                            $(e.target)
+                              .parent()
+                              .find("label")
+                              .addClass("active");
+                          }}
+                          onBlur={(e) => {
+                            if (e.target.value === "") {
+                              $(e.target)
+                                .parent()
+                                .find("label")
+                                .removeClass("active");
+                            }
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </form>
+                </div>
               </div>
               <div className="col col-1"></div>
-              <div className="col col-4 cart-page__result-stick">
-                <div className="cart-page__result">
-                  <ul>
-                    <li>
-                      <div>
-                        <span>Итого</span>{" "}
-                        <span>{totalPrice.toLocaleString()} ₽</span>
-                      </div>
-                      <div>
-                        <span>Стоимость товаров</span>{" "}
-                        <span>{totalPrice.toLocaleString()} ₽</span>
-                      </div>
-                      <div>
-                        <span>Скидка</span>{" "}
-                        <span className="red">
-                          {totalPrice.toLocaleString()} ₽
-                        </span>
-                      </div>
-                      <div>
-                        <span>Доставка</span>{" "}
-                        <span>
-                          250 ₽ / <span className="b_gray"> 3 дня</span>
-                        </span>
-                      </div>
-                    </li>
-                  </ul>
+              <div className="col col-4 ">
+                <div className="cart-page__result-stick">
+                  <div className="cart-page__result">
+                    <ul>
+                      <li>
+                        <div>
+                          <span>Итого</span> <span>{totalPrice} ₽</span>
+                        </div>
+                        <div>
+                          <span>Стоимость товаров</span>{" "}
+                          <span>{totalPrice} ₽</span>
+                        </div>
+                        <div>
+                          <span>Скидка</span>{" "}
+                          <span className="red">{totalPrice} ₽</span>
+                        </div>
+                        <div>
+                          <span>Доставка</span>{" "}
+                          <span>
+                            250 ₽ / <span className="b_gray"> 3 дня</span>
+                          </span>
+                        </div>
+                      </li>
+                    </ul>
 
-                  <div className="cart-page__result-address">
-                    г. Москва, Большая Андроньевская 23, 24, подъезд 1
+                    <div className="cart-page__result-address">
+                      г. Москва, Большая Андроньевская 23, 24, подъезд 1
+                    </div>
+
+                    <button className="btn btn_yellow">Зaказать</button>
                   </div>
-
-                  <button className="btn btn_yellow">Зaказать</button>
+                  <div className="cart-page__promo">
+                    <input
+                      className="def"
+                      placeholder="Сертификат"
+                      type="text"
+                    />{" "}
+                    <button>Активировать</button>
+                  </div>
                 </div>
               </div>
             </div>
