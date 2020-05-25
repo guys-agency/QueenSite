@@ -1,12 +1,19 @@
 .product__image {
   position: relative;
-  width: 263px;
-  height: 290px;
+  height: 300px;
   margin-bottom: 13px;
   border-radius: 3px;
   border: 1px solid #f2f2f2;
-  
+  width: 100%;
+  overflow: hidden;
+  &-wrp{
+    position: relative;
+    padding: 50% 10px;
+  }
   img {
+    position: absolute;
+    top: 0;
+    left: 1px;
     width: 100%;
     height: 100%;
   }

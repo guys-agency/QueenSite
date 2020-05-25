@@ -35,7 +35,7 @@ const MainPage = observer(
         .then((data) => {
           Object.keys(data[0].hit).forEach((element, i) => {
             hitContTime.push(
-              <div className="swiper-slide" key={i}>
+              <div className="swiper-slide col col-3" key={i}>
                 <ProductCard
                   key={data[0].hit[element].slug}
                   data={data[0].hit[element]}
@@ -131,7 +131,7 @@ const MainPage = observer(
       };
 
       const productCar = {
-        slidesPerView: 4,
+        slidesPerView: "auto",
         slidesPerGroup: 4,
         speed: 800,
         draggable: true,
@@ -147,7 +147,25 @@ const MainPage = observer(
           nextEl: ".swiper-button-next",
           prevEl: ".swiper-button-prev",
         },
-        spaceBetween: 20,
+      };
+
+      const newCar = {
+        slidesPerView: "auto",
+        slidesPerGroup: 4,
+        speed: 800,
+        draggable: true,
+        // autoplay: {
+        //   delay: 4000,
+        // },
+        pagination: {
+          el: ".swiper-pagination",
+          type: "bullets",
+          clickable: true,
+        },
+        navigation: {
+          nextEl: ".swiper-button-next",
+          prevEl: ".swiper-button-prev",
+        },
       };
 
       const brandCar = {
@@ -270,82 +288,98 @@ const MainPage = observer(
               <div className="title">
                 <h2 className="tilda">Идеи</h2>
               </div>
-              <div className="ideas-block">
-                <a
-                  href="#"
-                  className="banner banner_overlay main-idea"
-                  style={{
-                    backgroundImage: "url(" + "/image/ideas/1.jpg" + ")",
-                  }}
-                >
-                  <div className="banner__desc">Вкусное вино</div>
-                </a>
-                <div className="ideas">
+              <div className="row ideas-block">
+                <div className="col col-5">
                   <a
                     href="#"
-                    className="banner banner_overlay small"
+                    className="banner banner_overlay main-idea"
                     style={{
-                      backgroundImage: "url(" + "/image/ideas/2.jpg" + ")",
+                      backgroundImage: "url(" + "/image/ideas/1.jpg" + ")",
                     }}
                   >
-                    <div className="banner__desc">Виски</div>
+                    <div className="banner__desc">Вкусное вино</div>
                   </a>
-                  <a
-                    href="#"
-                    className="banner banner_overlay small"
-                    style={{
-                      backgroundImage: "url(" + "/image/ideas/3.jpg" + ")",
-                    }}
-                  >
-                    <div className="banner__desc">Кружки со смыслом</div>
-                  </a>
-                  <a
-                    href="#"
-                    className="banner banner_overlay large"
-                    style={{
-                      backgroundImage: "url(" + "/image/ideas/4.jpg" + ")",
-                    }}
-                  >
-                    <div className="banner__desc">На вечеринку</div>
-                  </a>
+                </div>
+                <div className="ideas col col-7">
+                  <div className="row row_inner">
+                    <div className="col col-6">
+                      <a
+                        href="#"
+                        className="banner banner_overlay small"
+                        style={{
+                          backgroundImage: "url(" + "/image/ideas/2.jpg" + ")",
+                        }}
+                      >
+                        <div className="banner__desc">Виски</div>
+                      </a>
+                    </div>
+                    <div className="col col-6">
+                      <a
+                        href="#"
+                        className="banner banner_overlay small"
+                        style={{
+                          backgroundImage: "url(" + "/image/ideas/3.jpg" + ")",
+                        }}
+                      >
+                        <div className="banner__desc">Кружки со смыслом</div>
+                      </a>
+                    </div>
+                    <div className="col col-12">
+                      <a
+                        href="#"
+                        className="banner banner_overlay large"
+                        style={{
+                          backgroundImage: "url(" + "/image/ideas/4.jpg" + ")",
+                        }}
+                      >
+                        <div className="banner__desc">На вечеринку</div>
+                      </a>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div className="title">
                 <h2>Подарки</h2>
               </div>
-              <div className="gifts">
-                <a
-                  className="banner"
-                  style={{
-                    backgroundImage: "url(" + "/image/gifts/1.jpg" + ")",
-                  }}
-                >
-                  <div className="banner__desc">До 500₽</div>
-                </a>
+              <div className="gifts row">
+                <div className="col col-4">
+                  <a
+                    className="banner"
+                    style={{
+                      backgroundImage: "url(" + "/image/gifts/1.jpg" + ")",
+                    }}
+                  >
+                    <div className="banner__desc">До 500₽</div>
+                  </a>
+                </div>
 
-                <a
-                  className="banner"
-                  style={{
-                    backgroundImage: "url(" + "/image/gifts/2.jpg" + ")",
-                  }}
-                >
-                  <div className="banner__desc">До 1 000₽</div>
-                </a>
+                <div className="col col-4">
+                  <a
+                    className="banner"
+                    style={{
+                      backgroundImage: "url(" + "/image/gifts/2.jpg" + ")",
+                    }}
+                  >
+                    <div className="banner__desc">До 1 000₽</div>
+                  </a>
+                </div>
 
-                <a
-                  className="banner"
-                  style={{
-                    backgroundImage: "url(" + "/image/gifts/3.jpg" + ")",
-                  }}
-                >
-                  <div className="banner__desc">До 2 000₽</div>
-                </a>
+                <div className="col col-4">
+                  <a
+                    className="banner"
+                    style={{
+                      backgroundImage: "url(" + "/image/gifts/3.jpg" + ")",
+                    }}
+                  >
+                    <div className="banner__desc">До 2 000₽</div>
+                  </a>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="container">
-            <div className="carousel carousel_product">
+          <div className="carousel carousel_product">
+            <div className="container">
               <div className="title">
                 <a href="">
                   <h2 className="tilda">
@@ -357,12 +391,16 @@ const MainPage = observer(
                 </a>
                 <p className="subtitle">Сложно определиться? Мы поможем</p>
               </div>
-
+            </div>
+            <div className="container container_s">
               <div className="slider-cont">
-                <Swiper {...productCar}>{hitCont}</Swiper>
+                {hitCont.length && <Swiper {...newCar}>{hitCont}</Swiper>}
               </div>
             </div>
-            <div className="collections-h">
+          </div>
+
+          <div className="collections-h">
+            <div className="container">
               <div className="title">
                 <a href="">
                   <h2 className="dib">
@@ -375,35 +413,43 @@ const MainPage = observer(
                 <p className="subtitle">Готовые решения для вашего дома</p>
               </div>
 
-              <div className="collections-h__block">
-                <a
-                  href="#"
-                  className="banner banner_overlay main"
-                  style={{
-                    backgroundImage: "url(" + "/image/ideas/1.jpg" + ")",
-                  }}
-                >
-                  <div className="banner__desc">Вкусное вино</div>
-                </a>
-                <div className="items">
+              <div className="row">
+                <div className="col col-7">
                   <a
                     href="#"
-                    className="banner banner_overlay small"
+                    className="banner banner_overlay main"
                     style={{
-                      backgroundImage: "url(" + "/image/ideas/2.jpg" + ")",
+                      backgroundImage: "url(" + "/image/ideas/1.jpg" + ")",
                     }}
                   >
-                    <div className="banner__desc">Виски</div>
+                    <div className="banner__desc">Индиго</div>
                   </a>
-                  <a
-                    href="#"
-                    className="banner banner_overlay small"
-                    style={{
-                      backgroundImage: "url(" + "/image/ideas/3.jpg" + ")",
-                    }}
-                  >
-                    <div className="banner__desc">Кружки со смыслом</div>
-                  </a>
+                </div>
+                <div className="items col col-5">
+                  <div className="row row_inner">
+                    <div className="col col-12">
+                      <a
+                        href="#"
+                        className="banner banner_overlay small"
+                        style={{
+                          backgroundImage: "url(" + "/image/ideas/2.jpg" + ")",
+                        }}
+                      >
+                        <div className="banner__desc">Натура</div>
+                      </a>
+                    </div>
+                    <div className="col col-12">
+                      <a
+                        href="#"
+                        className="banner banner_overlay small"
+                        style={{
+                          backgroundImage: "url(" + "/image/ideas/3.jpg" + ")",
+                        }}
+                      >
+                        <div className="banner__desc">Пасха</div>
+                      </a>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -434,41 +480,59 @@ const MainPage = observer(
                 </div>
             </div> */}
               <div className="container container_f">
-                {newCont}
+                <div className="row">{newCont}</div>
                 <button className="btn btn_primary">Посмотреть еще</button>
               </div>
             </div>
           </div>
           <div className="subscribe">
             <div className="container">
-              <h3>Подпишитесь на новости</h3>
-              <p>
-                <b>Скидка 5%</b> на первую покупку
-              </p>
-              <form className="">
-                <div className="input-field">
-                  <label className="required" htmlFor="emailSubs">
-                    E-mail
-                  </label>
-                  <input
-                    id="emailSubs"
-                    name="email"
-                    type="text"
-                    onFocus={(e) => {
-                      $(e.target).parent().find("label").addClass("active");
-                    }}
-                    onBlur={(e) => {
-                      if (e.target.value === "") {
-                        $(e.target)
-                          .parent()
-                          .find("label")
-                          .removeClass("active");
-                      }
-                    }}
-                  />
+              <div className="row">
+                <div className="col col-6 col-middle subscribe__form">
+                  <h3>Подпишитесь на новости</h3>
+                  <p>
+                    <b>Скидка 5%</b> на первую покупку
+                  </p>
+                  <form className="row row_inner col-bottom">
+                    <div className="col col-7">
+                      <div className="input-field">
+                        <label className="required" htmlFor="emailSubs">
+                          E-mail
+                        </label>
+                        <input
+                          id="emailSubs"
+                          name="email"
+                          type="text"
+                          onFocus={(e) => {
+                            $(e.target)
+                              .parent()
+                              .find("label")
+                              .addClass("active");
+                          }}
+                          onBlur={(e) => {
+                            if (e.target.value === "") {
+                              $(e.target)
+                                .parent()
+                                .find("label")
+                                .removeClass("active");
+                            }
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <div className="col col-4">
+                      <button className="btn btn_primary">Подписаться</button>
+                    </div>
+                  </form>
                 </div>
-              </form>
+              </div>
             </div>
+            <div
+              className="subscribe__img"
+              style={{
+                backgroundImage: "url(" + "/image/subs/1.jpg" + ")",
+              }}
+            ></div>
           </div>
         </div>
       );

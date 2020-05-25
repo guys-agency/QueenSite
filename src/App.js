@@ -115,16 +115,18 @@ const MainScreen = observer(
                 this.props.store.cleaningActiveFilters(),
                 (
                   <div className="main-screen">
-                    <Filters
-                      store={this.props.store}
-                      parentName={routProps.match.params.parentName}
-                      childName={routProps.match.params.childName}
-                    />
-                    <ProductCardContainer
-                      store={this.props.store}
-                      parentName={routProps.match.params.parentName}
-                      childName={routProps.match.params.childName}
-                    />
+                    <div className="catalog">
+                      <Filters
+                        store={this.props.store}
+                        parentName={routProps.match.params.parentName}
+                        childName={routProps.match.params.childName}
+                      />
+                      <ProductCardContainer
+                        store={this.props.store}
+                        parentName={routProps.match.params.parentName}
+                        childName={routProps.match.params.childName}
+                      />
+                    </div>
                   </div>
                 )
               )}
@@ -163,6 +165,74 @@ const MainScreen = observer(
               (this.props.store.cartPage && (
                 <CartPage store={this.props.store} />
               ))} */}
+
+          <div className="footer">
+            <div className="container">
+              <div className="footer__row">
+                <div className="footer__column">
+                  <h4 className="white">Наши новости</h4>
+                  <div className="social">
+                    <a className="ic i_fb" href=""></a>
+                    <a className="ic i_inst" href=""></a>
+                  </div>
+                  <a href="" className="logo logo_sq">
+                    <span className="i_queen"></span>
+                    <span className="i_of"></span>
+                    <span className="i_line-h"></span>
+                    <span className="i_bohemia"></span>
+                    <span className="i_qr"></span>
+                  </a>
+                </div>
+                <div className="footer__column">
+                  <h4 className="white">Категории</h4>
+                  <div className="footer__links-column">
+                    <ul className="footer__links">
+                      <li><a href="">Каталог</a></li>
+                      <li><a href="">Коллекции</a></li>
+                      <li><a href="">Интерьр</a></li>
+                      <li><a href="">Подарки</a></li>
+                    </ul>
+                    <ul className="footer__links">
+                      <li><a href="">Premium</a></li>
+                      <li><a href="">Милениум</a></li>
+                      <li><a href="">Акции</a></li>
+                    </ul>
+                  </div>
+                </div>
+                <div className="footer__column">
+                  <h4 className="white">Сервис</h4> 
+                  <div className="footer__links-column">
+                    <ul className="footer__links">
+                      <li><a href="">О нас</a></li>
+                      <li><a href="">Доставка</a></li>
+                      <li><a href="">Оплата</a></li>
+                    </ul>
+                    <ul className="footer__links">
+                      <li><a href="">Возврат</a></li>
+                      <li><a href="">Бонусы</a></li>
+                      <li><a href="">Публичная оферта</a></li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="footer__column">
+                  <h4 className="white">+7 495 744-00-50</h4>
+                  <button class="link dotted ask">Задать вопрос</button>
+                  <div>
+                    <a className="underline" href="mailto:info@queenbohemia.ru">info@queenbohemia.ru</a>
+                  </div>
+                </div>
+              </div>
+              <div className="footer__row">
+                <div className="footer__column">
+                  <p>queenbohemia.ru © 1993 – 2020. Все права защищены</p>
+                </div>
+                <div className="footer__column">
+                  <p>105082, г. Москва, Переведёновский переулок, д. 13, стр. 18</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </>
       );
     }

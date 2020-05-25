@@ -1,26 +1,20 @@
 .collections-h{
-    &__block{
-        display: flex;
-        .main{
-            width: 639px;
-            height: 366px;
-            margin-right: 20px;
-            flex: 0 0 auto;
-        }
+    padding-bottom: 60px;
+    .main{
+        height: 366px;
+        flex: 0 0 auto;
+    }
 
-        .items {
-            display: flex;
-            flex-wrap: wrap;
-            .small {
-                width: 451px;
-                height: 172px;
-                margin-right: 20px;
-                margin-bottom: 20px;
-                &:nth-child(2) {
-                margin-right: 0px;
-                }
+    .items {
+        display: flex;
+        flex-wrap: wrap;
+        .small {
+            
+            height: 172px;
+            margin-bottom: 20px;
+            &:nth-child(2) {
+            margin-right: 0px;
             }
         }
     }
-    padding-bottom: 60px;
 }

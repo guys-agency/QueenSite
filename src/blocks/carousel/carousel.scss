@@ -11,13 +11,6 @@
         //         margin-right: 0;
         //     }
         // }
-        .container_s{
-            max-width: calc(1110px + 20px);
-            .swiper-container{
-                padding: 10px;
-            }
-        }
-
         .swiper-button{
             &-prev, &-next{
                 top: 40%;

@@ -37,6 +37,9 @@ h1, h2, h3, h4, h5, h6{
       @include gold-txt;
     }
   }
+  &.white{
+    color: white;
+  }
 }
 
 h3, h4, h5, h6, p, a, input, button{
@@ -60,6 +63,12 @@ h2{
 h3{
   font-size: 24px;
   font-weight: 500;
+  &.tilda{
+    &::before{
+      font-size: 40px;
+      margin-bottom: -10px;
+    }
+  }
 }
 
 h4{
@@ -95,6 +104,9 @@ a, .link{
     }
     color: $g_middle;
   }
+  &.underline{
+    text-decoration: underline;
+  }
 }
 
 p{
@@ -104,4 +116,12 @@ p{
 
 .title{
   padding-bottom: 30px;
+}
+
+.red{
+  color: $red;
+}
+
+.b_gray{
+  color: $b_gray;
 }

@@ -16,10 +16,9 @@ button{
     font-size: 16px;
     color: $b_dark;
     transition: all 0.3s;
+    text-align: center;
     cursor: pointer;
-    &_primary{
-        border: 1px solid $g_middle;
-    }
+
     .ic{
         &:before{
             position: relative;
@@ -29,5 +28,20 @@ button{
     &:hover{
         box-shadow: $sh_no;
         transform: translateY(1px);
+    }
+    
+    &_primary{
+        border: 1px solid $g_middle;
+    }
+
+    &_yellow{
+        box-shadow: $sh_no;
+        border: 1px solid $g_middle;
+        background-color: $g_light;
+        &:hover{
+            box-shadow: $sh_no;
+            transform: translateY(0px);
+            opacity: 0.7;
+        }
     }
 }
