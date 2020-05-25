@@ -17,8 +17,8 @@ const ProductCard = observer(function ProductCard(props) {
 
   data.meta_data.forEach((elem) => {
     if (elem.key === "path_to_photo") {
-      console.log("elem.value[0] :>> ", elem.value[0]);
-      imagePath = imagePath + elem.value[0];
+      const imageCont = elem.value.split(",");
+      imagePath = imagePath + imageCont[0];
     }
   });
 

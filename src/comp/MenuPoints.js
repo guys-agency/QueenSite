@@ -182,7 +182,7 @@ const MenuPoints = observer(
                   <ul>{childsPoints}</ul>
                 </div>
               );
-            } else if (elem.name === "Акссесуары для стола") {
+            } else if (elem.name === "Аксесуары для стола") {
               menu[4] = (
                 <div>
                   <h5>{elem.name}</h5>
@@ -450,7 +450,9 @@ const MenuPoints = observer(
                   <button
                     className="profile ic i_user"
                     onClick={() => {
-                      document.querySelector(".sidebar-overlay").classList.add("active");
+                      document
+                        .querySelector(".sidebar-overlay")
+                        .classList.add("active");
                       this.setState({ reg: false });
                       this.setState({ popreg: true });
                       this.setState({ log: true });
@@ -464,18 +466,31 @@ const MenuPoints = observer(
                 </div>
               </div>
             </div>
-            
-            <div className={'sidebar' + (this.state.popreg ? ' visible' : '')}>
-              <button className="btn btn-head" onClick={() => {
-                this.setState({ popreg: false });
-                document.querySelector(".sidebar-overlay").classList.remove("visible");
-              }}>Свернуть</button>
-              
+
+            <div className={"sidebar" + (this.state.popreg ? " visible" : "")}>
+              <button
+                className="btn btn-head"
+                onClick={() => {
+                  this.setState({ popreg: false });
+                  document
+                    .querySelector(".sidebar-overlay")
+                    .classList.remove("visible");
+                }}
+              >
+                Свернуть
+              </button>
+
               <div className="tumbler">
-                <button className={(this.state.log ? ' active' : '')} onClick={() => {
-                  this.setState({ reg: false, log: true });
-                }}>Вход</button>
-                <button className={(this.state.reg ? ' active' : '')}
+                <button
+                  className={this.state.log ? " active" : ""}
+                  onClick={() => {
+                    this.setState({ reg: false, log: true });
+                  }}
+                >
+                  Вход
+                </button>
+                <button
+                  className={this.state.reg ? " active" : ""}
                   onClick={() => {
                     this.setState({ reg: true, log: false });
                   }}
@@ -484,8 +499,7 @@ const MenuPoints = observer(
                 </button>
               </div>
 
-
-              <form className={(this.state.log ? ' visible' : '')} >
+              <form className={this.state.log ? " visible" : ""}>
                 <div className="input-field">
                   <label className="required" htmlFor="email">
                     Email
@@ -494,14 +508,14 @@ const MenuPoints = observer(
                     id="email"
                     type="text"
                     onFocus={(e) => {
-                      $(e.target)
-                        .parent()
-                        .find("label")
-                        .addClass("active");
+                      $(e.target).parent().find("label").addClass("active");
                     }}
                     onBlur={(e) => {
                       if (e.target.value === "") {
-                        $(e.target).parent().find('label').removeClass('active');
+                        $(e.target)
+                          .parent()
+                          .find("label")
+                          .removeClass("active");
                       }
                     }}
                     onChange={(e) => {
@@ -518,14 +532,14 @@ const MenuPoints = observer(
                     id="password"
                     type="password"
                     onFocus={(e) => {
-                      $(e.target)
-                        .parent()
-                        .find("label")
-                        .addClass("active");
+                      $(e.target).parent().find("label").addClass("active");
                     }}
                     onBlur={(e) => {
                       if (e.target.value === "") {
-                        $(e.target).parent().find('label').removeClass('active');
+                        $(e.target)
+                          .parent()
+                          .find("label")
+                          .removeClass("active");
                       }
                     }}
                     onChange={(e) => {
@@ -547,9 +561,11 @@ const MenuPoints = observer(
                 >
                   Войти
                 </button>
-                <button className="link dotted forgot-btn">Забыли пароль?</button>
+                <button className="link dotted forgot-btn">
+                  Забыли пароль?
+                </button>
               </form>
-              <form className={(this.state.reg ? ' visible' : '')}>
+              <form className={this.state.reg ? " visible" : ""}>
                 <div className="input-field">
                   <label className="required" htmlFor="name">
                     Имя
@@ -558,14 +574,14 @@ const MenuPoints = observer(
                     id="name"
                     type="text"
                     onFocus={(e) => {
-                      $(e.target)
-                        .parent()
-                        .find("label")
-                        .addClass("active");
+                      $(e.target).parent().find("label").addClass("active");
                     }}
                     onBlur={(e) => {
                       if (e.target.value === "") {
-                        $(e.target).parent().find('label').removeClass('active');
+                        $(e.target)
+                          .parent()
+                          .find("label")
+                          .removeClass("active");
                       }
                     }}
                     onChange={(e) => {
@@ -582,14 +598,14 @@ const MenuPoints = observer(
                     id="email"
                     type="text"
                     onFocus={(e) => {
-                      $(e.target)
-                        .parent()
-                        .find("label")
-                        .addClass("active");
+                      $(e.target).parent().find("label").addClass("active");
                     }}
                     onBlur={(e) => {
                       if (e.target.value === "") {
-                        $(e.target).parent().find('label').removeClass('active');
+                        $(e.target)
+                          .parent()
+                          .find("label")
+                          .removeClass("active");
                       }
                     }}
                     onChange={(e) => {
@@ -606,14 +622,14 @@ const MenuPoints = observer(
                     id="password"
                     type="password"
                     onFocus={(e) => {
-                      $(e.target)
-                        .parent()
-                        .find("label")
-                        .addClass("active");
+                      $(e.target).parent().find("label").addClass("active");
                     }}
                     onBlur={(e) => {
                       if (e.target.value === "") {
-                        $(e.target).parent().find('label').removeClass('active');
+                        $(e.target)
+                          .parent()
+                          .find("label")
+                          .removeClass("active");
                       }
                     }}
                     onChange={(e) => {
@@ -630,14 +646,14 @@ const MenuPoints = observer(
                     id="password_confirm"
                     type="password"
                     onFocus={(e) => {
-                      $(e.target)
-                        .parent()
-                        .find("label")
-                        .addClass("active");
+                      $(e.target).parent().find("label").addClass("active");
                     }}
                     onBlur={(e) => {
                       if (e.target.value === "") {
-                        $(e.target).parent().find('label').removeClass('active');
+                        $(e.target)
+                          .parent()
+                          .find("label")
+                          .removeClass("active");
                       }
                     }}
                     onChange={(e) => {
@@ -646,9 +662,7 @@ const MenuPoints = observer(
                   />
                 </div>
                 <button
-
                   className="btn btn_primary"
-
                   onClick={(e) => {
                     e.preventDefault();
                     api.regist({
@@ -663,13 +677,14 @@ const MenuPoints = observer(
               </form>
             </div>
 
-            <div className="sidebar-overlay"
+            <div
+              className="sidebar-overlay"
               onClick={(e) => {
                 this.setState({ reg: false });
                 this.setState({ popreg: false });
                 this.setState({ log: true });
 
-                e.target.classList.remove("active")
+                e.target.classList.remove("active");
                 document.querySelector(".sidebar").classList.remove("visible");
               }}
             ></div>
