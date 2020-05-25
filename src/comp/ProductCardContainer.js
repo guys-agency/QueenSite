@@ -60,9 +60,11 @@ const ProductCardContainer = observer(
 
     render() {
       return (
-        <div className="row">
-          {this.props.store.productsToRender}
-          {this.props.store.paginatCont}
+        <div className="col col-9">
+          <div className="row row_inner">
+            {this.props.store.productsToRender}
+            {this.props.store.paginatCont}
+          </div>
         </div>
       );
     }

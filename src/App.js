@@ -115,17 +115,21 @@ const MainScreen = observer(
                 this.props.store.cleaningActiveFilters(),
                 (
                   <div className="main-screen">
-                    <div className="catalog">
-                      <Filters
-                        store={this.props.store}
-                        parentName={routProps.match.params.parentName}
-                        childName={routProps.match.params.childName}
-                      />
-                      <ProductCardContainer
-                        store={this.props.store}
-                        parentName={routProps.match.params.parentName}
-                        childName={routProps.match.params.childName}
-                      />
+                    <div className="container">
+                      <div className="row">
+                        <div className="col col-3">
+                          <Filters
+                            store={this.props.store}
+                            parentName={routProps.match.params.parentName}
+                            childName={routProps.match.params.childName}
+                          />
+                        </div>
+                        <ProductCardContainer
+                          store={this.props.store}
+                          parentName={routProps.match.params.parentName}
+                          childName={routProps.match.params.childName}
+                        />
+                      </div>
                     </div>
                   </div>
                 )

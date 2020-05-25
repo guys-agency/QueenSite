@@ -464,7 +464,9 @@ const MenuPoints = observer(
             {this.state.popreg && (
               <div>
                 <h2>test login</h2>
-                <button>log</button>
+                <button onClick={() => {
+                  this.setState({ reg: false, log: true });
+                }}>log</button>
                 <button
                   onClick={() => {
                     this.setState({ reg: true, log: false });
