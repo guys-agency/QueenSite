@@ -680,6 +680,11 @@ const MenuPoints = observer(
                 >
                   Регистрация
                 </button>
+                <label class="checkbox checkbox_margin">
+                  <input type="checkbox" name="" id=""/>
+                  <span className="checkbox-btn"></span>
+                  <i>Согласен с условиями "<a className="underline" href="">Публичной оферты</a>"</i>
+                </label>
               </form>
             </div>
 
