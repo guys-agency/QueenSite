@@ -13,12 +13,20 @@ const ProductCard = observer(function ProductCard(props) {
   };
 
   const { data } = props;
+  let imagePath = "/image/products/";
+
+  data.meta_data.forEach((elem) => {
+    if (elem.key === "path_to_photo") {
+      console.log("elem.value[0] :>> ", elem.value[0]);
+      imagePath = imagePath + elem.value[0];
+    }
+  });
 
   return (
     <div className="product" onClick={clickHandler}>
       <div className="product__image">
         <div className="product__image-wrp">
-          <img src="/image/Category/Product-card/Placeholder.png" />
+          <img src={imagePath} />
           <div className="product__attr-cont">
             <div className="product__hit">Хит</div>
             <div className="product__sale">Акция</div>
