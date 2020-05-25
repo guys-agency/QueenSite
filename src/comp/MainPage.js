@@ -39,6 +39,7 @@ const MainPage = observer(
                 <ProductCard
                   key={data[0].hit[element].slug}
                   data={data[0].hit[element]}
+                  store={this.props.store}
                 />
               </div>
             );
@@ -48,6 +49,7 @@ const MainPage = observer(
               <ProductCard
                 key={data[0].new[element].slug}
                 data={data[0].new[element]}
+                store={this.props.store}
               />
             );
           });
@@ -56,6 +58,7 @@ const MainPage = observer(
               <ProductCard
                 key={data[0].all[element].slug}
                 data={data[0].all[element]}
+                store={this.props.store}
               />
             );
           });
