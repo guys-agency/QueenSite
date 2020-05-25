@@ -134,7 +134,15 @@ const MainScreen = observer(
             <Route
               path="/cart"
               render={() => (
-                <div className="main-screen">
+                <div className="main-screen" onClick={(e)=>{
+                  e.stopPropagation();
+
+                  var container = document.querySelector(".city__drop");
+                  if (!container.contains(e.target)) {
+                    document.querySelector(".city__btn").classList.remove("active");
+                    document.querySelector(".city__drop").classList.remove("active");
+                  }
+                }}>
                   <CartPage store={this.props.store} />
                 </div>
               )}
