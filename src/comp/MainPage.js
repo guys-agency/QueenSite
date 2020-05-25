@@ -39,19 +39,18 @@ const MainPage = observer(
                 <ProductCard
                   key={data[0].hit[element].slug}
                   data={data[0].hit[element]}
+                  store={this.props.store}
                 />
               </div>
             );
           });
           Object.keys(data[0].new).forEach((element) => {
             newContTime.push(
-              <div className="col col-3 col-t-4 col-s-6">
-                <ProductCard
-                  key={data[0].new[element].slug}
-                  data={data[0].new[element]}
-                /
-                >
-              </div>
+              <ProductCard
+                key={data[0].new[element].slug}
+                data={data[0].new[element]}
+                store={this.props.store}
+              />
             );
           });
           Object.keys(data[0].all).forEach((element) => {
@@ -59,6 +58,7 @@ const MainPage = observer(
               <ProductCard
                 key={data[0].all[element].slug}
                 data={data[0].all[element]}
+                store={this.props.store}
               />
             );
           });
@@ -131,7 +131,7 @@ const MainPage = observer(
       };
 
       const productCar = {
-        slidesPerView: 'auto',
+        slidesPerView: "auto",
         slidesPerGroup: 4,
         speed: 800,
         draggable: true,
@@ -149,9 +149,8 @@ const MainPage = observer(
         },
       };
 
-
       const newCar = {
-        slidesPerView: 'auto',
+        slidesPerView: "auto",
         slidesPerGroup: 4,
         speed: 800,
         draggable: true,
@@ -290,19 +289,19 @@ const MainPage = observer(
                 <h2 className="tilda">Идеи</h2>
               </div>
               <div className="row ideas-block">
-                  <div className="col col-5">
-                    <a
-                      href="#"
-                      className="banner banner_overlay main-idea"
-                      style={{
-                        backgroundImage: "url(" + "/image/ideas/1.jpg" + ")",
-                      }}
-                    >
-                      <div className="banner__desc">Вкусное вино</div>
-                    </a>
-                  </div>
+                <div className="col col-5">
+                  <a
+                    href="#"
+                    className="banner banner_overlay main-idea"
+                    style={{
+                      backgroundImage: "url(" + "/image/ideas/1.jpg" + ")",
+                    }}
+                  >
+                    <div className="banner__desc">Вкусное вино</div>
+                  </a>
+                </div>
                 <div className="ideas col col-7">
-                 <div className="row row_inner">
+                  <div className="row row_inner">
                     <div className="col col-6">
                       <a
                         href="#"
@@ -336,7 +335,7 @@ const MainPage = observer(
                         <div className="banner__desc">На вечеринку</div>
                       </a>
                     </div>
-                 </div>
+                  </div>
                 </div>
               </div>
               <div className="title">
@@ -365,7 +364,7 @@ const MainPage = observer(
                   </a>
                 </div>
 
-               <div className="col col-4">
+                <div className="col col-4">
                   <a
                     className="banner"
                     style={{
@@ -374,7 +373,7 @@ const MainPage = observer(
                   >
                     <div className="banner__desc">До 2 000₽</div>
                   </a>
-               </div>
+                </div>
               </div>
             </div>
           </div>
@@ -399,7 +398,6 @@ const MainPage = observer(
               </div>
             </div>
           </div>
-                  
 
           <div className="collections-h">
             <div className="container">
@@ -414,7 +412,6 @@ const MainPage = observer(
                 </a>
                 <p className="subtitle">Готовые решения для вашего дома</p>
               </div>
-
 
               <div className="row">
                 <div className="col col-7">
@@ -483,9 +480,7 @@ const MainPage = observer(
                 </div>
             </div> */}
               <div className="container container_f">
-                <div className="row">
-                  {newCont}
-                </div>
+                <div className="row">{newCont}</div>
                 <button className="btn btn_primary">Посмотреть еще</button>
               </div>
             </div>
@@ -493,7 +488,6 @@ const MainPage = observer(
           <div className="subscribe">
             <div className="container">
               <div className="row">
-
                 <div className="col col-6 col-middle subscribe__form">
                   <h3>Подпишитесь на новости</h3>
                   <p>
@@ -504,13 +498,16 @@ const MainPage = observer(
                       <div className="input-field">
                         <label className="required" htmlFor="emailSubs">
                           E-mail
-                      </label>
+                        </label>
                         <input
                           id="emailSubs"
                           name="email"
                           type="text"
                           onFocus={(e) => {
-                            $(e.target).parent().find("label").addClass("active");
+                            $(e.target)
+                              .parent()
+                              .find("label")
+                              .addClass("active");
                           }}
                           onBlur={(e) => {
                             if (e.target.value === "") {
@@ -524,17 +521,18 @@ const MainPage = observer(
                       </div>
                     </div>
                     <div className="col col-4">
-                      <button className="btn btn_primary">
-                        Подписаться
-                        </button>
+                      <button className="btn btn_primary">Подписаться</button>
                     </div>
                   </form>
-                </div>  
-              </div> 
+                </div>
+              </div>
             </div>
-            <div className="subscribe__img" style={{
-              backgroundImage: "url(" + "/image/subs/1.jpg" + ")",
-            }}></div>
+            <div
+              className="subscribe__img"
+              style={{
+                backgroundImage: "url(" + "/image/subs/1.jpg" + ")",
+              }}
+            ></div>
           </div>
         </div>
       );
