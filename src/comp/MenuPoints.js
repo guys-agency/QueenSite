@@ -17,6 +17,7 @@ const MenuPoints = observer(
       log: true,
       login: "",
       password: "",
+
       name: "",
     };
 
@@ -474,7 +475,7 @@ const MenuPoints = observer(
                   this.setState({ popreg: false });
                   document
                     .querySelector(".sidebar-overlay")
-                    .classList.remove("visible");
+                    .classList.remove("active");
                 }}
               >
                 Свернуть
@@ -657,9 +658,14 @@ const MenuPoints = observer(
                       }
                     }}
                     onChange={(e) => {
-                      // this.setState({ password: e.target.value });
+                      if (e.target.value !== this.state.password) {
+                        $("#" + e.target.id + "_err").text("хуйнана");
+                      } else {
+                        $("#" + e.target.id + "_err").text("");
+                      }
                     }}
                   />
+                  <p id="password_confirm_err"></p>
                 </div>
                 <button
                   className="btn btn_primary"
