@@ -70,11 +70,13 @@ class Store {
           console.log("dataData :>> ", data);
           Object.keys(data).forEach((element) => {
             testContainer.push(
-              <ProductCard
-                key={data[element].slug}
-                data={data[element]}
-                store={this}
-              />
+              <div className="col col-4">
+                <ProductCard
+                  key={data[element].slug}
+                  data={data[element]}
+                  store={this}
+                />
+              </div>
             );
           });
           this.productsToRender = testContainer;
@@ -178,11 +180,13 @@ class Store {
           console.log("dataData :>> ", data);
           Object.keys(data).forEach((element) => {
             testContainer.push(
-              <ProductCard
-                key={data[element].slug}
-                data={data[element]}
-                store={this}
-              />
+              <div className="col col-4">
+                <ProductCard
+                  key={data[element].slug}
+                  data={data[element]}
+                  store={this}
+                />
+              </div>
             );
           });
 

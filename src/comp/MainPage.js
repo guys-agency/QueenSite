@@ -47,22 +47,23 @@ const MainPage = observer(
           Object.keys(data[0].new).forEach((element) => {
             newContTime.push(
               <div className="col col-3">
-
-              <ProductCard
-                key={data[0].new[element].slug}
-                data={data[0].new[element]}
-                store={this.props.store}
-              />
+                <ProductCard
+                  key={data[0].new[element].slug}
+                  data={data[0].new[element]}
+                  store={this.props.store}
+                />
               </div>
             );
           });
           Object.keys(data[0].all).forEach((element) => {
             allContTime.push(
-              <ProductCard
-                key={data[0].all[element].slug}
-                data={data[0].all[element]}
-                store={this.props.store}
-              />
+              <div className="col col-3">
+                <ProductCard
+                  key={data[0].all[element].slug}
+                  data={data[0].all[element]}
+                  store={this.props.store}
+                />
+              </div>
             );
           });
           this.setState({
