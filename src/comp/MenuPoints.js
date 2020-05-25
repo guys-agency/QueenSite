@@ -450,7 +450,10 @@ const MenuPoints = observer(
                   <button
                     className="profile ic i_user"
                     onClick={() => {
+                      document.querySelector(".sidebar-overlay").classList.add("active");
+                      this.setState({ reg: false });
                       this.setState({ popreg: true });
+                      this.setState({ log: true });
                     }}
                   ></button>
                 </div>
@@ -461,83 +464,215 @@ const MenuPoints = observer(
                 </div>
               </div>
             </div>
-            {this.state.popreg && (
-              <div>
-                <h2>test login</h2>
-                <button onClick={() => {
+            
+            <div className={'sidebar' + (this.state.popreg ? ' visible' : '')}>
+              <button className="btn btn-head" onClick={() => {
+                this.setState({ popreg: false });
+                document.querySelector(".sidebar-overlay").classList.remove("visible");
+              }}>Свернуть</button>
+              
+              <div className="tumbler">
+                <button className={(this.state.log ? ' active' : '')} onClick={() => {
                   this.setState({ reg: false, log: true });
-                }}>log</button>
-                <button
+                }}>Вход</button>
+                <button className={(this.state.reg ? ' active' : '')}
                   onClick={() => {
                     this.setState({ reg: true, log: false });
                   }}
                 >
-                  reg
+                  Регистрация
                 </button>
-                {this.state.log && (
-                  <form>
-                    <label>login</label>
-                    <input
-                      onChange={(e) => {
-                        this.setState({ login: e.target.value });
-                      }}
-                    ></input>
-                    <label>password</label>
-                    <input
-                      onChange={(e) => {
-                        this.setState({ password: e.target.value });
-                      }}
-                    ></input>
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        api.login({
-                          email: this.state.login,
-
-                          password: this.state.password,
-                        });
-                      }}
-                    >
-                      ok
-                    </button>
-                  </form>
-                )}
-                {this.state.reg && (
-                  <form>
-                    <label>name</label>
-                    <input
-                      onChange={(e) => {
-                        this.setState({ name: e.target.value });
-                      }}
-                    ></input>
-                    <label>login</label>
-                    <input
-                      onChange={(e) => {
-                        this.setState({ login: e.target.value });
-                      }}
-                    ></input>
-                    <label>password</label>
-                    <input
-                      onChange={(e) => {
-                        this.setState({ password: e.target.value });
-                      }}
-                    ></input>
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        api.regist({
-                          email: this.state.login,
-                          name: this.state.name,
-                          password: this.state.password,
-                        });
-                      }}
-                    >
-                      ok
-                    </button>
-                  </form>
-                )}
               </div>
-            )}
+
+
+              <form className={(this.state.log ? ' visible' : '')} >
+                <div className="input-field">
+                  <label className="required" htmlFor="email">
+                    Email
+                  </label>
+                  <input
+                    id="email"
+                    type="text"
+                    onFocus={(e) => {
+                      $(e.target)
+                        .parent()
+                        .find("label")
+                        .addClass("active");
+                    }}
+                    onBlur={(e) => {
+                      if (e.target.value === "") {
+                        $(e.target).parent().find('label').removeClass('active');
+                      }
+                    }}
+                    onChange={(e) => {
+                      this.setState({ login: e.target.value });
+                    }}
+                  />
+                </div>
+
+                <div className="input-field">
+                  <label className="required" htmlFor="password">
+                    Пароль
+                  </label>
+                  <input
+                    id="password"
+                    type="password"
+                    onFocus={(e) => {
+                      $(e.target)
+                        .parent()
+                        .find("label")
+                        .addClass("active");
+                    }}
+                    onBlur={(e) => {
+                      if (e.target.value === "") {
+                        $(e.target).parent().find('label').removeClass('active');
+                      }
+                    }}
+                    onChange={(e) => {
+                      this.setState({ login: e.target.value });
+                    }}
+                  />
+                </div>
+
+                <button
+                  className="btn btn_primary"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    api.login({
+                      email: this.state.login,
+
+                      password: this.state.password,
+                    });
+                  }}
+                >
+                  Войти
+                </button>
+                <button className="link dotted forgot-btn">Забыли пароль?</button>
+              </form>
+              <form className={(this.state.reg ? ' visible' : '')}>
+                <div className="input-field">
+                  <label className="required" htmlFor="name">
+                    Имя
+                  </label>
+                  <input
+                    id="name"
+                    type="text"
+                    onFocus={(e) => {
+                      $(e.target)
+                        .parent()
+                        .find("label")
+                        .addClass("active");
+                    }}
+                    onBlur={(e) => {
+                      if (e.target.value === "") {
+                        $(e.target).parent().find('label').removeClass('active');
+                      }
+                    }}
+                    onChange={(e) => {
+                      this.setState({ name: e.target.value });
+                    }}
+                  />
+                </div>
+
+                <div className="input-field">
+                  <label className="required" htmlFor="email">
+                    E-mail
+                  </label>
+                  <input
+                    id="email"
+                    type="text"
+                    onFocus={(e) => {
+                      $(e.target)
+                        .parent()
+                        .find("label")
+                        .addClass("active");
+                    }}
+                    onBlur={(e) => {
+                      if (e.target.value === "") {
+                        $(e.target).parent().find('label').removeClass('active');
+                      }
+                    }}
+                    onChange={(e) => {
+                      this.setState({ login: e.target.value });
+                    }}
+                  />
+                </div>
+
+                <div className="input-field">
+                  <label className="required" htmlFor="password">
+                    Пароль
+                  </label>
+                  <input
+                    id="password"
+                    type="password"
+                    onFocus={(e) => {
+                      $(e.target)
+                        .parent()
+                        .find("label")
+                        .addClass("active");
+                    }}
+                    onBlur={(e) => {
+                      if (e.target.value === "") {
+                        $(e.target).parent().find('label').removeClass('active');
+                      }
+                    }}
+                    onChange={(e) => {
+                      this.setState({ password: e.target.value });
+                    }}
+                  />
+                </div>
+
+                <div className="input-field">
+                  <label className="required" htmlFor="password_confirm">
+                    Пароль еще раз
+                  </label>
+                  <input
+                    id="password_confirm"
+                    type="password"
+                    onFocus={(e) => {
+                      $(e.target)
+                        .parent()
+                        .find("label")
+                        .addClass("active");
+                    }}
+                    onBlur={(e) => {
+                      if (e.target.value === "") {
+                        $(e.target).parent().find('label').removeClass('active');
+                      }
+                    }}
+                    onChange={(e) => {
+                      // this.setState({ password: e.target.value });
+                    }}
+                  />
+                </div>
+                <button
+
+                  className="btn btn_primary"
+
+                  onClick={(e) => {
+                    e.preventDefault();
+                    api.regist({
+                      email: this.state.login,
+                      name: this.state.name,
+                      password: this.state.password,
+                    });
+                  }}
+                >
+                  Регистрация
+                </button>
+              </form>
+            </div>
+
+            <div className="sidebar-overlay"
+              onClick={(e) => {
+                this.setState({ reg: false });
+                this.setState({ popreg: false });
+                this.setState({ log: true });
+
+                e.target.classList.remove("active")
+                document.querySelector(".sidebar").classList.remove("visible");
+              }}
+            ></div>
           </>
         )
       );

@@ -1,6 +1,11 @@
     .column{
         margin-right: 120px;
         min-width: 200px;
+        &>div{
+            &:nth-child(2n){
+                margin-top: 40px;
+            }
+        }
         h5{
             margin-bottom: 0;
         }
