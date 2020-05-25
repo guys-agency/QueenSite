@@ -116,7 +116,7 @@ const MainScreen = observer(
                 (
                   <div className="main-screen">
                     <div className="container">
-                      <div className="row">
+                      <div className="row catalog">
                         <div className="col col-3">
                           <Filters
                             store={this.props.store}
