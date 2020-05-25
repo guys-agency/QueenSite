@@ -1,3 +1,19 @@
+.red{
+  color: $red;
+}
+
+.b_gray{
+  color: $b_gray;
+}
+
+.b_dark{
+  color: $b_dark;
+}
+
+.fw_m{
+  font-weight: 500;
+}
+
 h1, h2{
   font-family: "CaslonC 540 BT", 'Times New Roman', Times, serif;
   text-transform: uppercase;
@@ -116,12 +132,4 @@ p{
 
 .title{
   padding-bottom: 30px;
-}
-
-.red{
-  color: $red;
-}
-
-.b_gray{
-  color: $b_gray;
 }

@@ -21,8 +21,48 @@
             }
         }
         padding-bottom: 100px;
-        .btn{
+        .btn_primary{
             width: 100%;
+        }
+        &-details{
+            .items{
+                margin-bottom: 20px;
+            }
+            .item{
+                display: inline-block;
+                margin-right: 20px;
+                h5{
+                    display: inline-block;
+                    margin-left: 0;
+                    margin-right: 4px;
+                }
+                span{
+                    font-size: 14px;
+                }
+            }
+            padding-bottom: 20px;
+        }
+    }
+
+    &__data{
+        &-form{
+            margin-top: 40px;
+            .col{
+                margin-bottom: 40px;
+            }
+        }
+    }
+    &__promo{
+        width: 100%;
+        margin-top: 20px;
+        position: relative;
+        .def{
+            padding-right: 140px;
+        }
+        button{
+            position: absolute;
+            right: 20px;
+            top: 15px;
         }
     }
     &__result{
@@ -31,10 +71,11 @@
        border-radius: 30px;
        display: flex;
        flex-direction: column;
-        position: sticky;
-        position: -webkit-sticky;
-        top: 90px;
-
+       &-stick{
+            position: sticky;
+            position: -webkit-sticky;
+            top: 90px;
+       }
        ul{
            padding: 0;
            margin: 0;

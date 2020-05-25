@@ -30,6 +30,18 @@ input[type="text"], input[type="tel"], textarea{
     }
 }
 
+input.def{
+    border: 1px solid $gr_middle;
+    border-radius: 30px;
+    height: 44px;
+    padding: {
+        left: 20px;
+    };
+    &::placeholder{
+        opacity: 1;
+    } 
+}
+
 .input-field{
     position: relative;
     label{
@@ -39,6 +51,7 @@ input[type="text"], input[type="tel"], textarea{
         color: $a_dark;
         transition: all 0.2s;
         left: 0;
+        cursor: pointer;
         &.active{
             font-size: 14px;
             // top: -20px;
@@ -48,6 +61,28 @@ input[type="text"], input[type="tel"], textarea{
             &::placeholder{
                 opacity: 1;
             } 
+        }
+        &.required{
+            &::after{
+                content: ' *';
+                color: $red;
+            }
+        }
+    }
+    input[type="number"]{
+        border: 0;
+        font-size: 16px;
+        border-bottom: 1px solid $gr_middle;
+        color: $b_dark;
+        width: 100%;
+        &::placeholder{
+            opacity: 0;
+        }
+        &:focus{
+            border-color: $g_middle;
+            &::placeholder{
+                opacity: 1;
+            }
         }
     }
 }
