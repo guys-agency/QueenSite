@@ -2,6 +2,7 @@ import { observer } from "mobx-react";
 import React from "react";
 import $ from "jquery";
 import { Link, NavLink } from "react-router-dom";
+import LikeButton from "./LikeButton";
 import { Dropdown, Menu } from "semantic-ui-react";
 import Cart from "./Cart";
 import api from "./api";
@@ -316,7 +317,7 @@ const MenuPoints = observer(
                   <span className="i_bohemia"></span>
                   <span className="i_qd"></span>
                 </Link>
-                
+
                 <div className="header__right">
                   <button className="link dotted ask">Задать вопрос</button>
                   <a href="tel:+7 495 744-00-50" className="phone">
@@ -442,7 +443,10 @@ const MenuPoints = observer(
                     <button className="ic i_search"></button>
                   </form>
                   <button className="liked ic i_fav"></button>
-                  <button className="cart ic i_bag"></button>
+                  <LikeButton
+                    classNameProp="cart ic i_bag"
+                    to="/cart"
+                  ></LikeButton>
                   <button
                     className="profile ic i_user"
                     onClick={() => {

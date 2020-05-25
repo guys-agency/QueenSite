@@ -22,6 +22,25 @@ const Filters = observer(
     minPriceLocal = 0;
     maxPriceLocal = 0;
 
+    checkBoxHandler = (name, value) => {
+      const { activeFilters } = this.props.store;
+      console.log("value :>> ", value);
+      if (value === "1") {
+        console.log(" :>> test");
+        if (!activeFilters.attr.includes(name)) {
+          activeFilters.attr.push(name);
+        }
+      } else {
+        console.log(
+          "activeFilters.attr.includes(name) :>> ",
+          activeFilters.attr.includes(name)
+        );
+        if (activeFilters.attr.includes(name)) {
+          activeFilters.attr.splice(activeFilters.attr.indexOf(name), 1);
+        }
+      }
+    };
+
     render() {
       const {
         filterPointsContainers,
@@ -93,6 +112,27 @@ const Filters = observer(
           <div className="main-filers-block">
             <p className="filter-title">Дополнительно</p>
             <div>{optPointsContainers}</div>
+            <div>
+              <label>
+                <input type="checkbox" onChange={this.handleChange} />
+                <span>Хиты продаж</span>
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  onChange={(e) => {
+                    console.log("e.target.value", e.target.value);
+                    e.target.value = !e.target.value;
+                    this.checkBoxHandler("new", e.target.value);
+                  }}
+                />
+                <span>Премиум</span>
+              </label>
+              <label>
+                <input type="checkbox" value="0" />
+                <span>Со скидкой</span>
+              </label>
+            </div>
           </div>
         </div>
       );

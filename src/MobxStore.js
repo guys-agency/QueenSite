@@ -7,7 +7,7 @@ import Paginat from "./comp/paginat";
 
 //1http://134.122.81.119/api
 //127.0.0.1:3010
-const mainAdressServ = "http://134.122.81.119";
+const mainAdressServ = "http://127.0.0.1:3010";
 
 class Store {
   productsToRender = [];
@@ -22,6 +22,7 @@ class Store {
     measure: [],
     count: 0,
     choosePoint: [],
+    attr: [],
     minPrice: 0,
     maxPrice: 0,
   };
@@ -274,6 +275,7 @@ class Store {
       measure: [],
       count: 0,
       choosePoint: [],
+      attr: [],
       minPrice: 0,
       maxPrice: 0,
     };
@@ -332,6 +334,12 @@ class Store {
         price.regular_price["$gte"] = Number(this.activeFilters.minPrice);
       }
       filterArray.push(price);
+    }
+
+    if (this.activeFilters.attr.length) {
+      this.activeFilters.attr.forEach((elem) => {
+        filterArray.push({ [elem]: true });
+      });
     }
 
     const bodyJSON = {

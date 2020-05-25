@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
 import React from "react";
 import $ from "jquery";
+import { withRouter } from "react-router";
 
 import { Link } from "react-router-dom";
 const { Component } = React;
@@ -53,7 +54,10 @@ const CartPage = observer(
         <div className="cart-page">
           <div className="container">
             <p>
-              <Link className="btn" to="/catalog"> <span className="ic i_left"></span> Вернуться в магазин</Link>
+              <a className="btn" onClick={this.props.history.goBack}>
+                {" "}
+                <span className="ic i_left"></span> Вернуться в магазин
+              </a>
             </p>
             <div className="row cart-page__wrp">
               <div className="col col-7">
@@ -63,24 +67,28 @@ const CartPage = observer(
                 </div>
 
                 <div className="cart-page__delivery">
-                  <h3 className="tilda">Доставка
-                    <h5 className="dib">Ваш город:
+                  <h3 className="tilda">
+                    Доставка
+                    <h5 className="dib">
+                      Ваш город:
                       <span>
-                          <button className="link dotted cart-city__btn" onClick={(e) => {
-                          // $(".header__drop").addClass("visible");
-                          // console.log(
-                          //   $(e.target).parent()
-                          // );
-
-                          // $(e.target).addClass("active");
-                        }}>
+                        <button
+                          className="link dotted cart-city__btn"
+                          onClick={(e) => {
+                            // $(".header__drop").addClass("visible");
+                            // console.log(
+                            //   $(e.target).parent()
+                            // );
+                            // $(e.target).addClass("active");
+                          }}
+                        >
                           Москва <span className="ic i_drop"></span>
                         </button>
                         <form className="cart-city__drop header__drop header__drop_city">
                           <div className="input-field">
                             <label className="active" htmlFor="citySearch">
                               Ваш город
-                        </label>
+                            </label>
                             <input
                               id="citySearch"
                               value="Ка"
@@ -115,9 +123,7 @@ const CartPage = observer(
                     </h5>
                   </h3>
 
-                  <div className="btn btn_primary">
-                    Выбрать доставку
-                  </div>
+                  <div className="btn btn_primary">Выбрать доставку</div>
                   <div className="Ya-block" id="yaDeliveryWidget"></div>
                 </div>
 
@@ -125,21 +131,34 @@ const CartPage = observer(
               </div>
               <div className="col col-1"></div>
               <div className="col col-4 cart-page__result-stick">
-              <div className="cart-page__result">
-                <ul>
-                  <li>
-                      <div><span>Итого</span> <span>{totalPrice} ₽</span></div>
-                      <div><span>Стоимость товаров</span> <span>{totalPrice} ₽</span></div>
-                      <div><span>Скидка</span> <span className="red">{totalPrice} ₽</span></div>
-                      <div><span>Доставка</span> <span>250 ₽ / <span className="b_gray"> 3 дня</span></span></div>
-                  </li>
-                </ul>
+                <div className="cart-page__result">
+                  <ul>
+                    <li>
+                      <div>
+                        <span>Итого</span> <span>{totalPrice} ₽</span>
+                      </div>
+                      <div>
+                        <span>Стоимость товаров</span>{" "}
+                        <span>{totalPrice} ₽</span>
+                      </div>
+                      <div>
+                        <span>Скидка</span>{" "}
+                        <span className="red">{totalPrice} ₽</span>
+                      </div>
+                      <div>
+                        <span>Доставка</span>{" "}
+                        <span>
+                          250 ₽ / <span className="b_gray"> 3 дня</span>
+                        </span>
+                      </div>
+                    </li>
+                  </ul>
 
-                <div className="cart-page__result-address">
-                  г. Москва, Большая Андроньевская 23, 24, подъезд 1
-                </div>
+                  <div className="cart-page__result-address">
+                    г. Москва, Большая Андроньевская 23, 24, подъезд 1
+                  </div>
 
-                <button className="btn btn_yellow">Зaказать</button>
+                  <button className="btn btn_yellow">Зaказать</button>
                 </div>
               </div>
             </div>
@@ -266,4 +285,4 @@ function YaDeliveryFunc(w, cart, order) {
   w.YaDelivery ? start() : w.addEventListener("YaDeliveryLoad", start);
 }
 
-export default CartPage;
+export default withRouter(CartPage);
