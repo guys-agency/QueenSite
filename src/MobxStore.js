@@ -4,6 +4,7 @@ import FilterPoint from "./comp/FilterPoint";
 import ProductCard from "./comp/ProductCard";
 import React from "react";
 import Paginat from "./comp/paginat";
+import localStorage from "mobx-localstorage";
 
 //1http://134.122.81.119/api
 //127.0.0.1:3010
@@ -37,7 +38,7 @@ class Store {
   nameSecondCat = "";
 
   cartCount = 0;
-  productInCart = [];
+  productInCart = {};
 
   cardContainer = [];
 
@@ -51,6 +52,17 @@ class Store {
   stopPag = 42;
 
   paginatCont = [];
+
+  addtoCart = autorun(() => {
+    console.log(
+      'localStorage.get("productInCart") :>> ',
+      localStorage.get("productInCart").length
+    );
+    if (Object.keys(localStorage.get("productInCart")).length) {
+      this.productInCart = localStorage.get("productInCart");
+      this.cartCount = this.productInCart.length;
+    }
+  });
 
   getData = (filterArray, bodyJSON, bodyJSONFilter) => {
     const testContainer = [];

@@ -182,7 +182,7 @@ const MenuPoints = observer(
                   <ul>{childsPoints}</ul>
                 </div>
               );
-            } else if (elem.name === "Акссесуары для стола") {
+            } else if (elem.name === "Аксесуары для стола") {
               menu[4] = (
                 <div>
                   <h5>{elem.name}</h5>
@@ -464,9 +464,13 @@ const MenuPoints = observer(
             {this.state.popreg && (
               <div>
                 <h2>test login</h2>
-                <button onClick={() => {
-                  this.setState({ reg: false, log: true });
-                }}>log</button>
+                <button
+                  onClick={() => {
+                    this.setState({ reg: false, log: true });
+                  }}
+                >
+                  log
+                </button>
                 <button
                   onClick={() => {
                     this.setState({ reg: true, log: false });

@@ -37,30 +37,78 @@ const CartPage = observer(
     // };
 
     render() {
-      const { store } = this.props;
+      const { productInCart } = this.props.store;
 
       const productList = [];
       let totalPrice = 0;
-
-      store.productInCart.forEach((el, i) => {
+      console.log("object123123 :>> ", productInCart);
+      Object.keys(productInCart).forEach((el) => {
         productList.push(
-          <div className="product-list" key={i}>
-            <p className="product-list__name">{el.name}</p>
-            <p className="product-list__price">
-              {el.regular_price.toLocaleString() + " руб."}
-            </p>
-            <p className="product-list__price">{el.countInCart}</p>
-            <p
-              className="product-list__delete"
-              onClick={() => {
-                this.deteleProduct(i);
-              }}
-            >
-              Удалить
-            </p>
+          <div className="product product_h" key={el}>
+            <div className="product__image">
+              <div className="product__image-wrp">
+                <img src="/image/Category/Product-card/Placeholder.png" />
+              </div>
+            </div>
+            <div className="product__info">
+              <Link className="product__name" to={"/product/" + el}>
+                {productInCart[el].name}
+              </Link>
+              {productInCart[el].sale ? (
+                <div className={"product__price product__price_disc"}>
+                  <span className="old">
+                    {productInCart[el].regular_price} ₽
+                  </span>{" "}
+                  {productInCart[el].sale_price.toLocaleString()} ₽{" "}
+                  <span className="disc_perc">
+                    -
+                    {(
+                      (productInCart[el].regular_price /
+                        productInCart[el].sale_price -
+                        1) *
+                      100
+                    ).toFixed(0)}
+                    %
+                  </span>
+                </div>
+              ) : (
+                <div className={"product__price"}>
+                  {productInCart[el].regular_price.toLocaleString()} ₽{" "}
+                </div>
+              )}
+              <button className="ic i_close"></button>
+              <div className="product__counter">
+                <button className="ic i_minus"></button>
+                <input
+                  min="1"
+                  max="100"
+                  type="number"
+                  value={productInCart[el].countInCart}
+                />
+                <button className="ic i_plus"></button>
+              </div>
+            </div>
           </div>
+
+          // <div className="product-list" key={i}>
+          //   <p className="product-list__name">{el.name}</p>
+          //   <p className="product-list__price">
+          //     {el.regular_price.toLocaleString() + " руб."}
+          //   </p>
+          //   <p className="product-list__price">{el.countInCart}</p>
+          //   <p
+          //     className="product-list__delete"
+          //     onClick={() => {
+          //       this.deteleProduct(i);
+          //     }}
+          //   >
+          //     Удалить
+          //   </p>
+          // </div>
         );
-        totalPrice += el.countInCart * el.regular_price;
+
+        totalPrice +=
+          productInCart[el].countInCart * productInCart[el].regular_price;
       });
 
       return (
@@ -76,10 +124,11 @@ const CartPage = observer(
               <div className="col col-7">
                 <div className="cart-page__cart">
                   <h3>Оформление заказа</h3>
+
                   <div className="cart__list">
-                    {/* {productList} */}
+                    {productList}
 
-                    <div className="product product_h">
+                    {/* <div className="product product_h">
                       <div className="product__image">
                         <div className="product__image-wrp">
                           <img src="/image/Category/Product-card/Placeholder.png" />
@@ -146,7 +195,7 @@ const CartPage = observer(
                           <button className="ic i_plus"></button>
                         </div>
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
 
@@ -219,15 +268,18 @@ const CartPage = observer(
                   <ul>
                     <li>
                       <div>
-                        <span>Итого</span> <span>{totalPrice} ₽</span>
+                        <span>Итого</span>{" "}
+                        <span>{totalPrice.toLocaleString()} ₽</span>
                       </div>
                       <div>
                         <span>Стоимость товаров</span>{" "}
-                        <span>{totalPrice} ₽</span>
+                        <span>{totalPrice.toLocaleString()} ₽</span>
                       </div>
                       <div>
                         <span>Скидка</span>{" "}
-                        <span className="red">{totalPrice} ₽</span>
+                        <span className="red">
+                          {totalPrice.toLocaleString()} ₽
+                        </span>
                       </div>
                       <div>
                         <span>Доставка</span>{" "}
@@ -252,23 +304,23 @@ const CartPage = observer(
     }
 
     componentDidMount() {
-      const { store } = this.props;
+      const { productInCart } = this.props.store;
       const items = [];
       let sum = 0;
-      store.productInCart.forEach((el, i) => {
-        sum += el.regular_price * el.countInCart;
+      Object.keys(productInCart).forEach((el, i) => {
+        sum += productInCart[el].regular_price * productInCart[el].countInCart;
         items.push({
-          externalId: `${el.slug}`,
-          name: el.name,
-          count: el.countInCart,
-          price: el.regular_price,
-          assessedValue: el.regular_price,
+          externalId: `${productInCart[el].slug}`,
+          name: productInCart[el].name,
+          count: productInCart[el].countInCart,
+          price: productInCart[el].regular_price,
+          assessedValue: productInCart[el].regular_price,
           tax: "NO_VAT",
           dimensions: {
-            weight: el.weight,
-            length: parseInt(el.dimensions.length, 10),
-            width: parseInt(el.dimensions.width, 10),
-            height: parseInt(el.dimensions.height, 10),
+            weight: productInCart[el].weight,
+            length: parseInt(productInCart[el].dimensions.length, 10),
+            width: parseInt(productInCart[el].dimensions.width, 10),
+            height: parseInt(productInCart[el].dimensions.height, 10),
           },
         });
       });

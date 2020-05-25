@@ -25,7 +25,7 @@ const Filters = observer(
     checkBoxHandler = (name, value) => {
       const { activeFilters } = this.props.store;
       console.log("value :>> ", value);
-      if (value === "1") {
+      if (value) {
         console.log(" :>> test");
         if (!activeFilters.attr.includes(name)) {
           activeFilters.attr.push(name);
@@ -129,7 +129,15 @@ const Filters = observer(
                 <span>Премиум</span>
               </label>
               <label>
-                <input type="checkbox" value="0" />
+                <input
+                  type="checkbox"
+                  value="0"
+                  onChange={(e) => {
+                    console.log("e.target.value", e.target.value);
+                    e.target.value = !e.target.value;
+                    this.checkBoxHandler("sale", 1);
+                  }}
+                />
                 <span>Со скидкой</span>
               </label>
             </div>
