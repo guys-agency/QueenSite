@@ -58,7 +58,7 @@
         transition: all 0.2s;
         &.active{
             visibility: visible;
-            opacity: 0;
+            opacity: 0.9;
         }
     }
 }

@@ -187,7 +187,7 @@ const MainScreen = observer(
                     <a className="ic i_fb" href=""></a>
                     <a className="ic i_inst" href=""></a>
                   </div>
-                  <a href="" className="logo logo_sq">
+                  <a href="/" className="logo logo_sq">
                     <span className="i_queen"></span>
                     <span className="i_of"></span>
                     <span className="i_line-h"></span>

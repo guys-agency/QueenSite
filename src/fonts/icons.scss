@@ -156,3 +156,9 @@
     content: $i_filter;
   }
 }
+
+.i_check {
+  &:before {
+    content: $i_check;
+  }
+}
