@@ -80,14 +80,14 @@ const MenuPoints = observer(
       // $(".header__drop").removeClass("visible");
     };
 
-    hoverMenuBtn = (e) => {
+    hoverMenuBtn = () => {
       $(".menu-point").removeClass("active");
       $(".menu_sub").removeClass("visible");
       $(".header__drop").removeClass("visible");
       $(".header__btn").removeClass("active");
     };
 
-    scrollNav = (e) => {
+    scrollNav = () => {
       var scroll = $(window).scrollTop();
       if (scroll > 55) {
         $(".header__drop").removeClass("visible");

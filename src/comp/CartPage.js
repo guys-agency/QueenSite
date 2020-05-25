@@ -19,9 +19,22 @@ const CartPage = observer(
       );
     };
 
+    // toggleCity = (e) => {
+    //   // e.stopPropagation();
+    //   // $(".city__drop").addClass("visible");
+    //   $(e.target).addClass("active");
+    //   console.log(1);
+
+    // };
+
     closeCart = () => {
       this.props.store.cartPage = false;
     };
+
+    // componentDidUpdate() {
+    //   $(".city__btn").off("click", this.toggleCity);
+    //   $(".city__btn").on("click", this.toggleCity);
+    // };
 
     render() {
       const { store } = this.props;
@@ -63,7 +76,78 @@ const CartPage = observer(
               <div className="col col-7">
                 <div className="cart-page__cart">
                   <h3>Оформление заказа</h3>
-                  <div>{productList}</div>
+                  <div className="cart__list">
+                    {/* {productList} */}
+
+                    <div className="product product_h">
+                      <div className="product__image">
+                        <div className="product__image-wrp">
+                          <img src="/image/Category/Product-card/Placeholder.png" />
+                        </div>
+                      </div>
+                      <div className="product__info">
+                        <Link className="product__name">
+                          Кружка 370 мл Модерн, черная матовая
+                        </Link>
+                        <div className="product__price product__price_disc">
+                          <span className="old">152 ₽</span> 152 ₽{" "}
+                          <span className="disc_perc">-20%</span>
+                        </div>
+                        <button className="ic i_close"></button>
+                        <div className="product__counter">
+                          <button className="ic i_minus"></button>
+                          <input min="1" max="100" type="number" value="1" />
+                          <button className="ic i_plus"></button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="product product_h">
+                      <div className="product__image">
+                        <div className="product__image-wrp">
+                          <img src="/image/Category/Product-card/Placeholder.png" />
+                        </div>
+                      </div>
+                      <div className="product__info">
+                        <Link className="product__name">
+                          Кружка 370 мл Модерн, черная матовая
+                        </Link>
+                        <div className="product__price product__price_disc">
+                          <span className="old">152 ₽</span> 152 ₽{" "}
+                          <span className="disc_perc">-20%</span>
+                        </div>
+                        <button className="ic i_close"></button>
+                        <div className="product__counter">
+                          <button className="ic i_minus"></button>
+                          <input min="1" max="100" type="number" value="1" />
+                          <button className="ic i_plus"></button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="product product_h">
+                      <div className="product__image">
+                        <div className="product__image-wrp">
+                          <img src="/image/Category/Product-card/Placeholder.png" />
+                        </div>
+                      </div>
+                      <div className="product__info">
+                        <Link className="product__name">
+                          Кружка 370 мл Модерн, черная матовая
+                        </Link>
+                        <div className="product__price product__price_disc">
+                          <span className="old">152 ₽</span> 152 ₽{" "}
+                          <span className="disc_perc">-20%</span>
+                        </div>
+                        <button className="ic i_close"></button>
+                        <div className="product__counter">
+                          <button className="ic i_minus"></button>
+                          <input min="1" max="100" type="number" value="1" />
+                          <button className="ic i_plus"></button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="cart-page__delivery">
@@ -73,18 +157,18 @@ const CartPage = observer(
                       Ваш город:
                       <span>
                         <button
-                          className="link dotted cart-city__btn"
+                          className="link dotted city__btn"
                           onClick={(e) => {
-                            // $(".header__drop").addClass("visible");
-                            // console.log(
-                            //   $(e.target).parent()
-                            // );
-                            // $(e.target).addClass("active");
+                            e.stopPropagation();
+                            e.target.classList.toggle("active");
+                            document
+                              .querySelector(".city__drop")
+                              .classList.toggle("active");
                           }}
                         >
                           Москва <span className="ic i_drop"></span>
                         </button>
-                        <form className="cart-city__drop header__drop header__drop_city">
+                        <form className="city__drop header__drop header__drop_city">
                           <div className="input-field">
                             <label className="active" htmlFor="citySearch">
                               Ваш город
