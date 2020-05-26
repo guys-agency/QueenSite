@@ -1,13 +1,12 @@
 import { observer } from "mobx-react";
 import React from "react";
-import { useHistory } from "react-router-dom";
+import { withRouter } from "react-router";
 import localStorage from "mobx-localstorage";
 
 const ProductCard = observer(function ProductCard(props) {
-  let history = useHistory();
   const clickHandler = (e) => {
     const { data, store } = props;
-    console.log("currentTarget :>> ", e.target);
+
     if (e.target.classList.contains("i_bag")) {
       const cardData = Object.assign(data, {
         countInCart: 1,
@@ -16,12 +15,8 @@ const ProductCard = observer(function ProductCard(props) {
         localStorage.get("productInCart") &&
         Object.keys(localStorage.get("productInCart")).length
       ) {
-        console.log("object :>> 123123123123123");
         const pc = localStorage.get("productInCart");
-        console.log(
-          "Object.keys(pc).includes(this.cardData.slug) :>> ",
-          Object.keys(pc).includes(cardData.slug)
-        );
+
         if (Object.keys(pc).includes(cardData.slug)) {
           console.log("object :>> ");
           pc[cardData.slug].countInCart += 1;
@@ -35,21 +30,15 @@ const ProductCard = observer(function ProductCard(props) {
         });
     } else {
       store.cardContainer = data;
-      history.push(`/product/${data.slug}`);
+      props.history.push(`/product/${data.slug}`, { test: "test" });
+
       store.productPage = true;
       store.cartPage = false;
     }
   };
 
   const { data } = props;
-  let imagePath = "/image/products/";
-
-  data.meta_data.forEach((elem) => {
-    if (elem.key === "path_to_photo") {
-      const imageCont = elem.value.split(",");
-      imagePath = imagePath + imageCont[0];
-    }
-  });
+  let imagePath = "/image/products/" + data.path_to_photo[0];
 
   return (
     <div className="product" onClick={clickHandler}>
@@ -57,9 +46,9 @@ const ProductCard = observer(function ProductCard(props) {
         <div className="product__image-wrp">
           <img src={imagePath} />
           <div className="product__attr-cont">
-            <div className="product__hit">Хит</div>
-            <div className="product__sale">Акция</div>
-            <div className="product__new">Новинка</div>
+            {data.hit && <div className="product__hit">Хит</div>}
+            {data.sale && <div className="product__sale">Акция</div>}
+            {data.new && <div className="product__new">Новинка</div>}
           </div>
         </div>
         <div className="product__action">
@@ -68,10 +57,23 @@ const ProductCard = observer(function ProductCard(props) {
         </div>
       </div>
       <h3 className="product__name">{data.name}</h3>
+      {data.sale ? (
+        <div className={"product__price product__price_disc"}>
+          <span className="old">{data.regular_price} ₽</span>{" "}
+          {data.sale_price.toLocaleString()} ₽{" "}
+          <span className="disc_perc">
+            {((data.sale_price / data.regular_price - 1) * 100).toFixed(0)}%
+          </span>
+        </div>
+      ) : (
+        <div className={"product__price"}>
+          {data.regular_price.toLocaleString()} ₽{" "}
+        </div>
+      )}
       {/* <p className="product__brand">{data.brand}</p> */}
-      <p className="product__price">{data.regular_price.toLocaleString()} ₽</p>
+      {/* <p className="product__price">{data.regular_price.toLocaleString()} ₽</p> */}
     </div>
   );
 });
 
-export default ProductCard;
+export default withRouter(ProductCard);

@@ -53,6 +53,8 @@ class Store {
 
   paginatCont = [];
 
+  city = "";
+
   addtoCart = autorun(() => {
     console.log(
       'localStorage.get("productInCart") :>> ',
@@ -61,6 +63,24 @@ class Store {
     if (Object.keys(localStorage.get("productInCart")).length) {
       this.productInCart = localStorage.get("productInCart");
       this.cartCount = this.productInCart.length;
+    }
+  });
+
+  cityCheck = autorun(() => {
+    console.log('localStorage.get("city") :>> ', localStorage.get("city"));
+    if (localStorage.get("city")) {
+      this.city = localStorage.get("city").name;
+    } else {
+      const init = () => {
+        const geolocation = window.ymaps.geolocation;
+        if (geolocation) {
+          localStorage.set("city", { name: geolocation.city, sourse: "Y" });
+          this.city = geolocation.city;
+        } else {
+          console.log("Не удалось установить местоположение");
+        }
+      };
+      window.ymaps.ready(init);
     }
   });
 
@@ -300,14 +320,12 @@ class Store {
     this.categoryFilter = {};
   };
 
-  filtration = autorun(() => {
+  filtration = () => {
     console.log("this.props.store.startPag", this.startPag);
     console.log("this.props.store.stopPag", this.stopPag);
     const filterArray = [];
 
     if (this.activeFilters.count) {
-      this.startPag = 0;
-      this.stopPag = 42;
       this.activeFilters.choosePoint.forEach((filterName) => {
         const onePointFilter = [];
         if (filterName !== "choosePoint") {
@@ -358,6 +376,9 @@ class Store {
       });
     }
 
+    console.log("this.props.store.startPag2", this.startPag);
+    console.log("this.props.store.stopPag2", this.stopPag);
+
     const bodyJSON = {
       start: this.startPag,
       stop: this.stopPag,
@@ -378,8 +399,9 @@ class Store {
     }
 
     //переделать, что бы не было лишних запросов
+    console.log("fetch data :>> ", filterArray, bodyJSON);
     this.getData(filterArray, bodyJSON, bodyJSONFilter);
-  });
+  };
 
   createFilterPointsContainers = (availableFilters) => {
     this.minPrice = availableFilters.minPrice;
@@ -599,6 +621,7 @@ decorate(Store, {
   startPag: observable,
   stopPag: observable,
   productValue: observable,
+  city: observable,
 });
 
 const store = new Store();

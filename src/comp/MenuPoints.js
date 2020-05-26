@@ -5,12 +5,17 @@ import { Link, NavLink } from "react-router-dom";
 import LikeButton from "./LikeButton";
 import { Dropdown, Menu } from "semantic-ui-react";
 import Cart from "./Cart";
+import { cities } from "../constants";
 import api from "./api";
+import { Formik, Field, Form } from "formik";
+import RegistrationSchema from "../schemas/registrationSchema";
+import localStorage from "mobx-localstorage";
 const { Component } = React;
 
 const MenuPoints = observer(
   class MenuPoints extends Component {
     state = {
+      cities: [],
       ready: false,
       popreg: false,
       reg: false,
@@ -235,6 +240,16 @@ const MenuPoints = observer(
         });
     };
 
+    focusHandler = (e) => {
+      $(e.target).parent().find("label").addClass("active");
+    };
+
+    blurHandler = (e) => {
+      if (e.target.value === "") {
+        $(e.target).parent().find("label").removeClass("active");
+      }
+    };
+
     render() {
       return (
         this.state.ready && (
@@ -269,7 +284,8 @@ const MenuPoints = observer(
                   <Link>Бонусы</Link>
                   <span>
                     <button className="link dotted header__btn">
-                      Москва <span className="ic i_drop"></span>
+                      {this.props.store.city}{" "}
+                      <span className="ic i_drop"></span>
                     </button>
                     <form className="header__drop header__drop_city">
                       <div className="input-field">
@@ -278,9 +294,53 @@ const MenuPoints = observer(
                         </label>
                         <input
                           id="citySearch"
-                          value="Ка"
                           placeholder="Поиск"
                           type="text"
+                          onInput={(e) => {
+                            if (e.target.value.length >= 3) {
+                              console.log(
+                                "e.target.value.length :>> ",
+                                e.target.value.length
+                              );
+                              const rigthCities = [];
+                              cities.some((el) => {
+                                if (rigthCities.length < 3) {
+                                  if (
+                                    el
+                                      .toLowerCase()
+                                      .indexOf(e.target.value.toLowerCase()) !==
+                                    -1
+                                  ) {
+                                    rigthCities.push(el);
+                                  }
+                                  return false;
+                                } else {
+                                  return true;
+                                }
+                              });
+                              const renderCities = [];
+                              for (let index = 0; index < 3; index++) {
+                                console.log("object :>> ", rigthCities);
+                                renderCities.push(
+                                  <li>
+                                    <button
+                                      type="submit"
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        localStorage.set("city", {
+                                          name: rigthCities[index],
+                                          sourse: "U",
+                                        });
+                                      }}
+                                    >
+                                      {rigthCities[index]}
+                                    </button>
+                                  </li>
+                                );
+                              }
+                              this.setState({ cities: renderCities });
+                            }
+                          }}
                           onFocus={(e) => {
                             $(e.target)
                               .parent()
@@ -295,7 +355,8 @@ const MenuPoints = observer(
                         />
                       </div>
                       <ul>
-                        <li>
+                        {this.state.cities}
+                        {/* <li>
                           <button type="submit">Казань</button>
                         </li>
                         <li>
@@ -303,7 +364,7 @@ const MenuPoints = observer(
                         </li>
                         <li>
                           <button type="submit">Кабанск</button>
-                        </li>
+                        </li> */}
                       </ul>
                     </form>
                   </span>
@@ -500,7 +561,61 @@ const MenuPoints = observer(
                 </button>
               </div>
 
-              <form className={this.state.log ? " visible" : ""}>
+              <Formik
+                //инициализируем значения input-ов
+                initialValues={{
+                  email: "",
+
+                  password: "",
+                }}
+                //подключаем схему валидации, которую описали выше
+                validationSchema={RegistrationSchema}
+                //определяем, что будет происходить при вызове onsubmit
+                onSubmit={(values) => {
+                  console.log(JSON.stringify(values, null, 2));
+                }}
+                //свойство, где описывыем нашу форму
+                //errors-ошибки валидации формы
+                //touched-поля формы, которые мы "затронули",
+                //то есть, в которых что-то ввели
+                render={({ errors, touched }) => (
+                  <Form className={this.state.log ? " visible" : ""}>
+                    <div className="input-field">
+                      <label className="required" htmlFor="email">
+                        Email
+                      </label>
+                      <Field
+                        id="email"
+                        name="email"
+                        type="text"
+                        onFocus={this.focusHandler}
+                        onBlur={this.blurHandler}
+                      />
+                      <div className="field-error">{errors.email}</div>
+                    </div>
+
+                    <div className="input-field">
+                      <label htmlFor="password">Пароль</label>
+                      <Field
+                        name="password"
+                        type="password"
+                        id="password"
+                        onFocus={this.focusHandler}
+                        onBlur={this.blurHandler}
+                      />
+                      <div className="field-error">{errors.password}</div>
+                    </div>
+                    <button type="submit" className="btn btn_primary">
+                      Войти
+                    </button>
+                    <button className="link dotted forgot-btn">
+                      Забыли пароль?
+                    </button>
+                  </Form>
+                )}
+              />
+
+              {/* <form className={this.state.log ? " visible" : ""}>
                 <div className="input-field">
                   <label className="required" htmlFor="email">
                     Email
@@ -565,7 +680,7 @@ const MenuPoints = observer(
                 <button className="link dotted forgot-btn">
                   Забыли пароль?
                 </button>
-              </form>
+              </form> */}
               <form className={this.state.reg ? " visible" : ""}>
                 <div className="input-field">
                   <label className="required" htmlFor="name">
@@ -681,9 +796,15 @@ const MenuPoints = observer(
                   Регистрация
                 </button>
                 <label class="checkbox checkbox_margin">
-                  <input type="checkbox" name="" id=""/>
+                  <input type="checkbox" name="" id="" />
                   <span className="checkbox-btn"></span>
-                  <i>Согласен с условиями "<a className="underline" href="">Публичной оферты</a>"</i>
+                  <i>
+                    Согласен с условиями "
+                    <a className="underline" href="">
+                      Публичной оферты
+                    </a>
+                    "
+                  </i>
                 </label>
               </form>
             </div>

@@ -41,13 +41,15 @@ const CartPage = observer(
 
       const productList = [];
       let totalPrice = 0;
-      console.log("object123123 :>> ", productInCart);
+
       Object.keys(productInCart).forEach((el) => {
         productList.push(
           <div className="product product_h" key={el}>
             <div className="product__image">
               <div className="product__image-wrp">
-                <img src="/image/Category/Product-card/Placeholder.png" />
+                <img
+                  src={"/image/products/" + productInCart[el].path_to_photo[0]}
+                />
               </div>
             </div>
             <div className="product__info">
@@ -61,10 +63,9 @@ const CartPage = observer(
                   </span>{" "}
                   {productInCart[el].sale_price.toLocaleString()} ₽{" "}
                   <span className="disc_perc">
-                    -
                     {(
-                      (productInCart[el].regular_price /
-                        productInCart[el].sale_price -
+                      (productInCart[el].sale_price /
+                        productInCart[el].regular_price -
                         1) *
                       100
                     ).toFixed(0)}

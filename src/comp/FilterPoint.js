@@ -11,7 +11,8 @@ const FilterPoint = observer(
 
     clickHandler = (filterPoint) => {
       const { objectName, data, name } = this.props;
-      const { activeFilters } = this.props.store;
+      const { activeFilters, filtration } = this.props.store;
+
       if (objectName === "measure") {
         const number = Object.keys(activeFilters[objectName]).indexOf(name);
         if (number === -1) {
@@ -52,6 +53,9 @@ const FilterPoint = observer(
           }
         }
       }
+      this.props.store.startPag = 0;
+      this.props.store.stopPag = 42;
+      filtration();
     };
 
     render() {

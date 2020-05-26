@@ -113,6 +113,7 @@ const MainScreen = observer(
                 (this.props.store.nameSecondCat =
                   routProps.match.params.childName),
                 this.props.store.cleaningActiveFilters(),
+                this.props.store.filtration(),
                 (
                   <div className="main-screen">
                     <div className="container">
@@ -138,15 +139,22 @@ const MainScreen = observer(
             <Route
               path="/cart"
               render={() => (
-                <div className="main-screen" onClick={(e)=>{
-                  e.stopPropagation();
+                <div
+                  className="main-screen"
+                  onClick={(e) => {
+                    e.stopPropagation();
 
-                  var container = document.querySelector(".city__drop");
-                  if (!container.contains(e.target)) {
-                    document.querySelector(".city__btn").classList.remove("active");
-                    document.querySelector(".city__drop").classList.remove("active");
-                  }
-                }}>
+                    var container = document.querySelector(".city__drop");
+                    if (!container.contains(e.target)) {
+                      document
+                        .querySelector(".city__btn")
+                        .classList.remove("active");
+                      document
+                        .querySelector(".city__drop")
+                        .classList.remove("active");
+                    }
+                  }}
+                >
                   <CartPage store={this.props.store} />
                 </div>
               )}
@@ -199,39 +207,67 @@ const MainScreen = observer(
                   <h4 className="white">Категории</h4>
                   <div className="footer__links-column">
                     <ul className="footer__links">
-                      <li><a href="">Каталог</a></li>
-                      <li><a href="">Коллекции</a></li>
-                      <li><a href="">Интерьр</a></li>
-                      <li><a href="">Подарки</a></li>
+                      <li>
+                        <a href="">Каталог</a>
+                      </li>
+                      <li>
+                        <a href="">Коллекции</a>
+                      </li>
+                      <li>
+                        <a href="">Интерьр</a>
+                      </li>
+                      <li>
+                        <a href="">Подарки</a>
+                      </li>
                     </ul>
                     <ul className="footer__links">
-                      <li><a href="">Premium</a></li>
-                      <li><a href="">Милениум</a></li>
-                      <li><a href="">Акции</a></li>
+                      <li>
+                        <a href="">Premium</a>
+                      </li>
+                      <li>
+                        <a href="">Милениум</a>
+                      </li>
+                      <li>
+                        <a href="">Акции</a>
+                      </li>
                     </ul>
                   </div>
                 </div>
                 <div className="footer__column">
-                  <h4 className="white">Сервис</h4> 
+                  <h4 className="white">Сервис</h4>
                   <div className="footer__links-column">
                     <ul className="footer__links">
-                      <li><a href="">О нас</a></li>
-                      <li><a href="">Доставка</a></li>
-                      <li><a href="">Оплата</a></li>
+                      <li>
+                        <a href="">О нас</a>
+                      </li>
+                      <li>
+                        <a href="">Доставка</a>
+                      </li>
+                      <li>
+                        <a href="">Оплата</a>
+                      </li>
                     </ul>
                     <ul className="footer__links">
-                      <li><a href="">Возврат</a></li>
-                      <li><a href="">Бонусы</a></li>
-                      <li><a href="">Публичная оферта</a></li>
+                      <li>
+                        <a href="">Возврат</a>
+                      </li>
+                      <li>
+                        <a href="">Бонусы</a>
+                      </li>
+                      <li>
+                        <a href="">Публичная оферта</a>
+                      </li>
                     </ul>
                   </div>
                 </div>
 
                 <div className="footer__column">
                   <h4 className="white">+7 495 744-00-50</h4>
-                  <button class="link dotted ask">Задать вопрос</button>
+                  <button className="link dotted ask">Задать вопрос</button>
                   <div>
-                    <a className="underline" href="mailto:info@queenbohemia.ru">info@queenbohemia.ru</a>
+                    <a className="underline" href="mailto:info@queenbohemia.ru">
+                      info@queenbohemia.ru
+                    </a>
                   </div>
                 </div>
               </div>
@@ -240,7 +276,9 @@ const MainScreen = observer(
                   <p>queenbohemia.ru © 1993 – 2020. Все права защищены</p>
                 </div>
                 <div className="footer__column">
-                  <p>105082, г. Москва, Переведёновский переулок, д. 13, стр. 18</p>
+                  <p>
+                    105082, г. Москва, Переведёновский переулок, д. 13, стр. 18
+                  </p>
                 </div>
               </div>
             </div>

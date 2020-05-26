@@ -12,7 +12,7 @@ const Paginat = observer(
       if (this.props.store.startPag === 0 && this.state.midlPage !== 3) {
         this.setState({ midlPage: 3 });
       }
-      const { productValue } = this.props.store;
+      const { productValue, filtration } = this.props.store;
       console.log("productValue :>> ", productValue);
       const { midlPage } = this.state;
       const page = midlPage - 3;
@@ -35,13 +35,10 @@ const Paginat = observer(
                 this.props.store.startPag = 42 * i;
                 this.props.store.stopPag = 42 * (i + 1);
               }
-              console.log(
-                "this.props.store.startPag",
-                this.props.store.startPag
-              );
-              console.log("this.props.store.stopPag", this.props.store.stopPag);
+
               $("html, body").animate({ scrollTop: 0 }, 500);
               this.setState({ midlPage: i + 1 < 3 ? 3 : i + 1 });
+              filtration();
             }}
           >
             {i + 1}
