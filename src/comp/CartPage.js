@@ -5,6 +5,7 @@ import { withRouter } from "react-router";
 import { cities } from "../constants";
 import localStorage from "mobx-localstorage";
 import { Link } from "react-router-dom";
+import moment from "moment";
 const { Component } = React;
 
 //TODO: исправить вывод стоимости во время скидки
@@ -12,6 +13,7 @@ const CartPage = observer(
   class CartPage extends Component {
     state = {
       cities: [],
+      deliveryData: {},
     };
 
     deteleProduct = (i) => {
@@ -41,6 +43,7 @@ const CartPage = observer(
 
     render() {
       const { productInCart } = this.props.store;
+      const { deliveryData } = this.state;
 
       const productList = [];
       let totalPrice = 0;
@@ -301,117 +304,166 @@ const CartPage = observer(
                         </form>
                       </span>
                     </h5>
-                    <div className="cart-page__delivery-details">
-                      <div className="row">
-                        <div className="items col col-12">
-                          <div className="item">
-                            <h5>Тип доставки:</h5>
-                            <span>Курьером</span>
-                          </div>
+                    {Object.keys(deliveryData).length !== 0 && (
+                      <div className="cart-page__delivery-details">
+                        <div className="row">
+                          <div className="items col col-12">
+                            <div className="item">
+                              <h5>Тип доставки:</h5>
+                              <span>
+                                {deliveryData.deliveryType === "COURIER"
+                                  ? "Курьером"
+                                  : "Пункт выдачи"}{" "}
+                                {deliveryData.deliveryService !== undefined
+                                  ? " (" +
+                                    deliveryData.deliveryService.name +
+                                    ")"
+                                  : deliveryData.deliveryOption.name !== null
+                                  ? "( " +
+                                    deliveryData.deliveryOption.name +
+                                    ")"
+                                  : null}
+                              </span>
+                            </div>
 
-                          <div className="item">
-                            <h5>Служба доставки:</h5>
-                            <span>
-                              СДЭК (250 ₽/ <span className="b_gray">3 дня</span>
-                              )
-                            </span>
-                          </div>
+                            <div className="item">
+                              <h5>Стоимость и сроки:</h5>
+                              <span>
+                                {
+                                  deliveryData.deliveryOption.cost
+                                    .deliveryForCustomer
+                                }{" "}
+                                ₽/{" "}
+                                <span className="b_gray">
+                                  {deliveryData.deliveryOption
+                                    .calculatedDeliveryDateMax ==
+                                  deliveryData.deliveryOption
+                                    .calculatedDeliveryDateMin
+                                    ? moment(
+                                        deliveryData.deliveryOption
+                                          .calculatedDeliveryDateMax
+                                      ).diff(moment(), "days")
+                                    : moment(
+                                        deliveryData.deliveryOption
+                                          .calculatedDeliveryDateMin
+                                      ).diff(moment(), "days") +
+                                      "-" +
+                                      moment(
+                                        deliveryData.deliveryOption
+                                          .calculatedDeliveryDateMax
+                                      ).diff(moment(), "days")}{" "}
+                                  дня
+                                </span>
+                              </span>
+                            </div>
 
-                          <div className="item">
-                            <h5>Адрес выдачи:</h5>
-                            <span>
-                              443063, Самарская обл., Самара, ул. Вольская, д.
-                              71/42, кв. 1 этаж
-                            </span>
+                            {deliveryData.deliveryType !== "COURIER" && (
+                              <div className="item">
+                                <h5>Адрес выдачи:</h5>
+                                <span>
+                                  443063, Самарская обл., Самара, ул. Вольская,
+                                  д. 71/42, кв. 1 этаж
+                                </span>
+                              </div>
+                            )}
                           </div>
                         </div>
+                        {deliveryData.deliveryType === "COURIER" && (
+                          <form className="row" action="">
+                            <div className="col col-8">
+                              <div className="input-field">
+                                <label className="required" htmlFor="address">
+                                  Адрес
+                                </label>
+                                <input
+                                  id="address"
+                                  type="text"
+                                  onFocus={(e) => {
+                                    $(e.target)
+                                      .parent()
+                                      .find("label")
+                                      .addClass("active");
+                                  }}
+                                  onBlur={(e) => {
+                                    if (e.target.value === "") {
+                                      $(e.target)
+                                        .parent()
+                                        .find("label")
+                                        .removeClass("active");
+                                    }
+                                  }}
+                                />
+                              </div>
+                            </div>
+
+                            <div className="col col-2">
+                              <div className="input-field">
+                                <label className="required" htmlFor="flat">
+                                  Кв/Офис
+                                </label>
+                                <input
+                                  id="flat"
+                                  type="text"
+                                  onFocus={(e) => {
+                                    $(e.target)
+                                      .parent()
+                                      .find("label")
+                                      .addClass("active");
+                                  }}
+                                  onBlur={(e) => {
+                                    if (e.target.value === "") {
+                                      $(e.target)
+                                        .parent()
+                                        .find("label")
+                                        .removeClass("active");
+                                    }
+                                  }}
+                                />
+                              </div>
+                            </div>
+
+                            <div className="col col-2">
+                              <div className="input-field">
+                                <label className="required" htmlFor="porch">
+                                  Подъезд
+                                </label>
+                                <input
+                                  id="porch"
+                                  type="text"
+                                  onFocus={(e) => {
+                                    $(e.target)
+                                      .parent()
+                                      .find("label")
+                                      .addClass("active");
+                                  }}
+                                  onBlur={(e) => {
+                                    if (e.target.value === "") {
+                                      $(e.target)
+                                        .parent()
+                                        .find("label")
+                                        .removeClass("active");
+                                    }
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          </form>
+                        )}
                       </div>
-                      <form className="row" action="">
-                        <div className="col col-8">
-                          <div className="input-field">
-                            <label className="required" htmlFor="address">
-                              Адрес
-                            </label>
-                            <input
-                              id="address"
-                              type="text"
-                              onFocus={(e) => {
-                                $(e.target)
-                                  .parent()
-                                  .find("label")
-                                  .addClass("active");
-                              }}
-                              onBlur={(e) => {
-                                if (e.target.value === "") {
-                                  $(e.target)
-                                    .parent()
-                                    .find("label")
-                                    .removeClass("active");
-                                }
-                              }}
-                            />
-                          </div>
-                        </div>
-
-                        <div className="col col-2">
-                          <div className="input-field">
-                            <label className="required" htmlFor="flat">
-                              Кв/Офис
-                            </label>
-                            <input
-                              id="flat"
-                              type="text"
-                              onFocus={(e) => {
-                                $(e.target)
-                                  .parent()
-                                  .find("label")
-                                  .addClass("active");
-                              }}
-                              onBlur={(e) => {
-                                if (e.target.value === "") {
-                                  $(e.target)
-                                    .parent()
-                                    .find("label")
-                                    .removeClass("active");
-                                }
-                              }}
-                            />
-                          </div>
-                        </div>
-
-                        <div className="col col-2">
-                          <div className="input-field">
-                            <label className="required" htmlFor="porch">
-                              Подъезд
-                            </label>
-                            <input
-                              id="porch"
-                              type="text"
-                              onFocus={(e) => {
-                                $(e.target)
-                                  .parent()
-                                  .find("label")
-                                  .addClass("active");
-                              }}
-                              onBlur={(e) => {
-                                if (e.target.value === "") {
-                                  $(e.target)
-                                    .parent()
-                                    .find("label")
-                                    .removeClass("active");
-                                }
-                              }}
-                            />
-                          </div>
-                        </div>
-                      </form>
-                    </div>
+                    )}
                   </h3>
 
-                  <div className="btn btn_primary" onClick={this.startYaDeliv}>
-                    Выбрать доставку
-                  </div>
-                  <div className="btn">Изменить способ доставки</div>
+                  {Object.keys(deliveryData).length === 0 && (
+                    <div
+                      className="btn btn_primary"
+                      onClick={this.startYaDeliv}
+                    >
+                      Выбрать доставку
+                    </div>
+                  )}
+                  {Object.keys(deliveryData).length !== 0 && (
+                    <div className="btn">Изменить способ доставки</div>
+                  )}
                   <div className="Ya-block" id="yaDeliveryWidget"></div>
                 </div>
 
@@ -636,75 +688,142 @@ const CartPage = observer(
           },
         ],
       };
-      YaDeliveryFunc(window, cart, order, city);
+      this.YaDeliveryFunc(window, cart, order, city);
+    };
+
+    YaDeliveryFunc = (w, cart, order, city) => {
+      const start = () => {
+        w.removeEventListener("YaDeliveryLoad", start);
+        // console.log("object", document.getElementById("yaDeliveryWidget"));
+
+        const successCallback = (widget) => {
+          // После инициализации виджета автоматически определяется регион пользователя.
+          // Перед отображением виджета этот регион можно получить методом getRegion...
+
+          widget.getRegionsByName(city).then((regions) => {
+            widget.setRegion({ id: regions[0].id });
+          });
+
+          // ...или изменить, передав идентификатор в аргументе метода setRegion. Узнать
+          // идентификатор региона по его названию можно с помощью метода
+          // getRegionsByName; он возвращает массив регионов, соответствующих названию.
+
+          // Чтобы виджет отобразился, нужно вызвать метод showDeliveryOptions и передать
+          // в его аргументе информацию о товарах в корзине покупателя.
+          // Подробнее об объекте cart.
+          widget.showDeliveryOptions(cart);
+
+          // Чтобы привязать обработчик к событию submitDeliveryOption (пользователь
+          // выбрал вариант доставки), нужно вызвать метод on с двумя аргументами:
+          // названием события и функцией-обработчиком.
+          widget.on("submitDeliveryOption", (deliveryOption) => {
+            // Обработка выбранного пользователем варианта доставки. В параметре deliveryOption
+            // содержится информация о способе доставки, сроках, стоимости и т. д.
+            console.log("deliveryOption", deliveryOption);
+            this.setState({ deliveryData: deliveryOption });
+          });
+
+          // Когда пользователь отправит форму выбора условий доставки, нужно сохранить
+          // их в куки с помощью метода setOrderInfo, чтобы после оформления заказа вы могли
+          // отправить их в Доставку. В аргументе метода нужно передать объект с информацией
+          // о заказе. Подробнее об объекте order.
+          // const form = document.getElementById("checkout");
+          // form.addEventListener("submit", () => widget.setOrderInfo(order));
+        };
+
+        const failureCallback = (error) => {
+          // Эта функция будет вызвана, если при создании виджета произошли ошибки.
+          console.log("error", error);
+        };
+
+        // Создание виджета
+        w.YaDelivery.createWidget({
+          // Обязательные параметры
+          containerId: "yaDeliveryWidget", // Идентификатор HTML-элемента (контейнера),
+          // в котором будет отображаться виджет
+          type: "deliveryCart", // Тип виджета - всегда deliveryCart
+
+          params: {
+            // Обязательные параметры
+            apiKey: "f16336a6-8d98-4f0e-b07f-3969b2384006", // Авторизационный ключ
+            senderId: 500001936, // Идентификатор магазина
+          },
+        })
+          // Функция createWidget возвращает объект типа Promise. С ним можно
+          // продолжить работу с помощью функций-коллбэков, передаваемых в аргументах
+          // методов then (при успешном создании виджета) и catch (для обработки ошибок).
+          .then(successCallback)
+          .catch(failureCallback);
+      };
+      w.YaDelivery ? start() : w.addEventListener("YaDeliveryLoad", start);
     };
   }
 );
 
-function YaDeliveryFunc(w, cart, order, city) {
-  function start() {
-    w.removeEventListener("YaDeliveryLoad", start);
-    // console.log("object", document.getElementById("yaDeliveryWidget"));
+// function YaDeliveryFunc(w, cart, order, city) {
+//   function start() {
+//     w.removeEventListener("YaDeliveryLoad", start);
+//     // console.log("object", document.getElementById("yaDeliveryWidget"));
 
-    // Создание виджета
-    w.YaDelivery.createWidget({
-      // Обязательные параметры
-      containerId: "yaDeliveryWidget", // Идентификатор HTML-элемента (контейнера),
-      // в котором будет отображаться виджет
-      type: "deliveryCart", // Тип виджета - всегда deliveryCart
+//     // Создание виджета
+//     w.YaDelivery.createWidget({
+//       // Обязательные параметры
+//       containerId: "yaDeliveryWidget", // Идентификатор HTML-элемента (контейнера),
+//       // в котором будет отображаться виджет
+//       type: "deliveryCart", // Тип виджета - всегда deliveryCart
 
-      params: {
-        // Обязательные параметры
-        apiKey: "f16336a6-8d98-4f0e-b07f-3969b2384006", // Авторизационный ключ
-        senderId: 500001936, // Идентификатор магазина
-      },
-    })
-      // Функция createWidget возвращает объект типа Promise. С ним можно
-      // продолжить работу с помощью функций-коллбэков, передаваемых в аргументах
-      // методов then (при успешном создании виджета) и catch (для обработки ошибок).
-      .then(successCallback)
-      .catch(failureCallback);
+//       params: {
+//         // Обязательные параметры
+//         apiKey: "f16336a6-8d98-4f0e-b07f-3969b2384006", // Авторизационный ключ
+//         senderId: 500001936, // Идентификатор магазина
+//       },
+//     })
+//       // Функция createWidget возвращает объект типа Promise. С ним можно
+//       // продолжить работу с помощью функций-коллбэков, передаваемых в аргументах
+//       // методов then (при успешном создании виджета) и catch (для обработки ошибок).
+//       .then(successCallback)
+//       .catch(failureCallback);
 
-    function successCallback(widget) {
-      // После инициализации виджета автоматически определяется регион пользователя.
-      // Перед отображением виджета этот регион можно получить методом getRegion...
+//     function successCallback(widget) {
+//       // После инициализации виджета автоматически определяется регион пользователя.
+//       // Перед отображением виджета этот регион можно получить методом getRegion...
 
-      widget.getRegionsByName(city).then((regions) => {
-        widget.setRegion({ id: regions[0].id });
-      });
+//       widget.getRegionsByName(city).then((regions) => {
+//         widget.setRegion({ id: regions[0].id });
+//       });
 
-      // ...или изменить, передав идентификатор в аргументе метода setRegion. Узнать
-      // идентификатор региона по его названию можно с помощью метода
-      // getRegionsByName; он возвращает массив регионов, соответствующих названию.
+//       // ...или изменить, передав идентификатор в аргументе метода setRegion. Узнать
+//       // идентификатор региона по его названию можно с помощью метода
+//       // getRegionsByName; он возвращает массив регионов, соответствующих названию.
 
-      // Чтобы виджет отобразился, нужно вызвать метод showDeliveryOptions и передать
-      // в его аргументе информацию о товарах в корзине покупателя.
-      // Подробнее об объекте cart.
-      widget.showDeliveryOptions(cart);
+//       // Чтобы виджет отобразился, нужно вызвать метод showDeliveryOptions и передать
+//       // в его аргументе информацию о товарах в корзине покупателя.
+//       // Подробнее об объекте cart.
+//       widget.showDeliveryOptions(cart);
 
-      // Чтобы привязать обработчик к событию submitDeliveryOption (пользователь
-      // выбрал вариант доставки), нужно вызвать метод on с двумя аргументами:
-      // названием события и функцией-обработчиком.
-      widget.on("submitDeliveryOption", (deliveryOption) => {
-        // Обработка выбранного пользователем варианта доставки. В параметре deliveryOption
-        // содержится информация о способе доставки, сроках, стоимости и т. д.
-        console.log("deliveryOption", deliveryOption);
-      });
+//       // Чтобы привязать обработчик к событию submitDeliveryOption (пользователь
+//       // выбрал вариант доставки), нужно вызвать метод on с двумя аргументами:
+//       // названием события и функцией-обработчиком.
+//       widget.on("submitDeliveryOption", (deliveryOption) => {
+//         // Обработка выбранного пользователем варианта доставки. В параметре deliveryOption
+//         // содержится информация о способе доставки, сроках, стоимости и т. д.
+//         console.log("deliveryOption", deliveryOption);
+//       });
 
-      // Когда пользователь отправит форму выбора условий доставки, нужно сохранить
-      // их в куки с помощью метода setOrderInfo, чтобы после оформления заказа вы могли
-      // отправить их в Доставку. В аргументе метода нужно передать объект с информацией
-      // о заказе. Подробнее об объекте order.
-      // const form = document.getElementById("checkout");
-      // form.addEventListener("submit", () => widget.setOrderInfo(order));
-    }
+//       // Когда пользователь отправит форму выбора условий доставки, нужно сохранить
+//       // их в куки с помощью метода setOrderInfo, чтобы после оформления заказа вы могли
+//       // отправить их в Доставку. В аргументе метода нужно передать объект с информацией
+//       // о заказе. Подробнее об объекте order.
+//       // const form = document.getElementById("checkout");
+//       // form.addEventListener("submit", () => widget.setOrderInfo(order));
+//     }
 
-    function failureCallback(error) {
-      // Эта функция будет вызвана, если при создании виджета произошли ошибки.
-      console.log("error", error);
-    }
-  }
-  w.YaDelivery ? start() : w.addEventListener("YaDeliveryLoad", start);
-}
+//     function failureCallback(error) {
+//       // Эта функция будет вызвана, если при создании виджета произошли ошибки.
+//       console.log("error", error);
+//     }
+//   }
+//   w.YaDelivery ? start() : w.addEventListener("YaDeliveryLoad", start);
+// }
 
 export default withRouter(CartPage);
