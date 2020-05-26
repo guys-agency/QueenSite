@@ -38,14 +38,17 @@ const FilterPoint = observer(
         }
       } else {
         const number = activeFilters[objectName].indexOf(filterPoint);
+
         if (number === -1) {
           activeFilters[objectName].push(filterPoint);
           activeFilters.count += 1;
-          activeFilters.choosePoint.push(objectName);
+          if (activeFilters.choosePoint.indexOf(objectName) === -1)
+            activeFilters.choosePoint.push(objectName);
         } else {
           activeFilters.count -= 1;
           activeFilters[objectName].splice(number, 1);
-          if (activeFilters[objectName].length) {
+
+          if (!activeFilters[objectName].length) {
             const numberInChoose = activeFilters.choosePoint.indexOf(
               objectName
             );

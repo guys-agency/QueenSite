@@ -281,11 +281,7 @@ const MainScreen = observer(
                     105082, г. Москва, Переведёновский переулок, д. 13, стр. 18
                   </p>
                 </div>
-                <div
-                  onLoad={() => {
-                    console.log("test");
-                  }}
-                ></div>
+                <div></div>
               </div>
             </div>
           </div>
@@ -294,6 +290,50 @@ const MainScreen = observer(
     }
   }
 );
+
+const ddata = {
+  senderId: 500001936,
+  from: {
+    location: "Москва",
+  },
+  to: {
+    location: "Новосибирск",
+  },
+  dimensions: {
+    length: 10,
+    width: 20,
+    height: 30,
+    weight: 5.25,
+  },
+  deliveryType: "POST",
+
+  cost: {
+    assessedValue: 500,
+    itemsSum: 1000,
+    manualDeliveryForCustomer: 750,
+    fullyPrepaid: true,
+  },
+};
+
+const test = "AgAAAABASxkvAAZdVra9ZV0BJ0IXqs3u8imsY8s";
+
+fetch("https://api.delivery.yandex.ru/delivery-options", {
+  headers: {
+    Authorization: "OAuth AgAAAABASxkvAAZdVra9ZV0BJ0IXqs3u8imsY8s",
+    "Content-Type": "application/json",
+  },
+  method: "PUT",
+})
+  .then((res) => {
+    console.log("res", res);
+    return res.json();
+  })
+  .then((res) => {
+    console.log("res :>> ", res);
+  })
+  .catch((err) => {
+    console.log("err :>> ", err);
+  });
 
 class LoginAuth extends Component {
   state = {};

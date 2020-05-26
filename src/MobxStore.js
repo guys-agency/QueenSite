@@ -321,8 +321,6 @@ class Store {
   };
 
   filtration = () => {
-    console.log("this.props.store.startPag", this.startPag);
-    console.log("this.props.store.stopPag", this.stopPag);
     const filterArray = [];
 
     if (this.activeFilters.count) {
@@ -376,9 +374,6 @@ class Store {
       });
     }
 
-    console.log("this.props.store.startPag2", this.startPag);
-    console.log("this.props.store.stopPag2", this.stopPag);
-
     const bodyJSON = {
       start: this.startPag,
       stop: this.stopPag,
@@ -399,7 +394,7 @@ class Store {
     }
 
     //переделать, что бы не было лишних запросов
-    console.log("fetch data :>> ", filterArray, bodyJSON);
+
     this.getData(filterArray, bodyJSON, bodyJSONFilter);
   };
 
