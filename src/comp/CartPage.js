@@ -47,6 +47,9 @@ const CartPage = observer(
 
       const productList = [];
       let totalPrice = 0;
+      let totalSale = 0;
+      let totalFullprice = 0;
+      let address = "";
 
       Object.keys(productInCart).forEach((el) => {
         productList.push(
@@ -103,25 +106,17 @@ const CartPage = observer(
               </div>
             </div>
           </div>
-
-          // <div className="product-list" key={i}>
-          //   <p className="product-list__name">{el.name}</p>
-          //   <p className="product-list__price">
-          //     {el.regular_price.toLocaleString() + " руб."}
-          //   </p>
-          //   <p className="product-list__price">{el.countInCart}</p>
-          //   <p
-          //     className="product-list__delete"
-          //     onClick={() => {
-          //       this.deteleProduct(i);
-          //     }}
-          //   >
-          //     Удалить
-          //   </p>
-          // </div>
         );
 
-        totalPrice +=
+        totalPrice += productInCart[el].sale
+          ? productInCart[el].countInCart * productInCart[el].sale_price
+          : productInCart[el].countInCart * productInCart[el].regular_price;
+
+        totalSale += productInCart[el].sale
+          ? (productInCart[el].regular_price - productInCart[el].sale_price) *
+            productInCart[el].countInCart
+          : 0;
+        totalFullprice +=
           productInCart[el].countInCart * productInCart[el].regular_price;
       });
 
@@ -335,24 +330,7 @@ const CartPage = observer(
                                 }{" "}
                                 ₽/{" "}
                                 <span className="b_gray">
-                                  {deliveryData.deliveryOption
-                                    .calculatedDeliveryDateMax ==
-                                  deliveryData.deliveryOption
-                                    .calculatedDeliveryDateMin
-                                    ? moment(
-                                        deliveryData.deliveryOption
-                                          .calculatedDeliveryDateMax
-                                      ).diff(moment(), "days")
-                                    : moment(
-                                        deliveryData.deliveryOption
-                                          .calculatedDeliveryDateMin
-                                      ).diff(moment(), "days") +
-                                      "-" +
-                                      moment(
-                                        deliveryData.deliveryOption
-                                          .calculatedDeliveryDateMax
-                                      ).diff(moment(), "days")}{" "}
-                                  дня
+                                  {deliveryData.time} дня
                                 </span>
                               </span>
                             </div>
@@ -361,8 +339,10 @@ const CartPage = observer(
                               <div className="item">
                                 <h5>Адрес выдачи:</h5>
                                 <span>
-                                  443063, Самарская обл., Самара, ул. Вольская,
-                                  д. 71/42, кв. 1 этаж
+                                  {
+                                    deliveryData.pickupPoint.address
+                                      .addressString
+                                  }
                                 </span>
                               </div>
                             )}
@@ -462,7 +442,9 @@ const CartPage = observer(
                     </div>
                   )}
                   {Object.keys(deliveryData).length !== 0 && (
-                    <div className="btn">Изменить способ доставки</div>
+                    <div className="btn" onClick={this.startYaDeliv}>
+                      Изменить способ доставки
+                    </div>
                   )}
                   <div className="Ya-block" id="yaDeliveryWidget"></div>
                 </div>
@@ -593,28 +575,55 @@ const CartPage = observer(
                     <ul>
                       <li>
                         <div>
-                          <span>Итого</span> <span>{totalPrice} ₽</span>
+                          <span>Итого</span>{" "}
+                          <span>
+                            {Object.keys(deliveryData).length === 0
+                              ? totalPrice.toLocaleString()
+                              : (
+                                  deliveryData.deliveryOption.cost
+                                    .deliveryForCustomer + totalPrice
+                                ).toLocaleString()}{" "}
+                            ₽
+                          </span>
                         </div>
                         <div>
                           <span>Стоимость товаров</span>{" "}
-                          <span>{totalPrice} ₽</span>
+                          <span>{totalFullprice.toLocaleString()} ₽</span>
                         </div>
                         <div>
                           <span>Скидка</span>{" "}
-                          <span className="red">{totalPrice} ₽</span>
-                        </div>
-                        <div>
-                          <span>Доставка</span>{" "}
-                          <span>
-                            250 ₽ / <span className="b_gray"> 3 дня</span>
+                          <span className="red">
+                            {totalSale.toLocaleString()} ₽
                           </span>
                         </div>
+                        {Object.keys(deliveryData).length !== 0 && (
+                          <div>
+                            <span>Доставка</span>{" "}
+                            <span>
+                              {
+                                deliveryData.deliveryOption.cost
+                                  .deliveryForCustomer
+                              }{" "}
+                              ₽ /{" "}
+                              <span className="b_gray">
+                                {" "}
+                                {deliveryData.time} дня
+                              </span>
+                            </span>
+                          </div>
+                        )}
                       </li>
                     </ul>
 
-                    <div className="cart-page__result-address">
-                      г. Москва, Большая Андроньевская 23, 24, подъезд 1
-                    </div>
+                    {Object.keys(deliveryData).length !== 0 &&
+                      (deliveryData.deliveryType !== "COURIER" ||
+                        address !== "") && (
+                        <div className="cart-page__result-address">
+                          {deliveryData.deliveryType !== "COURIER"
+                            ? deliveryData.pickupPoint.address.addressString
+                            : address}
+                        </div>
+                      )}
 
                     <button className="btn btn_yellow">Зaказать</button>
                   </div>
@@ -720,7 +729,24 @@ const CartPage = observer(
             // Обработка выбранного пользователем варианта доставки. В параметре deliveryOption
             // содержится информация о способе доставки, сроках, стоимости и т. д.
             console.log("deliveryOption", deliveryOption);
-            this.setState({ deliveryData: deliveryOption });
+            const time =
+              deliveryOption.deliveryOption.calculatedDeliveryDateMax ==
+              deliveryOption.deliveryOption.calculatedDeliveryDateMin
+                ? moment(
+                    deliveryOption.deliveryOption.calculatedDeliveryDateMax
+                  ).diff(moment(), "days")
+                : moment(
+                    deliveryOption.deliveryOption.calculatedDeliveryDateMin
+                  ).diff(moment(), "days") +
+                  "-" +
+                  moment(
+                    deliveryOption.deliveryOption.calculatedDeliveryDateMax
+                  ).diff(moment(), "days");
+            this.setState({ deliveryData: { ...deliveryOption, time } });
+
+            setInterval(() => {
+              console.log("object :>> ", deliveryOption.deliveryType);
+            }, 500);
           });
 
           // Когда пользователь отправит форму выбора условий доставки, нужно сохранить

@@ -8,6 +8,9 @@ import * as serviceWorker from "./serviceWorker";
 import store from "./MobxStore";
 import { BrowserRouter } from "react-router-dom";
 const WooCommerceRestApi = require("@woocommerce/woocommerce-rest-api").default;
+require("dotenv").config();
+
+console.log("object111 :>> ", process.env.SECRET_KEY);
 
 // let json = csvToJson.fieldDelimiter("~").getJsonFromCsv("all.csv");
 // console.log("json", json);
