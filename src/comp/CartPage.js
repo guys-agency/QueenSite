@@ -2,14 +2,17 @@ import { observer } from "mobx-react";
 import React from "react";
 import $ from "jquery";
 import { withRouter } from "react-router";
-
+import { cities } from "../constants";
+import localStorage from "mobx-localstorage";
 import { Link } from "react-router-dom";
 const { Component } = React;
 
 //TODO: исправить вывод стоимости во время скидки
 const CartPage = observer(
   class CartPage extends Component {
-    state = {};
+    state = {
+      cities: [],
+    };
 
     deteleProduct = (i) => {
       console.log("work?");
@@ -77,7 +80,14 @@ const CartPage = observer(
                   {productInCart[el].regular_price.toLocaleString()} ₽{" "}
                 </div>
               )}
-              <button className="ic i_close"></button>
+              <button
+                className="ic i_close"
+                onClick={() => {
+                  const deleteObj = localStorage.get("productInCart");
+                  delete deleteObj[el];
+                  localStorage.set("productInCart", deleteObj);
+                }}
+              ></button>
               <div className="product__counter">
                 <button className="ic i_minus"></button>
                 <input
@@ -216,7 +226,8 @@ const CartPage = observer(
                               .classList.toggle("active");
                           }}
                         >
-                          Москва <span className="ic i_drop"></span>
+                          {this.props.store.city}{" "}
+                          <span className="ic i_drop"></span>
                         </button>
                         <form className="city__drop header__drop header__drop_city">
                           <div className="input-field">
@@ -225,9 +236,54 @@ const CartPage = observer(
                             </label>
                             <input
                               id="citySearch"
-                              value="Ка"
                               placeholder="Поиск"
                               type="text"
+                              onInput={(e) => {
+                                if (e.target.value.length >= 3) {
+                                  console.log(
+                                    "e.target.value.length :>> ",
+                                    e.target.value.length
+                                  );
+                                  const rigthCities = [];
+                                  cities.some((el) => {
+                                    if (rigthCities.length < 3) {
+                                      if (
+                                        el
+                                          .toLowerCase()
+                                          .indexOf(
+                                            e.target.value.toLowerCase()
+                                          ) !== -1
+                                      ) {
+                                        rigthCities.push(el);
+                                      }
+                                      return false;
+                                    } else {
+                                      return true;
+                                    }
+                                  });
+                                  const renderCities = [];
+                                  for (let index = 0; index < 3; index++) {
+                                    console.log("object :>> ", rigthCities);
+                                    renderCities.push(
+                                      <li>
+                                        <button
+                                          type="submit"
+                                          onClick={(e) => {
+                                            e.preventDefault();
+                                            localStorage.set("city", {
+                                              name: rigthCities[index],
+                                              sourse: "U",
+                                            });
+                                          }}
+                                        >
+                                          {rigthCities[index]}
+                                        </button>
+                                      </li>
+                                    );
+                                  }
+                                  this.setState({ cities: renderCities });
+                                }
+                              }}
                               onFocus={(e) => {
                                 $(e.target)
                                   .parent()
@@ -241,17 +297,7 @@ const CartPage = observer(
                               }}
                             />
                           </div>
-                          <ul>
-                            <li>
-                              <button type="submit">Казань</button>
-                            </li>
-                            <li>
-                              <button type="submit">Калининград</button>
-                            </li>
-                            <li>
-                              <button type="submit">Кабанск</button>
-                            </li>
-                          </ul>
+                          <ul>{this.state.cities}</ul>
                         </form>
                       </span>
                     </h5>
@@ -362,7 +408,9 @@ const CartPage = observer(
                     </div>
                   </h3>
 
-                  <div className="btn btn_primary">Выбрать доставку</div>
+                  <div className="btn btn_primary" onClick={this.startYaDeliv}>
+                    Выбрать доставку
+                  </div>
                   <div className="btn">Изменить способ доставки</div>
                   <div className="Ya-block" id="yaDeliveryWidget"></div>
                 </div>
@@ -534,8 +582,18 @@ const CartPage = observer(
       );
     }
 
-    componentDidMount() {
-      const { productInCart } = this.props.store;
+    componentDidMount() {}
+
+    startYaDeliv = () => {
+      const { productInCart, city } = this.props.store;
+      console.log(
+        "productInCart :>> ",
+        productInCart[Object.keys(productInCart)[2]]
+      );
+      console.log(
+        "Object.keys(productInCart) :>> ",
+        Object.keys(productInCart)
+      );
       const items = [];
       let sum = 0;
       Object.keys(productInCart).forEach((el, i) => {
@@ -548,7 +606,7 @@ const CartPage = observer(
           assessedValue: productInCart[el].regular_price,
           tax: "NO_VAT",
           dimensions: {
-            weight: productInCart[el].weight,
+            weight: +productInCart[el].weight,
             length: parseInt(productInCart[el].dimensions.length, 10),
             width: parseInt(productInCart[el].dimensions.width, 10),
             height: parseInt(productInCart[el].dimensions.height, 10),
@@ -578,15 +636,15 @@ const CartPage = observer(
           },
         ],
       };
-      YaDeliveryFunc(window, cart, order);
-    }
+      YaDeliveryFunc(window, cart, order, city);
+    };
   }
 );
 
-function YaDeliveryFunc(w, cart, order) {
+function YaDeliveryFunc(w, cart, order, city) {
   function start() {
     w.removeEventListener("YaDeliveryLoad", start);
-    console.log("object", document.getElementById("yaDeliveryWidget"));
+    // console.log("object", document.getElementById("yaDeliveryWidget"));
 
     // Создание виджета
     w.YaDelivery.createWidget({
@@ -594,13 +652,11 @@ function YaDeliveryFunc(w, cart, order) {
       containerId: "yaDeliveryWidget", // Идентификатор HTML-элемента (контейнера),
       // в котором будет отображаться виджет
       type: "deliveryCart", // Тип виджета - всегда deliveryCart
-      onlyDeliveryTypes: ["pickup"],
-      deliveryType: "PICKUP",
+
       params: {
         // Обязательные параметры
         apiKey: "f16336a6-8d98-4f0e-b07f-3969b2384006", // Авторизационный ключ
         senderId: 500001936, // Идентификатор магазина
-        deliveryType: "PICKUP",
       },
     })
       // Функция createWidget возвращает объект типа Promise. С ним можно
@@ -612,12 +668,11 @@ function YaDeliveryFunc(w, cart, order) {
     function successCallback(widget) {
       // После инициализации виджета автоматически определяется регион пользователя.
       // Перед отображением виджета этот регион можно получить методом getRegion...
-      var regionName;
-      widget.getRegion().then(({ name }) =>
-        widget.getRegionsByName(name).then((regions) => {
-          widget.setRegion({ id: regions[0].id });
-        })
-      );
+
+      widget.getRegionsByName(city).then((regions) => {
+        widget.setRegion({ id: regions[0].id });
+      });
+
       // ...или изменить, передав идентификатор в аргументе метода setRegion. Узнать
       // идентификатор региона по его названию можно с помощью метода
       // getRegionsByName; он возвращает массив регионов, соответствующих названию.
