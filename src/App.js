@@ -1,15 +1,16 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import { observer } from "mobx-react";
 import { Router, Route, Switch } from "react-router";
 import { Link, NavLink } from "react-router-dom";
-import { navigate } from "hookrouter";
+
 import MenuPoints from "./comp/MenuPoints";
 import Filters from "./comp/Filters";
 import ProductCardContainer from "./comp/ProductCardContainer";
 import CartPage from "./comp/CartPage";
 import CardView from "./comp/CardView";
 import MainPage from "./comp/MainPage";
+import Swiper from "react-id-swiper";
 
 const { Component } = React;
 
@@ -21,12 +22,12 @@ const MainScreen = observer(
 
     cardContainer = [];
 
-    clickHandler = (data) => {
-      // this.cardContainer = <CardView data={data} store={this.props.store} />;
-      navigate(`/product/${data.slug}`, false, { data });
-      this.props.store.productPage = true;
-      this.props.store.cartPage = false;
-    };
+    // clickHandler = (data) => {
+    //   // this.cardContainer = <CardView data={data} store={this.props.store} />;
+    //   navigate(`/product/${data.slug}`, false, { data });
+    //   this.props.store.productPage = true;
+    //   this.props.store.cartPage = false;
+    // };
 
     chooseMenuPoint = (nameMainCat, nameSecondCat, start, stop) => {
       const testContainer = [];
@@ -280,6 +281,11 @@ const MainScreen = observer(
                     105082, г. Москва, Переведёновский переулок, д. 13, стр. 18
                   </p>
                 </div>
+                <div
+                  onLoad={() => {
+                    console.log("test");
+                  }}
+                ></div>
               </div>
             </div>
           </div>
