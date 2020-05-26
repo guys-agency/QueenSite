@@ -1,9 +1,12 @@
 .filters-block {
   display: flex;
   flex-direction: column;
-  width: 263px;
+  padding-right: 30px;
   margin-right: 20px;
 
+  .filter-block{
+    position: relative;
+  }
   .main-filers-block {
     margin-bottom: 20px;
     &.price {
@@ -62,56 +65,109 @@
     }
   }
 
-  .filter-title {
-    font-family: Excentra Pro;
-    font-style: normal;
-    font-weight: 500;
-    font-size: 14px;
-
-    display: flex;
-    align-items: flex-end;
-
-    margin-bottom: 15px;
-
-    color: #89a5bf;
-  }
-
   .filter__name {
-    font-family: Excentra Pro;
-    font-style: normal;
+    cursor: pointer;
     font-weight: normal;
     font-size: 15px;
     line-height: 15px;
+    position: relative;
+    margin-bottom: 0;
     /* identical to box height */
 
     /* Blue/Dark */
 
-    color: #00094d;
+    color: $b_dark;
+    transition: all 0.2s;
+    .ic{
+      position: absolute;
+      right: 0;
+      top: 0;
+      color: $a_middle;
+      // transition: initial;
+    }
+    &:hover{
+      color: $g_middle;
+      .ic{
+        color: $g_middle;
+        transform: translateY(2px);
+      }
+    }
+    &.active{
+      color: $g_middle;
+      .ic{
+        color: $g_middle;
+        transform: scale(-1);
+      }
+    }
   }
 
   .filter__container {
-    padding-left: 15px;
-    max-height: 0px;
+    max-height: 0;
+    padding-left: 1px;
+    padding-right: 1px;
+    padding-top: 13px;
+    margin-bottom: 5px;
+    transition: max-height 0.1s, opacity 0.3s, visibility 0.3s;
+    opacity: 0;
+    visibility: hidden;
     overflow: hidden;
-
-    transition: max-height 0.5s linear, margin-bottom 0.2s linear;
-
+    &::before{
+      content: '';
+      width: 100%;
+      height: 15px;
+      background: linear-gradient( #fff, rgba(255, 255, 255, 0));
+      position: absolute;
+      left: 0;
+      top: 15px;
+    }
+    &::after{
+      content: '';
+      width: 100%;
+      height: 30px;
+      background: linear-gradient( rgba(255, 255, 255, 0), #fff);
+      position: absolute;
+      left: 0;
+      bottom: 0px;
+    }
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    -ms-overflow-style: none;
+    overflow: -moz-scrollbars-none;
     &.active {
-      max-height: 1000px;
-      margin-bottom: 15px;
+      max-height: 200px;
+      opacity: 1;
+      visibility: visible;
+      overflow-y: auto;
+
+      // margin-bottom: 15px;
     }
 
     .filter__point {
-      font-family: Excentra Pro;
-      font-style: normal;
-      font-weight: normal;
-      font-size: 15px;
-      line-height: 15px;
-
-      color: #00094d;
-
+      font-size: 13px;
+      height: 25px;
+      display: inline-flex;    
+      align-items: center;
+      padding: 0px 10px;
+      padding-top: 2px;
+      margin-right: 5px;
+      margin-bottom: 10px;
+      border: 1px solid $a_middle;
+      background-color: #fff;
+      color: $b_dark;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: all 0.2s;
+      &:hover{
+        box-shadow: $sh_btn;
+      }
       &.active {
-        font-weight: bold;
+        color: white;
+        border: 1px solid $b_light;
+        background-color: $b_light;
+      }
+      &:last-child{
+        margin-bottom: 25px;
       }
     }
   }
