@@ -48,7 +48,7 @@ const MenuPoints = observer(
       $(".header__btn").removeClass("active");
 
       $(e.target).parent().find(".header__drop").addClass("visible");
-      $(e.target).addClass("active");
+      $(e.target).toggleClass("active");
     };
 
     offDrop = () => {

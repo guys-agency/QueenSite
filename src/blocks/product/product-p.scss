@@ -1,0 +1,172 @@
+.product-p{
+    margin-top: 30px;
+    &__image{
+        &-block{
+            .main{
+                &-img{
+                    border-radius: 5px;
+                    border: 1px solid $gr_light;
+                    padding: 50% 0;
+                    overflow: hidden;
+                    position: relative;
+                }
+                img{
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                }
+            }
+            .thumb{
+                margin-top: 20px;
+                margin-bottom: 20px;
+                .swiper-wrapper{
+                    height: initial;
+                }
+                .thumb-img{
+                        border-radius: 5px;
+                        border: 1px solid $gr_light;
+                        width: 60px; 
+                        height: 60px;
+                        overflow: hidden;
+                        margin-right: 20px;
+                    img{  
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                    }
+                }
+            }
+        }
+    }
+    &__description{
+        padding-left: 40px;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+    &__article{
+        font-size: 14px;
+        color: $a_dark;
+        .underline{
+            margin-left: 10px;
+        }
+    }
+    &__head{
+        order: 0;
+    }
+    &__info{
+        order: 1;
+        margin-top: 40px;
+        font-size: 16px;
+        line-height: 24px;
+        margin-bottom: 0;
+    }
+    &__control{
+        order: 2;
+        margin-top: 40px;
+    }
+    &__buttons{
+        display: flex;
+        .product__counter{
+            margin-left: 20px;
+            margin-right: 20px;
+        }
+        .btn{
+            display: flex;
+            align-items: center;
+            .i_bag{
+                font-size: 21px;
+                margin-right: 7px;
+                position: relative;
+                top: -3px;
+                color: $b_light;
+            }
+        }
+        .i_fav{
+            font-size: 24px;
+            &:hover{
+                color: $g_middle;
+            }
+        }
+    }
+    &__available{
+        position: relative;
+        display: flex;
+        margin-top: 20px;
+        &>span{
+            margin-right: 20px;
+        }
+        .drop{
+            margin-top: 40px;
+        }
+    }
+    &__stock{
+        color: $green;
+    }
+    &__spec{
+        order: 3;
+        margin-top: 30px;
+        padding-top: 30px;
+        border-top: 2px solid $gr_light;
+        display: flex;
+        justify-content: space-between;
+        h5{
+            margin-bottom: 4px;
+        }
+        ul{
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            flex: 0 0 auto;
+            li{
+                margin-bottom: 7px;
+                &::before {
+                    content: "\2022";
+                    color: $a_dark;
+                    font-size: 20px;
+                    margin-right: 5px;
+                    position: relative;
+                    top: 3px;
+                } 
+                .lth{
+                    text-decoration: line-through;
+                }
+            }
+        }
+        &-detail{
+            display: flex;
+            ul{
+                &:first-child{
+                    margin-right: 10px;
+                }
+            }
+        }
+    }
+
+    &.no-desc{
+        .product-p__control{
+            order: 3;
+        }
+        .product-p__spec{
+            order: 2;
+        }
+    }
+}
+
+.drift-inline{
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    border-radius: 100%;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+    z-index: 3;
+}
+
+.card-view-container{
+    .carousel_product{
+        border-top: 2px solid $gr_light;
+        padding-top: 40px;
+    }
+}

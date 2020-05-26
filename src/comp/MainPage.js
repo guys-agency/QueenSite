@@ -2,9 +2,9 @@ import { observer } from "mobx-react";
 import React from "react";
 import $ from "jquery";
 import { Link } from "react-router-dom";
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
+// import Slider from "react-slick";
+// import "slick-carousel/slick/slick.css";
+// import "slick-carousel/slick/slick-theme.css";
 import Swiper from "react-id-swiper";
 import ProductCard from "./ProductCard";
 
@@ -192,11 +192,6 @@ const MainPage = observer(
 
       return (
         <div className="main-page">
-          {!ready && (
-            <div className="slider-cont">
-              <Slider {...settings}></Slider>
-            </div>
-          )}
           <div className="head head_big">
             <div className="head-car">
               <Swiper {...headCar}>

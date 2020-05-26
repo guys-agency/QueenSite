@@ -114,14 +114,21 @@ a, .link{
     color: $b_light;
     border-bottom: 1px dotted $a_dark;
   }
+  &.underline{
+    color: $b_light;
+    text-decoration: underline;
+  }
   &:hover, &.active{
     .i_drop{
       top: 3px;
     }
     color: $g_middle;
   }
-  &.underline{
-    text-decoration: underline;
+  &.active{
+    .i_drop{
+      transform: scale(-1);
+      top: 1px;
+    }
   }
 }
 
