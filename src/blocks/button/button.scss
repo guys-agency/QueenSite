@@ -50,3 +50,52 @@ button{
         }
     }
 }
+
+.ic{
+    transition: all 0.3s;
+}
+
+.i_fav{
+    position: relative;
+    &::after{
+        content: $i_fav-f;
+        position: absolute;
+        left: 0;
+        opacity: 0;
+        color: $red;
+        transition: all 0.2s;
+    }
+}
+
+.i_user{
+    position: relative;
+    &::after{
+        content: $i_user-f;
+        position: absolute;
+        left: 0;
+        opacity: 0;
+        transition: all 0.2s;
+    }
+}
+
+.i_bag{
+    position: relative;
+    &::after{
+        content: $i_bag-f;
+        position: absolute;
+        left: 0;
+        opacity: 0;
+        transition: all 0.2s;
+    }
+}
+
+.active{
+    &.i_fav, &.i_user, &.i_bag{
+        &::after{
+            opacity: 1;
+        }
+        &::before{
+            opacity: 0;
+        }
+    }
+}

@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^7.2.1",
     "@woocommerce/woocommerce-rest-api": "^1.0.1",
     "dotenv": "^8.2.0",
+    "drift-zoom": "^1.4.0",
     "formik": "^2.1.4",
     "jquery": "^3.5.1",
     "mobx": "^5.15.4",
