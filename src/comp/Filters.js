@@ -64,7 +64,7 @@ const Filters = observer(
       return (
         <div className="filters-block">
           <div className="main-filers-block price">
-            <p className="filter-title">Цена</p>
+            <h5>Цена</h5>
             <div>
               <p>от </p>
               <input
@@ -102,22 +102,23 @@ const Filters = observer(
             </div>
           </div>
           <div className="main-filers-block">
-            <p className="filter-title">Фильтры</p>
+            <h5>Фильтры</h5>
             <div>{filterPointsContainers}</div>
           </div>
           <div className="main-filers-block">
-            <p className="filter-title">Размеры</p>
+            <h5>Размеры</h5>
             <div>{measurePointsContainers}</div>
           </div>
           <div className="main-filers-block">
-            <p className="filter-title">Дополнительно</p>
+            <h5>Дополнительно</h5>
             <div>{optPointsContainers}</div>
             <div>
-              <label>
+              <label className="checkbox">
                 <input type="checkbox" onChange={this.handleChange} />
-                <span>Хиты продаж</span>
+                <span class="checkbox-btn"></span>
+                <i>Хиты продаж</i>
               </label>
-              <label>
+              <label className="checkbox checkbox_margin">
                 <input
                   type="checkbox"
                   onChange={(e) => {
@@ -126,9 +127,10 @@ const Filters = observer(
                     this.checkBoxHandler("new", e.target.value);
                   }}
                 />
-                <span>Премиум</span>
+                <span class="checkbox-btn"></span>
+                <i>Премиум</i>
               </label>
-              <label>
+              <label className="checkbox checkbox_margin">
                 <input
                   type="checkbox"
                   value="0"
@@ -138,7 +140,8 @@ const Filters = observer(
                     this.checkBoxHandler("sale", 1);
                   }}
                 />
-                <span>Со скидкой</span>
+                <span class="checkbox-btn"></span>
+                <i>Со скидкой</i>
               </label>
             </div>
           </div>

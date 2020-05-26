@@ -361,6 +361,7 @@ const CardView = observer(
           new Drift(img, {
             paneContainer: pane,
             inlinePane: true,
+            hoverDelay: 200,
           });
         });
         this.driftInit = true

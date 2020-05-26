@@ -65,7 +65,7 @@ const FilterPoint = observer(
       data.forEach((filterPoint) => {
         if (filterPoint != "") {
           filterPoints.push(
-            <p
+            <span
               className="filter__point"
               onClick={(e) => {
                 e.target.classList.toggle("active");
@@ -74,7 +74,7 @@ const FilterPoint = observer(
               key={filterPoint}
             >
               {filterPoint}
-            </p>
+            </span>
           );
         }
       });
@@ -83,6 +83,7 @@ const FilterPoint = observer(
           <h3
             className="filter__name"
             onClick={(e) => {
+              e.target.classList.toggle('active');
               if (classStyle.includes("active")) {
                 this.setState({ classStyle: "filter__container" });
               } else {
@@ -91,6 +92,7 @@ const FilterPoint = observer(
             }}
           >
             {name}
+            <div className="ic i_drop"></div>
           </h3>
           <div className={classStyle}>{filterPoints}</div>
         </div>
