@@ -188,7 +188,7 @@ const MainScreen = observer(
               path="/profile"
               render={() => (
                 <div className="main-screen">
-                  <Profile />
+                  <Profile store={this.props.store} />
                 </div>
               )}
             />
