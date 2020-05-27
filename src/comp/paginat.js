@@ -25,6 +25,7 @@ const Paginat = observer(
       ) {
         pointCont.push(
           <div
+            key={i}
             onClick={() => {
               if (i === countPage - 1) {
                 console.log("42 * i;", 42 * i);

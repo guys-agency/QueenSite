@@ -5,7 +5,7 @@ import { Link, NavLink } from "react-router-dom";
 import LikeButton from "./LikeButton";
 import { Dropdown, Menu, Checkbox } from "semantic-ui-react";
 import Cart from "./Cart";
-import { cities } from "../constants";
+import { cities, SERVER_URL } from "../constants";
 import api from "./api";
 import { Formik, Field, Form } from "formik";
 import RegistrationSchema from "../schemas/registrationSchema";
@@ -134,7 +134,7 @@ const MenuPoints = observer(
     }
 
     createMenu = () => {
-      fetch("http://134.122.81.119/categories", {
+      fetch(SERVER_URL + "/categories", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -155,7 +155,7 @@ const MenuPoints = observer(
             elem.childs.sort().forEach((child, iCh) => {
               //убрать tr, так как будут поля с транскрипцией в бд
               childsPoints.push(
-                <li>
+                <li key={child.name}>
                   <NavLink to={`/catalog/${elem.slug}/${child.slug}`}>
                     {child.name}
                   </NavLink>
@@ -228,7 +228,7 @@ const MenuPoints = observer(
           });
           for (let index = 0; index < Object.keys(menu).length; index += 2) {
             this.menuContainer.push(
-              <div className="column">
+              <div className="column" key={index}>
                 {menu[index]}
                 {menu[index + 1]}
               </div>
@@ -260,8 +260,8 @@ const MenuPoints = observer(
             <div className="header">
               <div className="container container_f">
                 <div className="header__left">
-                  <a href="">О нас</a>
-                  <a href="/shops">Магазины</a>
+                  <Link to="">О нас</Link>
+                  <Link to="/shops">Магазины</Link>
                   <span>
                     <span className="link header__btn">
                       Помощь <span className="ic i_drop"></span>
@@ -398,7 +398,9 @@ const MenuPoints = observer(
                     <span className="ic i_menu"></span> Каталог
                   </button>
                   <span className="menu__sub ">
-                    <a href="/collections" className="menu-point">Коллекции</a>
+                    <Link to="/collections" className="menu-point">
+                      Коллекции
+                    </Link>
                     <div className="menu menu_sub menu_collection">
                       <div className="container container_f">
                         <div className="column">
@@ -480,7 +482,9 @@ const MenuPoints = observer(
                   </span>
 
                   <span className="menu__drop">
-                    <a href="/actions" className="menu-point sale-point">Акции</a>
+                    <Link to="/actions" className="menu-point sale-point">
+                      Акции
+                    </Link>
                     <div className="menu menu_sub">
                       <div className="container container_f">
                         <div className="column">

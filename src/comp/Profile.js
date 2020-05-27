@@ -2,6 +2,7 @@ import { observer } from "mobx-react";
 import React from "react";
 import { withRouter } from "react-router";
 import api from "./api";
+import getCookie from "../ulits/getCookie";
 const { Component } = React;
 
 const Profile = observer(
@@ -28,13 +29,23 @@ const Profile = observer(
                   className="small-nav__btn"
                   onClick={(e) => {
                     e.preventDefault();
-                    api.logout().then((ok) => {
-                      if (ok.ok) {
+                    api
+                      .logout()
+                      .then((ok) => {
+                        console.log("ok", ok);
+                        if (ok.ok) {
+                          return ok.json();
+                        }
+                        return Promise.reject(ok);
+                      })
+                      .then((data) => {
                         this.props.store.auth = false;
                         this.props.history.push("/");
-                      }
-                      console.log("ok", ok);
-                    });
+                        console.log('getCookie("auth")', getCookie("auth"));
+                      })
+                      .catch((err) => {
+                        console.log("err", err);
+                      });
                   }}
                 >
                   Выход

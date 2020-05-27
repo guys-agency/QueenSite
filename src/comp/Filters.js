@@ -63,8 +63,8 @@ const Filters = observer(
       //   this.props.store.nameSecondCat = childName;
       // }
       return (
-        <div id="sidebar" class="">
-          <div class="sidebar__inner">
+        <div id="sidebar" className="">
+          <div className="sidebar__inner">
             <div className="filters-block">
               <div className="main-filers-block price">
                 <h5>Цена</h5>
@@ -119,7 +119,7 @@ const Filters = observer(
                 <div>
                   <label className="checkbox">
                     <input type="checkbox" onChange={this.handleChange} />
-                    <span class="checkbox-btn"></span>
+                    <span className="checkbox-btn"></span>
                     <i>Хиты продаж</i>
                   </label>
                   <label className="checkbox checkbox_margin">
@@ -131,7 +131,7 @@ const Filters = observer(
                         this.checkBoxHandler("new", e.target.value);
                       }}
                     />
-                    <span class="checkbox-btn"></span>
+                    <span className="checkbox-btn"></span>
                     <i>Премиум</i>
                   </label>
                   <label className="checkbox checkbox_margin">
@@ -143,7 +143,7 @@ const Filters = observer(
                         this.checkBoxHandler("sale", 1);
                       }}
                     />
-                    <span class="checkbox-btn"></span>
+                    <span className="checkbox-btn"></span>
                     <i>Со скидкой</i>
                   </label>
                 </div>

@@ -6,6 +6,7 @@ import React from "react";
 import Paginat from "./comp/paginat";
 import localStorage from "mobx-localstorage";
 import getCookie from "./ulits/getCookie";
+import { SERVER_URL } from "./constants";
 
 //1http://134.122.81.119/api
 //127.0.0.1:3010
@@ -90,7 +91,7 @@ class Store {
   getData = (filterArray, bodyJSON, bodyJSONFilter) => {
     const testContainer = [];
     if (!filterArray.length) {
-      fetch(mainAdressServ, {
+      fetch(SERVER_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -120,7 +121,7 @@ class Store {
           console.log("err", err);
         });
 
-      fetch(mainAdressServ + "/sort-names", {
+      fetch(SERVER_URL + "/sort-names", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -196,7 +197,7 @@ class Store {
           console.log("err", err);
         });
     } else {
-      fetch(mainAdressServ, {
+      fetch(SERVER_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -247,7 +248,7 @@ class Store {
           console.log("err", err);
         });
 
-      fetch(mainAdressServ + "/sort-names", {
+      fetch(SERVER_URL + "/sort-names", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

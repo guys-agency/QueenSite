@@ -1,10 +1,10 @@
-import getCookie from "../ulits/getCookie";
+import { SERVER_URL } from "../constants";
 
 class Api {
   constructor() {}
 
   regist(data) {
-    return fetch("http://127.0.0.1:3010/registration", {
+    return fetch(SERVER_URL + "/registration", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -24,32 +24,23 @@ class Api {
   }
 
   login(data) {
-    return fetch("http://127.0.0.1:3010/login", {
+    return fetch(SERVER_URL + "/login", {
       method: "POST",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
-    })
-      .then((res) => {
-        console.log("res", res);
-        return res.json();
-      })
-      .catch((err) => {
-        console.log("err", err);
-      });
+    });
   }
 
   logout() {
-    return fetch("http://127.0.0.1:3010/logout", {
+    return fetch(SERVER_URL + "/logout", {
       method: "GET",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
-    }).catch((err) => {
-      console.log("err", err);
     });
   }
 }

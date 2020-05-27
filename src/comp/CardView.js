@@ -5,6 +5,7 @@ import localStorage from "mobx-localstorage";
 import Swiper from "react-id-swiper";
 import Drift from "drift-zoom";
 import ProductCard from "./ProductCard";
+import { SERVER_URL } from "../constants";
 
 const { Component } = React;
 const historyAll = createBrowserHistory();
@@ -72,7 +73,7 @@ const CardView = observer(
       console.log("data120 :>> ", data);
 
       if (!this.fetchReady && data !== undefined) {
-        fetch("http://134.122.81.119/product/" + this.props.sku, {
+        fetch(SERVER_URL + "/product/" + this.props.sku, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

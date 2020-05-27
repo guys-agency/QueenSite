@@ -3,6 +3,9 @@ import "./App.css";
 import { observer } from "mobx-react";
 import { Router, Route, Switch } from "react-router";
 import { Link, NavLink } from "react-router-dom";
+import { Formik, Field, Form } from "formik";
+import api from "./comp/api";
+import LoginSchema from "./schemas/loginSchema";
 
 import MenuPoints from "./comp/MenuPoints";
 import Filters from "./comp/Filters";
@@ -75,32 +78,32 @@ const MainScreen = observer(
       //     console.log("err", err);
       //   });
 
-      fetch("http://134.122.81.119/sort-names", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          "categories.name": nameMainCat,
-          "categories.childs": nameSecondCat,
-        }),
-      })
-        .then((res) => {
-          return res.json();
-        })
-        .then((data) => {
-          const sortData = {};
+      // fetch("http://134.122.81.119/sort-names", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify({
+      //     "categories.name": nameMainCat,
+      //     "categories.childs": nameSecondCat,
+      //   }),
+      // })
+      //   .then((res) => {
+      //     return res.json();
+      //   })
+      //   .then((data) => {
+      //     const sortData = {};
 
-          Object.keys(data).forEach((name) => {
-            if (name !== "_id") sortData[name] = data[name].sort();
-          });
+      //     Object.keys(data).forEach((name) => {
+      //       if (name !== "_id") sortData[name] = data[name].sort();
+      //     });
 
-          this.props.store.categoryFilter = sortData;
-          this.props.store.createFilterPointsContainers(sortData);
-        })
-        .catch((err) => {
-          console.log("err", err);
-        });
+      //     this.props.store.categoryFilter = sortData;
+      //     this.props.store.createFilterPointsContainers(sortData);
+      //   })
+      //   .catch((err) => {
+      //     console.log("err", err);
+      //   });
     };
 
     render() {

@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 // import "slick-carousel/slick/slick-theme.css";
 import Swiper from "react-id-swiper";
 import ProductCard from "./ProductCard";
+import { SERVER_URL } from "../constants";
 
 const { Component } = React;
 
@@ -23,7 +24,7 @@ const MainPage = observer(
       const hitContTime = [];
       const newContTime = [];
       const allContTime = [];
-      fetch("http://134.122.81.119/main-page", {
+      fetch(SERVER_URL + "/main-page", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -228,7 +229,9 @@ const MainPage = observer(
               <div className="slider-cont">
                 {/* <Slider {...settingsMulti}>{hitCont}</Slider> */}
 
-                {hitCont.length && <Swiper {...productCar}>{hitCont}</Swiper>}
+                {hitCont.length !== 0 && (
+                  <Swiper {...productCar}>{hitCont}</Swiper>
+                )}
               </div>
             </div>
           </div>
