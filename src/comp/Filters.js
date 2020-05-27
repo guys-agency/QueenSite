@@ -133,7 +133,6 @@ const Filters = observer(
               <label className="checkbox checkbox_margin">
                 <input
                   type="checkbox"
-                  value="0"
                   onChange={(e) => {
                     console.log("e.target.value", e.target.value);
                     e.target.value = !e.target.value;

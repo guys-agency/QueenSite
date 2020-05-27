@@ -4,6 +4,7 @@ import { createBrowserHistory } from "history";
 import localStorage from "mobx-localstorage";
 import Swiper from "react-id-swiper";
 import Drift from "drift-zoom";
+import ProductCard from "./ProductCard";
 
 const { Component } = React;
 const historyAll = createBrowserHistory();
@@ -21,6 +22,9 @@ const CardView = observer(
     cardData = Object.assign(this.props.data, {
       countInCart: this.countInCart,
     });
+
+    with = [];
+    like = [];
 
     clickHandler = () => {
       const { data, store } = this.props;
@@ -68,7 +72,7 @@ const CardView = observer(
       console.log("data120 :>> ", data);
 
       if (!this.fetchReady && data !== undefined) {
-        fetch("http://134.122.81.119/product/" + this.props.sku, {
+        fetch("http://127.0.0.1:3010/product/" + this.props.sku, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -76,12 +80,17 @@ const CardView = observer(
           },
         })
           .then((res) => {
+            console.log("res", res);
             return res.json();
           })
           .then((data) => {
-            console.log("datasto :>> ", data[0]);
+            console.log("datasto :>> ", data);
+
+            this.with = data.addProd[0].with;
+            this.like = data.addProd[0].like;
+            console.log("this.like :>> ", this.like);
+            this.props.store.cardContainer = data.product[0];
             this.fetchReady = true;
-            this.props.store.cardContainer = data[0];
           })
           .catch((err) => {
             console.log("err", err);
@@ -420,7 +429,21 @@ const CardView = observer(
               </div>
               <div className="container container_s">
                 <div className="slider-cont">
-                  {/* {hitCont.length && <Swiper {...relativeCar}>{hitCont}</Swiper>} */}
+                  {this.with.length && (
+                    <Swiper {...relativeCar}>
+                      {this.with.map((el) => {
+                        return (
+                          <div className="col col-3">
+                            <ProductCard
+                              key={el.slug}
+                              data={el}
+                              store={this.props.store}
+                            />
+                          </div>
+                        );
+                      })}
+                    </Swiper>
+                  )}
                 </div>
               </div>
             </div>
@@ -433,7 +456,21 @@ const CardView = observer(
               </div>
               <div className="container container_s">
                 <div className="slider-cont">
-                  {/* {hitCont.length && <Swiper {...sameCar}>{hitCont}</Swiper>} */}
+                  {this.like.length && (
+                    <Swiper {...sameCar}>
+                      {this.like.map((el) => {
+                        return (
+                          <div className="col col-3">
+                            <ProductCard
+                              key={el.slug}
+                              data={el}
+                              store={this.props.store}
+                            />
+                          </div>
+                        );
+                      })}
+                    </Swiper>
+                  )}
                 </div>
               </div>
             </div>
