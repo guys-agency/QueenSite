@@ -1,4 +1,7 @@
 .actions{
+    .head_big{
+        height: 470px;
+    }
     .container_f{
         flex-wrap: wrap;
         .product{
@@ -13,6 +16,14 @@
             margin-top: 40px;
             margin-left: auto;
             margin-right: auto;
+        }
+    }
+    .action{
+        margin-bottom: 50px;
+        div.head-banner{
+            &:hover{
+                transform: translateY(0);
+            }
         }
     }
 }

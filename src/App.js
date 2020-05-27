@@ -10,7 +10,17 @@ import ProductCardContainer from "./comp/ProductCardContainer";
 import CartPage from "./comp/CartPage";
 import CardView from "./comp/CardView";
 import MainPage from "./comp/MainPage";
+
 import Profile from "./comp/Profile";
+
+import Collections from "./comp/Collections";
+import Collection from "./comp/Collection";
+
+import Actions from "./comp/Actions";
+import Action from "./comp/Action";
+
+import Shops from "./comp/Shops";
+
 import Swiper from "react-id-swiper";
 
 const { Component } = React;
@@ -174,13 +184,56 @@ const MainScreen = observer(
               )}
             />
 
-
             <Route
               path="/profile"
               render={() => (
                 <div className="main-screen">
-                  <Profile
-                  />
+                  <Profile />
+                </div>
+              )}
+            />
+
+            <Route
+              path="/collections"
+              render={() => (
+                <div className="main-screen">
+                  <Collections />
+                </div>
+              )}
+            />
+
+            <Route
+              path="/collection"
+              render={() => (
+                <div className="main-screen">
+                  <Collection />
+                </div>
+              )}
+            />
+
+            <Route
+              path="/actions"
+              render={() => (
+                <div className="main-screen">
+                  <Actions />
+                </div>
+              )}
+            />
+
+            <Route
+              path="/action"
+              render={() => (
+                <div className="main-screen">
+                  <Action />
+                </div>
+              )}
+            />
+
+            <Route
+              path="/shops"
+              render={() => (
+                <div className="main-screen">
+                  <Shops />
                 </div>
               )}
             />

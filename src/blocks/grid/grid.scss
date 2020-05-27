@@ -3,7 +3,7 @@
   margin-right: auto;
   margin-left: auto;
   max-width: 1110px;
-  @include max($m){
+  @include max($d){
     margin-right: 10px;
     margin-left: 10px;
   }

@@ -31,6 +31,15 @@
             }
         }
     }
+    &-cont{
+        max-width: 1300px;
+        margin-left: auto;
+        margin-right: auto;
+        position: relative; 
+        .head-banner{
+            box-shadow: $sh_bottom;
+        }
+    }
     &-banner{
         background-color: #fff;
         box-shadow: $sh_main;
@@ -41,9 +50,9 @@
         margin-right: auto;
         background-size: cover;
         display: block;
-        @include max(1440px){
-            margin-right: 20px;
-            margin-left: 20px;
+        @include max($d){
+            margin-right: 10px;
+            margin-left: 10px;
         }
         &_action{
             height: 366px;
