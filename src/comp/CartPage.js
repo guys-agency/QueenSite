@@ -58,7 +58,10 @@ const CartPage = observer(
                 <div className="product__image-wrp">
                   <img
                     src={
-                      "/image/products/" + productInCart[el].path_to_photo[0]
+                      productInCart[el].path_to_photo !== undefined
+                        ? "/image/products/" +
+                          productInCart[el].path_to_photo[0]
+                        : "/image/Category/Product-card/Placeholder.png"
                     }
                   />
                 </div>
