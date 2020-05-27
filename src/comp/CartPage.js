@@ -50,75 +50,78 @@ const CartPage = observer(
       let totalSale = 0;
       let totalFullprice = 0;
       let address = "";
-
-      Object.keys(productInCart).forEach((el) => {
-        productList.push(
-          <div className="product product_h" key={el}>
-            <div className="product__image">
-              <div className="product__image-wrp">
-                <img
-                  src={"/image/products/" + productInCart[el].path_to_photo[0]}
-                />
+      if (Object.keys(productInCart).length) {
+        Object.keys(productInCart).forEach((el) => {
+          productList.push(
+            <div className="product product_h" key={el}>
+              <div className="product__image">
+                <div className="product__image-wrp">
+                  <img
+                    src={
+                      "/image/products/" + productInCart[el].path_to_photo[0]
+                    }
+                  />
+                </div>
+              </div>
+              <div className="product__info">
+                <Link className="product__name" to={"/product/" + el}>
+                  {productInCart[el].name}
+                </Link>
+                {productInCart[el].sale ? (
+                  <div className={"product__price product__price_disc"}>
+                    <span className="old">
+                      {productInCart[el].regular_price} ₽
+                    </span>{" "}
+                    {productInCart[el].sale_price.toLocaleString()} ₽{" "}
+                    <span className="disc_perc">
+                      {(
+                        (productInCart[el].sale_price /
+                          productInCart[el].regular_price -
+                          1) *
+                        100
+                      ).toFixed(0)}
+                      %
+                    </span>
+                  </div>
+                ) : (
+                  <div className={"product__price"}>
+                    {productInCart[el].regular_price.toLocaleString()} ₽{" "}
+                  </div>
+                )}
+                <button
+                  className="ic i_close"
+                  onClick={() => {
+                    const deleteObj = localStorage.get("productInCart");
+                    delete deleteObj[el];
+                    localStorage.set("productInCart", deleteObj);
+                  }}
+                ></button>
+                <div className="product__counter">
+                  <button className="ic i_minus"></button>
+                  <input
+                    min="1"
+                    max="100"
+                    type="number"
+                    value={productInCart[el].countInCart}
+                  />
+                  <button className="ic i_plus"></button>
+                </div>
               </div>
             </div>
-            <div className="product__info">
-              <Link className="product__name" to={"/product/" + el}>
-                {productInCart[el].name}
-              </Link>
-              {productInCart[el].sale ? (
-                <div className={"product__price product__price_disc"}>
-                  <span className="old">
-                    {productInCart[el].regular_price} ₽
-                  </span>{" "}
-                  {productInCart[el].sale_price.toLocaleString()} ₽{" "}
-                  <span className="disc_perc">
-                    {(
-                      (productInCart[el].sale_price /
-                        productInCart[el].regular_price -
-                        1) *
-                      100
-                    ).toFixed(0)}
-                    %
-                  </span>
-                </div>
-              ) : (
-                <div className={"product__price"}>
-                  {productInCart[el].regular_price.toLocaleString()} ₽{" "}
-                </div>
-              )}
-              <button
-                className="ic i_close"
-                onClick={() => {
-                  const deleteObj = localStorage.get("productInCart");
-                  delete deleteObj[el];
-                  localStorage.set("productInCart", deleteObj);
-                }}
-              ></button>
-              <div className="product__counter">
-                <button className="ic i_minus"></button>
-                <input
-                  min="1"
-                  max="100"
-                  type="number"
-                  value={productInCart[el].countInCart}
-                />
-                <button className="ic i_plus"></button>
-              </div>
-            </div>
-          </div>
-        );
+          );
 
-        totalPrice += productInCart[el].sale
-          ? productInCart[el].countInCart * productInCart[el].sale_price
-          : productInCart[el].countInCart * productInCart[el].regular_price;
+          totalPrice += productInCart[el].sale
+            ? productInCart[el].countInCart * productInCart[el].sale_price
+            : productInCart[el].countInCart * productInCart[el].regular_price;
 
-        totalSale += productInCart[el].sale
-          ? (productInCart[el].regular_price - productInCart[el].sale_price) *
-            productInCart[el].countInCart
-          : 0;
-        totalFullprice +=
-          productInCart[el].countInCart * productInCart[el].regular_price;
-      });
+          totalSale += productInCart[el].sale
+            ? (productInCart[el].regular_price - productInCart[el].sale_price) *
+              productInCart[el].countInCart
+            : 0;
+          totalFullprice +=
+            productInCart[el].countInCart * productInCart[el].regular_price;
+        });
+      }
 
       return (
         <div className="cart-page">
