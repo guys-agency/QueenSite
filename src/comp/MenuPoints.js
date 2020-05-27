@@ -9,6 +9,7 @@ import { cities } from "../constants";
 import api from "./api";
 import { Formik, Field, Form } from "formik";
 import RegistrationSchema from "../schemas/registrationSchema";
+import LoginSchema from "../schemas/loginSchema";
 import localStorage from "mobx-localstorage";
 const { Component } = React;
 
@@ -561,59 +562,80 @@ const MenuPoints = observer(
                 </button>
               </div>
 
-              <Formik
-                //инициализируем значения input-ов
-                initialValues={{
-                  email: "",
+              {this.state.log && (
+                <Formik
+                  //инициализируем значения input-ов
+                  initialValues={{
+                    email: "",
+                    password: "",
+                  }}
+                  //подключаем схему валидации, которую описали выше
+                  validationSchema={LoginSchema}
+                  //определяем, что будет происходить при вызове onsubmit
+                  onSubmit={(values, { setSubmitting }) => {
+                    api.login({
+                      email: values.email.toLowerCase(),
+                      password: values.password,
+                    });
+                  }}
+                  //свойство, где описывыем нашу форму
+                  //errors-ошибки валидации формы
+                  //touched-поля формы, которые мы "затронули",
+                  //то есть, в которых что-то ввели
+                >
+                  {({
+                    errors,
+                    touched,
+                    handleSubmit,
+                    isSubmitting,
+                    values,
+                    handleChange,
+                  }) => (
+                    <form className=" visible" onSubmit={handleSubmit}>
+                      <div className="input-field">
+                        <label className="required" htmlFor="email">
+                          Email
+                        </label>
+                        <input
+                          id="email"
+                          name="email"
+                          type="text"
+                          onFocus={this.focusHandler}
+                          onBlur={this.blurHandler}
+                          value={values.email}
+                          onChange={handleChange}
+                        />
 
-                  password: "",
-                }}
-                //подключаем схему валидации, которую описали выше
-                validationSchema={RegistrationSchema}
-                //определяем, что будет происходить при вызове onsubmit
-                onSubmit={(values) => {
-                  console.log(JSON.stringify(values, null, 2));
-                }}
-                //свойство, где описывыем нашу форму
-                //errors-ошибки валидации формы
-                //touched-поля формы, которые мы "затронули",
-                //то есть, в которых что-то ввели
-                render={({ errors, touched }) => (
-                  <Form className={this.state.log ? " visible" : ""}>
-                    <div className="input-field">
-                      <label className="required" htmlFor="email">
-                        Email
-                      </label>
-                      <Field
-                        id="email"
-                        name="email"
-                        type="text"
-                        onFocus={this.focusHandler}
-                        onBlur={this.blurHandler}
-                      />
-                      <div className="field-error">{errors.email}</div>
-                    </div>
+                        <div className="field-error">{errors.email}</div>
+                      </div>
 
-                    <div className="input-field">
-                      <label htmlFor="password">Пароль</label>
-                      <Field
-                        name="password"
-                        type="password"
-                        id="password"
-                        onFocus={this.focusHandler}
-                        onBlur={this.blurHandler}
-                      />
-                      <div className="field-error">{errors.password}</div>
-                    </div>
-                    <button type="submit" className="btn btn_primary">
-                      Войти
-                    </button>
-                    <button className="link dotted forgot-btn">
-                      Забыли пароль?
-                    </button>
-                  </Form>
-                )}
-              />
+                      <div className="input-field">
+                        <label className="required" htmlFor="password">
+                          Пароль
+                        </label>
+                        <input
+                          name="password"
+                          type="password"
+                          id="password"
+                          onFocus={this.focusHandler}
+                          onBlur={this.blurHandler}
+                          value={values.password}
+                          onChange={handleChange}
+                        />
+                        {errors.password && touched.password && (
+                          <div className="field-error">{errors.password}</div>
+                        )}
+                      </div>
+                      <button type="submit" className="btn btn_primary">
+                        Войти
+                      </button>
+                      <button className="link dotted forgot-btn">
+                        Забыли пароль?
+                      </button>
+                    </form>
+                  )}
+                </Formik>
+              )}
 
               {/* <form className={this.state.log ? " visible" : ""}>
                 <div className="input-field">
@@ -681,132 +703,128 @@ const MenuPoints = observer(
                   Забыли пароль?
                 </button>
               </form> */}
-              <form className={this.state.reg ? " visible" : ""}>
-                <div className="input-field">
-                  <label className="required" htmlFor="name">
-                    Имя
-                  </label>
-                  <input
-                    id="name"
-                    type="text"
-                    onFocus={(e) => {
-                      $(e.target).parent().find("label").addClass("active");
-                    }}
-                    onBlur={(e) => {
-                      if (e.target.value === "") {
-                        $(e.target)
-                          .parent()
-                          .find("label")
-                          .removeClass("active");
-                      }
-                    }}
-                    onChange={(e) => {
-                      this.setState({ name: e.target.value });
-                    }}
-                  />
-                </div>
-
-                <div className="input-field">
-                  <label className="required" htmlFor="email">
-                    E-mail
-                  </label>
-                  <input
-                    id="email"
-                    type="text"
-                    onFocus={(e) => {
-                      $(e.target).parent().find("label").addClass("active");
-                    }}
-                    onBlur={(e) => {
-                      if (e.target.value === "") {
-                        $(e.target)
-                          .parent()
-                          .find("label")
-                          .removeClass("active");
-                      }
-                    }}
-                    onChange={(e) => {
-                      this.setState({ login: e.target.value });
-                    }}
-                  />
-                </div>
-
-                <div className="input-field">
-                  <label className="required" htmlFor="password">
-                    Пароль
-                  </label>
-                  <input
-                    id="password"
-                    type="password"
-                    onFocus={(e) => {
-                      $(e.target).parent().find("label").addClass("active");
-                    }}
-                    onBlur={(e) => {
-                      if (e.target.value === "") {
-                        $(e.target)
-                          .parent()
-                          .find("label")
-                          .removeClass("active");
-                      }
-                    }}
-                    onChange={(e) => {
-                      this.setState({ password: e.target.value });
-                    }}
-                  />
-                </div>
-
-                <div className="input-field">
-                  <label className="required" htmlFor="password_confirm">
-                    Пароль еще раз
-                  </label>
-                  <input
-                    id="password_confirm"
-                    type="password"
-                    onFocus={(e) => {
-                      $(e.target).parent().find("label").addClass("active");
-                    }}
-                    onBlur={(e) => {
-                      if (e.target.value === "") {
-                        $(e.target)
-                          .parent()
-                          .find("label")
-                          .removeClass("active");
-                      }
-                    }}
-                    onChange={(e) => {
-                      if (e.target.value !== this.state.password) {
-                        $("#" + e.target.id + "_err").text("хуйнана");
-                      } else {
-                        $("#" + e.target.id + "_err").text("");
-                      }
-                    }}
-                  />
-                  <p id="password_confirm_err"></p>
-                </div>
-                <button
-                  className="btn btn_primary"
-                  onClick={(e) => {
-                    e.preventDefault();
+              {this.state.reg && (
+                <Formik
+                  //инициализируем значения input-ов
+                  initialValues={{
+                    email: "",
+                    username: "",
+                    password: "",
+                    repassword: "",
+                    acceptedTerms: false,
+                  }}
+                  //подключаем схему валидации, которую описали выше
+                  validationSchema={RegistrationSchema}
+                  //определяем, что будет происходить при вызове onsubmit
+                  onSubmit={(values, { setSubmitting }) => {
+                    console.log("values :>> ", values);
                     api.regist({
-                      email: this.state.login,
-                      name: this.state.name,
-                      password: this.state.password,
+                      name: values.username,
+                      email: values.email.toLowerCase(),
+                      password: values.password,
                     });
                   }}
+                  //свойство, где описывыем нашу форму
+                  //errors-ошибки валидации формы
+                  //touched-поля формы, которые мы "затронули",
+                  //то есть, в которых что-то ввели
                 >
-                  Регистрация
-                </button>
-                <label className="checkbox checkbox_margin">
-                  <input type="checkbox" name="" id="" />
-                  <span className="checkbox-btn"></span>
-                  <i>
-                    Согласен с условиями "
-                    <a className="underline" href="">
-                      Публичной оферты
-                    </a>
-                    "
-                  </i>
-                </label>
-              </form>
+                  {({
+                    errors,
+                    touched,
+                    handleSubmit,
+                    isSubmitting,
+                    values,
+                    handleChange,
+                  }) => (
+                    <form className=" visible" onSubmit={handleSubmit}>
+                      <div className="input-field">
+                        <label className="required" htmlFor="name">
+                          Имя
+                        </label>
+                        <input
+                          id="name"
+                          name="username"
+                          type="text"
+                          oonFocus={this.focusHandler}
+                          onBlur={this.blurHandler}
+                          value={values.username}
+                          onChange={handleChange}
+                        />
+                        <div className="field-error">{errors.username}</div>
+                      </div>
+
+                      <div className="input-field">
+                        <label className="required" htmlFor="email">
+                          E-mail
+                        </label>
+                        <input
+                          id="email"
+                          name="email"
+                          type="text"
+                          onFocus={this.focusHandler}
+                          onBlur={this.blurHandler}
+                          value={values.email}
+                          onChange={handleChange}
+                        />
+                        <div className="field-error">{errors.email}</div>
+                      </div>
+
+                      <div className="input-field">
+                        <label className="required" htmlFor="password">
+                          Пароль
+                        </label>
+                        <input
+                          id="password"
+                          name="password"
+                          type="password"
+                          onFocus={this.focusHandler}
+                          onBlur={this.blurHandler}
+                          value={values.password}
+                          onChange={handleChange}
+                        />
+                        <div className="field-error">{errors.password}</div>
+                      </div>
+
+                      <div className="input-field">
+                        <label className="required" htmlFor="password_confirm">
+                          Пароль еще раз
+                        </label>
+                        <input
+                          id="password_confirm"
+                          type="password"
+                          name="repassword"
+                          onFocus={this.focusHandler}
+                          onBlur={this.blurHandler}
+                          value={values.repassword}
+                          onChange={handleChange}
+                        />
+                        <div className="field-error">{errors.repassword}</div>
+                      </div>
+                      <button className="btn btn_primary" type="submit">
+                        Регистрация
+                      </button>
+                      <label className="checkbox checkbox_margin">
+                        <input
+                          type="checkbox"
+                          name="acceptedTerms"
+                          id=""
+                          value={values.acceptedTerms}
+                          onChange={handleChange}
+                        />
+                        <span className="checkbox-btn"></span>
+                        <i>
+                          Согласен с условиями "
+                          <a className="underline" href="">
+                            Публичной оферты
+                          </a>
+                          "
+                        </i>
+                      </label>
+                    </form>
+                  )}
+                </Formik>
+              )}
             </div>
 
             <div

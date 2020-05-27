@@ -314,21 +314,25 @@ const CardView = observer(
                           <span className="product-p__delivery">
                             Доставка <b>3-4 дня</b>
                           </span>
-                          <button
-                            className="link dotted drop_shop-btn"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              e.target.classList.toggle("active");
-                              var drop = document.querySelector(".drop_shop");
-                              drop.classList.toggle("visible");
-                            }}
-                          >
-                            Есть в {storesAvali.length} магазинах{" "}
-                            <span className="ic i_drop"></span>
-                          </button>
-                          <div className="drop drop_shop">
-                            {storesAvali}
-                            {/* <div className="drop_shop-list">
+                          {storesAvali.length && (
+                            <>
+                              <button
+                                className="link dotted drop_shop-btn"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  e.target.classList.toggle("active");
+                                  var drop = document.querySelector(
+                                    ".drop_shop"
+                                  );
+                                  drop.classList.toggle("visible");
+                                }}
+                              >
+                                Есть в {storesAvali.length} магазинах{" "}
+                                <span className="ic i_drop"></span>
+                              </button>
+                              <div className="drop drop_shop">
+                                {storesAvali}
+                                {/* <div className="drop_shop-list">
                               <div>
                                 <b>ТРЦ OUTLET Белая дача:</b> Новорязанское
                                 шоссе 8, Котельники, Московская область
@@ -371,7 +375,9 @@ const CardView = observer(
                                 salaris@queenbohemia.ru
                               </a>
                             </div> */}
-                          </div>
+                              </div>
+                            </>
+                          )}
                         </div>
                       </div>
 

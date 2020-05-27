@@ -50,6 +50,7 @@ const Filters = observer(
         activeFilters,
         minPrice,
         maxPrice,
+        filtration,
       } = this.props.store;
 
       const { parentName, childName } = this.props;
@@ -97,10 +98,11 @@ const Filters = observer(
                       } else {
                         activeFilters.maxPrice = 0;
                       }
+                      filtration();
                     }}
                   >
                     ok
-              </button>
+                  </button>
                 </div>
               </div>
               <div className="main-filers-block">
@@ -149,7 +151,7 @@ const Filters = observer(
             </div>
           </div>
         </div>
-         );
+      );
     }
     sideInit = false;
 
