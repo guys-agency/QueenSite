@@ -260,8 +260,8 @@ const MenuPoints = observer(
             <div className="header">
               <div className="container container_f">
                 <div className="header__left">
-                  <Link>О нас</Link>
-                  <Link>Магазины</Link>
+                  <a href="">О нас</a>
+                  <a href="/shops">Магазины</a>
                   <span>
                     <span className="link header__btn">
                       Помощь <span className="ic i_drop"></span>
@@ -283,7 +283,7 @@ const MenuPoints = observer(
                       </ul>
                     </div>
                   </span>
-                  <Link>Бонусы</Link>
+                  <a href="">Бонусы</a>
                   <span>
                     <button className="link dotted header__btn">
                       {this.props.store.city}{" "}
@@ -398,7 +398,7 @@ const MenuPoints = observer(
                     <span className="ic i_menu"></span> Каталог
                   </button>
                   <span className="menu__sub ">
-                    <Link className="menu-point">Коллекции</Link>
+                    <a href="/collections" className="menu-point">Коллекции</a>
                     <div className="menu menu_sub menu_collection">
                       <div className="container container_f">
                         <div className="column">
@@ -480,16 +480,16 @@ const MenuPoints = observer(
                   </span>
 
                   <span className="menu__drop">
-                    <Link className="menu-point sale-point">Акции</Link>
+                    <a href="/actions" className="menu-point sale-point">Акции</a>
                     <div className="menu menu_sub">
                       <div className="container container_f">
                         <div className="column">
                           <ul>
                             <li>
-                              <a href="">Тест</a>
+                              <a href="">Распродажа</a>
                             </li>
                             <li>
-                              <a href="">Тест</a>
+                              <a href="/actions">Акции</a>
                             </li>
                           </ul>
                         </div>

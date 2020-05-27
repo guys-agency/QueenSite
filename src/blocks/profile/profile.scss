@@ -23,7 +23,7 @@
     .small-nav{
         li{
             &:last-child{
-                a{
+                .small-nav__btn{
                     &:hover{
                         background: $red;
                         color: white;
