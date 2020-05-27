@@ -23,6 +23,7 @@ import Actions from "./comp/Actions";
 import Action from "./comp/Action";
 
 import Shops from "./comp/Shops";
+import ShopsMap from "./comp/ShopsMap";
 
 import Swiper from "react-id-swiper";
 
@@ -237,6 +238,15 @@ const MainScreen = observer(
               render={() => (
                 <div className="main-screen">
                   <Shops />
+                </div>
+              )}
+            />
+
+            <Route
+              path="/shops-map"
+              render={() => (
+                <div className="main-screen">
+                  <ShopsMap />
                 </div>
               )}
             />
