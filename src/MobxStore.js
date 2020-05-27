@@ -99,7 +99,7 @@ class Store {
           return res.json();
         })
         .then((data) => {
-          console.log("dataData :>> ", data);
+          console.log("dataData1 :>> ", data);
           Object.keys(data).forEach((element) => {
             testContainer.push(
               <div className="col col-4">
@@ -209,20 +209,36 @@ class Store {
           return res.json();
         })
         .then((data) => {
-          console.log("dataData :>> ", data);
-          Object.keys(data).forEach((element) => {
-            testContainer.push(
-              <div className="col col-4">
-                <ProductCard
-                  key={data[element].slug}
-                  data={data[element]}
-                  store={this}
-                />
-              </div>
-            );
-          });
+          console.log("dataData2 :>> ", data);
+          console.log(
+            "Object.keys(data).length :>> ",
+            Object.keys(data).length
+          );
+          if (!Object.keys(data).length) {
+            if (this.activeFilters.choosePoint.length) {
+              this.activeFilters[
+                this.activeFilters.choosePoint[
+                  this.activeFilters.choosePoint.length - 1
+                ]
+              ] = [];
+              this.activeFilters.choosePoint.pop();
+              this.filtration();
+            }
+          } else {
+            Object.keys(data).forEach((element) => {
+              testContainer.push(
+                <div className="col col-4">
+                  <ProductCard
+                    key={data[element].slug}
+                    data={data[element]}
+                    store={this}
+                  />
+                </div>
+              );
+            });
 
-          this.productsToRender = testContainer;
+            this.productsToRender = testContainer;
+          }
         })
         .catch((err) => {
           console.log("err", err);
@@ -246,55 +262,56 @@ class Store {
         .then((data) => {
           console.log("data2 :>> ", data);
           const sortData = {};
-
-          Object.keys(data).forEach((name) => {
-            if (
-              (name !== "_id") &
-              (name !== "minPrice") &
-              (name !== "maxPrice") &
-              (name !== "measure") &
-              (name !== "count")
-            ) {
-              sortData[name] = data[name].sort();
-            } else if (name == "measure") {
-              const newMeasure = [];
-              const sortObj = {
-                names: [],
-              };
-              data[name].forEach((elem) => {
-                if (elem.name != "") {
-                  if (!sortObj.names.includes(elem.name[0])) {
-                    sortObj.names.push(elem.name[0]);
+          if (Object.keys(data).length) {
+            Object.keys(data).forEach((name) => {
+              if (
+                (name !== "_id") &
+                (name !== "minPrice") &
+                (name !== "maxPrice") &
+                (name !== "measure") &
+                (name !== "count")
+              ) {
+                sortData[name] = data[name].sort();
+              } else if (name == "measure") {
+                const newMeasure = [];
+                const sortObj = {
+                  names: [],
+                };
+                data[name].forEach((elem) => {
+                  if (elem.name != "") {
+                    if (!sortObj.names.includes(elem.name[0])) {
+                      sortObj.names.push(elem.name[0]);
+                    }
+                    if (sortObj[elem.name]) {
+                      sortObj[elem.name].push(Number(elem.value[0]));
+                    } else {
+                      sortObj[elem.name] = [Number(elem.value[0])];
+                    }
+                    if (!sortObj[elem.name + "Unit"]) {
+                      sortObj[elem.name + "Unit"] = elem.unit;
+                    }
                   }
-                  if (sortObj[elem.name]) {
-                    sortObj[elem.name].push(Number(elem.value[0]));
-                  } else {
-                    sortObj[elem.name] = [Number(elem.value[0])];
-                  }
-                  if (!sortObj[elem.name + "Unit"]) {
-                    sortObj[elem.name + "Unit"] = elem.unit;
-                  }
-                }
-              });
-              sortObj.names.sort();
-
-              sortObj.names.forEach((sn) => {
-                newMeasure.push({
-                  name: sn,
-                  value: sortObj[sn].sort(function (a, b) {
-                    return a - b;
-                  }),
-                  unit: sortObj[sn + "Unit"][0],
                 });
-              });
-              sortData[name] = newMeasure;
-            } else {
-              sortData[name] = data[name];
-            }
-          });
-          this.productValue = data.count;
-          this.paginatCont.push(<Paginat store={this} />);
-          this.createFilterPointsContainers(sortData);
+                sortObj.names.sort();
+
+                sortObj.names.forEach((sn) => {
+                  newMeasure.push({
+                    name: sn,
+                    value: sortObj[sn].sort(function (a, b) {
+                      return a - b;
+                    }),
+                    unit: sortObj[sn + "Unit"][0],
+                  });
+                });
+                sortData[name] = newMeasure;
+              } else {
+                sortData[name] = data[name];
+              }
+            });
+            this.productValue = data.count;
+            this.paginatCont.push(<Paginat store={this} />);
+            this.createFilterPointsContainers(sortData);
+          }
         })
         .catch((err) => {
           console.log("err", err);
@@ -394,6 +411,7 @@ class Store {
     }
 
     //переделать, что бы не было лишних запросов
+    console.log("activeFilters :>> ", this.activeFilters);
 
     this.getData(filterArray, bodyJSON, bodyJSONFilter);
   };

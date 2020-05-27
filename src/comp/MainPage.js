@@ -35,9 +35,11 @@ const MainPage = observer(
         .then((data) => {
           Object.keys(data[0].hit).forEach((element, i) => {
             hitContTime.push(
-              <div className="swiper-slide col col-3" key={i}>
+              <div
+                className="swiper-slide col col-3"
+                key={data[0].hit[element].slug}
+              >
                 <ProductCard
-                  key={data[0].hit[element].slug}
                   data={data[0].hit[element]}
                   store={this.props.store}
                 />
@@ -46,9 +48,8 @@ const MainPage = observer(
           });
           Object.keys(data[0].new).forEach((element) => {
             newContTime.push(
-              <div className="col col-3">
+              <div className="col col-3" key={data[0].new[element].slug}>
                 <ProductCard
-                  key={data[0].new[element].slug}
                   data={data[0].new[element]}
                   store={this.props.store}
                 />
@@ -57,9 +58,8 @@ const MainPage = observer(
           });
           Object.keys(data[0].all).forEach((element) => {
             allContTime.push(
-              <div className="col col-3">
+              <div className="col col-3" key={data[0].all[element].slug}>
                 <ProductCard
-                  key={data[0].all[element].slug}
                   data={data[0].all[element]}
                   store={this.props.store}
                 />
@@ -536,7 +536,7 @@ const MainPage = observer(
         </div>
       );
     }
-    componentWillMount() {
+    componentDidMount() {
       this.getData();
     }
   }

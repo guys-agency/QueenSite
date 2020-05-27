@@ -305,139 +305,132 @@ const CartPage = observer(
                         </form>
                       </span>
                     </h5>
-                    {Object.keys(deliveryData).length !== 0 && (
-                      <div className="cart-page__delivery-details">
-                        <div className="row">
-                          <div className="items col col-12">
-                            <div className="item">
-                              <h5>Тип доставки:</h5>
-                              <span>
-                                {deliveryData.deliveryType === "COURIER"
-                                  ? "Курьером"
-                                  : "Пункт выдачи"}{" "}
-                                {deliveryData.deliveryService !== undefined
-                                  ? " (" +
-                                    deliveryData.deliveryService.name +
-                                    ")"
-                                  : deliveryData.deliveryOption.name !== null
-                                  ? "( " +
-                                    deliveryData.deliveryOption.name +
-                                    ")"
-                                  : null}
-                              </span>
-                            </div>
-
-                            <div className="item">
-                              <h5>Стоимость и сроки:</h5>
-                              <span>
-                                {
-                                  deliveryData.deliveryOption.cost
-                                    .deliveryForCustomer
-                                }{" "}
-                                ₽/{" "}
-                                <span className="b_gray">
-                                  {deliveryData.time} дня
-                                </span>
-                              </span>
-                            </div>
-
-                            {deliveryData.deliveryType !== "COURIER" && (
-                              <div className="item">
-                                <h5>Адрес выдачи:</h5>
-                                <span>
-                                  {
-                                    deliveryData.pickupPoint.address
-                                      .addressString
-                                  }
-                                </span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                        {deliveryData.deliveryType === "COURIER" && (
-                          <form className="row" action="">
-                            <div className="col col-8">
-                              <div className="input-field">
-                                <label className="required" htmlFor="address">
-                                  Адрес
-                                </label>
-                                <input
-                                  id="address"
-                                  type="text"
-                                  onFocus={(e) => {
-                                    $(e.target)
-                                      .parent()
-                                      .find("label")
-                                      .addClass("active");
-                                  }}
-                                  onBlur={(e) => {
-                                    if (e.target.value === "") {
-                                      $(e.target)
-                                        .parent()
-                                        .find("label")
-                                        .removeClass("active");
-                                    }
-                                  }}
-                                />
-                              </div>
-                            </div>
-
-                            <div className="col col-2">
-                              <div className="input-field">
-                                <label className="required" htmlFor="flat">
-                                  Кв/Офис
-                                </label>
-                                <input
-                                  id="flat"
-                                  type="text"
-                                  onFocus={(e) => {
-                                    $(e.target)
-                                      .parent()
-                                      .find("label")
-                                      .addClass("active");
-                                  }}
-                                  onBlur={(e) => {
-                                    if (e.target.value === "") {
-                                      $(e.target)
-                                        .parent()
-                                        .find("label")
-                                        .removeClass("active");
-                                    }
-                                  }}
-                                />
-                              </div>
-                            </div>
-
-                            <div className="col col-2">
-                              <div className="input-field">
-                                <label className="required" htmlFor="porch">
-                                  Подъезд
-                                </label>
-                                <input
-                                  id="porch"
-                                  type="text"
-                                  onFocus={(e) => {
-                                    $(e.target)
-                                      .parent()
-                                      .find("label")
-                                      .addClass("active");
-                                  }}
-                                  onBlur={(e) => {
-                                    if (e.target.value === "") {
-                                      $(e.target)
-                                        .parent()
-                                        .find("label")
-                                        .removeClass("active");
-                                    }
-                                  }}
-                                />
-                              </div>
-                            </div>
-                          </form>
-                        )}
-                      </div>
-                    )}
                   </h3>
+                  {Object.keys(deliveryData).length !== 0 && (
+                    <div className="cart-page__delivery-details">
+                      <div className="row">
+                        <div className="items col col-12">
+                          <div className="item">
+                            <h5>Тип доставки:</h5>
+                            <span>
+                              {deliveryData.deliveryType === "COURIER"
+                                ? "Курьером"
+                                : "Пункт выдачи"}{" "}
+                              {deliveryData.deliveryService !== undefined
+                                ? " (" + deliveryData.deliveryService.name + ")"
+                                : deliveryData.deliveryOption.name !== null
+                                ? "( " + deliveryData.deliveryOption.name + ")"
+                                : null}
+                            </span>
+                          </div>
+
+                          <div className="item">
+                            <h5>Стоимость и сроки:</h5>
+                            <span>
+                              {
+                                deliveryData.deliveryOption.cost
+                                  .deliveryForCustomer
+                              }{" "}
+                              ₽/{" "}
+                              <span className="b_gray">
+                                {deliveryData.time} дня
+                              </span>
+                            </span>
+                          </div>
+
+                          {deliveryData.deliveryType !== "COURIER" && (
+                            <div className="item">
+                              <h5>Адрес выдачи:</h5>
+                              <span>
+                                {deliveryData.pickupPoint.address.addressString}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      {deliveryData.deliveryType === "COURIER" && (
+                        <form className="row" action="">
+                          <div className="col col-8">
+                            <div className="input-field">
+                              <label className="required" htmlFor="address">
+                                Адрес
+                              </label>
+                              <input
+                                id="address"
+                                type="text"
+                                onFocus={(e) => {
+                                  $(e.target)
+                                    .parent()
+                                    .find("label")
+                                    .addClass("active");
+                                }}
+                                onBlur={(e) => {
+                                  if (e.target.value === "") {
+                                    $(e.target)
+                                      .parent()
+                                      .find("label")
+                                      .removeClass("active");
+                                  }
+                                }}
+                              />
+                            </div>
+                          </div>
+
+                          <div className="col col-2">
+                            <div className="input-field">
+                              <label className="required" htmlFor="flat">
+                                Кв/Офис
+                              </label>
+                              <input
+                                id="flat"
+                                type="text"
+                                onFocus={(e) => {
+                                  $(e.target)
+                                    .parent()
+                                    .find("label")
+                                    .addClass("active");
+                                }}
+                                onBlur={(e) => {
+                                  if (e.target.value === "") {
+                                    $(e.target)
+                                      .parent()
+                                      .find("label")
+                                      .removeClass("active");
+                                  }
+                                }}
+                              />
+                            </div>
+                          </div>
+
+                          <div className="col col-2">
+                            <div className="input-field">
+                              <label className="required" htmlFor="porch">
+                                Подъезд
+                              </label>
+                              <input
+                                id="porch"
+                                type="text"
+                                onFocus={(e) => {
+                                  $(e.target)
+                                    .parent()
+                                    .find("label")
+                                    .addClass("active");
+                                }}
+                                onBlur={(e) => {
+                                  if (e.target.value === "") {
+                                    $(e.target)
+                                      .parent()
+                                      .find("label")
+                                      .removeClass("active");
+                                  }
+                                }}
+                              />
+                            </div>
+                          </div>
+                        </form>
+                      )}
+                    </div>
+                  )}
 
                   {Object.keys(deliveryData).length === 0 && (
                     <div
