@@ -29,7 +29,7 @@ const MenuPoints = observer(
     menuContainer = [];
 
     reglog = () => {};
-
+    timeout = null;
     test1 = "";
     test2 = "";
 
@@ -795,7 +795,7 @@ const MenuPoints = observer(
                 >
                   Регистрация
                 </button>
-                <label class="checkbox checkbox_margin">
+                <label className="checkbox checkbox_margin">
                   <input type="checkbox" name="" id="" />
                   <span className="checkbox-btn"></span>
                   <i>
