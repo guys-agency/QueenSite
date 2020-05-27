@@ -16,9 +16,11 @@
 @import "./blocks/tumbler/tumbler.scss";
 @import "./blocks/header/header.scss";
 @import "./blocks/navigation/navigation.scss";
+@import "./blocks/small-nav/small-nav.scss";
 @import "./blocks/menu/menu.scss";
 @import "./blocks/head/head.scss";
 @import "./blocks/product/product.scss";
+@import "./blocks/orders/orders.scss";
 @import "./blocks/drop/drop.scss";
 @import "./blocks/swiper/swiper.scss";
 @import "./blocks/banner/banner.scss";
@@ -38,6 +40,8 @@
 
 //PAGES
 @import "./blocks/cart-page/cart-page.scss";
+@import "./blocks/profile/profile.scss";
+@import "./blocks/user/user.scss";
 
 
 
@@ -84,6 +88,10 @@ code {
 
 .main-page {
   width: 100%;
+  flex: 1;
+}
+.main-screen{
+  flex: 1;
 }
 
 .slick-slider {
@@ -179,6 +187,7 @@ code {
   margin: auto;
   justify-content: center;
   align-items: center;
+  min-height: calc(100vh + 350px);
 }
 
 .product-container {

@@ -1,0 +1,20 @@
+.user{
+    &__name{
+        font-weight: bold;
+        font-size: 18px;
+        line-height: 33px;
+        padding-bottom: 10px;
+    }
+    &__contact{
+        display: flex;       
+    }
+    &__mail{
+        margin-left: 20px;
+    }
+    &__edit{
+        border-top: 1px solid $gr_light;
+        margin-top: 10px;
+        padding-top: 10px;
+        text-align: right;
+    }
+}

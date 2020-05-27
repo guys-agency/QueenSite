@@ -1,0 +1,35 @@
+.profile-p{
+    &>.container{
+        margin-top: 50px;
+    }
+    &__divider{
+        height: 100%;
+        width: 1px;
+        background-color: $gr_light;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    &__card{
+        border-radius: 3px;
+        box-shadow: $sh_bottom;
+        padding: 20px;
+        margin-bottom: 40px;
+    }
+    &__side{
+        position: -webkit-sticky;
+        position: sticky;
+        top: 80px;
+    }
+    .small-nav{
+        li{
+            &:last-child{
+                a{
+                    &:hover{
+                        background: $red;
+                        color: white;
+                    }
+                }
+            }
+        }
+    }
+}

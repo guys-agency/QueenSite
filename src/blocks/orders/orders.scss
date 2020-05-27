@@ -1,0 +1,87 @@
+.orders{
+    &-item{
+        border-radius: 5px;
+        border: 1px solid $gr_light;
+        margin-bottom: 20px;
+        padding-top: 15px;
+        transition: all 0.2s;
+        &__head{
+            display: flex;
+            padding-left: 15px;
+            padding-right: 15px;
+            h4{
+                font-size: 16px;
+            }
+            .date{
+                margin-left: auto;
+                color: $b_gray;
+            }
+        }
+        &__desc{
+            display: flex;
+            padding-left: 15px;
+            padding-right: 15px;
+            padding-bottom: 15px;
+            .status{
+                display: inline-block;
+                padding: 3px 11px;
+                border-radius: 12px;
+                box-sizing: border-box;
+                background-color: $gr_light;
+                &_green{
+                    color: #fff;
+                    background-color: $green;
+                }
+
+                &_blue{
+                    color: #fff;
+                    background-color: #2F80ED;
+                }
+
+                // &_green{
+                //     color: #fff;
+                //     background-color: $green;
+                // }
+            }
+            button{
+                margin-left: auto;
+            }
+        }
+        &__products{
+            max-height: 0;
+            visibility: hidden;
+            opacity: 0;
+            transition: all 0.2s;
+            .item{
+                display: flex;
+                border-top: 1px solid $gr_light;
+                padding-top: 15px;
+                padding-left: 15px;
+                padding-right: 15px;
+                &:last-child{
+                    padding-bottom: 15px;
+                }
+                .name{
+                    font-size: 16px;
+                    text-overflow: ellipsis;
+                    overflow: hidden; 
+                    width: 70%;
+                    height: 30px; 
+                    white-space: nowrap;
+                }
+                .price{
+                    font-size: 16px;
+                    margin-left: auto;
+                }
+            }
+        }
+        &.active{
+            box-shadow: $sh_bottom;
+            .orders-item__products{
+                opacity: 1;
+                visibility: visible;
+                max-height: 1000px;
+            }
+        }
+    }
+}

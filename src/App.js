@@ -10,6 +10,7 @@ import ProductCardContainer from "./comp/ProductCardContainer";
 import CartPage from "./comp/CartPage";
 import CardView from "./comp/CardView";
 import MainPage from "./comp/MainPage";
+import Profile from "./comp/Profile";
 import Swiper from "react-id-swiper";
 
 const { Component } = React;
@@ -168,6 +169,17 @@ const MainScreen = observer(
                     store={this.props.store}
                     data={this.props.store.cardContainer}
                     sku={propsRout.match.params.id}
+                  />
+                </div>
+              )}
+            />
+
+
+            <Route
+              path="/profile"
+              render={() => (
+                <div className="main-screen">
+                  <Profile
                   />
                 </div>
               )}

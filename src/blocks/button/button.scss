@@ -52,7 +52,7 @@ button{
 }
 
 .ic{
-    transition: all 0.2s;
+    // transition: all 0.2s;
 }
 
 .i_fav{
@@ -91,6 +91,14 @@ button{
 
 .active{
     &.i_fav, &.i_user, &.i_bag{
+        &::after{
+            opacity: 1;
+        }
+        &::before{
+            opacity: 0;
+        }
+    }
+    .i_fav, .i_user, .i_bag{
         &::after{
             opacity: 1;
         }
