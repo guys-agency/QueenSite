@@ -3,7 +3,7 @@ import React from "react";
 import $ from "jquery";
 import { Link, NavLink } from "react-router-dom";
 import LikeButton from "./LikeButton";
-import { Dropdown, Menu } from "semantic-ui-react";
+import { Dropdown, Menu, Checkbox } from "semantic-ui-react";
 import Cart from "./Cart";
 import { cities } from "../constants";
 import api from "./api";
@@ -11,6 +11,7 @@ import { Formik, Field, Form } from "formik";
 import RegistrationSchema from "../schemas/registrationSchema";
 import LoginSchema from "../schemas/loginSchema";
 import localStorage from "mobx-localstorage";
+import { withRouter } from "react-router";
 const { Component } = React;
 
 const MenuPoints = observer(
@@ -513,12 +514,16 @@ const MenuPoints = observer(
                   <button
                     className="profile ic i_user"
                     onClick={() => {
-                      document
-                        .querySelector(".sidebar-overlay")
-                        .classList.add("active");
-                      this.setState({ reg: false });
-                      this.setState({ popreg: true });
-                      this.setState({ log: true });
+                      if (this.props.store.auth) {
+                        this.props.history.push("/profile");
+                      } else {
+                        document
+                          .querySelector(".sidebar-overlay")
+                          .classList.add("active");
+                        this.setState({ reg: false });
+                        this.setState({ popreg: true });
+                        this.setState({ log: true });
+                      }
                     }}
                   ></button>
                 </div>
@@ -573,10 +578,14 @@ const MenuPoints = observer(
                   validationSchema={LoginSchema}
                   //определяем, что будет происходить при вызове onsubmit
                   onSubmit={(values, { setSubmitting }) => {
-                    api.login({
-                      email: values.email.toLowerCase(),
-                      password: values.password,
-                    });
+                    api
+                      .login({
+                        email: values.email.toLowerCase(),
+                        password: values.password,
+                      })
+                      .then((data) => {
+                        this.props.store.auth = true;
+                      });
                   }}
                   //свойство, где описывыем нашу форму
                   //errors-ошибки валидации формы
@@ -711,7 +720,7 @@ const MenuPoints = observer(
                     username: "",
                     password: "",
                     repassword: "",
-                    acceptedTerms: false,
+                    acceptedTerms: true,
                   }}
                   //подключаем схему валидации, которую описали выше
                   validationSchema={RegistrationSchema}
@@ -811,6 +820,7 @@ const MenuPoints = observer(
                           id=""
                           value={values.acceptedTerms}
                           onChange={handleChange}
+                          checked={values.acceptedTerms}
                         />
                         <span className="checkbox-btn"></span>
                         <i>
@@ -849,4 +859,4 @@ const MenuPoints = observer(
   }
 );
 
-export default MenuPoints;
+export default withRouter(MenuPoints);

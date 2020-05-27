@@ -5,6 +5,7 @@ import ProductCard from "./comp/ProductCard";
 import React from "react";
 import Paginat from "./comp/paginat";
 import localStorage from "mobx-localstorage";
+import getCookie from "./ulits/getCookie";
 
 //1http://134.122.81.119/api
 //127.0.0.1:3010
@@ -54,6 +55,8 @@ class Store {
   paginatCont = [];
 
   city = "";
+
+  auth = getCookie("auth") === undefined ? false : true;
 
   addtoCart = autorun(() => {
     console.log(
@@ -635,6 +638,7 @@ decorate(Store, {
   stopPag: observable,
   productValue: observable,
   city: observable,
+  auth: observable,
 });
 
 const store = new Store();

@@ -126,6 +126,8 @@ const CartPage = observer(
         });
       }
 
+      console.log("auth :>> ", this.props.store.auth);
+
       return (
         <div className="cart-page">
           <div className="container">
