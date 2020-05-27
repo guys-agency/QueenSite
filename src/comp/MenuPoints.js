@@ -796,7 +796,7 @@ const MenuPoints = observer(
                   Регистрация
                 </button>
                 <label className="checkbox checkbox_margin">
-                  <input type="checkbox" name="" id="" />
+                  <input checked type="checkbox" name="" id="" />
                   <span className="checkbox-btn"></span>
                   <i>
                     Согласен с условиями "
