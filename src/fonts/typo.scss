@@ -68,6 +68,9 @@ h1{
 
 h2{
   font-size: 27px;
+  @include max($s){
+    font-size: 21px;
+  }
   &.tilda{
     &::before{
       font-size: 70px;
@@ -135,6 +138,9 @@ a, .link{
 p{
   font-size: 16px;
   color: $b_dark;
+  @include max($s){
+    font-size: 14px;
+  }
 }
 
 .title{

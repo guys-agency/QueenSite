@@ -2509,6 +2509,6 @@ const cities = [
 //http://api.queenbohemia.ru
 //127.0.0.1:3010
 
-const SERVER_URL = "http://api.queenbohemia.ru";
+const SERVER_URL = "https://api.queenbohemia.ru";
 
 export { cities, SERVER_URL };

@@ -10,9 +10,56 @@
   top: 0;
   z-index: 98;
   transition: all 0.3s;
+  @include max($s){
+    background-color: #fff;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 280px;
+    z-index: 99;
+    &>.container_f{
+      flex-direction: column;
+      margin-left: 20px;
+      margin-right: 0;
+    }
+  }
+
+  &__city-ch{
+    display: none;
+    h5{
+      display: inline-block;
+      margin-right: 10px;
+    }
+    @include max($s){
+      display: inline-block;
+      padding-top: 10px;
+    }
+    .header__right{
+      display: flex;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      .phone{
+        order: 0;
+        font-size: 14px;
+        &::before{
+          content: none;
+        }
+      }
+      .ask{
+        margin-left: 15px;
+        font-size: 14px;
+        order: 1;
+      }
+    }
+  }
+
   .container{
     padding-bottom: 10px;
     padding-top: 10px;
+    @include max($s){
+      position: relative;
+    }
   }
   &_scroll{
     background: #fff;
@@ -39,6 +86,53 @@
             &::before{
               opacity: 1;
             }
+          }
+        }
+      }
+    }
+  }
+  &__service{
+    order: 4;
+    display: none;
+    @include max($s){
+      display: flex;
+      flex-direction: column;
+    }
+    .header__left-bonus{
+      display: block;
+    }
+    .header__btn{
+      display: block;
+    }
+    &>span, a{
+      padding-top: 30px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid $gr_light;
+      display: block;
+      font-size: 16px;
+      position: relative;
+      &:hover{
+        &::after{
+          color: $g_middle;
+        }
+      }
+      &::after{
+        @include icon;
+        content: $i_right;
+        position: absolute;
+        right: 10px;
+        bottom: 13px;
+        transition: all 0.2s;
+      }
+      .i_drop{
+        display: none;
+      }
+    }
+    .header__drop{
+      ul{
+        li{
+          &:last-child{
+            display: none;
           }
         }
       }

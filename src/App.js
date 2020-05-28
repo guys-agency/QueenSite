@@ -258,10 +258,10 @@ const MainScreen = observer(
             />
 
             <Route
-              path="/help"
-              render={() => (
+              path={["/help/:options"]}
+              render={(routProps) => (
                 <div className="main-screen">
-                  <Help />
+                  <Help path={routProps.match.params.options} />
                 </div>
               )}
             />
@@ -394,13 +394,14 @@ const MainScreen = observer(
                     105082, г. Москва, Переведёновский переулок, д. 13, стр. 18
                   </p>
                 </div>
-                <div
-                  onLoad={() => {
-                    console.log("test");
-                  }}
-                ></div>
               </div>
             </div>
+
+            <div
+              onLoad={() => {
+                console.log("test");
+              }}
+            ></div>
           </div>
         </>
       );

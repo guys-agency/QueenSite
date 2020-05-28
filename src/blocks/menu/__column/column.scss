@@ -1,6 +1,17 @@
     .column{
         margin-right: 120px;
         min-width: 200px;
+        transition: all 0.2s;
+        @include max(1210px){
+            margin-right: 60px;
+        }
+        @include max(1000px){
+            margin-right: 40px;
+            min-width: initial;
+        }
+        &:last-child{
+            margin-right: 0;
+        }
         &>div{
             &:nth-child(2n){
                 margin-top: 40px;

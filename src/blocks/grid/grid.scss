@@ -3,7 +3,7 @@
   margin-right: auto;
   margin-left: auto;
   max-width: 1110px;
-  @include max($d){
+  @include max(1130px){
     margin-right: 10px;
     margin-left: 10px;
   }
@@ -12,6 +12,10 @@
   }
   &_s{
     max-width: calc(1110px + 20px);
+    @include max(1130px){
+      margin-left: 0;
+      margin-right: 0;
+    }
     .swiper-container{
         padding-top: 10px;
         padding-bottom: 10px;

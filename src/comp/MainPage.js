@@ -37,7 +37,7 @@ const MainPage = observer(
           Object.keys(data[0].hit).forEach((element, i) => {
             hitContTime.push(
               <div
-                className="swiper-slide col col-3"
+                className="swiper-slide col col-3 col-t-4 col-s-6"
                 key={data[0].hit[element].slug}
               >
                 <ProductCard
@@ -49,7 +49,7 @@ const MainPage = observer(
           });
           Object.keys(data[0].new).forEach((element) => {
             newContTime.push(
-              <div className="col col-3" key={data[0].new[element].slug}>
+              <div className="col col-3 col-t-4 col-s-6" key={data[0].new[element].slug}>
                 <ProductCard
                   data={data[0].new[element]}
                   store={this.props.store}
@@ -59,7 +59,10 @@ const MainPage = observer(
           });
           Object.keys(data[0].all).forEach((element) => {
             allContTime.push(
-              <div className="col col-3" key={data[0].all[element].slug}>
+              <div
+                className="col col-3 col-t-4 col-s-6"
+                key={data[0].all[element].slug}
+              >
                 <ProductCard
                   data={data[0].all[element]}
                   store={this.props.store}
@@ -291,7 +294,7 @@ const MainPage = observer(
                 <h2 className="tilda">Идеи</h2>
               </div>
               <div className="row ideas-block">
-                <div className="col col-5">
+                <div className="col col-5 col-t-12">
                   <a
                     href="#"
                     className="banner banner_overlay main-idea"
@@ -302,9 +305,9 @@ const MainPage = observer(
                     <div className="banner__desc">Вкусное вино</div>
                   </a>
                 </div>
-                <div className="ideas col col-7">
+                <div className="ideas col col-7 col-t-12">
                   <div className="row row_inner">
-                    <div className="col col-6">
+                    <div className="col col-6 col-s-12">
                       <a
                         href="#"
                         className="banner banner_overlay small"
@@ -315,7 +318,7 @@ const MainPage = observer(
                         <div className="banner__desc">Виски</div>
                       </a>
                     </div>
-                    <div className="col col-6">
+                    <div className="col col-6 col-s-12">
                       <a
                         href="#"
                         className="banner banner_overlay small"
@@ -326,7 +329,7 @@ const MainPage = observer(
                         <div className="banner__desc">Кружки со смыслом</div>
                       </a>
                     </div>
-                    <div className="col col-12">
+                    <div className="col col-12 col-s-12">
                       <a
                         href="#"
                         className="banner banner_overlay large"
@@ -416,7 +419,7 @@ const MainPage = observer(
               </div>
 
               <div className="row">
-                <div className="col col-7">
+                <div className="col col-7 col-s-12">
                   <a
                     href="#"
                     className="banner banner_overlay main"
@@ -427,7 +430,7 @@ const MainPage = observer(
                     <div className="banner__desc">Индиго</div>
                   </a>
                 </div>
-                <div className="items col col-5">
+                <div className="items col col-5 col-s-12">
                   <div className="row row_inner">
                     <div className="col col-12">
                       <a

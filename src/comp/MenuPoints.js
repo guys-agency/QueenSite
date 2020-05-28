@@ -5,13 +5,15 @@ import { Link, NavLink } from "react-router-dom";
 import LikeButton from "./LikeButton";
 import { Dropdown, Menu, Checkbox } from "semantic-ui-react";
 import Cart from "./Cart";
-import { cities, SERVER_URL } from "../constants";
 import api from "./api";
 import { Formik, Field, Form } from "formik";
 import RegistrationSchema from "../schemas/registrationSchema";
 import LoginSchema from "../schemas/loginSchema";
 import localStorage from "mobx-localstorage";
 import { withRouter } from "react-router";
+import { cities, SERVER_URL } from "../constants";
+import CityCh from "./CityCh";
+
 const { Component } = React;
 
 const MenuPoints = observer(
@@ -24,7 +26,6 @@ const MenuPoints = observer(
       log: true,
       login: "",
       password: "",
-
       name: "",
     };
 
@@ -34,6 +35,40 @@ const MenuPoints = observer(
     timeout = null;
     test1 = "";
     test2 = "";
+
+    
+    phone = (
+      <div className="header__right">
+        <button className="link dotted ask">Задать вопрос</button>
+        <a href="tel:+78008085878" className="phone">
+          +7 800 808-58-78
+        </a>
+      </div>
+    );
+
+    service = (
+      <div className="header__drop">
+        <ul>
+          <li>
+            <Link to="help/delivery">Доставка</Link>
+          </li>
+          <li>
+            <Link to="help/payment">Оплата</Link>
+          </li>
+          <li>
+            <Link to="help/return">Возврат</Link>
+          </li>
+          <li>
+            <Link to="help/offer">Публичная оферта</Link>
+          </li>
+          <li>
+            <Link to="help/bonus">Бонусы</Link>
+          </li>
+        </ul>
+      </div>
+    );
+
+    search = (<></>);
 
     toggleMenu = (e) => {
       e.stopPropagation();
@@ -59,12 +94,13 @@ const MenuPoints = observer(
     };
 
     toggleDrop = (e) => {
-      e.preventDefault();
+      // e.preventDefault();
       $(".menu_mega").removeClass("visible");
       $(".menu_sub").removeClass("visible");
       $(".menu-point").removeClass("active");
       $(".header__drop").removeClass("visible");
       $(".header__btn").removeClass("active");
+      console.log(e.target);
 
       $(e.target).addClass("active");
       $(e.target).parent().find(".menu_sub").addClass("visible");
@@ -85,7 +121,6 @@ const MenuPoints = observer(
       if (container.has(e.target).length === 0) {
         container.removeClass("visible");
       }
-
 
       var mega = $(".menu_mega");
       if (mega.has(e.target).length === 0) {
@@ -119,18 +154,26 @@ const MenuPoints = observer(
     }
 
     componentDidUpdate() {
+      //  $(window).width
+
       $(".header__btn").off("click", this.toggleHeader);
       $(".header__btn").on("click", this.toggleHeader);
 
       $(".btn-menu").off("click", this.toggleMenu);
       $(".btn-menu").on("click", this.toggleMenu);
-      $(".btn-menu").off("mouseenter", this.hoverMenuBtn);
-      $(".btn-menu").on("mouseenter", this.hoverMenuBtn);
 
-      $(".menu-point").off("mouseenter", this.toggleDrop);
-      $(".menu-point").on("mouseenter", this.toggleDrop);
-      $(".menu_sub").off("mouseleave", this.offDrop);
-      $(".menu_sub").on("mouseleave", this.offDrop);
+      if ($(window).width() > 760) {
+        $(".btn-menu").off("mouseenter", this.hoverMenuBtn);
+        $(".btn-menu").on("mouseenter", this.hoverMenuBtn);
+
+        $(".menu-point").off("mouseenter", this.toggleDrop);
+        $(".menu-point").on("mouseenter", this.toggleDrop);
+        $(".menu_sub").off("mouseleave", this.offDrop);
+        $(".menu_sub").on("mouseleave", this.offDrop);
+      } else {
+        $(".menu-point").off("click", this.toggleDrop);
+        $(".menu-point").on("click", this.toggleDrop);
+      }
 
       $(document).off("click", this.closeAll);
       $(document).on("click", this.closeAll);
@@ -162,7 +205,10 @@ const MenuPoints = observer(
               //убрать tr, так как будут поля с транскрипцией в бд
               childsPoints.push(
                 <li key={child.name}>
-                  <NavLink to={`/catalog/${elem.slug}/${child.slug}`}>
+                  <NavLink
+                    to={`/catalog/${elem.slug}/${child.slug}`}
+                    onClick={this.closeAll}
+                  >
                     {child.name}
                   </NavLink>
                 </li>
@@ -266,116 +312,18 @@ const MenuPoints = observer(
             <div className="header">
               <div className="container container_f">
                 <div className="header__left">
-                  <Link to="">О нас</Link>
+                  <Link to="/about">О нас</Link>
                   <Link to="/shops">Магазины</Link>
                   <span>
                     <span className="link header__btn">
                       Помощь <span className="ic i_drop"></span>
                     </span>
-                    <div className="header__drop">
-                      <ul>
-                        <li>
-                          <a href="">Доставка</a>
-                        </li>
-                        <li>
-                          <a href="">Оплата</a>
-                        </li>
-                        <li>
-                          <a href="">Возврат</a>
-                        </li>
-                        <li>
-                          <a href="">Публичная оферта</a>
-                        </li>
-                      </ul>
-                    </div>
+                    {this.service}
                   </span>
-                  <a href="">Бонусы</a>
-                  <span>
-                    <button className="link dotted header__btn">
-                      {this.props.store.city}{" "}
-                      <span className="ic i_drop"></span>
-                    </button>
-                    <form className="header__drop header__drop_city">
-                      <div className="input-field">
-                        <label className="active" htmlFor="citySearch">
-                          Ваш город
-                        </label>
-                        <input
-                          id="citySearch"
-                          placeholder="Поиск"
-                          type="text"
-                          onInput={(e) => {
-                            if (e.target.value.length >= 3) {
-                              console.log(
-                                "e.target.value.length :>> ",
-                                e.target.value.length
-                              );
-                              const rigthCities = [];
-                              cities.some((el) => {
-                                if (rigthCities.length < 3) {
-                                  if (
-                                    el
-                                      .toLowerCase()
-                                      .indexOf(e.target.value.toLowerCase()) !==
-                                    -1
-                                  ) {
-                                    rigthCities.push(el);
-                                  }
-                                  return false;
-                                } else {
-                                  return true;
-                                }
-                              });
-                              const renderCities = [];
-                              for (let index = 0; index < 3; index++) {
-                                console.log("object :>> ", rigthCities);
-                                renderCities.push(
-                                  <li>
-                                    <button
-                                      type="submit"
-                                      onClick={(e) => {
-                                        e.preventDefault();
-                                        localStorage.set("city", {
-                                          name: rigthCities[index],
-                                          sourse: "U",
-                                        });
-                                      }}
-                                    >
-                                      {rigthCities[index]}
-                                    </button>
-                                  </li>
-                                );
-                              }
-                              this.setState({ cities: renderCities });
-                            }
-                          }}
-                          onFocus={(e) => {
-                            $(e.target)
-                              .parent()
-                              .find("label")
-                              .addClass("active");
-                          }}
-                          onBlur={(e) => {
-                            if (e.target.value === "") {
-                              // $(e.target).parent().find('label').removeClass('active');
-                            }
-                          }}
-                        />
-                      </div>
-                      <ul>
-                        {this.state.cities}
-                        {/* <li>
-                          <button type="submit">Казань</button>
-                        </li>
-                        <li>
-                          <button type="submit">Калининград</button>
-                        </li>
-                        <li>
-                          <button type="submit">Кабанск</button>
-                        </li> */}
-                      </ul>
-                    </form>
-                  </span>
+                  <Link className="header__left-bonus" to="help/bonus">
+                    Бонусы
+                  </Link>
+                  <CityCh store={this.props.store} />
                 </div>
                 {/* <Link className="logo" to="/">
 
@@ -388,16 +336,16 @@ const MenuPoints = observer(
                   <span className="i_qd"></span>
                 </Link>
 
-                <div className="header__right">
-                  <button className="link dotted ask">Задать вопрос</button>
-                  <a href="tel:+78008085878" className="phone">
-                    +7 800 808-58-78
-                  </a>
-                </div>
+                {this.phone}
               </div>
             </div>
             <div className="navigation">
               <div className="container container_f">
+                <div className="navigation__city-ch">
+                  <h5>Ваш город:</h5>
+                  <CityCh store={this.props.store} />
+                  {this.phone}
+                </div>
                 <div className="navigation__left">
                   <button className="btn btn_primary btn-menu">
                     {" "}
@@ -507,7 +455,7 @@ const MenuPoints = observer(
                     </div>
                   </span>
                 </div>
-                <div className="navigation__right">
+                <div className="search-pos">
                   <form className="search-wrp">
                     <input
                       type="text"
@@ -516,7 +464,11 @@ const MenuPoints = observer(
                     ></input>
                     <button className="ic i_search"></button>
                   </form>
-                  <button className="liked ic i_fav"></button>
+                </div>
+                <div className="navigation__buttons">
+                  <button className="liked ic i_fav">
+                    <span className="vis-s">Избранное</span>
+                  </button>
                   <LikeButton
                     classNameProp="cart ic i_bag"
                     to="/cart"
@@ -535,7 +487,22 @@ const MenuPoints = observer(
                         this.setState({ log: true });
                       }
                     }}
-                  ></button>
+                  >
+                    <span className="vis-s">Войти</span>
+                  </button>
+                </div>
+                <div className="navigation__service">
+                  <Link to="/about">О нас</Link>
+                  <Link to="/shops">Магазины</Link>
+                  <span>
+                    <span className="link header__btn">
+                      Помощь <span className="ic i_drop"></span>
+                    </span>
+                    {this.service}
+                  </span>
+                  <Link className="header__left-bonus" to="help/bonus">
+                    Бонусы
+                  </Link>
                 </div>
                 <div className="menu menu_mega">
                   <div className="container container_f">

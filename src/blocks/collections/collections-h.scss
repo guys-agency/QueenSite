@@ -3,6 +3,10 @@
     .main{
         height: 366px;
         flex: 0 0 auto;
+        @include max($s){
+            height: 220px;
+            margin-bottom: 20px;
+        }
     }
 
     .items {
@@ -11,6 +15,9 @@
         .small {
             
             height: 172px;
+            @include max($s){
+                height: 220px;
+            }
             margin-bottom: 20px;
             &:nth-child(2) {
             margin-right: 0px;

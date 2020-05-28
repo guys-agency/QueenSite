@@ -4,6 +4,10 @@
         top: 60px;
         bottom: 60px;
     };
+    @include max($t){
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
     width: 100%;
     color: white;
     p{
@@ -39,6 +43,16 @@
     &__column{
         .logo{
             margin-top: 10px;
+            @include max(950px){
+                .i_qr{
+                    display: none;
+                }
+            }
+            @include max($t){
+                transform: scale(0.8);
+                left: -15px;
+
+            }
         }
         .dotted{
             color: white;
@@ -46,7 +60,7 @@
             &:hover{
                 opacity: 0.7;
             }
-            margin-bottom: 38px;
+            margin-bottom: 53px;
         }
         &:last-child{
             text-align: right;
@@ -57,6 +71,9 @@
         margin: 0;
         padding: 0;
         margin-right: 50px;
+        @include max($t){
+            margin-right: 30px;
+        }
         li{
             a{
                 font-size: 14px;
@@ -65,6 +82,9 @@
         }
 
 
+        &:last-child{
+            margin-right: 0;
+        }
         &-column{
             display: flex;
         }

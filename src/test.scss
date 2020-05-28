@@ -68,6 +68,13 @@ code {
   }
 }
 
+.vis-s{
+  display: none;
+  @include max($s){
+    display: inline-block;
+  }
+}
+
 .catalog{
   margin-top: 30px;
 }
@@ -146,6 +153,12 @@ code {
 
 .main-idea {
   height: 460px;
+  @include max($t){
+    margin-bottom: 20px;
+  }
+  @include max($s){
+    height: 220px;
+  }
 }
 
 .ideas {
@@ -170,11 +183,8 @@ code {
 
   .banner {
     position: relative;
-    width: 357px;
     height: 221px;
     border-radius: 3px;
-    margin-right: 20px;
-
     box-shadow: 0px 2px 16px rgba(0, 0, 0, 0.07);
     border-radius: 3px;
 

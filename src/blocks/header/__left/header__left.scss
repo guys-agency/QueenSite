@@ -40,4 +40,9 @@
         }
       }
     }
+    &-bonus{
+      @include max(950px){
+        display: none;
+      }
+    }
   }

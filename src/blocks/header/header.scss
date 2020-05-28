@@ -11,7 +11,14 @@
     bottom: 10px;
   };
   transition: all 0.3s;
-
+  @include max($t){
+    padding-top: 10px;
+  }
+  .header__left{
+      @include max($s){
+        display: none;
+      }
+  }
   .container{
     align-items: center;
   }
@@ -20,8 +27,13 @@
     display: flex;
     margin-right: auto;
     margin-left: auto;
+    @include max(950px){
+      transform: scale(0.8);
+      .i_qd{
+        display: none;
+      }
+    }
   }
-
 
   &_scroll{
     background-color: #fff;

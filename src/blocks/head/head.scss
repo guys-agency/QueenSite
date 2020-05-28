@@ -7,6 +7,9 @@
     padding-top: 150px;
     &_big{
         height: 500px;
+        @include max($s){
+            height: 300px;
+        }
     }
     &_sm{
         height: 355px;
@@ -22,6 +25,10 @@
         margin-left: auto;
         margin-right: auto;
         position: relative;
+        @include max(1320px){
+            margin-left: 10px;
+            margin-right: 10px;
+        }
         .swiper-pagination{
             max-width: 1110px;
             @include c(x);
@@ -49,7 +56,11 @@
         margin-left: auto;
         margin-right: auto;
         background-size: cover;
+        background-position: center;
         display: block;
+        @include max($s){
+            height: 250px;
+        }
         @include max($d){
             margin-right: 10px;
             margin-left: 10px;
@@ -62,6 +73,10 @@
                 max-width: 1110px;
                 width: 100%;
                 @include c(x);
+                @include max($d){
+                    padding-right: 20px;
+                    padding-left: 20px;
+                }
                 bottom: 20px;
                 z-index: 1;
                 color: white;
