@@ -4,30 +4,38 @@ import { withRouter } from "react-router";
 import localStorage from "mobx-localstorage";
 
 const ProductCard = observer(function ProductCard(props) {
+  const { data, store } = props;
+
+  const inLike = store.likeContainer.length
+    ? store.likeContainer.indexOf(String(data.slug))
+    : -1;
+  const inCart = Object.keys(store.productInCartList).length
+    ? Object.keys(store.productInCartList).indexOf(String(data.slug))
+    : -1;
+
+  // console.log("inLike :>> ", store.productInCartList);
+  //придумать, как не вызывать все это заного у всех при изменении у одного
   const clickHandler = (e) => {
-    const { data, store } = props;
-
     if (e.target.classList.contains("i_bag")) {
-      const cardData = Object.assign(data, {
-        countInCart: 1,
-      });
-      if (
-        localStorage.get("productInCart") &&
-        Object.keys(localStorage.get("productInCart")).length
-      ) {
-        const pc = localStorage.get("productInCart");
+      const { productInCartList, addtoCart } = store;
+      console.log("inCart :>> ", inCart);
+      if (inCart !== -1) {
+        console.log("test123 :>> ");
 
-        if (Object.keys(pc).includes(cardData.slug)) {
-          console.log("object :>> ");
-          pc[cardData.slug].countInCart += 1;
-        } else {
-          pc[cardData.slug] = cardData;
-        }
-        localStorage.setItem("productInCart", pc);
-      } else
-        localStorage.setItem("productInCart", {
-          [cardData.slug]: cardData,
-        });
+        delete productInCartList[data.slug];
+      } else {
+        productInCartList[data.slug] = 1;
+      }
+      addtoCart(true);
+    } else if (e.target.classList.contains("i_fav")) {
+      const { likeContainer, addToLike } = store;
+
+      if (inLike !== -1) {
+        likeContainer.splice(inLike, 1);
+      } else {
+        likeContainer.unshift(String(data.slug));
+      }
+      addToLike();
     } else {
       store.cardContainer = data;
       props.history.push(`/product/${data.slug}`, { test: "test" });
@@ -37,7 +45,6 @@ const ProductCard = observer(function ProductCard(props) {
     }
   };
 
-  const { data } = props;
   let imagePath = "/image/products/" + data.path_to_photo[0];
 
   return (
@@ -52,8 +59,12 @@ const ProductCard = observer(function ProductCard(props) {
           </div>
         </div>
         <div className="product__action">
-          <button className="ic i_fav"></button>
-          <button className="ic i_bag"></button>
+          <button
+            className={"ic i_fav" + (inLike === -1 ? "" : " active")}
+          ></button>
+          <button
+            className={"ic i_bag" + (inCart === -1 ? "" : " active")}
+          ></button>
         </div>
       </div>
       <h3 className="product__name">{data.name}</h3>

@@ -53,6 +53,22 @@ class Api {
       },
     });
   }
+
+  getAnyProd(data) {
+    return fetch(SERVER_URL + "/any-prod", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }).then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      Promise.reject(res.json());
+    });
+  }
 }
 
 const api = new Api();
