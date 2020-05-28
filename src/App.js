@@ -6,6 +6,7 @@ import { Link, NavLink } from "react-router-dom";
 import { Formik, Field, Form } from "formik";
 import api from "./comp/api";
 import LoginSchema from "./schemas/loginSchema";
+import getCookie from "./ulits/getCookie";
 
 import MenuPoints from "./comp/MenuPoints";
 import Filters from "./comp/Filters";
