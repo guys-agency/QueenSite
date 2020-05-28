@@ -43,6 +43,16 @@ class Api {
       },
     });
   }
+
+  getUserData() {
+    return fetch(SERVER_URL + "/user", {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  }
 }
 
 const api = new Api();
