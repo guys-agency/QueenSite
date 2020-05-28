@@ -10,6 +10,9 @@ import api from "./api";
 import { Formik, Field, Form } from "formik";
 import RegistrationSchema from "../schemas/registrationSchema";
 import LoginSchema from "../schemas/loginSchema";
+import LikeSidebar from "./LikeSidebar";
+import AuthSidebar from "./AuthSidebar";
+import CartSidebar from "./CartSidebar";
 import localStorage from "mobx-localstorage";
 import { withRouter } from "react-router";
 const { Component } = React;
@@ -20,12 +23,8 @@ const MenuPoints = observer(
       cities: [],
       ready: false,
       popreg: false,
-      reg: false,
-      log: true,
-      login: "",
-      password: "",
-
-      name: "",
+      popLike: false,
+      popCart: false,
     };
 
     menuContainer = [];
@@ -85,7 +84,6 @@ const MenuPoints = observer(
       if (container.has(e.target).length === 0) {
         container.removeClass("visible");
       }
-
 
       var mega = $(".menu_mega");
       if (mega.has(e.target).length === 0) {
@@ -256,6 +254,15 @@ const MenuPoints = observer(
       if (e.target.value === "") {
         $(e.target).parent().find("label").removeClass("active");
       }
+    };
+
+    closeSidebar = () => {
+      this.setState({
+        popreg: false,
+        popCart: false,
+        popLike: false,
+      });
+      document.querySelector(".sidebar-overlay").classList.remove("active");
     };
 
     render() {
@@ -516,11 +523,26 @@ const MenuPoints = observer(
                     ></input>
                     <button className="ic i_search"></button>
                   </form>
-                  <button className="liked ic i_fav"></button>
-                  <LikeButton
-                    classNameProp="cart ic i_bag"
-                    to="/cart"
-                  ></LikeButton>
+                  <button
+                    className="liked ic i_fav"
+                    onClick={() => {
+                      document
+                        .querySelector(".sidebar-overlay")
+                        .classList.add("active");
+
+                      this.setState({ popLike: true });
+                    }}
+                  ></button>
+                  <button
+                    className="cart ic i_bag"
+                    onClick={() => {
+                      document
+                        .querySelector(".sidebar-overlay")
+                        .classList.add("active");
+
+                      this.setState({ popCart: true });
+                    }}
+                  ></button>
                   <button
                     className="profile ic i_user"
                     onClick={() => {
@@ -530,9 +552,8 @@ const MenuPoints = observer(
                         document
                           .querySelector(".sidebar-overlay")
                           .classList.add("active");
-                        this.setState({ reg: false });
+
                         this.setState({ popreg: true });
-                        this.setState({ log: true });
                       }
                     }}
                   ></button>
@@ -545,314 +566,58 @@ const MenuPoints = observer(
               </div>
             </div>
 
-            <div className={"sidebar" + (this.state.popreg ? " visible" : "")}>
-              <button
-                className="btn btn-head"
-                onClick={() => {
-                  this.setState({ popreg: false });
-                  document
-                    .querySelector(".sidebar-overlay")
-                    .classList.remove("active");
-                }}
-              >
+            <div
+              className={
+                "sidebar" +
+                (this.state.popreg || this.state.popCart || this.state.popLike
+                  ? " visible"
+                  : "")
+              }
+            >
+              <button className="btn btn-head" onClick={this.closeSidebar}>
                 Свернуть
               </button>
-
-              <div className="tumbler">
+              {!this.state.popreg && (
                 <button
-                  className={this.state.log ? " active" : ""}
+                  className="btn btn-head"
                   onClick={() => {
-                    this.setState({ reg: false, log: true });
+                    if (this.state.popLike) {
+                      this.props.store.likeContainer = [];
+                      this.props.store.addToLike();
+                    } else {
+                      this.props.store.productInCartList = {};
+                      this.props.store.addtoCart(true);
+                    }
                   }}
                 >
-                  Вход
+                  Очистить
                 </button>
-                <button
-                  className={this.state.reg ? " active" : ""}
-                  onClick={() => {
-                    this.setState({ reg: true, log: false });
-                  }}
-                >
-                  Регистрация
-                </button>
-              </div>
-
-              {this.state.log && (
-                <Formik
-                  //инициализируем значения input-ов
-                  initialValues={{
-                    email: "",
-                    password: "",
-                  }}
-                  //подключаем схему валидации, которую описали выше
-                  validationSchema={LoginSchema}
-                  //определяем, что будет происходить при вызове onsubmit
-                  onSubmit={(values, { setSubmitting }) => {
-                    api
-                      .login({
-                        email: values.email.toLowerCase(),
-                        password: values.password,
-                      })
-                      .then((data) => {
-                        this.props.store.auth = true;
-                      });
-                  }}
-                  //свойство, где описывыем нашу форму
-                  //errors-ошибки валидации формы
-                  //touched-поля формы, которые мы "затронули",
-                  //то есть, в которых что-то ввели
-                >
-                  {({
-                    errors,
-                    touched,
-                    handleSubmit,
-                    isSubmitting,
-                    values,
-                    handleChange,
-                  }) => (
-                    <form className=" visible" onSubmit={handleSubmit}>
-                      <div className="input-field">
-                        <label className="required" htmlFor="email">
-                          Email
-                        </label>
-                        <input
-                          id="email"
-                          name="email"
-                          type="text"
-                          onFocus={this.focusHandler}
-                          onBlur={this.blurHandler}
-                          value={values.email}
-                          onChange={handleChange}
-                        />
-
-                        <div className="field-error">{errors.email}</div>
-                      </div>
-
-                      <div className="input-field">
-                        <label className="required" htmlFor="password">
-                          Пароль
-                        </label>
-                        <input
-                          name="password"
-                          type="password"
-                          id="password"
-                          onFocus={this.focusHandler}
-                          onBlur={this.blurHandler}
-                          value={values.password}
-                          onChange={handleChange}
-                        />
-                        {errors.password && touched.password && (
-                          <div className="field-error">{errors.password}</div>
-                        )}
-                      </div>
-                      <button type="submit" className="btn btn_primary">
-                        Войти
-                      </button>
-                      <button className="link dotted forgot-btn">
-                        Забыли пароль?
-                      </button>
-                    </form>
-                  )}
-                </Formik>
               )}
-
-              {/* <form className={this.state.log ? " visible" : ""}>
-                <div className="input-field">
-                  <label className="required" htmlFor="email">
-                    Email
-                  </label>
-                  <input
-                    id="email"
-                    type="text"
-                    onFocus={(e) => {
-                      $(e.target).parent().find("label").addClass("active");
-                    }}
-                    onBlur={(e) => {
-                      if (e.target.value === "") {
-                        $(e.target)
-                          .parent()
-                          .find("label")
-                          .removeClass("active");
-                      }
-                    }}
-                    onChange={(e) => {
-                      this.setState({ login: e.target.value });
-                    }}
-                  />
-                </div>
-
-                <div className="input-field">
-                  <label className="required" htmlFor="password">
-                    Пароль
-                  </label>
-                  <input
-                    id="password"
-                    type="password"
-                    onFocus={(e) => {
-                      $(e.target).parent().find("label").addClass("active");
-                    }}
-                    onBlur={(e) => {
-                      if (e.target.value === "") {
-                        $(e.target)
-                          .parent()
-                          .find("label")
-                          .removeClass("active");
-                      }
-                    }}
-                    onChange={(e) => {
-                      this.setState({ login: e.target.value });
-                    }}
-                  />
-                </div>
-
-                <button
-                  className="btn btn_primary"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    api.login({
-                      email: this.state.login,
-
-                      password: this.state.password,
-                    });
-                  }}
-                >
-                  Войти
-                </button>
-                <button className="link dotted forgot-btn">
-                  Забыли пароль?
-                </button>
-              </form> */}
-              {this.state.reg && (
-                <Formik
-                  //инициализируем значения input-ов
-                  initialValues={{
-                    email: "",
-                    username: "",
-                    password: "",
-                    repassword: "",
-                    acceptedTerms: true,
-                  }}
-                  //подключаем схему валидации, которую описали выше
-                  validationSchema={RegistrationSchema}
-                  //определяем, что будет происходить при вызове onsubmit
-                  onSubmit={(values, { setSubmitting }) => {
-                    console.log("values :>> ", values);
-                    api.regist({
-                      name: values.username,
-                      email: values.email.toLowerCase(),
-                      password: values.password,
-                    });
-                  }}
-                  //свойство, где описывыем нашу форму
-                  //errors-ошибки валидации формы
-                  //touched-поля формы, которые мы "затронули",
-                  //то есть, в которых что-то ввели
-                >
-                  {({
-                    errors,
-                    touched,
-                    handleSubmit,
-                    isSubmitting,
-                    values,
-                    handleChange,
-                  }) => (
-                    <form className=" visible" onSubmit={handleSubmit}>
-                      <div className="input-field">
-                        <label className="required" htmlFor="name">
-                          Имя
-                        </label>
-                        <input
-                          id="name"
-                          name="username"
-                          type="text"
-                          oonFocus={this.focusHandler}
-                          onBlur={this.blurHandler}
-                          value={values.username}
-                          onChange={handleChange}
-                        />
-                        <div className="field-error">{errors.username}</div>
-                      </div>
-
-                      <div className="input-field">
-                        <label className="required" htmlFor="email">
-                          E-mail
-                        </label>
-                        <input
-                          id="email"
-                          name="email"
-                          type="text"
-                          onFocus={this.focusHandler}
-                          onBlur={this.blurHandler}
-                          value={values.email}
-                          onChange={handleChange}
-                        />
-                        <div className="field-error">{errors.email}</div>
-                      </div>
-
-                      <div className="input-field">
-                        <label className="required" htmlFor="password">
-                          Пароль
-                        </label>
-                        <input
-                          id="password"
-                          name="password"
-                          type="password"
-                          onFocus={this.focusHandler}
-                          onBlur={this.blurHandler}
-                          value={values.password}
-                          onChange={handleChange}
-                        />
-                        <div className="field-error">{errors.password}</div>
-                      </div>
-
-                      <div className="input-field">
-                        <label className="required" htmlFor="password_confirm">
-                          Пароль еще раз
-                        </label>
-                        <input
-                          id="password_confirm"
-                          type="password"
-                          name="repassword"
-                          onFocus={this.focusHandler}
-                          onBlur={this.blurHandler}
-                          value={values.repassword}
-                          onChange={handleChange}
-                        />
-                        <div className="field-error">{errors.repassword}</div>
-                      </div>
-                      <button className="btn btn_primary" type="submit">
-                        Регистрация
-                      </button>
-                      <label className="checkbox checkbox_margin">
-                        <input
-                          type="checkbox"
-                          name="acceptedTerms"
-                          id=""
-                          value={values.acceptedTerms}
-                          onChange={handleChange}
-                          checked={values.acceptedTerms}
-                        />
-                        <span className="checkbox-btn"></span>
-                        <i>
-                          Согласен с условиями "
-                          <a className="underline" href="">
-                            Публичной оферты
-                          </a>
-                          "
-                        </i>
-                      </label>
-                    </form>
-                  )}
-                </Formik>
+              {this.state.popLike && (
+                <LikeSidebar
+                  store={this.props.store}
+                  closeSidebar={this.closeSidebar}
+                />
+              )}
+              {this.state.popreg && (
+                <AuthSidebar closeSidebar={this.closeSidebar} />
+              )}
+              {this.state.popCart && (
+                <CartSidebar
+                  store={this.props.store}
+                  closeSidebar={this.closeSidebar}
+                />
               )}
             </div>
 
             <div
               className="sidebar-overlay"
               onClick={(e) => {
-                this.setState({ reg: false });
-                this.setState({ popreg: false });
-                this.setState({ log: true });
+                this.setState({
+                  popreg: false,
+                  popCart: false,
+                  popLike: false,
+                });
 
                 e.target.classList.remove("active");
                 document.querySelector(".sidebar").classList.remove("visible");

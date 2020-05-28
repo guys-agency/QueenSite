@@ -6,6 +6,7 @@ import { cities } from "../constants";
 import localStorage from "mobx-localstorage";
 import { Link } from "react-router-dom";
 import moment from "moment";
+import ProductList from "./ProductList";
 const { Component } = React;
 
 //TODO: исправить вывод стоимости во время скидки
@@ -16,12 +17,10 @@ const CartPage = observer(
       deliveryData: {},
     };
 
-    deteleProduct = (i) => {
-      console.log("work?");
-      this.props.store.productInCart = this.props.store.productInCart.splice(
-        i,
-        1
-      );
+    deteleProduct = (el) => {
+      const { productInCartList, addtoCart } = this.props.store;
+      delete productInCartList[el];
+      addtoCart(true);
     };
 
     // toggleCity = (e) => {
@@ -36,13 +35,25 @@ const CartPage = observer(
       this.props.store.cartPage = false;
     };
 
+    clickPlus = (el) => {
+      const { productInCartList, addtoCart } = this.props.store;
+      productInCartList[el] += 1;
+      addtoCart(false);
+    };
+
+    clickMinus = (el) => {
+      const { productInCartList, addtoCart } = this.props.store;
+      productInCartList[el] -= 1;
+      addtoCart(false);
+    };
+
     // componentDidUpdate() {
     //   $(".city__btn").off("click", this.toggleCity);
     //   $(".city__btn").on("click", this.toggleCity);
     // };
 
     render() {
-      const { productInCart } = this.props.store;
+      const { productInCart, productInCartList, addtoCart } = this.props.store;
       const { deliveryData } = this.state;
 
       const productList = [];
@@ -53,76 +64,25 @@ const CartPage = observer(
       if (Object.keys(productInCart).length) {
         Object.keys(productInCart).forEach((el) => {
           productList.push(
-            <div className="product product_h" key={el}>
-              <div className="product__image">
-                <div className="product__image-wrp">
-                  <img
-                    src={
-                      productInCart[el].path_to_photo !== undefined
-                        ? "/image/products/" +
-                          productInCart[el].path_to_photo[0]
-                        : "/image/Category/Product-card/Placeholder.png"
-                    }
-                  />
-                </div>
-              </div>
-              <div className="product__info">
-                <Link className="product__name" to={"/product/" + el}>
-                  {productInCart[el].name}
-                </Link>
-                {productInCart[el].sale ? (
-                  <div className={"product__price product__price_disc"}>
-                    <span className="old">
-                      {productInCart[el].regular_price} ₽
-                    </span>{" "}
-                    {productInCart[el].sale_price.toLocaleString()} ₽{" "}
-                    <span className="disc_perc">
-                      {(
-                        (productInCart[el].sale_price /
-                          productInCart[el].regular_price -
-                          1) *
-                        100
-                      ).toFixed(0)}
-                      %
-                    </span>
-                  </div>
-                ) : (
-                  <div className={"product__price"}>
-                    {productInCart[el].regular_price.toLocaleString()} ₽{" "}
-                  </div>
-                )}
-                <button
-                  className="ic i_close"
-                  onClick={() => {
-                    const deleteObj = localStorage.get("productInCart");
-                    delete deleteObj[el];
-                    localStorage.set("productInCart", deleteObj);
-                  }}
-                ></button>
-                <div className="product__counter">
-                  <button className="ic i_minus"></button>
-                  <input
-                    min="1"
-                    max="100"
-                    type="number"
-                    value={productInCart[el].countInCart}
-                  />
-                  <button className="ic i_plus"></button>
-                </div>
-              </div>
-            </div>
+            <ProductList
+              key={el}
+              data={productInCart[el]}
+              el={el}
+              store={this.props.store}
+              cart={true}
+            />
           );
 
           totalPrice += productInCart[el].sale
-            ? productInCart[el].countInCart * productInCart[el].sale_price
-            : productInCart[el].countInCart * productInCart[el].regular_price;
+            ? productInCartList[el] * productInCart[el].sale_price
+            : productInCartList[el] * productInCart[el].regular_price;
 
           totalSale += productInCart[el].sale
             ? (productInCart[el].regular_price - productInCart[el].sale_price) *
-              productInCart[el].countInCart
+              productInCartList[el]
             : 0;
           totalFullprice +=
-            productInCart[el].countInCart * productInCart[el].regular_price;
+            productInCartList[el] * productInCart[el].regular_price;
         });
       }
 

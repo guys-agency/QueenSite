@@ -7,6 +7,7 @@ import Paginat from "./comp/paginat";
 import localStorage from "mobx-localstorage";
 import getCookie from "./ulits/getCookie";
 import { SERVER_URL } from "./constants";
+import api from "./comp/api";
 
 //1http://134.122.81.119/api
 //127.0.0.1:3010
@@ -41,6 +42,10 @@ class Store {
 
   cartCount = 0;
   productInCart = {};
+  productInCartList =
+    localStorage.get("productInCart") === null
+      ? {}
+      : localStorage.get("productInCart");
 
   cardContainer = [];
 
@@ -55,20 +60,76 @@ class Store {
 
   paginatCont = [];
 
+  likeData = [];
+  likeContainer =
+    localStorage.get("like") === null ? [] : localStorage.get("like");
+
   city = "";
 
   auth = getCookie("auth") === undefined ? false : true;
 
-  addtoCart = autorun(() => {
+  addToLike = () => {
+    console.log("likeContainer :>> ", this.likeContainer);
+    localStorage.set("like", this.likeContainer);
+    if (this.auth) {
+    }
+    if (this.likeContainer.length) {
+      api
+        .getAnyProd({ slugs: this.likeContainer })
+        .then((data) => {
+          console.log("dataSLUGS :>> ", data);
+          const timeCont = [];
+          Object.keys(data).forEach((prod) => {
+            timeCont.push(data[prod]);
+          });
+          this.likeData = timeCont;
+        })
+        .catch((err) => {
+          console.log("err :>> ", err);
+        });
+    } else {
+      this.likeData = [];
+    }
+  };
+
+  addtoCart = (give) => {
     console.log(
       'localStorage.get("productInCart") :>> ',
-      localStorage.get("productInCart").length
+      this.productInCartList
     );
-    if (Object.keys(localStorage.get("productInCart")).length) {
-      this.productInCart = localStorage.get("productInCart");
-      this.cartCount = this.productInCart.length;
+    console.log(
+      'localStorage.get("productInCart") :>> ',
+      localStorage.get("productInCart")
+    );
+    localStorage.set("productInCart", this.productInCartList);
+    this.cartCount = Object.keys(this.productInCartList).length;
+
+    if (this.auth) {
     }
-  });
+    if (this.cartCount) {
+      if (give) {
+        api
+          .getAnyProd({ slugs: Object.keys(this.productInCartList) })
+          .then((data) => {
+            const timeCont = {};
+            console.log("prodCart :>> ", data);
+            Object.keys(data).forEach((prod) => {
+              timeCont[data[prod].slug] = {
+                ...data[prod],
+                countInCart: this.productInCartList[data[prod].slug],
+              };
+            });
+            this.productInCart = timeCont;
+            console.log("object :>> ", this.productInCart);
+          })
+          .catch((err) => {
+            console.log("err :>> ", err);
+          });
+      }
+    } else {
+      this.productInCart = {};
+    }
+  };
 
   cityCheck = autorun(() => {
     console.log('localStorage.get("city") :>> ', localStorage.get("city"));
@@ -640,8 +701,13 @@ decorate(Store, {
   productValue: observable,
   city: observable,
   auth: observable,
+  likeContainer: observable,
+  likeData: observable,
+  productInCartList: observable,
 });
 
 const store = new Store();
+store.addToLike();
+store.addtoCart(true);
 
 export default store;

@@ -1,5 +1,5 @@
-import React from 'react';
-import { observer } from 'mobx-react';
+import React from "react";
+import { observer } from "mobx-react";
 import { Link, NavLink } from "react-router-dom";
 const { Component } = React;
 
@@ -119,6 +119,4 @@ const Help = observer(
   }
 );
 
-
- 
 export default Help;
