@@ -85,6 +85,12 @@ const MenuPoints = observer(
       if (container.has(e.target).length === 0) {
         container.removeClass("visible");
       }
+
+
+      var mega = $(".menu_mega");
+      if (mega.has(e.target).length === 0) {
+        mega.removeClass("visible");
+      }
       // $(".header__drop").removeClass("visible");
     };
 

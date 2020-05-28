@@ -30,48 +30,72 @@
             left: 20px;
             z-index: 4;
         }
+        &-banner{
+            height: 500px;
+        }
     }
-    .shop{
+    .head_big-f{
+        margin-bottom: 230px;
+        margin-top: -220px;
+        // height: 570px;
+        padding-top: 230px;
+    }
+    &_map{
+        .head-banner{
+            height: 600px;
+        }
+    }
+}
+
+.shop{
+    margin-bottom: 30px;
+    &__tumbler{
+        position: relative;
+        width: 300px;
+        margin-left: auto;
+        margin-right: auto;
         margin-bottom: 30px;
-        &__wrp{
-            align-items: center;
-        }
-        &__info{
-            margin-top: 25px;
-            padding-left: 25px;
-            padding-right: 25px;
-            border-right: 1px solid $gr_light;
-            margin-bottom: 40px;
-        }
-        &__div{
-            height: 100%;
-            width: 1px;
-            background-color: $gr_light;
-        }
-        &__contact{
-            padding-left: 20px;
-            a{
-                font-size: 16px;
-                margin-bottom: 10px;
-                display: inline-block;
-            }
-            p{
-                margin: 0;
-                margin-top: 20px;
-                margin-bottom: 10px;
-            }
-        }
-        // .col-7{
-        //     position: relative;
-        //     &::after{
-        //         position: absolute;
-        //         content: '';
-        //         height: 100%;
-        //         width: 1px;
-        //         background-color: $gr_light;
-        //         top: 0;
-        //         right: -5%;
-        //     }
-        // }
+        margin-top: 20px;
+        z-index: 1;
     }
+    &__wrp{
+        align-items: center;
+    }
+    &__info{
+        margin-top: 25px;
+        padding-left: 25px;
+        padding-right: 25px;
+        border-right: 1px solid $gr_light;
+        margin-bottom: 40px;
+    }
+    &__div{
+        height: 100%;
+        width: 1px;
+        background-color: $gr_light;
+    }
+    &__contact{
+        padding-left: 20px;
+        a{
+            font-size: 16px;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+        p{
+            margin: 0;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+    }
+    // .col-7{
+    //     position: relative;
+    //     &::after{
+    //         position: absolute;
+    //         content: '';
+    //         height: 100%;
+    //         width: 1px;
+    //         background-color: $gr_light;
+    //         top: 0;
+    //         right: -5%;
+    //     }
+    // }
 }
