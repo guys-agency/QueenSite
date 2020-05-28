@@ -11,6 +11,9 @@ import MenuPoints from "./comp/MenuPoints";
 import Filters from "./comp/Filters";
 import ProductCardContainer from "./comp/ProductCardContainer";
 import CartPage from "./comp/CartPage";
+import Finish from "./comp/Finish";
+
+
 import CardView from "./comp/CardView";
 import MainPage from "./comp/MainPage";
 
@@ -26,6 +29,7 @@ import Shops from "./comp/Shops";
 import ShopsMap from "./comp/ShopsMap";
 
 import Help from "./comp/Help";
+import About from "./comp/About";
 
 import Swiper from "react-id-swiper";
 
@@ -116,7 +120,6 @@ const MainScreen = observer(
             store={this.props.store}
             chooseMenuPoint={this.chooseMenuPoint}
           />
-
           <Switch>
             <Route
               path="/"
@@ -261,6 +264,24 @@ const MainScreen = observer(
                 </div>
               )}
             />
+
+            <Route
+              path="/about"
+              render={() => (
+                <div className="main-screen">
+                  <About />
+                </div>
+              )}
+            />
+
+            <Route
+              path="/finish"
+              render={() => (
+                <div className="main-screen">
+                  <Finish />
+                </div>
+              )}
+            />
           </Switch>
           {/* {(this.props.store.productPage && this.props.store.cardContainer) ||
               (!this.props.store.productPage && !this.props.store.cartPage && (
@@ -352,7 +373,9 @@ const MainScreen = observer(
                 </div>
 
                 <div className="footer__column">
-                  <h4 className="white">+7 495 744-00-50</h4>
+                  <a href="tel:+78008085878">
+                    <h4 className="white">+7 800 808-58-78</h4>
+                  </a>
                   <button className="link dotted ask">Задать вопрос</button>
                   <div>
                     <a className="underline" href="mailto:info@queenbohemia.ru">

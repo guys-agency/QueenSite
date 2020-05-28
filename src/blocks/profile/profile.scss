@@ -14,6 +14,23 @@
         box-shadow: $sh_bottom;
         padding: 20px;
         margin-bottom: 40px;
+        &_no-wrp{
+            padding: 0;
+            box-shadow: none;
+        }
+        &-login{
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            .input-field{
+                flex: 1;
+                margin-right: 20px;
+            }
+            .checkbox{
+                width: 100%;
+            }
+        }
     }
     &__side{
         position: -webkit-sticky;
