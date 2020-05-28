@@ -57,4 +57,9 @@
         right: 20px;
         visibility: visible;
     }
+
+    &_mega{
+        max-height: 85vh;
+        overflow: auto;
+    }
 }

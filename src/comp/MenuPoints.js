@@ -397,8 +397,8 @@ const MenuPoints = observer(
 
                 <div className="header__right">
                   <button className="link dotted ask">Задать вопрос</button>
-                  <a href="tel:+7 495 744-00-50" className="phone">
-                    +7 495 744-00-50
+                  <a href="tel:+78008085878" className="phone">
+                    +7 800 808-58-78
                   </a>
                 </div>
               </div>

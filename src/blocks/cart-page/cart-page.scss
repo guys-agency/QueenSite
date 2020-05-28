@@ -109,4 +109,23 @@
            margin-top: 10px;
        }
     }
+
+    .order{
+        .orders{
+            &-item__products{
+                visibility: visible;
+                max-height: initial;
+                opacity: 1;
+                .item{
+                    padding-left: 0;
+                    padding-right: 0;
+                    &:last-child{
+                        b{
+                            font-size: 18px;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
