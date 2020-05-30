@@ -55,6 +55,9 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: $b_dark;
+  &.no-scroll{
+    overflow-y: hidden;
+  }
 }
 
 code {

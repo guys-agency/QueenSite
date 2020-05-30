@@ -1,5 +1,8 @@
 .menu__drop{
     position: relative;
+    @include max($s){
+        position: static;
+    }
     .menu{
         width: initial;
         border-radius: 3px;

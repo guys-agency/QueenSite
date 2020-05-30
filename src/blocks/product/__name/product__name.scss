@@ -7,4 +7,8 @@
   width: 100%;
   overflow: hidden;
   color: $b_dark;
+  @include max($s){
+    font-size: 14px;
+    height: 33px;
+  }
 }

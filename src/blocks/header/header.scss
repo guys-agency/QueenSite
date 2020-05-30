@@ -13,6 +13,7 @@
   transition: all 0.3s;
   @include max($t){
     padding-top: 10px;
+    z-index: 98;
   }
   .header__left{
       @include max($s){
@@ -37,5 +38,28 @@
 
   &_scroll{
     background-color: #fff;
+  }
+
+  .i_menu{
+      display: none;
+      @include max($s){
+        display: inline-block;
+      }
+      font-size: 15px;
+      margin-left: 5px;
+      &:hover{
+        color: $g_middle;
+      }
+  }
+  .i_bag{
+     display: none;
+    @include max($s){
+      display: inline-block;
+    }
+    font-size: 21px;
+    margin-right: 5px;
+    &:hover{
+      color: $g_middle;
+    }
   }
 }

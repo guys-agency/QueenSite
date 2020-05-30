@@ -49,6 +49,16 @@ button{
             opacity: 0.7;
         }
     }
+    &_wide{
+        width: 100%;
+    }
+    &_bottom{
+        margin-top: auto;
+    }
+    .i_right{
+        position: relative;
+        top: 1px;
+    }
 }
 
 .ic{

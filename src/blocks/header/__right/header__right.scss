@@ -1,7 +1,9 @@
   .header__right {
     display: flex;
     align-items: center;
-
+    @include max($s){
+      display: none;
+    }
     .ask {
       font-size: 12px;
       margin-right: 17px;

@@ -8,6 +8,9 @@
   margin-top: 10px;
   display: flex;
   align-items: center;
+  @include max($s){
+    font-size: 18px;
+  }
   &_disc{
     color: $red;
   }
@@ -16,6 +19,9 @@
     font-size: 15px;
     color: $b_gray;
     margin-right: 8px;
+    @include max($s){
+      font-size: 13px;
+    }
   }
   .disc_perc{
     background-color: $red;
@@ -32,5 +38,8 @@
       left: 10px;
       right: 10px;
     };
+    @include max($s){
+      font-size: 12px;
+    }
   }
 }

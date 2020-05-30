@@ -44,15 +44,19 @@ const CartSidebar = observer(
       return (
         <>
           <p>Итого: {totalPrice}</p>
-          {productList}
+          <div className="sidebar__over">
+            <div className="cart__list">
+              {productList}
+            </div>
+          </div>
           <button
-            className="btn btn_primary"
+            className="btn btn_yellow btn_wide btn_bottom"
             onClick={() => {
               this.props.history.push("/cart");
               this.props.closeSidebar();
             }}
           >
-            в корзину
+            Перейти к оформлению <span className="ic i_right"></span>
           </button>
         </>
       );

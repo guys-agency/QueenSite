@@ -97,16 +97,19 @@ const MenuPoints = observer(
     };
 
     toggleDrop = (e) => {
+
       // e.preventDefault();
       $(".menu_mega").removeClass("visible");
       $(".menu_sub").removeClass("visible");
       $(".menu-point").removeClass("active");
       $(".header__drop").removeClass("visible");
       $(".header__btn").removeClass("active");
-      console.log(e.target);
-
       $(e.target).addClass("active");
       $(e.target).parent().find(".menu_sub").addClass("visible");
+      if ($(window).width() <= 760) {
+        e.stopPropagation();
+        e.preventDefault();
+      }
     };
 
     offDrop = () => {
@@ -125,7 +128,7 @@ const MenuPoints = observer(
         container.removeClass("visible");
       }
 
-      var mega = $(".menu_mega");
+      var mega = $(".menu");
       if (mega.has(e.target).length === 0) {
         mega.removeClass("visible");
       }
@@ -177,6 +180,24 @@ const MenuPoints = observer(
         $(".menu-point").off("click", this.toggleDrop);
         $(".menu-point").on("click", this.toggleDrop);
       }
+
+      // window.onresize = function () {
+      //   if (window.innerHeight > 760) {
+      //     console.log(1);
+          
+      //     $(".btn-menu").off("mouseenter", this.hoverMenuBtn);
+      //     $(".btn-menu").on("mouseenter", this.hoverMenuBtn);
+
+      //     $(".menu-point").off("mouseenter", this.toggleDrop);
+      //     $(".menu-point").on("mouseenter", this.toggleDrop);
+      //     $(".menu_sub").off("mouseleave", this.offDrop);
+      //     $(".menu_sub").on("mouseleave", this.offDrop);
+      //   }
+      //   if (window.innerWidth <= 760) {
+      //     $(".menu-point").off("click", this.toggleDrop);
+      //     $(".menu-point").on("click", this.toggleDrop);
+      //   }
+      // };
 
       $(document).off("click", this.closeAll);
       $(document).on("click", this.closeAll);
@@ -323,6 +344,11 @@ const MenuPoints = observer(
             {/* <Menu>{this.menuContainer}</Menu> */}
             <div className="header">
               <div className="container container_f">
+                <button className="ic i_menu mobile-menu" onClick={() => {
+                  $("body").toggleClass("no-scroll");
+                  $(".navigation").toggleClass("visible");
+                  $(".sidebar-overlay").toggleClass("active");
+                }}></button>
                 <div className="header__left">
                   <Link to="/about">О нас</Link>
                   <Link to="/shops">Магазины</Link>
@@ -349,6 +375,23 @@ const MenuPoints = observer(
                 </Link>
 
                 {this.phone}
+
+                <button
+                  className="cart ic i_bag"
+                  onClick={() => {
+                    document
+                      .querySelector(".sidebar-overlay")
+                      .classList.add("active");
+
+
+
+                    document
+                      .querySelector("body")
+                      .classList.add("no-scroll");
+
+                    this.setState({ popCart: true });
+                  }}
+                ></button>
               </div>
             </div>
             <div className="navigation">
@@ -384,6 +427,14 @@ const MenuPoints = observer(
                     <Link className="menu-point">Премиум</Link>
                     <div className="menu menu_sub">
                       <div className="container container_f">
+                        <button
+                          className="btn btn_prev"
+                          onClick={(e) => {
+                            e.target.closest(".menu").classList.remove("visible");
+                          }}
+                        >
+                          <span className="ic i_left"></span> Назад
+                        </button>
                         <div className="column">
                           <ul>
                             <li>
@@ -418,6 +469,14 @@ const MenuPoints = observer(
                     <Link className="menu-point">Интерьер</Link>
                     <div className="menu menu_sub">
                       <div className="container container_f">
+                        <button
+                          className="btn btn_prev"
+                          onClick={(e) => {
+                            e.target.closest(".menu").classList.remove("visible");
+                          }}
+                        >
+                          <span className="ic i_left"></span> Назад
+                        </button>
                         <div className="column">
                           <ul>
                             <li>
@@ -436,6 +495,14 @@ const MenuPoints = observer(
                     <Link className="menu-point">Подарки</Link>
                     <div className="menu menu_sub menu_gift">
                       <div className="container container_f">
+                        <button
+                          className="btn btn_prev"
+                          onClick={(e) => {
+                            e.target.closest(".menu").classList.remove("visible");
+                          }}
+                        >
+                          <span className="ic i_left"></span> Назад
+                        </button>
                         <div className="column">
                           <ul>
                             <li>
@@ -453,6 +520,14 @@ const MenuPoints = observer(
                     </Link>
                     <div className="menu menu_sub">
                       <div className="container container_f">
+                        <button
+                          className="btn btn_prev"
+                          onClick={(e) => {
+                            e.target.closest(".menu").classList.remove("visible");
+                          }}
+                        >
+                          <span className="ic i_left"></span> Назад
+                        </button>
                         <div className="column">
                           <ul>
                             <li>
@@ -485,6 +560,11 @@ const MenuPoints = observer(
                         .querySelector(".sidebar-overlay")
                         .classList.add("active");
 
+
+                      document
+                        .querySelector("body")
+                        .classList.add("no-scroll");
+
                       this.setState({ popLike: true });
                     }}
                   >
@@ -496,6 +576,11 @@ const MenuPoints = observer(
                       document
                         .querySelector(".sidebar-overlay")
                         .classList.add("active");
+
+
+                      document
+                        .querySelector("body")
+                        .classList.add("no-scroll");
 
                       this.setState({ popCart: true });
                     }}
@@ -509,6 +594,11 @@ const MenuPoints = observer(
                         document
                           .querySelector(".sidebar-overlay")
                           .classList.add("active");
+
+
+                      document
+                        .querySelector("body")
+                        .classList.add("no-scroll");
 
                         this.setState({ popreg: true });
                       }
@@ -532,6 +622,14 @@ const MenuPoints = observer(
                 </div>
                 <div className="menu menu_mega">
                   <div className="container container_f">
+                    <button
+                      className="btn btn_prev"
+                      onClick={(e) => {
+                        e.target.closest(".menu").classList.remove("visible");
+                      }}
+                    >
+                      <span className="ic i_left"></span> Назад
+                    </button>
                     {this.menuContainer}
                   </div>
                 </div>
@@ -546,25 +644,27 @@ const MenuPoints = observer(
                   : "")
               }
             >
-              <button className="btn btn-head" onClick={this.closeSidebar}>
-                Свернуть
-              </button>
-              {!this.state.popreg && (
-                <button
-                  className="btn btn-head"
-                  onClick={() => {
-                    if (this.state.popLike) {
-                      this.props.store.likeContainer = [];
-                      this.props.store.addToLike();
-                    } else {
-                      this.props.store.productInCartList = {};
-                      this.props.store.addtoCart(true);
-                    }
-                  }}
-                >
-                  Очистить
+              <div className="sidebar__head">
+                <button className="btn btn-head" onClick={this.closeSidebar}>
+                  Свернуть
                 </button>
-              )}
+                {!this.state.popreg && (
+                  <button
+                    className="btn btn-head"
+                    onClick={() => {
+                      if (this.state.popLike) {
+                        this.props.store.likeContainer = [];
+                        this.props.store.addToLike();
+                      } else {
+                        this.props.store.productInCartList = {};
+                        this.props.store.addtoCart(true);
+                      }
+                    }}
+                  >
+                    Очистить
+                  </button>
+                )}
+              </div>
               {this.state.popLike && (
                 <LikeSidebar
                   store={this.props.store}
@@ -591,10 +691,13 @@ const MenuPoints = observer(
                   popLike: false,
                 });
 
+                $("body").removeClass("no-scroll");
+                $(".navigation").removeClass("visible");
                 e.target.classList.remove("active");
                 document.querySelector(".sidebar").classList.remove("visible");
               }}
-            ></div>
+            >
+            </div>
           </>
         )
       );

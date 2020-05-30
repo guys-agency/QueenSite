@@ -10,11 +10,30 @@
     box-shadow: -6px 0px 16px rgba(0, 9, 77, 0.05);
     transform: translateX(500px);
     transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
+    @include max($s){
+        width: 280px;
+        padding: 20px;
+    }
+    &__over{
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        &::-webkit-scrollbar {
+            display: none;
+        }
+        padding-top: 20px;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+    }
     &.visible{
         transform: translateX(0px);
     }
     .btn-head{
         margin-bottom: 50px;
+    }
+    .btn{
+        min-height: 40px;
     }
     .tumbler{
         margin-bottom: 45px;
@@ -56,9 +75,42 @@
         visibility: hidden;
         opacity: 0;
         transition: all 0.2s;
+        @include max($s){
+            z-index: 98;
+            background-color: $b_dark;
+            width: calc(100% - 280px);
+            transition: all 0.2s 0s;
+            // transform: translateX(-280px);
+        }
         &.active{
             visibility: visible;
             opacity: 0.9;
+            @include max($s){
+                opacity: 0.83;
+                transition: all 0.2s 0.23s;
+                // transform: translateX(0px);
+            }
         }
+        &::after{
+            @include icon;
+            content: none;
+            color: white;
+            font-size: 21px;
+            @include c();
+            position: absolute;
+            @include max($s){
+               content: $i_close;
+            }
+        }
+    }
+    @include max($s){
+        .product__image{
+            display: none;
+        }
+    }
+    .product__counter{
+        position: relative;
+        margin-top: 4px;
+        height: 34px;
     }
 }

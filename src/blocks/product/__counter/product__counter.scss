@@ -5,6 +5,9 @@
     height: 42px;
     display: inline-flex;
     align-items: center;
+    @include max($s){
+        height: 34px;
+    }
     input{
         height: 100%;
         width: 30px;

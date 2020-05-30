@@ -12,12 +12,24 @@
   transition: all 0.3s;
   @include max($s){
     background-color: #fff;
+    box-shadow: 10px 0px 16px rgba(0, 0, 0, 0.25);
     height: 100vh;
     position: fixed;
     top: 0;
     right: 0;
     width: 280px;
     z-index: 99;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    transform: translateX(280px);
+    opacity: 0;
+    visibility: hidden;
+    &.visible{
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(0px);
+    }
     &>.container_f{
       flex-direction: column;
       margin-left: 20px;
@@ -71,7 +83,7 @@
       }
     }
     .menu{
-      top: 62px;
+      top: 60px;
       box-shadow: $sh_bottom;
       .container{
         &::before{
@@ -116,6 +128,11 @@
           color: $g_middle;
         }
       }
+      .i_drop{
+        display: none;
+      }
+    }
+    &>span{
       &::after{
         @include icon;
         content: $i_right;
@@ -123,9 +140,6 @@
         right: 10px;
         bottom: 13px;
         transition: all 0.2s;
-      }
-      .i_drop{
-        display: none;
       }
     }
     .header__drop{

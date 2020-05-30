@@ -62,4 +62,46 @@
         max-height: 85vh;
         overflow: auto;
     }
+    .btn_prev{
+        display: none;
+    }
+    @include max($s){
+        height: 120vh;
+        max-height: 120vh;
+        box-shadow: none;
+        top: 0 !important;
+        left: -20px !important;
+        width: 280px !important;
+        padding: 0 !important;
+        padding-top: 20px !important;
+        transform: translateX(280px);
+        &.visible{
+            transform: translateX(0px);
+        }
+        .container{
+            .btn_prev{
+                display: inline-block;
+                margin-bottom: 30px;
+            }
+            flex-direction: column;
+            margin-right: 0px;
+            margin-left: 20px;
+            .column{
+                margin-right: 0;
+                ul{
+                    li{
+                        a{
+                            border-bottom: 1px solid $gr_light;
+                            padding-bottom: 10px;
+                            padding-top: 30px;
+                            &:hover{
+                                transform: translateX(0px);
+                                border-bottom: 1px solid $g_middle;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
