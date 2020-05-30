@@ -119,8 +119,8 @@ const MenuPoints = observer(
 
     closeAll = (e) => {
       e.stopPropagation();
-      $(".menu_mega").removeClass("visible");
-      $(".menu_sub").removeClass("visible");
+      // $(".menu_mega").removeClass("visible");
+      // $(".menu_sub").removeClass("visible");
       $(".menu-point").removeClass("active");
       $(".header__btn").removeClass("active");
       var container = $(".header__drop");
@@ -129,9 +129,19 @@ const MenuPoints = observer(
       }
 
       var mega = $(".menu");
-      if (mega.has(e.target).length === 0) {
+      var trgClass = $(e.target).hasClass("menu");
+      if (!trgClass) {
         mega.removeClass("visible");
       }
+
+      // var mega = $(".menu");
+      // if (mega.has(e.target).length === 0) {
+      //   console.log(1);
+        
+      //   mega.removeClass("visible");
+      // } else {
+        
+      // }
       // $(".header__drop").removeClass("visible");
     };
 
@@ -198,6 +208,21 @@ const MenuPoints = observer(
       //     $(".menu-point").on("click", this.toggleDrop);
       //   }
       // };
+
+      $(window).resize(function () {
+        if ($(window).width() >= 760) {
+          console.log(1);
+          $(".btn-menu").off("mouseenter", this.hoverMenuBtn);
+          $(".btn-menu").on("mouseenter", this.hoverMenuBtn);
+          $(".menu-point").off("mouseenter", this.toggleDrop);
+          $(".menu-point").on("mouseenter", this.toggleDrop);
+          $(".menu_sub").off("mouseleave", this.offDrop);
+          $(".menu_sub").on("mouseleave", this.offDrop);
+        } else {
+          $(".menu-point").off("click", this.toggleDrop);
+          $(".menu-point").on("click", this.toggleDrop);
+        }
+      });
 
       $(document).off("click", this.closeAll);
       $(document).on("click", this.closeAll);
@@ -431,6 +456,7 @@ const MenuPoints = observer(
                           className="btn btn_prev"
                           onClick={(e) => {
                             e.target.closest(".menu").classList.remove("visible");
+                            $(".navigation").scrollTop(0)
                           }}
                         >
                           <span className="ic i_left"></span> Назад
@@ -650,7 +676,7 @@ const MenuPoints = observer(
                 </button>
                 {!this.state.popreg && (
                   <button
-                    className="btn btn-head"
+                    className="link dotted"
                     onClick={() => {
                       if (this.state.popLike) {
                         this.props.store.likeContainer = [];

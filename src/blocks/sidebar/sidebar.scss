@@ -16,6 +16,16 @@
         width: 280px;
         padding: 20px;
     }
+    &__head{
+        display: flex;
+        margin-bottom: 50px;
+        @include max($s){
+            margin-bottom: 30px;
+        }
+        .dotted{
+            margin-left: auto;
+        }
+    }
     &__over{
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
@@ -28,9 +38,6 @@
     }
     &.visible{
         transform: translateX(0px);
-    }
-    .btn-head{
-        margin-bottom: 50px;
     }
     .btn{
         min-height: 40px;
