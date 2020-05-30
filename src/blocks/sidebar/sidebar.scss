@@ -120,4 +120,20 @@
         margin-top: 4px;
         height: 34px;
     }
+    .product_h{
+        .product__info{
+            .i_fav{
+                position: absolute;
+                right: 0;
+                top: 0;
+                font-size: 21px;
+            }
+            .i_bag{
+                position: absolute;
+                right: 0;
+                bottom: 0;
+                font-size: 21px;
+            }
+        }
+    }
 }

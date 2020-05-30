@@ -3,6 +3,7 @@ import React from "react";
 import api from "./api";
 import { Formik } from "formik";
 import RegistrationSchema from "../schemas/registrationSchema";
+import $ from "jquery";
 import LoginSchema from "../schemas/loginSchema";
 
 const { Component } = React;
@@ -12,6 +13,15 @@ const AuthSidebar = observer(
     state = {
       reg: false,
       log: true,
+    };
+    focusHandler = (e) => {
+      $(e.target).parent().find("label").addClass("active");
+    };
+
+    blurHandler = (e) => {
+      if (e.target.value === "") {
+        $(e.target).parent().find("label").removeClass("active");
+      }
     };
     render() {
       return (
@@ -223,7 +233,7 @@ const AuthSidebar = observer(
                       id="name"
                       name="username"
                       type="text"
-                      oonFocus={this.focusHandler}
+                      onFocus={this.focusHandler}
                       onBlur={this.blurHandler}
                       value={values.username}
                       onChange={handleChange}

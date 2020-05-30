@@ -24,7 +24,15 @@ const LikeSidebar = observer(
           />
         );
       });
-      return <>{renderCont}</>;
+      return <>
+        <div className="sidebar__over">
+          {renderCont}
+        </div>
+
+        <div className="btn btn_primary btn_wide btn_bottom">
+          Добавить все в корзину
+        </div>
+      </>;
     }
   }
 );

@@ -360,6 +360,7 @@ const MenuPoints = observer(
         popLike: false,
       });
       document.querySelector(".sidebar-overlay").classList.remove("active");
+      $("body").removeClass("no-scroll");
     };
 
     render() {
@@ -437,6 +438,14 @@ const MenuPoints = observer(
                     </Link>
                     <div className="menu menu_sub menu_collection">
                       <div className="container container_f">
+                        <button
+                          className="btn btn_prev"
+                          onClick={(e) => {
+                            e.target.closest(".menu").classList.remove("visible");
+                          }}
+                        >
+                          <span className="ic i_left"></span> Назад
+                        </button>
                         <div className="column">
                           <ul>
                             <li>

@@ -65,6 +65,25 @@ const Filters = observer(
       return (
         <div id="sidebar" className="">
           <div className="sidebar__inner">
+            <div className="categories-block">
+              <ul>
+                <li>
+                  <h5>Кофе и чай <span className="ic i_drop"></span></h5>
+                  <ul>
+                    <li>Чайная пара</li>
+                    <li>Кофейная пара</li>
+                  </ul>
+                </li>
+
+                <li>
+                  <h5>Кофе и чай <span className="ic i_drop"></span></h5>
+                  <ul>
+                    <li>Чайная пара</li>
+                    <li>Кофейная пара</li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
             <div className="filters-block">
               <div className="main-filers-block price">
                 <h5>Цена</h5>
