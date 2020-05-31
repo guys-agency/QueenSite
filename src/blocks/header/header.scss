@@ -91,5 +91,9 @@
     @include max(1045px){
       max-width: 90px;
     }
+    @include max($s){
+      max-width: 143px;
+      height: 20px;
+    }
   }
 }

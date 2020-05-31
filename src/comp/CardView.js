@@ -5,6 +5,7 @@ import localStorage from "mobx-localstorage";
 import Swiper from "react-id-swiper";
 import Drift from "drift-zoom";
 import ProductCard from "./ProductCard";
+import Gallery from "./Gallery";
 import { SERVER_URL } from "../constants";
 
 const { Component } = React;
@@ -100,30 +101,9 @@ const CardView = observer(
         this.fetchReady = true;
       }
 
-      const imgProduct = {
-        // getSwiper: this.state.getGallerySwiper,
-        slidesPerView: 1,
-        speed: 800,
-        effect: "fade",
-        navigation: {
-          nextEl: ".swiper-button-next",
-          prevEl: ".swiper-button-prev",
-        },
-      };
-
-      const imgProducts = {
-        // getSwiper: this.state.getThumbnailSwiper,
-        slidesPerView: "auto",
-        speed: 800,
-        navigation: {
-          nextEl: ".swiper-button-next",
-          prevEl: ".swiper-button-prev",
-        },
-      };
-
       const relativeCar = {
         slidesPerView: "auto",
-        slidesPerGroup: 4,
+        slidesPerGroup: 2,
         speed: 800,
         draggable: true,
         // autoplay: {
@@ -138,11 +118,19 @@ const CardView = observer(
           nextEl: ".swiper-button-next",
           prevEl: ".swiper-button-prev",
         },
+        breakpoints: {
+          760: {
+            slidesPerGroup: 3,
+          },
+          951: {
+            slidesPerGroup: 4,
+          },
+        }
       };
 
       const sameCar = {
         slidesPerView: "auto",
-        slidesPerGroup: 4,
+        slidesPerGroup: 2,
         speed: 800,
         draggable: true,
         // autoplay: {
@@ -157,6 +145,14 @@ const CardView = observer(
           nextEl: ".swiper-button-next",
           prevEl: ".swiper-button-prev",
         },
+        breakpoints: {
+          760: {
+            slidesPerGroup: 3,
+          },
+          951: {
+            slidesPerGroup: 4,
+          },
+        }
       };
 
       const storesAvali = [];
@@ -206,57 +202,7 @@ const CardView = observer(
                   }
                 >
                   <div className="col col-6 col-t-5 col-s-12">
-                    <div className="product-p__image-block">
-                      <div className="main">
-                        {/* <div className="main-img">
-                          <img className="drift" src="/image/testbig.jpg" data-zoom="/image/testbig.jpg"alt="" />
-                        </div> */}
-
-                        <Swiper {...imgProduct}>
-                          <div className="main-img">
-                            <img
-                              className="drift"
-                              src="/image/testbig.jpg"
-                              data-zoom="/image/testbig.jpg"
-                              alt=""
-                            />
-                          </div>
-
-                          <div className="main-img">
-                            <img
-                              className="drift"
-                              src="/image/testbig.jpg"
-                              data-zoom="/image/testbig.jpg"
-                              alt=""
-                            />
-                          </div>
-
-                          <div className="main-img">
-                            <img
-                              className="drift"
-                              src="/image/testbig.jpg"
-                              data-zoom="/image/testbig.jpg"
-                              alt=""
-                            />
-                          </div>
-                        </Swiper>
-                      </div>
-                      <div className="thumb">
-                        <Swiper {...imgProducts}>
-                          <div className="thumb-img">
-                            <img src="/image/testbig.jpg" alt="" />
-                          </div>
-
-                          <div className="thumb-img">
-                            <img src="/image/testbig.jpg" alt="" />
-                          </div>
-
-                          <div className="thumb-img">
-                            <img src="/image/testbig.jpg" alt="" />
-                          </div>
-                        </Swiper>
-                      </div>
-                    </div>
+                    <Gallery/>
                   </div>
                   <div className="col col-6 col-t-7 col-s-12">
                     <div className="product-p__description">
@@ -389,7 +335,9 @@ const CardView = observer(
                             <ul>
                               <li>{data.weight + "кг."}</li>
                               <li>{data.color}</li>
-                              <li>{data.material}</li>
+                              {data.material && (
+                                <li>{data.material}</li>
+                              )}
                             </ul>
                             <ul>
                               <li>

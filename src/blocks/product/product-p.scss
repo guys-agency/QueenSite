@@ -18,8 +18,11 @@
                 }
             }
             .thumb{
-                margin-top: 20px;
+                margin-top: 18px;
                 margin-bottom: 20px;
+                .swiper-container{
+                    padding-top: 2px;
+                }
                 .swiper-wrapper{
                     height: initial;
                 }
@@ -30,6 +33,14 @@
                         height: 60px;
                         overflow: hidden;
                         margin-right: 20px;
+                        cursor: pointer;
+                        transition: all 0.2s;
+                        &.swiper-slide-active{
+                            border: 1px solid $g_middle;
+                        }
+                        &:hover{
+                            transform: translatey(-2px);
+                        }
                     img{  
                         position: absolute;
                         top: 0;
