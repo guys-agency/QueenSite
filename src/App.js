@@ -139,8 +139,11 @@ const MainScreen = observer(
                 (
                   <div className="main-screen">
                     <div className="container">
+                      <div className="row">
+                        <div className="col col-12"><h3 className="catalog-title">Каталог товаров</h3></div>
+                      </div>
                       <div className="row catalog">
-                        <div className="col col-3 col-t-4">
+                        <div className="col col-3">
                           <Filters
                             store={this.props.store}
                             parentName={routProps.match.params.parentName}

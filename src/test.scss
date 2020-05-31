@@ -28,8 +28,8 @@
 @import "./blocks/user/user.scss";
 @import "./blocks/cart/cart.scss";
 @import "./blocks/pagination/pagination.scss";
+@import "./blocks/dropdown/dropdown.scss";
 @import "./blocks/footer/footer.scss";
-
 
 //HOME ELEMENTS
 @import "./blocks/carousel/carousel.scss";
@@ -87,6 +87,7 @@ code {
 
 .catalog{
   margin-top: 30px;
+  position: relative;
 }
 
 .line {

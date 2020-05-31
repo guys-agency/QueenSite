@@ -6,7 +6,12 @@
   border-right: 1px solid $gr_light;
   padding-top: 15px;
   padding-bottom: 15px;
-
+  @include max($t){
+    margin-right: 0;
+    border-right: 0px;
+    padding-right: 0;
+    padding-bottom: 0;
+  }
   .filter-block{
     position: relative;
   }
@@ -189,6 +194,10 @@
   margin-right: 20px;
   padding-bottom: 40px;
   border-right: 1px solid $gr_light;
+  @include max($t){
+    margin-right: 0;
+    border-right: 0px;
+  }
   &::after{
     content: '';
     width: 80%;
@@ -208,7 +217,7 @@
       font-size: 15px;
       color: $b_dark;
       margin-bottom: 0;
-      padding-bottom: 5px;
+      padding-bottom: 10px;
       cursor: pointer;
       transition: all 0.2s;
       .ic{
@@ -283,6 +292,76 @@
           padding-bottom: 30px;
         }
       }
+    }
+  }
+}
+
+
+.catalog__bar{
+  @include max($t){
+    position: absolute;
+    z-index: 97;
+    background-color: #fff;
+    width: 250px;
+    left: 10px;
+    top: 50px;
+    box-shadow: $sh_main;
+    padding: 20px;
+    border-radius: 3px;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateX(-250px);
+    transition: all 0.4s;
+    .sidebar__inner{
+      max-height: 65vh;
+      padding-top: 10px;
+      overflow-y: auto;
+      &::-webkit-scrollbar {
+        display: none;
+      }
+      -ms-overflow-style: none;
+      overflow: -moz-scrollbars-none;
+    }
+     &::before{
+        content: '';
+        width: 100%;
+        height: 15px;
+        background: linear-gradient( #fff, rgba(255, 255, 255, 0));
+        position: absolute;
+        left: 0;
+        top: 20px;
+        z-index: 1;
+      }
+      &::after{
+        content: '';
+        width: 100%;
+        height: 30px;
+        background: linear-gradient( rgba(255, 255, 255, 0), #fff);
+        position: absolute;
+        left: 0;
+        bottom: 20px;
+      }
+      &.visible{
+        transform: translateX(0);
+        visibility: visible;
+        opacity: 1;
+      }
+  }
+}
+
+.sort{
+  display: flex;
+  margin-bottom: 30px;
+  top: 90px;
+  .i_filter{
+    margin-left: 20px;
+    font-size: 21px;
+    display: none;
+    @include max($t){
+      display: inline-block;
+    }
+    &:hover,&.active{
+      color: $g_middle;
     }
   }
 }
