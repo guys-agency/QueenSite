@@ -184,13 +184,16 @@ const MainScreen = observer(
             <Route
               path="/product/:id"
               render={(propsRout) => (
-                <div className="main-screen">
-                  <CardView
-                    store={this.props.store}
-                    data={this.props.store.cardContainer}
-                    sku={propsRout.match.params.id}
-                  />
-                </div>
+                (this.props.store.countInProdPage = 1),
+                (
+                  <div className="main-screen">
+                    <CardView
+                      store={this.props.store}
+                      data={this.props.store.cardContainer}
+                      sku={propsRout.match.params.id}
+                    />
+                  </div>
+                )
               )}
             />
 
@@ -300,7 +303,7 @@ const MainScreen = observer(
               (this.props.store.cartPage && (
                 <CartPage store={this.props.store} />
               ))} */}
-              <Footer/>
+          <Footer />
         </>
       );
     }

@@ -31,6 +31,8 @@ class Store {
     maxPrice: 0,
   };
 
+  countInProdPage = 1;
+
   prodSlugs = [];
 
   productValue = 0;
@@ -765,6 +767,7 @@ decorate(Store, {
   collectionsData: observable,
   activeCats: observable,
   fullCats: observable,
+  countInProdPage: observable,
 });
 
 const store = new Store();

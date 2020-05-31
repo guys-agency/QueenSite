@@ -57,7 +57,9 @@ const ProductList = observer(
             </Link>
             {data.sale ? (
               <div className={"product__price product__price_disc"}>
-                <span className="old">{data.regular_price} ₽</span>{" "}
+                <span className="old">
+                  {data.regular_price.toLocaleString()} ₽
+                </span>{" "}
                 {data.sale_price.toLocaleString()} ₽{" "}
                 <span className="disc_perc">
                   {((data.sale_price / data.regular_price - 1) * 100).toFixed(
