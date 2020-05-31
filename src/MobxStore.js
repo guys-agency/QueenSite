@@ -207,7 +207,7 @@ class Store {
           console.log("dataData1 :>> ", data);
           Object.keys(data).forEach((element) => {
             testContainer.push(
-              <div className="col col-4">
+              <div className="col col-4 col-s-6">
                 <ProductCard
                   key={data[element].slug}
                   data={data[element]}

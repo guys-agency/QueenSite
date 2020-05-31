@@ -50,14 +50,14 @@ const MenuPoints = observer(
 
     service = (
       <div className="header__drop">
-        <buttton
+        <button
           className="btn btn_wide vis-s"
           onClick={(e) => {
             $(".header__drop").removeClass("visible");
           }}
         >
           <span className="ic i_left"></span> Назад
-        </buttton>
+        </button>
         <ul>
           <li>
             <Link to="/help/delivery">Доставка</Link>
@@ -493,7 +493,9 @@ const MenuPoints = observer(
                   </span>
 
                   <span className="menu__drop">
-                    <Link className="menu-point">Премиум</Link>
+                    <Link to="/premium" className="menu-point">
+                      Премиум
+                    </Link>
                     <div className="menu menu_sub">
                       <div className="container container_f">
                         <button
@@ -538,7 +540,9 @@ const MenuPoints = observer(
                   </span> */}
 
                   <span className="menu__drop">
-                    <Link className="menu-point">Интерьер</Link>
+                    <Link to="catalog/interer" className="menu-point">
+                      Интерьер
+                    </Link>
                     <div className="menu menu_sub">
                       <div className="container container_f">
                         <button
@@ -566,7 +570,9 @@ const MenuPoints = observer(
                   </span>
 
                   <span className="menu__sub">
-                    <Link className="menu-point">Подарки</Link>
+                    <Link to="/gifts" className="menu-point">
+                      Подарки
+                    </Link>
                     <div className="menu menu_sub menu_gift">
                       <div className="container container_f">
                         <button
