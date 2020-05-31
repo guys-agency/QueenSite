@@ -1,5 +1,15 @@
 .navigation__left {
   margin-right: auto;
+  .i_qd{
+    font-size: 40px !important;
+    position: absolute;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s;
+    @include max($t){
+      display: none;
+    }
+  }
   @include max($s){
     display: flex;
     flex-direction: column;
@@ -12,95 +22,95 @@
       }
     }
   }
-    >.btn:first-child {
-      margin-right: 20px;
-      @include max($t){
-        margin-right: 15px;
-      }
+  >.btn-menu {
+    margin-right: 20px;
+    @include max($t){
+      margin-right: 15px;
+    }
+    .i_menu{
+      font-size: 14px;
+    }
+    @include max($s){ 
+      border: 0px;
+      border-bottom: 1px solid $g_middle;
+      border-radius: 0px;
+      box-shadow: none;
+      text-align: left;
+      font-weight: 400;
+      padding: {
+        left: 0;
+        bottom: 10px;
+        top: 30px;
+      };
+      margin-right: 0;
+      position: relative;
       .ic{
-        font-size: 14px;
+        display: none;
       }
-      @include max($s){ 
-        border: 0px;
-        border-bottom: 1px solid $g_middle;
-        border-radius: 0px;
-        box-shadow: none;
-        text-align: left;
-        font-weight: 400;
-        padding: {
-          left: 0;
-          bottom: 10px;
-          top: 30px;
-        };
-        margin-right: 0;
-        position: relative;
-        .ic{
-          display: none;
-        }
-        &::after{
-          @include icon;
-          content: $i_right;
-          font-size: 16px;
-          position: absolute;
-          right: 10px;
-          bottom: 13px;
-        }
-
-        &:hover{
-          transform: translateY(0);
-          color: $g_middle;
-          &::after{
-            color: $g_middle;
-          }
-        }
-      }
-    }
-
-    .menu-point {
-      font-family: Excentra Pro;
-      font-style: normal;
-      font-weight: normal;
-      font-size: 16px;
-      line-height: 16px;
-      margin-right: 20px;
-      /* identical to box height */
-      @include max($t){
-        font-size: 14px;
-        margin-right: 15px;
-      }
-      @include max($s){
+      &::after{
+        @include icon;
+        content: $i_right;
         font-size: 16px;
-        display: block;
-        padding-top: 30px;
-        padding-bottom: 10px;
-        border-bottom: 1px solid $gr_light;
-        margin-right: 0;
-        position: relative;
+        position: absolute;
+        right: 10px;
+        bottom: 13px;
+      }
+
+      &:hover{
+        transform: translateY(0);
+        color: $g_middle;
         &::after{
-          @include icon;
-          content: $i_right;
-          font-size: 16px;
-          position: absolute;
-          right: 10px;
-          bottom: 13px;
+          color: $g_middle;
         }
       }
     }
-    .menu__drop, .menu__sub{
-      @include max($s){
-        display: block;
+  }
+
+  .menu-point {
+    font-family: Excentra Pro;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 16px;
+    margin-right: 20px;
+    /* identical to box height */
+    @include max($t){
+      font-size: 14px;
+      margin-right: 15px;
+    }
+    @include max($s){
+      font-size: 16px;
+      display: block;
+      padding-top: 30px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid $gr_light;
+      margin-right: 0;
+      position: relative;
+      &::after{
+        @include icon;
+        content: $i_right;
+        font-size: 16px;
+        position: absolute;
+        right: 10px;
+        bottom: 13px;
       }
     }
-
-    .sale-point {
-      font-family: Excentra Pro;
-      font-style: normal;
-      font-weight: 600;
-      // font-size: 16px;
-      line-height: 16px;
-      /* identical to box height, or 100% */
-
-      /* Blue/Dark */
-      color: $b_dark;
+  }
+  .menu__drop, .menu__sub{
+    @include max($s){
+      display: block;
     }
+  }
+
+  .sale-point {
+    font-family: Excentra Pro;
+    font-style: normal;
+    font-weight: 600;
+    // font-size: 16px;
+    line-height: 16px;
+    /* identical to box height, or 100% */
+
+    /* Blue/Dark */
+    color: $b_dark;
+  }
 }

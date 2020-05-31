@@ -32,8 +32,9 @@
     }
     &>.container_f{
       flex-direction: column;
-      margin-left: 20px;
+      margin-left: 0px;
       margin-right: 0;
+      padding-left: 20px;
     }
   }
 
@@ -76,6 +77,16 @@
   &_scroll{
     background: #fff;
     box-shadow: $sh_bottom;
+    .i_qd{
+      opacity: 1;
+      visibility: visible;
+    }
+    .btn-menu{
+      margin-left: 45px;
+      @include max($t){
+        margin-left: 0;
+      }
+    }
     .search {
       &:focus{
         box-shadow: none;
@@ -115,6 +126,15 @@
     }
     .header__btn{
       display: block;
+      position: relative;
+      &::after{
+        @include icon;
+        content: $i_right;
+        position: absolute;
+        right: 10px;
+        bottom: 3px;
+        transition: all 0.2s;
+      }
     }
     &>span, a{
       padding-top: 30px;
@@ -123,23 +143,16 @@
       display: block;
       font-size: 16px;
       position: relative;
+      @include max($s){
+        position: static;
+      }
       &:hover{
         &::after{
           color: $g_middle;
         }
       }
       .i_drop{
-        display: none;
-      }
-    }
-    &>span{
-      &::after{
-        @include icon;
-        content: $i_right;
-        position: absolute;
-        right: 10px;
-        bottom: 13px;
-        transition: all 0.2s;
+      display: none;
       }
     }
     .header__drop{

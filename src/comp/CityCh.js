@@ -20,6 +20,9 @@ const CityCh = observer(
             {this.props.store.city} <span className="ic i_drop"></span>
           </button>
           <form className="header__drop header__drop_city">
+            <buttton className="btn btn_wide vis-s" onClick={(e) => {
+              $('.header__drop').removeClass('visible');
+            }}><span className="ic i_left"></span> Назад</buttton>
             <div className="input-field">
               <label className="active" htmlFor="citySearch">
                 Ваш город
@@ -58,6 +61,7 @@ const CityCh = observer(
                             type="submit"
                             onClick={(e) => {
                               e.preventDefault();
+                              $('.header__drop').removeClass('visible');
                               localStorage.set("city", {
                                 name: rigthCities[index],
                                 sourse: "U",
