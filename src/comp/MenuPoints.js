@@ -134,6 +134,10 @@ const MenuPoints = observer(
         mega.removeClass("visible");
       }
 
+      // if ($(window).width() < 760) {
+
+      // }
+
       // var mega = $(".menu");
       // if (mega.has(e.target).length === 0) {
       //   console.log(1);
@@ -229,6 +233,13 @@ const MenuPoints = observer(
 
       $(window).off("scroll", this.scrollNav);
       $(window).on("scroll", this.scrollNav);
+
+      var scroll = $(window).scrollTop();
+      if (scroll > 55) {
+        $(".header__drop").removeClass("visible");
+        $(".header").addClass("header_scroll");
+        $(".navigation").addClass("navigation_scroll");
+      }
     }
 
     createMenu = () => {
@@ -361,6 +372,7 @@ const MenuPoints = observer(
       });
       document.querySelector(".sidebar-overlay").classList.remove("active");
       $("body").removeClass("no-scroll");
+      $(".navigation").removeClass("visible");
     };
 
     render() {

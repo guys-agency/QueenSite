@@ -5,6 +5,9 @@
     margin-bottom: 230px;
     position: relative;
     padding-top: 150px;
+    @include max($s){
+        margin-bottom: 100px;
+    }
     &_big{
         height: 500px;
         @include max($s){
@@ -13,6 +16,9 @@
     }
     &_sm{
         height: 355px;
+        @include max($s){
+            height: 200px;
+        }
     }
     &_list{
         margin-top: 0;
@@ -68,6 +74,9 @@
         &_action{
             height: 366px;
             position: relative;
+            @include max($s){
+                height: 220px;
+            }
             .text{
                 position: absolute;
                 max-width: 1110px;
@@ -99,6 +108,10 @@
                         font-size: 27px;
                         margin-left: 10px;
                         transition: all 0.3s;
+                        @include max($s){
+                            font-size: 21px;
+                            margin-left: 5px;
+                        }
                     }
                 }
             }

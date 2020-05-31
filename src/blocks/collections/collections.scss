@@ -3,9 +3,15 @@
 .collections{
     .banner{
         height: 450px;
+        @include max($s){
+            height: 220px;
+        }
     }
     .head{
         margin-bottom: 240px;
+        @include max($s){
+            margin-bottom: 120px;
+        }
         a{
             &:hover{
                 transform: translateY(-3px);
@@ -34,6 +40,11 @@
         .banner{
             &__desc{
                 font-size: 24px;
+                @include max($s){
+                    font-size: 18px;
+                    left: 10px;
+                    bottom: 10px;
+                }
             }
         }
         .col{
@@ -54,24 +65,44 @@
                 -ms-flex-preferred-size: 58.33333333%;
                 flex-basis: 58.33333333%;
                 max-width: 58.33333333%;
+                @include max($s){
+                   -ms-flex-preferred-size: 50%;
+                    flex-basis: 50%;
+                    max-width: 50%; 
+                }
             }
 
             &:nth-child(6n+4):nth-child(even){
                 -ms-flex-preferred-size: 41.66666667%;
                 flex-basis: 41.66666667%;
                 max-width: 41.66666667%;
+                @include max($s){
+                   -ms-flex-preferred-size: 50%;
+                    flex-basis: 50%;
+                    max-width: 50%; 
+                }
             }
 
             &:nth-child(6n+5):nth-child(odd){
                 -ms-flex-preferred-size: 41.66666667%;
                 flex-basis: 41.66666667%;
                 max-width: 41.66666667%;
+                @include max($s){
+                   -ms-flex-preferred-size: 50%;
+                    flex-basis: 50%;
+                    max-width: 50%; 
+                }
             }
 
             &:nth-child(6n+6):nth-child(even){
                 -ms-flex-preferred-size: 58.33333333%;
                 flex-basis: 58.33333333%;
                 max-width: 58.33333333%;
+                @include max($s){
+                    -ms-flex-preferred-size: 50%;
+                    flex-basis: 50%;
+                    max-width: 50%;
+                }
             }
 
             &:last-child:nth-child(odd){

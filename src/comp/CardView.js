@@ -1,4 +1,4 @@
-import { observer } from "mobx-react";
+  import { observer } from "mobx-react";
 import React from "react";
 import { createBrowserHistory } from "history";
 import localStorage from "mobx-localstorage";
@@ -205,7 +205,7 @@ const CardView = observer(
                     "row product-p " + (data.description ? "" : "no-desc")
                   }
                 >
-                  <div className="col col-6">
+                  <div className="col col-6 col-t-5 col-s-12">
                     <div className="product-p__image-block">
                       <div className="main">
                         {/* <div className="main-img">
@@ -258,7 +258,7 @@ const CardView = observer(
                       </div>
                     </div>
                   </div>
-                  <div className="col col-6">
+                  <div className="col col-6 col-t-7 col-s-12">
                     <div className="product-p__description">
                       <div className="product-p__head">
                         <h4 className="product-p__name">{data.name}</h4>
@@ -440,7 +440,7 @@ const CardView = observer(
                     <Swiper {...relativeCar}>
                       {this.with.map((el) => {
                         return (
-                          <div className="col col-3">
+                          <div className="col col-3 col-t-4 col-s-6">
                             <ProductCard
                               key={el.slug}
                               data={el}
@@ -467,7 +467,7 @@ const CardView = observer(
                     <Swiper {...sameCar}>
                       {this.like.map((el) => {
                         return (
-                          <div className="col col-3">
+                          <div className="col col-3 col-t-4 col-s-6">
                             <ProductCard
                               key={el.slug}
                               data={el}

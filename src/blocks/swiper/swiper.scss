@@ -29,6 +29,10 @@
                 opacity: 1;
             }
         }
+        @include max($s){
+            padding-right: 10px;
+            padding-left: 10px;
+        }
     }
     &-button{
         &-next, &-prev{

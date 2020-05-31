@@ -25,6 +25,12 @@
             margin-bottom: 5px;
             display: block;
         }
+        @include max($s){
+            margin-top: 30px;
+            border-top: 1px solid $gr_light;
+            border-left: 0px;
+            padding-left: 0;
+        }
     }
     h3{
         padding-top: 10px;

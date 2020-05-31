@@ -78,6 +78,12 @@ code {
   }
 }
 
+.hide-s{
+  @include max($s){
+    display: none;
+  }
+}
+
 .catalog{
   margin-top: 30px;
 }

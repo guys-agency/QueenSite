@@ -16,7 +16,7 @@ const CityCh = observer(
         
       return (
         <span>
-          <button className="link dotted header__btn">
+          <button className="link dotted header__btn header__btn-city">
             {this.props.store.city} <span className="ic i_drop"></span>
           </button>
           <form className="header__drop header__drop_city">
