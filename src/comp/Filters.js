@@ -43,6 +43,11 @@ const Filters = observer(
       }
     };
 
+    subCat = (e) =>{
+      e.target.classList.toggle('active')
+      e.target.nextElementSibling.classList.toggle('visible')
+    }
+
     render() {
       const {
         filterPointsContainers,
@@ -88,81 +93,81 @@ const Filters = observer(
         if (elem.name === "Сервировка стола") {
           menu[0] = (
             <li>
-              <h5>
+              <h5 className="categories-block__name" onClick={this.subCat}>
                 {elem.name}
                 <span className="ic i_drop"></span>
               </h5>
-              <ul>{childsPoints}</ul>
+              <ul className="categories-block__child">{childsPoints}</ul>
             </li>
           );
         } else if (elem.name === "Для приготовления") {
           menu[1] = (
             <li>
-              <h5>
+              <h5 className="categories-block__name" onClick={this.subCat}>
                 {elem.name}
                 <span className="ic i_drop"></span>
               </h5>
-              <ul>{childsPoints}</ul>
+              <ul className="categories-block__child">{childsPoints}</ul>
             </li>
           );
         } else if (elem.name === "Напитки") {
           menu[2] = (
             <li>
-              <h5>
+              <h5 className="categories-block__name" onClick={this.subCat}>
                 {elem.name}
                 <span className="ic i_drop"></span>
               </h5>
-              <ul>{childsPoints}</ul>
+              <ul className="categories-block__child">{childsPoints}</ul>
             </li>
           );
         } else if (elem.name === "Кофе и чай") {
           menu[3] = (
             <li>
-              <h5>
+              <h5 className="categories-block__name" onClick={this.subCat}>
                 {elem.name}
                 <span className="ic i_drop"></span>
               </h5>
-              <ul>{childsPoints}</ul>
+              <ul className="categories-block__child">{childsPoints}</ul>
             </li>
           );
         } else if (elem.name === "Аксесуары для стола") {
           menu[4] = (
             <li>
-              <h5>
+              <h5 className="categories-block__name" onClick={this.subCat}>
                 {elem.name}
                 <span className="ic i_drop"></span>
               </h5>
-              <ul>{childsPoints}</ul>
+              <ul className="categories-block__child">{childsPoints}</ul>
             </li>
           );
         } else if (elem.name === "Интерьер") {
           menu[5] = (
             <li>
-              <h5>
+              <h5 className="categories-block__name" onClick={this.subCat}>
                 {elem.name}
                 <span className="ic i_drop"></span>
               </h5>
-              <ul>{childsPoints}</ul>
+              <ul className="categories-block__child">{childsPoints}</ul>
             </li>
           );
         } else if (elem.name === "Наборы") {
           menu[6] = (
             <li>
-              <h5>
+              <h5 className="categories-block__name" onClick={this.subCat}>
                 {elem.name}
                 <span className="ic i_drop"></span>
               </h5>
-              <ul>{childsPoints}</ul>
+              <ul className="categories-block__child">{childsPoints}</ul>
             </li>
           );
         } else if (elem.name === "Сервизы") {
           menu[7] = (
             <li>
-              <h5>
+              <h5 className="categories-block__name" onClick={this.subCat}>
                 {elem.name}
                 <span className="ic i_drop"></span>
               </h5>
-              <ul>{childsPoints}</ul>
+              <ul className="categories-block__child">{childsPoints}</ul>
             </li>
           );
         }
