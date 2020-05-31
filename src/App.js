@@ -140,7 +140,7 @@ const MainScreen = observer(
                   <div className="main-screen">
                     <div className="container">
                       <div className="row catalog">
-                        <div className="col col-3">
+                        <div className="col col-3 col-t-4">
                           <Filters
                             store={this.props.store}
                             parentName={routProps.match.params.parentName}

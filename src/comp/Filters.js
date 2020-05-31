@@ -180,7 +180,7 @@ const Filters = observer(
       });
 
       return (
-        <div id="sidebar" className="">
+        <div id="sidebar" className="catalog__bar">
           <div className="sidebar__inner">
             <div className="categories-block">
               <ul>{menu}</ul>
