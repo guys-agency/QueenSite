@@ -2,6 +2,7 @@ import { observer } from "mobx-react";
 import React from "react";
 import StickySidebar from "sticky-sidebar";
 import { Link, NavLink } from "react-router-dom";
+import $ from "jquery";
 const { Component } = React;
 
 const Filters = observer(
@@ -25,12 +26,13 @@ const Filters = observer(
     maxPriceLocal = 0;
 
     checkBoxHandler = (name, value) => {
-      const { activeFilters } = this.props.store;
+      const { activeFilters, filtration } = this.props.store;
       console.log("value :>> ", value);
       if (value) {
         console.log(" :>> test");
         if (!activeFilters.attr.includes(name)) {
           activeFilters.attr.push(name);
+          filtration();
         }
       } else {
         console.log(
@@ -39,14 +41,15 @@ const Filters = observer(
         );
         if (activeFilters.attr.includes(name)) {
           activeFilters.attr.splice(activeFilters.attr.indexOf(name), 1);
+          filtration();
         }
       }
     };
 
-    subCat = (e) =>{
-      e.target.classList.toggle('active')
-      e.target.nextElementSibling.classList.toggle('visible')
-    }
+    subCat = (e) => {
+      e.target.classList.toggle("active");
+      e.target.nextElementSibling.classList.toggle("visible");
+    };
 
     render() {
       const {
@@ -239,7 +242,17 @@ const Filters = observer(
                 <div>{optPointsContainers}</div>
                 <div>
                   <label className="checkbox">
-                    <input type="checkbox" onChange={this.handleChange} />
+                    <input
+                      type="checkbox"
+                      onChange={(e) => {
+                        console.log(
+                          "e.target.value",
+                          $(e.target).is(":checked")
+                        );
+
+                        this.checkBoxHandler("hit", $(e.target).is(":checked"));
+                      }}
+                    />
                     <span className="checkbox-btn"></span>
                     <i>Хиты продаж</i>
                   </label>
@@ -247,9 +260,12 @@ const Filters = observer(
                     <input
                       type="checkbox"
                       onChange={(e) => {
-                        console.log("e.target.value", e.target.value);
-                        e.target.value = !e.target.value;
-                        this.checkBoxHandler("new", e.target.value);
+                        console.log(
+                          "e.target.value",
+                          $(e.target).is(":checked")
+                        );
+
+                        this.checkBoxHandler("new", $(e.target).is(":checked"));
                       }}
                     />
                     <span className="checkbox-btn"></span>
@@ -259,9 +275,15 @@ const Filters = observer(
                     <input
                       type="checkbox"
                       onChange={(e) => {
-                        console.log("e.target.value", e.target.value);
-                        e.target.value = !e.target.value;
-                        this.checkBoxHandler("sale", 1);
+                        console.log(
+                          "e.target.value",
+                          $(e.target).is(":checked")
+                        );
+
+                        this.checkBoxHandler(
+                          "sale",
+                          $(e.target).is(":checked")
+                        );
                       }}
                     />
                     <span className="checkbox-btn"></span>

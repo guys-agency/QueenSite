@@ -1,4 +1,4 @@
-  import { observer } from "mobx-react";
+import { observer } from "mobx-react";
 import React from "react";
 import { createBrowserHistory } from "history";
 import localStorage from "mobx-localstorage";
@@ -14,47 +14,60 @@ const historyAll = createBrowserHistory();
 //TODO: исправить вывод стоимости во время скидки
 const CardView = observer(
   class CardView extends Component {
-    state = {};
+    state = {
+      countInCart: 1,
+    };
 
     fetchReady = false;
 
-    countInCart = 1;
     inCart = false;
-
-    cardData = Object.assign(this.props.data, {
-      countInCart: this.countInCart,
-    });
 
     with = [];
     like = [];
 
     clickHandler = () => {
-      const { data, store } = this.props;
-      console.log(
-        'localStorage.get("productInCart") 123:>> ',
-        localStorage.get("productInCart")
-      );
-      if (
-        localStorage.get("productInCart") &&
-        Object.keys(localStorage.get("productInCart")).length
-      ) {
-        console.log("object :>> 123123123123123");
-        const pc = localStorage.get("productInCart");
-        console.log(
-          "Object.keys(pc).includes(this.cardData.slug) :>> ",
-          Object.keys(pc).includes(this.cardData.slug)
-        );
-        if (Object.keys(pc).includes(this.cardData.slug)) {
-          console.log("object :>> ");
-          pc[this.cardData.slug].countInCart += 1;
-        } else {
-          pc[this.cardData.slug] = this.cardData;
-        }
-        localStorage.setItem("productInCart", pc);
-      } else
-        localStorage.setItem("productInCart", {
-          [this.cardData.slug]: this.cardData,
-        });
+      const { store } = this.props;
+      const data = store.cardContainer;
+      const inCart = Object.keys(store.productInCartList).length
+        ? Object.keys(store.productInCartList).indexOf(String(data.slug))
+        : -1;
+
+      const { productInCartList, addtoCart } = store;
+      console.log("inCart :>> ", inCart);
+      console.log("data :>> ", data);
+      if (inCart !== -1) {
+        console.log("test123 :>> ");
+      } else {
+        console.log("data :>> ", data);
+        productInCartList[data.slug] = store.countInProdPage;
+      }
+      addtoCart(true);
+
+      // const cardData = Object.assign(this.props.data, {
+      //   countInCart: this.props.store.countInProdPage,
+      // });
+
+      // if (
+      //   localStorage.get("productInCart") &&
+      //   Object.keys(localStorage.get("productInCart")).length
+      // ) {
+      //   console.log("object :>> 123123123123123");
+      //   const pc = localStorage.get("productInCart");
+      //   console.log(
+      //     "Object.keys(pc).includes(this.cardData.slug) :>> ",
+      //     Object.keys(pc).includes(this.cardData.slug)
+      //   );
+      //   if (Object.keys(pc).includes(this.cardData.slug)) {
+      //     console.log("object :>> ");
+      //     pc[this.cardData.slug].countInCart += 1;
+      //   } else {
+      //     pc[this.cardData.slug] = this.cardData;
+      //   }
+      //   localStorage.setItem("productInCart", pc);
+      // } else
+      //   localStorage.setItem("productInCart", {
+      //     [this.cardData.slug]: this.cardData,
+      //   });
       // if (!this.inCart) {
       //   store.productInCart.push(this.cardData);
       //   this.inCart = true;
@@ -67,6 +80,23 @@ const CardView = observer(
     close = () => {
       historyAll.goBack();
       this.props.store.productPage = false;
+    };
+
+    clickPlus = () => {
+      console.log("plus :>> ");
+      let { countInProdPage } = this.props.store;
+      const data = this.props.store.cardContainer;
+      if (this.props.store.countInProdPage < data.stock_quantity) {
+        console.log("plus2 :>> ");
+        this.props.store.countInProdPage += 1;
+      }
+    };
+
+    clickMinus = () => {
+      let { countInProdPage } = this.props.store;
+      if (this.props.store.countInProdPage > 1) {
+        this.props.store.countInProdPage -= 1;
+      }
     };
 
     render() {
@@ -125,7 +155,7 @@ const CardView = observer(
           951: {
             slidesPerGroup: 4,
           },
-        }
+        },
       };
 
       const sameCar = {
@@ -152,7 +182,7 @@ const CardView = observer(
           951: {
             slidesPerGroup: 4,
           },
-        }
+        },
       };
 
       const storesAvali = [];
@@ -183,11 +213,13 @@ const CardView = observer(
               e.stopPropagation();
 
               var container = document.querySelector(".drop");
-              if (!container.contains(e.target)) {
-                document
-                  .querySelector(".drop_shop-btn")
-                  .classList.remove("active");
-                document.querySelector(".drop").classList.remove("visible");
+              if (container !== null) {
+                if (!container.contains(e.target)) {
+                  document
+                    .querySelector(".drop_shop-btn")
+                    .classList.remove("active");
+                  document.querySelector(".drop").classList.remove("visible");
+                }
               }
             }}
           >
@@ -202,7 +234,7 @@ const CardView = observer(
                   }
                 >
                   <div className="col col-6 col-t-5 col-s-12">
-                    <Gallery/>
+                    <Gallery />
                   </div>
                   <div className="col col-6 col-t-7 col-s-12">
                     <div className="product-p__description">
@@ -214,9 +246,25 @@ const CardView = observer(
                             {data.brand}
                           </a>
                         </div>
-                        <div className="product__price">
-                          {data.regular_price.toLocaleString() + " ₽"}
-                        </div>
+                        {data.sale ? (
+                          <div className={"product__price product__price_disc"}>
+                            <span className="old">
+                              {data.regular_price.toLocaleString()} ₽
+                            </span>{" "}
+                            {data.sale_price.toLocaleString()} ₽{" "}
+                            <span className="disc_perc">
+                              {(
+                                (data.sale_price / data.regular_price - 1) *
+                                100
+                              ).toFixed(0)}
+                              %
+                            </span>
+                          </div>
+                        ) : (
+                          <div className={"product__price"}>
+                            {data.regular_price.toLocaleString()} ₽{" "}
+                          </div>
+                        )}
                       </div>
                       {data.description && (
                         <p className="product-p__info">{data.description}</p>
@@ -231,21 +279,21 @@ const CardView = observer(
                             <span className="ic i_bag"></span> В корзину
                           </button>
                           <div className="product__counter">
-                            <button className="ic i_minus"></button>
+                            <button
+                              className="ic i_minus"
+                              onClick={this.clickMinus}
+                            ></button>
                             <input
                               min="1"
                               max="100"
                               type="number"
-                              value={this.countInCart}
+                              value={this.props.store.countInProdPage}
                             />
-                            <button className="ic i_plus"></button>
+                            <button
+                              className="ic i_plus"
+                              onClick={this.clickPlus}
+                            ></button>
                           </div>
-                          <button
-                            className="ic i_fav"
-                            onClick={(e) => {
-                              e.target.classList.toggle("active");
-                            }}
-                          ></button>
                         </div>
                         <div className="product-p__available">
                           <span
@@ -335,9 +383,7 @@ const CardView = observer(
                             <ul>
                               <li>{data.weight + "кг."}</li>
                               <li>{data.color}</li>
-                              {data.material && (
-                                <li>{data.material}</li>
-                              )}
+                              {data.material && <li>{data.material}</li>}
                             </ul>
                             <ul>
                               <li>
