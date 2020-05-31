@@ -1,6 +1,16 @@
 .profile-p{
     &>.container{
         margin-top: 50px;
+        .row{
+            @include max($s){
+                .col-7{
+                    order: 1;
+                }
+                .col-4{
+                    order: 0;
+                }
+            }
+        }
     }
     &__divider{
         height: 100%;
@@ -36,6 +46,10 @@
         position: -webkit-sticky;
         position: sticky;
         top: 80px;
+        @include max($s){
+            position: relative;
+            top: 0;
+        }
     }
     .small-nav{
         li{

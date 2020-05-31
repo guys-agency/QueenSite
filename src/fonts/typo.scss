@@ -64,6 +64,9 @@ h3, h4, h5, h6, p, a, input, button{
 
 h1{
   font-size: 40px;
+  @include max($s){
+    font-size: 27px;
+  }
 }
 
 h2{
@@ -82,6 +85,9 @@ h2{
 h3{
   font-size: 24px;
   font-weight: 500;
+  @include max($s){
+    font-size: 18px;
+  }
   &.tilda{
     &::before{
       font-size: 40px;

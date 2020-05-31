@@ -18,8 +18,11 @@
                 }
             }
             .thumb{
-                margin-top: 20px;
+                margin-top: 18px;
                 margin-bottom: 20px;
+                .swiper-container{
+                    padding-top: 2px;
+                }
                 .swiper-wrapper{
                     height: initial;
                 }
@@ -30,6 +33,14 @@
                         height: 60px;
                         overflow: hidden;
                         margin-right: 20px;
+                        cursor: pointer;
+                        transition: all 0.2s;
+                        &.swiper-slide-active{
+                            border: 1px solid $g_middle;
+                        }
+                        &:hover{
+                            transform: translatey(-2px);
+                        }
                     img{  
                         position: absolute;
                         top: 0;
@@ -45,6 +56,10 @@
         display: flex;
         flex-direction: column;
         position: relative;
+        @include max(1115px){
+            padding-left: 0;
+        }
+        padding-bottom: 40px;
     }
     &__article{
         font-size: 14px;
@@ -62,6 +77,9 @@
         font-size: 16px;
         line-height: 24px;
         margin-bottom: 0;
+        @include max($s){
+            font-size: 14px;
+        }
     }
     &__control{
         order: 2;
@@ -114,6 +132,9 @@
         justify-content: space-between;
         h5{
             margin-bottom: 4px;
+            @include max($t){
+                font-size: 12px;
+            }
         }
         ul{
             list-style: none;
@@ -122,6 +143,10 @@
             flex: 0 0 auto;
             li{
                 margin-bottom: 7px;
+                @include max($t){
+                    font-size: 12px;
+                    margin-bottom: 3px;
+                }
                 &::before {
                     content: "\2022";
                     color: $a_dark;
@@ -168,5 +193,13 @@
     .carousel_product{
         border-top: 2px solid $gr_light;
         padding-top: 40px;
+        @include max($s){
+            padding-top: 20px;
+        }
+        .title{
+            @include max($s){
+                padding-bottom: 20px;
+            }
+        }
     }
 }

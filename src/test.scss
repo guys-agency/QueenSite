@@ -27,6 +27,7 @@
 @import "./blocks/sidebar/sidebar.scss";
 @import "./blocks/user/user.scss";
 @import "./blocks/cart/cart.scss";
+@import "./blocks/pagination/pagination.scss";
 @import "./blocks/footer/footer.scss";
 
 
@@ -75,6 +76,12 @@ code {
   display: none;
   @include max($s){
     display: inline-block;
+  }
+}
+
+.hide-s{
+  @include max($s){
+    display: none;
   }
 }
 

@@ -32,6 +32,9 @@
         }
         &-banner{
             height: 500px;
+            @include max($s){
+                height: 300px;
+            }
         }
     }
     .head_big-f{
@@ -43,6 +46,9 @@
     &_map{
         .head-banner{
             height: 600px;
+            @include max($s){
+                height: 300px;
+            }
         }
     }
 }
@@ -67,6 +73,9 @@
         padding-right: 25px;
         border-right: 1px solid $gr_light;
         margin-bottom: 40px;
+        @include max($s){
+            border-right: 0px;
+        }
     }
     &__div{
         height: 100%;
@@ -75,6 +84,10 @@
     }
     &__contact{
         padding-left: 20px;
+        @include max($s){
+            border-top: 1px solid $gr_light;
+            padding-top: 20px;
+        }
         a{
             font-size: 16px;
             margin-bottom: 10px;

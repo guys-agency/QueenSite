@@ -1,10 +1,11 @@
-import { observer } from "mobx-react";
+  import { observer } from "mobx-react";
 import React from "react";
 import { createBrowserHistory } from "history";
 import localStorage from "mobx-localstorage";
 import Swiper from "react-id-swiper";
 import Drift from "drift-zoom";
 import ProductCard from "./ProductCard";
+import Gallery from "./Gallery";
 import { SERVER_URL } from "../constants";
 
 const { Component } = React;
@@ -100,30 +101,9 @@ const CardView = observer(
         this.fetchReady = true;
       }
 
-      const imgProduct = {
-        // getSwiper: this.state.getGallerySwiper,
-        slidesPerView: 1,
-        speed: 800,
-        effect: "fade",
-        navigation: {
-          nextEl: ".swiper-button-next",
-          prevEl: ".swiper-button-prev",
-        },
-      };
-
-      const imgProducts = {
-        // getSwiper: this.state.getThumbnailSwiper,
-        slidesPerView: "auto",
-        speed: 800,
-        navigation: {
-          nextEl: ".swiper-button-next",
-          prevEl: ".swiper-button-prev",
-        },
-      };
-
       const relativeCar = {
         slidesPerView: "auto",
-        slidesPerGroup: 4,
+        slidesPerGroup: 2,
         speed: 800,
         draggable: true,
         // autoplay: {
@@ -138,11 +118,19 @@ const CardView = observer(
           nextEl: ".swiper-button-next",
           prevEl: ".swiper-button-prev",
         },
+        breakpoints: {
+          760: {
+            slidesPerGroup: 3,
+          },
+          951: {
+            slidesPerGroup: 4,
+          },
+        }
       };
 
       const sameCar = {
         slidesPerView: "auto",
-        slidesPerGroup: 4,
+        slidesPerGroup: 2,
         speed: 800,
         draggable: true,
         // autoplay: {
@@ -157,6 +145,14 @@ const CardView = observer(
           nextEl: ".swiper-button-next",
           prevEl: ".swiper-button-prev",
         },
+        breakpoints: {
+          760: {
+            slidesPerGroup: 3,
+          },
+          951: {
+            slidesPerGroup: 4,
+          },
+        }
       };
 
       const storesAvali = [];
@@ -205,60 +201,10 @@ const CardView = observer(
                     "row product-p " + (data.description ? "" : "no-desc")
                   }
                 >
-                  <div className="col col-6">
-                    <div className="product-p__image-block">
-                      <div className="main">
-                        {/* <div className="main-img">
-                          <img className="drift" src="/image/testbig.jpg" data-zoom="/image/testbig.jpg"alt="" />
-                        </div> */}
-
-                        <Swiper {...imgProduct}>
-                          <div className="main-img">
-                            <img
-                              className="drift"
-                              src="/image/testbig.jpg"
-                              data-zoom="/image/testbig.jpg"
-                              alt=""
-                            />
-                          </div>
-
-                          <div className="main-img">
-                            <img
-                              className="drift"
-                              src="/image/testbig.jpg"
-                              data-zoom="/image/testbig.jpg"
-                              alt=""
-                            />
-                          </div>
-
-                          <div className="main-img">
-                            <img
-                              className="drift"
-                              src="/image/testbig.jpg"
-                              data-zoom="/image/testbig.jpg"
-                              alt=""
-                            />
-                          </div>
-                        </Swiper>
-                      </div>
-                      <div className="thumb">
-                        <Swiper {...imgProducts}>
-                          <div className="thumb-img">
-                            <img src="/image/testbig.jpg" alt="" />
-                          </div>
-
-                          <div className="thumb-img">
-                            <img src="/image/testbig.jpg" alt="" />
-                          </div>
-
-                          <div className="thumb-img">
-                            <img src="/image/testbig.jpg" alt="" />
-                          </div>
-                        </Swiper>
-                      </div>
-                    </div>
+                  <div className="col col-6 col-t-5 col-s-12">
+                    <Gallery/>
                   </div>
-                  <div className="col col-6">
+                  <div className="col col-6 col-t-7 col-s-12">
                     <div className="product-p__description">
                       <div className="product-p__head">
                         <h4 className="product-p__name">{data.name}</h4>
@@ -389,7 +335,9 @@ const CardView = observer(
                             <ul>
                               <li>{data.weight + "кг."}</li>
                               <li>{data.color}</li>
-                              <li>{data.material}</li>
+                              {data.material && (
+                                <li>{data.material}</li>
+                              )}
                             </ul>
                             <ul>
                               <li>
@@ -440,7 +388,7 @@ const CardView = observer(
                     <Swiper {...relativeCar}>
                       {this.with.map((el) => {
                         return (
-                          <div className="col col-3">
+                          <div className="col col-3 col-t-4 col-s-6">
                             <ProductCard
                               key={el.slug}
                               data={el}
@@ -467,7 +415,7 @@ const CardView = observer(
                     <Swiper {...sameCar}>
                       {this.like.map((el) => {
                         return (
-                          <div className="col col-3">
+                          <div className="col col-3 col-t-4 col-s-6">
                             <ProductCard
                               key={el.slug}
                               data={el}

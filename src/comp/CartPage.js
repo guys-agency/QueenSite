@@ -118,7 +118,7 @@ const CartPage = observer(
               </a>
             </p>
             <div className="row cart-page__wrp">
-              <div className="col col-7">
+              <div className="col col-7 col-s-12">
                 <div className="cart-page__cart">
                   <h3>Оформление заказа</h3>
 
@@ -332,7 +332,7 @@ const CartPage = observer(
                       </div>
                       {deliveryData.deliveryType === "COURIER" && (
                         <form className="row" action="">
-                          <div className="col col-8">
+                          <div className="col col-8 col-s-12">
                             <div className="input-field">
                               <label className="required" htmlFor="address">
                                 Адрес
@@ -362,7 +362,7 @@ const CartPage = observer(
                             </div>
                           </div>
 
-                          <div className="col col-2">
+                          <div className="col col-2 col-s-6">
                             <div className="input-field">
                               <label className="required" htmlFor="flat">
                                 Кв/Офис
@@ -392,7 +392,7 @@ const CartPage = observer(
                             </div>
                           </div>
 
-                          <div className="col col-2">
+                          <div className="col col-2 col-s-6">
                             <div className="input-field">
                               <label className="required" htmlFor="porch">
                                 Подъезд
@@ -584,8 +584,8 @@ const CartPage = observer(
                   </form>
                 </div>
               </div>
-              <div className="col col-1"></div>
-              <div className="col col-4 ">
+              <div className="col col-1 hide-s"></div>
+              <div className="col col-4 col-s-12">
                 <div className="cart-page__result-stick">
                   <div className="cart-page__result">
                     <ul>

@@ -140,7 +140,7 @@ const MainPage = observer(
 
       const productCar = {
         slidesPerView: "auto",
-        slidesPerGroup: 4,
+        slidesPerGroup: 2,
         speed: 800,
         draggable: true,
         // autoplay: {
@@ -155,11 +155,19 @@ const MainPage = observer(
           nextEl: ".swiper-button-next",
           prevEl: ".swiper-button-prev",
         },
+        breakpoints: {
+          760: {
+            slidesPerGroup: 3,
+          },
+          951: {
+            slidesPerGroup: 4,
+          },
+        }
       };
 
       const newCar = {
         slidesPerView: "auto",
-        slidesPerGroup: 4,
+        slidesPerGroup: 2,
         speed: 800,
         draggable: true,
         // autoplay: {
@@ -174,6 +182,14 @@ const MainPage = observer(
           nextEl: ".swiper-button-next",
           prevEl: ".swiper-button-prev",
         },
+        breakpoints: {
+          760: {
+            slidesPerGroup: 3,
+          },
+          951: {
+            slidesPerGroup: 4,
+          },
+        }
       };
 
       const brandCar = {
@@ -221,7 +237,7 @@ const MainPage = observer(
                   <h2 className="tilda">
                     Хиты продаж{" "}
                     <span className="link">
-                      Ко всем хитам <span className="ic i_right"></span>
+                      <span className="hide-s">Ко всем хитам </span> <span className="ic i_right"></span>
                     </span>
                   </h2>
                 </a>
@@ -390,7 +406,7 @@ const MainPage = observer(
                   <h2 className="tilda">
                     Новинки{" "}
                     <span className="link">
-                      Все новинки <span className="ic i_right"></span>
+                      <span className="hide-s">Все новинки</span> <span className="ic i_right"></span>
                     </span>
                   </h2>
                 </a>
@@ -411,7 +427,7 @@ const MainPage = observer(
                   <h2 className="dib">
                     Новые коллекции{" "}
                     <span className="link">
-                      Все новинки <span className="ic i_right"></span>
+                      <span className="hide-s">Все коллекции</span> <span className="ic i_right"></span>
                     </span>
                   </h2>
                 </a>
@@ -493,13 +509,13 @@ const MainPage = observer(
           <div className="subscribe">
             <div className="container">
               <div className="row">
-                <div className="col col-6 col-middle subscribe__form">
+                <div className="col col-6 col-s-12 col-middle subscribe__form">
                   <h3>Подпишитесь на новости</h3>
                   <p>
                     <b>Скидка 5%</b> на первую покупку
                   </p>
                   <form className="row row_inner col-bottom">
-                    <div className="col col-7">
+                    <div className="col col-7 col-s-12">
                       <div className="input-field">
                         <label className="required" htmlFor="emailSubs">
                           E-mail
@@ -525,8 +541,8 @@ const MainPage = observer(
                         />
                       </div>
                     </div>
-                    <div className="col col-4">
-                      <button className="btn btn_primary">Подписаться</button>
+                    <div className="col col-4 col-s-12">
+                      <button className="btn btn_primary btn_wide">Подписаться</button>
                     </div>
                   </form>
                 </div>

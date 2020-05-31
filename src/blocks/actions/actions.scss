@@ -1,6 +1,9 @@
 .actions{
     .head_big{
         height: 470px;
+        @include max($s){
+            height: 300px;
+        }
     }
     .container_f{
         flex-wrap: wrap;
