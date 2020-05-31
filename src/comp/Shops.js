@@ -97,7 +97,7 @@ const Shops = observer(
               </div>
               <div className="container">
                 <div className="row shop__wrp">
-                  <div className="col col-8">
+                  <div className="col col-8 col-s-12">
                     <div className="shop__info">
                       <h2>ТЦ Орджоникидзе 11</h2>
                       <p>
@@ -115,7 +115,7 @@ const Shops = observer(
                       </p>
                     </div>
                   </div>
-                  <div className="col col-4">
+                  <div className="col col-4 col-s-12">
                     <div className="shop__contact">
                       <b>
                         <a href="tel:+79854175838">+7 985 417-58-38</a>
@@ -201,7 +201,7 @@ const Shops = observer(
               </div>
               <div className="container">
                 <div className="row shop__wrp">
-                  <div className="col col-8">
+                  <div className="col col-8 col-s-12">
                     <div className="shop__info">
                       <h2>ТРЦ Пушкино парк</h2>
                       <p>
@@ -218,7 +218,7 @@ const Shops = observer(
                       </p>
                     </div>
                   </div>
-                  <div className="col col-4">
+                  <div className="col col-4 col-s-12">
                     <div className="shop__contact">
                       <b>
                         <a href="tel:+79266733701">+7 926 673-37-01</a>
@@ -304,7 +304,7 @@ const Shops = observer(
               </div>
               <div className="container">
                 <div className="row shop__wrp">
-                  <div className="col col-8">
+                  <div className="col col-8 col-s-12">
                     <div className="shop__info">
                       <h2>ТРЦ Саларис</h2>
                       <p>
@@ -320,7 +320,7 @@ const Shops = observer(
                       </p>
                     </div>
                   </div>
-                  <div className="col col-4">
+                  <div className="col col-4 col-s-12">
                     <div className="shop__contact">
                       <b>
                         <a href="tel:+79265676742">+7 926 567-67-42</a>
@@ -407,7 +407,7 @@ const Shops = observer(
               </div>
               <div className="container">
                 <div className="row shop__wrp">
-                  <div className="col col-8">
+                  <div className="col col-8 col-s-12">
                     <div className="shop__info">
                       <h2>Outlet Village Белая Дача</h2>
                       <p>
@@ -426,7 +426,7 @@ const Shops = observer(
                       </p>
                     </div>
                   </div>
-                  <div className="col col-4">
+                  <div className="col col-4 col-s-12">
                     <div className="shop__contact">
                       <b>
                         <a href="tel:+79268975443">+7 926 897-54-43</a>

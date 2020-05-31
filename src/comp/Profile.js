@@ -55,7 +55,7 @@ const Profile = observer(
           </ul>
           <div className="container">
             <div className="row">
-              <div className="col col-7">
+              <div className="col col-7 col-s-12">
                 <h4>Последние заказы</h4>
                 <div className="orders">
                   <div className="orders-item">
@@ -188,10 +188,10 @@ const Profile = observer(
                   </div>
                 </div>
               </div>
-              <div className="col col-1">
+              <div className="col col-1 hide-s">
                 <div className="profile-p__divider"></div>
               </div>
-              <div className="col col-4">
+              <div className="col col-4 col-s-12">
                 <div className="profile-p__side">
                   <h4>Данные</h4>
                   <div className="profile-p__card">

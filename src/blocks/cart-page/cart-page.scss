@@ -6,6 +6,9 @@
     }
     &__cart{
         padding-bottom: 100px;
+        @include max($s){
+            padding-bottom: 50px;
+        }
     }
     &__delivery{
         h5{
@@ -41,6 +44,11 @@
                 }
             }
             padding-bottom: 20px;
+            .input-field{
+                @include max($s){
+                    margin-bottom: 40px;
+                }
+            }
         }
     }
 
@@ -75,6 +83,10 @@
             position: sticky;
             position: -webkit-sticky;
             top: 90px;
+            @include max($s){
+                top: 0;
+                position: relative;
+            }
        }
        ul{
            padding: 0;
