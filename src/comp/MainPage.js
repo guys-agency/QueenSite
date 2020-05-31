@@ -210,6 +210,17 @@ const MainPage = observer(
         },
       };
 
+
+      const giftCar = {
+        slidesPerView: "auto",
+        speed: 500,
+        draggable: true,
+        navigation: {
+          nextEl: ".swiper-button-next",
+          prevEl: ".swiper-button-prev",
+        },
+      };
+
       return (
         <div className="main-page">
           <div className="head head_big">
@@ -363,38 +374,41 @@ const MainPage = observer(
                 <h2>Подарки</h2>
               </div>
               <div className="gifts row">
-                <div className="col col-4">
-                  <a
-                    className="banner"
-                    style={{
-                      backgroundImage: "url(" + "/image/gifts/1.jpg" + ")",
-                    }}
-                  >
-                    <div className="banner__desc">До 500₽</div>
-                  </a>
-                </div>
+                <Swiper {...giftCar}>
+                  <div className="col col-4 col-t-5 col-s-7">
+                    <a
+                      className="banner"
+                      style={{
+                        backgroundImage: "url(" + "/image/gifts/1.png" + ")",
+                      }}
+                    >
+                      <div className="banner__desc">До 500₽</div>
+                    </a>
+                  </div>
 
-                <div className="col col-4">
-                  <a
-                    className="banner"
-                    style={{
-                      backgroundImage: "url(" + "/image/gifts/2.jpg" + ")",
-                    }}
-                  >
-                    <div className="banner__desc">До 1 000₽</div>
-                  </a>
-                </div>
+                  <div className="col col-4 col-t-5 col-s-7">
+                    <a
+                      className="banner"
+                      style={{
+                        backgroundImage: "url(" + "/image/gifts/2.png" + ")",
+                      }}
+                    >
+                      <div className="banner__desc">До 1 000₽</div>
+                    </a>
+                  </div>
 
-                <div className="col col-4">
-                  <a
-                    className="banner"
-                    style={{
-                      backgroundImage: "url(" + "/image/gifts/3.jpg" + ")",
-                    }}
-                  >
-                    <div className="banner__desc">До 2 000₽</div>
-                  </a>
-                </div>
+                  <div className="col col-4 col-t-5 col-s-7">
+                    <a
+                      className="banner"
+                      style={{
+                        backgroundImage: "url(" + "/image/gifts/3.png" + ")",
+                      }}
+                    >
+                      <div className="banner__desc">До 2 000₽</div>
+                    </a>
+                  </div>
+
+                </Swiper>
               </div>
             </div>
           </div>
