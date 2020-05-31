@@ -332,7 +332,7 @@ const CartPage = observer(
                       </div>
                       {deliveryData.deliveryType === "COURIER" && (
                         <form className="row" action="">
-                          <div className="col col-8 col-s-12">
+                          <div className="col col-6 col-s-12">
                             <div className="input-field">
                               <label className="required" htmlFor="address">
                                 Адрес
@@ -362,7 +362,7 @@ const CartPage = observer(
                             </div>
                           </div>
 
-                          <div className="col col-2 col-s-6">
+                          <div className="col col-3 col-s-6">
                             <div className="input-field">
                               <label className="required" htmlFor="flat">
                                 Кв/Офис
@@ -392,7 +392,7 @@ const CartPage = observer(
                             </div>
                           </div>
 
-                          <div className="col col-2 col-s-6">
+                          <div className="col col-3 col-s-6">
                             <div className="input-field">
                               <label className="required" htmlFor="porch">
                                 Подъезд

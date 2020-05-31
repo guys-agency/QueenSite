@@ -39,9 +39,12 @@
 
     &_gift{
         .container{
-        position: relative;
+            position: relative;
             &::before{
                 left: 452px;
+                @include max($t){
+                    left: 400px;
+                }
             }
         }
     }

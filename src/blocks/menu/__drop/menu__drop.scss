@@ -24,6 +24,9 @@
             &::before{
                 top: -10px;
                 left: 0px;
+                @include max($t){
+                    left: -20px;
+                }
             }
         }
     }

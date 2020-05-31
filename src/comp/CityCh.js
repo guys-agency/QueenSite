@@ -20,9 +20,9 @@ const CityCh = observer(
             {this.props.store.city} <span className="ic i_drop"></span>
           </button>
           <form className="header__drop header__drop_city">
-            <buttton className="btn btn_wide vis-s" onClick={(e) => {
+            <button className="btn btn_wide vis-s" onClick={(e) => {
               $('.header__drop').removeClass('visible');
-            }}><span className="ic i_left"></span> Назад</buttton>
+            }}><span className="ic i_left"></span> Назад</button>
             <div className="input-field">
               <label className="active" htmlFor="citySearch">
                 Ваш город
