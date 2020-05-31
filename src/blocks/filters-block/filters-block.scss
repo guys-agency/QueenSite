@@ -25,7 +25,9 @@
       div {
         display: flex;
         align-items: center;
-
+        @include max($s){
+          flex-wrap: wrap;
+        }
         p {
           font-family: Excentra Pro;
           font-style: normal;
@@ -81,6 +83,11 @@
           @include max($s){
             right: 0;
             position: relative;
+            width: 100%;
+            margin-left: 0;
+            margin-top: 10px;
+            font-size: 14px;
+            padding: 8px;
           }
         }
       }
