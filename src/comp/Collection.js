@@ -1,6 +1,8 @@
 import { observer } from "mobx-react";
 import React from "react";
 import api from "./api";
+import Filters from "./Filters";
+import ProductCardContainer from "./ProductCardContainer";
 const { Component } = React;
 
 const Collection = observer(
@@ -72,7 +74,16 @@ const Collection = observer(
           <div className="container">
             <div className="row"></div>
           </div>
-          {/* место для каталога */}
+          <div className="main-screen">
+            <div className="container">
+              <div className="row catalog">
+                <div className="col col-3">
+                  <Filters store={this.props.store} />
+                </div>
+                <ProductCardContainer store={this.props.store} />
+              </div>
+            </div>
+          </div>
         </div>
       );
     }
@@ -81,10 +92,7 @@ const Collection = observer(
         .getCollection(this.props.slug)
         .then((data) => {
           console.log("data :>> ", data);
-          this.setState({
-            dataProd: data.products,
-            dataColl: data.collData[0],
-          });
+          this.props.store.filtration(data.collData[0].products);
         })
         .catch((err) => {
           console.log("err :>> ", err);

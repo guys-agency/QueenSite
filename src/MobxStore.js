@@ -175,19 +175,20 @@ class Store {
 
   getData = (filterArray, bodyJSON, bodyJSONFilter) => {
     const testContainer = [];
-    if (!filterArray.length) {
-      fetch(SERVER_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          credentials: "include",
-        },
-        body: JSON.stringify(bodyJSON),
+
+    fetch(SERVER_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        credentials: "include",
+      },
+      body: JSON.stringify(bodyJSON),
+    })
+      .then((res) => {
+        return res.json();
       })
-        .then((res) => {
-          return res.json();
-        })
-        .then((data) => {
+      .then((data) => {
+        if (!filterArray.length) {
           console.log("dataData1 :>> ", data);
           Object.keys(data).forEach((element) => {
             testContainer.push(
@@ -201,23 +202,56 @@ class Store {
             );
           });
           this.productsToRender = testContainer;
-        })
-        .catch((err) => {
-          console.log("err", err);
-        });
+        } else {
+          console.log("dataData2 :>> ", data);
+          console.log(
+            "Object.keys(data).length :>> ",
+            Object.keys(data).length
+          );
+          if (!Object.keys(data).length) {
+            if (this.activeFilters.choosePoint.length) {
+              this.activeFilters[
+                this.activeFilters.choosePoint[
+                  this.activeFilters.choosePoint.length - 1
+                ]
+              ] = [];
+              this.activeFilters.choosePoint.pop();
+              this.filtration();
+            }
+          } else {
+            Object.keys(data).forEach((element) => {
+              testContainer.push(
+                <div className="col col-4">
+                  <ProductCard
+                    key={data[element].slug}
+                    data={data[element]}
+                    store={this}
+                  />
+                </div>
+              );
+            });
 
-      fetch(SERVER_URL + "/sort-names", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          credentials: "include",
-        },
-        body: JSON.stringify(bodyJSONFilter),
+            this.productsToRender = testContainer;
+          }
+        }
       })
-        .then((res) => {
-          return res.json();
-        })
-        .then((data) => {
+      .catch((err) => {
+        console.log("err", err);
+      });
+
+    fetch(SERVER_URL + "/sort-names", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        credentials: "include",
+      },
+      body: JSON.stringify(bodyJSONFilter),
+    })
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        if (!filterArray.length) {
           const sortData = {};
 
           Object.keys(data).forEach((name) => {
@@ -277,78 +311,7 @@ class Store {
           // }
           console.log("data :>> ", data);
           this.createFilterPointsContainers(sortData);
-        })
-        .catch((err) => {
-          console.log("err", err);
-        });
-    } else {
-      fetch(SERVER_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          credentials: "include",
-        },
-        body: JSON.stringify(
-          Object.assign(bodyJSON, {
-            $and: filterArray,
-          })
-        ),
-      })
-        .then((res) => {
-          return res.json();
-        })
-        .then((data) => {
-          console.log("dataData2 :>> ", data);
-          console.log(
-            "Object.keys(data).length :>> ",
-            Object.keys(data).length
-          );
-          if (!Object.keys(data).length) {
-            if (this.activeFilters.choosePoint.length) {
-              this.activeFilters[
-                this.activeFilters.choosePoint[
-                  this.activeFilters.choosePoint.length - 1
-                ]
-              ] = [];
-              this.activeFilters.choosePoint.pop();
-              this.filtration();
-            }
-          } else {
-            Object.keys(data).forEach((element) => {
-              testContainer.push(
-                <div className="col col-4">
-                  <ProductCard
-                    key={data[element].slug}
-                    data={data[element]}
-                    store={this}
-                  />
-                </div>
-              );
-            });
-
-            this.productsToRender = testContainer;
-          }
-        })
-        .catch((err) => {
-          console.log("err", err);
-        });
-
-      fetch(SERVER_URL + "/sort-names", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          credentials: "include",
-        },
-        body: JSON.stringify(
-          Object.assign(bodyJSONFilter, {
-            $and: filterArray,
-          })
-        ),
-      })
-        .then((res) => {
-          return res.json();
-        })
-        .then((data) => {
+        } else {
           console.log("data2 :>> ", data);
           const sortData = {};
           if (Object.keys(data).length) {
@@ -401,11 +364,11 @@ class Store {
             this.paginatCont.push(<Paginat store={this} />);
             this.createFilterPointsContainers(sortData);
           }
-        })
-        .catch((err) => {
-          console.log("err", err);
-        });
-    }
+        }
+      })
+      .catch((err) => {
+        console.log("err", err);
+      });
   };
 
   cleaningActiveFilters = () => {
@@ -426,7 +389,7 @@ class Store {
     this.categoryFilter = {};
   };
 
-  filtration = () => {
+  filtration = (prodSlugs) => {
     const filterArray = [];
 
     if (this.activeFilters.count) {
@@ -486,6 +449,11 @@ class Store {
     };
 
     const bodyJSONFilter = {};
+
+    if (prodSlugs) {
+      bodyJSON.slug = { $in: prodSlugs };
+      bodyJSONFilter.slug = { $in: prodSlugs };
+    }
 
     if (
       this.nameMainCat !== "" &&
