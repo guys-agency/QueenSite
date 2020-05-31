@@ -66,8 +66,27 @@ class Store {
 
   city = "";
 
+  collectionsData = {};
+
   auth = getCookie("auth") === undefined ? false : true;
 
+  getCollections = () => {
+    api
+      .getAllCollections()
+      .then((data) => {
+        const sortData = [];
+        Object.keys(data).forEach((el) => {
+          sortData.push(data[el]);
+        });
+        sortData.sort((a, b) => {
+          return a.order - b.order;
+        });
+        this.collectionsData = sortData;
+      })
+      .catch((err) => {
+        console.log("err :>> ", err);
+      });
+  };
   addToLike = () => {
     console.log("likeContainer :>> ", this.likeContainer);
     localStorage.set("like", this.likeContainer);
@@ -126,6 +145,11 @@ class Store {
             console.log("err :>> ", err);
           });
       }
+      // else {
+      //   Object.keys(this.productInCartList).forEach((el) => {
+      //     this.productInCart[el].countInCart = this.productInCartList[el];
+      //   });
+      // }
     } else {
       this.productInCart = {};
     }
@@ -704,6 +728,7 @@ decorate(Store, {
   likeContainer: observable,
   likeData: observable,
   productInCartList: observable,
+  collectionsData: observable,
 });
 
 const store = new Store();

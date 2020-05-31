@@ -7,6 +7,7 @@ import localStorage from "mobx-localstorage";
 import { Link } from "react-router-dom";
 import moment from "moment";
 import ProductList from "./ProductList";
+import api from "./api";
 const { Component } = React;
 
 //TODO: исправить вывод стоимости во время скидки
@@ -15,7 +16,17 @@ const CartPage = observer(
     state = {
       cities: [],
       deliveryData: {},
+      adress: "",
+      flat: "",
+      flatcoub: "",
+      name: "",
+      secondName: "",
+      email: "",
+      tel: "",
     };
+
+    deliveryOrderData = {};
+    deliverySend = {};
 
     deteleProduct = (el) => {
       const { productInCartList, addtoCart } = this.props.store;
@@ -87,6 +98,15 @@ const CartPage = observer(
       }
 
       console.log("auth :>> ", this.props.store.auth);
+      const {
+        adress,
+        flat,
+        flatcoub,
+        name,
+        secondName,
+        email,
+        tel,
+      } = this.state;
 
       return (
         <div className="cart-page">
@@ -320,6 +340,7 @@ const CartPage = observer(
                               <input
                                 id="address"
                                 type="text"
+                                value={adress}
                                 onFocus={(e) => {
                                   $(e.target)
                                     .parent()
@@ -333,6 +354,9 @@ const CartPage = observer(
                                       .find("label")
                                       .removeClass("active");
                                   }
+                                }}
+                                onInput={(e) => {
+                                  this.setState({ adress: e.target.value });
                                 }}
                               />
                             </div>
@@ -346,6 +370,7 @@ const CartPage = observer(
                               <input
                                 id="flat"
                                 type="text"
+                                value={flat}
                                 onFocus={(e) => {
                                   $(e.target)
                                     .parent()
@@ -359,6 +384,9 @@ const CartPage = observer(
                                       .find("label")
                                       .removeClass("active");
                                   }
+                                }}
+                                onInput={(e) => {
+                                  this.setState({ flat: e.target.value });
                                 }}
                               />
                             </div>
@@ -372,6 +400,7 @@ const CartPage = observer(
                               <input
                                 id="porch"
                                 type="text"
+                                value={flatcoub}
                                 onFocus={(e) => {
                                   $(e.target)
                                     .parent()
@@ -386,6 +415,9 @@ const CartPage = observer(
                                       .removeClass("active");
                                   }
                                 }}
+                                onInput={(e) => {
+                                  this.setState({ flatcoub: e.target.value });
+                                }}
                               />
                             </div>
                           </div>
@@ -397,13 +429,20 @@ const CartPage = observer(
                   {Object.keys(deliveryData).length === 0 && (
                     <div
                       className="btn btn_primary"
-                      onClick={this.startYaDeliv}
+                      onClick={() => {
+                        this.startYaDeliv(totalPrice, productInCartList);
+                      }}
                     >
                       Выбрать доставку
                     </div>
                   )}
                   {Object.keys(deliveryData).length !== 0 && (
-                    <div className="btn" onClick={this.startYaDeliv}>
+                    <div
+                      className="btn"
+                      onClick={() => {
+                        this.startYaDeliv(totalPrice, productInCartList);
+                      }}
+                    >
                       Изменить способ доставки
                     </div>
                   )}
@@ -433,6 +472,7 @@ const CartPage = observer(
                           id="firstname"
                           type="text"
                           name="firstname"
+                          value={name}
                           onFocus={(e) => {
                             $(e.target)
                               .parent()
@@ -446,6 +486,9 @@ const CartPage = observer(
                                 .find("label")
                                 .removeClass("active");
                             }
+                          }}
+                          onInput={(e) => {
+                            this.setState({ name: e.target.value });
                           }}
                         />
                       </div>
@@ -459,6 +502,7 @@ const CartPage = observer(
                           id="lastname"
                           name="lastname"
                           type="text"
+                          value={secondName}
                           onFocus={(e) => {
                             $(e.target)
                               .parent()
@@ -472,6 +516,9 @@ const CartPage = observer(
                                 .find("label")
                                 .removeClass("active");
                             }
+                          }}
+                          onInput={(e) => {
+                            this.setState({ secondName: e.target.value });
                           }}
                         />
                       </div>
@@ -484,6 +531,7 @@ const CartPage = observer(
                         <input
                           id="email"
                           type="text"
+                          value={email}
                           onFocus={(e) => {
                             $(e.target)
                               .parent()
@@ -497,6 +545,9 @@ const CartPage = observer(
                                 .find("label")
                                 .removeClass("active");
                             }
+                          }}
+                          onInput={(e) => {
+                            this.setState({ email: e.target.value });
                           }}
                         />
                       </div>
@@ -509,6 +560,7 @@ const CartPage = observer(
                         <input
                           id="phone"
                           type="text"
+                          value={tel}
                           onFocus={(e) => {
                             $(e.target)
                               .parent()
@@ -522,6 +574,9 @@ const CartPage = observer(
                                 .find("label")
                                 .removeClass("active");
                             }
+                          }}
+                          onInput={(e) => {
+                            this.setState({ tel: e.target.value });
                           }}
                         />
                       </div>
@@ -586,7 +641,95 @@ const CartPage = observer(
                         </div>
                       )}
 
-                    <button className="btn btn_yellow">Зaказать</button>
+                    <button
+                      className="btn btn_yellow"
+                      onClick={() => {
+                        //NEN
+                        console.log("productInCart", productInCart);
+                        const senderId = "500001936";
+
+                        const recipient = {
+                          firstName: name,
+                          middleName: "{string}",
+                          lastName: secondName,
+                          email: email,
+                          address: {
+                            // "geoId": {int},
+                            country: "Россия",
+                            region: "Татарстан",
+                            locality: "Казань",
+                            street: "Волкова",
+                            house: "2",
+                            // "housing": "{string}",
+                            // "building": "{string}",
+                            apartment: "5",
+                          },
+                          // "pickupPointId": {int}
+                        };
+                        const contacts = [
+                          {
+                            type: "CONTACT",
+                            phone: String(tel),
+                            // "additional": "{string}",
+                            firstName: name,
+                            // "middleName": "{string}",
+                            lastName: secondName,
+                          },
+                        ];
+                        const deliveryOrderData = Object.assign(
+                          { ...this.deliveryOrderData.deliveryOption.cost },
+                          this.deliveryOrderData
+                        );
+                        deliveryOrderData.deliveryOption.partnerId = this.deliveryOrderData.deliveryOption.partner;
+                        deliveryOrderData.deliveryOption.delivery = this.deliveryOrderData.deliveryOption.cost.delivery;
+
+                        const delivery = {
+                          ...this.deliverySend,
+                          recipient,
+                          contacts,
+                          senderId,
+                          ...deliveryOrderData,
+                        };
+
+                        const dataToSend = {
+                          prod: {},
+                        };
+
+                        Object.keys(productInCart).forEach((el) => {
+                          dataToSend.prod[el] = {
+                            countIn: productInCartList[el],
+                            sale: productInCart[el].sale,
+                            slug: productInCart[el].slug,
+                            regular_price: productInCart[el].regular_price,
+                            dbid: productInCart[el].dbid,
+                            name: productInCart[el].name,
+                          };
+                          if (productInCart[el].sale) {
+                            dataToSend[el].sale_price =
+                              productInCart[el].sale_price;
+                          }
+                        });
+
+                        dataToSend.sum = totalPrice;
+                        dataToSend.email = this.state.email;
+
+                        console.log("delivery :>> ", dataToSend);
+
+                        api
+                          .setOrderData({
+                            delivery,
+                            dataToSend,
+                          })
+                          .then((data) => {
+                            console.log("data :>> ", data);
+                          })
+                          .catch((err) => {
+                            console.log("err :>> ", err);
+                          });
+                      }}
+                    >
+                      Зaказать
+                    </button>
                   </div>
                   <div className="cart-page__promo">
                     <input
@@ -606,7 +749,7 @@ const CartPage = observer(
 
     componentDidMount() {}
 
-    startYaDeliv = () => {
+    startYaDeliv = (fullPrice, array) => {
       const { productInCart, city } = this.props.store;
       console.log(
         "productInCart :>> ",
@@ -617,15 +760,18 @@ const CartPage = observer(
         Object.keys(productInCart)
       );
       const items = [];
-      let sum = 0;
+      let sum = fullPrice;
       Object.keys(productInCart).forEach((el, i) => {
-        sum += productInCart[el].regular_price * productInCart[el].countInCart;
         items.push({
           externalId: `${productInCart[el].slug}`,
           name: productInCart[el].name,
-          count: productInCart[el].countInCart,
-          price: productInCart[el].regular_price,
-          assessedValue: productInCart[el].regular_price,
+          count: array[el],
+          price: productInCart[el].sale
+            ? productInCart[el].sale_price
+            : productInCart[el].regular_price,
+          assessedValue: productInCart[el].sale
+            ? productInCart[el].sale_price
+            : productInCart[el].regular_price,
           tax: "NO_VAT",
           dimensions: {
             weight: +productInCart[el].weight,
@@ -658,6 +804,9 @@ const CartPage = observer(
           },
         ],
       };
+
+      this.deliverySend = { ...cart, ...order };
+
       this.YaDeliveryFunc(window, cart, order, city);
     };
 
@@ -703,11 +852,9 @@ const CartPage = observer(
                   moment(
                     deliveryOption.deliveryOption.calculatedDeliveryDateMax
                   ).diff(moment(), "days");
-            this.setState({ deliveryData: { ...deliveryOption, time } });
 
-            setInterval(() => {
-              console.log("object :>> ", deliveryOption.deliveryType);
-            }, 500);
+            this.deliveryOrderData = deliveryOption;
+            this.setState({ deliveryData: { ...deliveryOption, time } });
           });
 
           // Когда пользователь отправит форму выбора условий доставки, нужно сохранить

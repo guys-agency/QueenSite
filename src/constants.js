@@ -2506,9 +2506,9 @@ const cities = [
   "Ярославль",
 ];
 
-//http://api.queenbohemia.ru
-//127.0.0.1:3010
+//https://api.queenbohemia.ru
+//http://127.0.0.1:3010
 
-const SERVER_URL = "https://api.queenbohemia.ru";
+const SERVER_URL = "http://127.0.0.1:3010";
 
 export { cities, SERVER_URL };
