@@ -19,6 +19,7 @@
     &__head{
         display: flex;
         margin-bottom: 50px;
+        align-items: baseline;
         @include max($s){
             margin-bottom: 30px;
         }

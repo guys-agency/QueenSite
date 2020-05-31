@@ -13,6 +13,9 @@
             margin-right: 0;
         }
         &>div{
+            @include max($s){
+                margin-top: 40px;
+            }
             &:nth-child(2n){
                 margin-top: 40px;
             }

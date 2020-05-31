@@ -51,21 +51,24 @@ const MenuPoints = observer(
 
     service = (
       <div className="header__drop">
+        <buttton className="btn btn_wide vis-s" onClick={(e)=>{
+          $('.header__drop').removeClass('visible');
+        }}><span className="ic i_left"></span> Назад</buttton>
         <ul>
           <li>
-            <Link to="help/delivery">Доставка</Link>
+            <Link to="/help/delivery">Доставка</Link>
           </li>
           <li>
-            <Link to="help/payment">Оплата</Link>
+            <Link to="/help/payment">Оплата</Link>
           </li>
           <li>
-            <Link to="help/return">Возврат</Link>
+            <Link to="/help/return">Возврат</Link>
           </li>
           <li>
-            <Link to="help/offer">Публичная оферта</Link>
+            <Link to="/help/offer">Публичная оферта</Link>
           </li>
           <li>
-            <Link to="help/bonus">Бонусы</Link>
+            <Link to="/help/bonus">Бонусы</Link>
           </li>
         </ul>
       </div>
@@ -116,6 +119,20 @@ const MenuPoints = observer(
       $(".menu_sub").removeClass("visible");
       $(".menu-point").removeClass("active");
     };
+
+
+    closeNav = (e) =>{
+      $(".body").removeClass("no-scroll");
+      $(".navigation").removeClass("visible");
+      $(".sidebar-overlay").removeClass("active");
+      $(".menu-point").removeClass("active");
+      $(".header__btn").removeClass("active");
+      var mega = $(".menu");
+      var trgClass = $(e.target).hasClass("menu");
+      if (!trgClass) {
+        mega.removeClass("visible");
+      }
+    }
 
     closeAll = (e) => {
       e.stopPropagation();
@@ -267,7 +284,7 @@ const MenuPoints = observer(
                 <li key={child.name}>
                   <NavLink
                     to={`/catalog/${elem.slug}/${child.slug}`}
-                    onClick={this.closeAll}
+                    onClick={this.closeNav}
                   >
                     {child.name}
                   </NavLink>
@@ -396,7 +413,7 @@ const MenuPoints = observer(
                     </span>
                     {this.service}
                   </span>
-                  <Link className="header__left-bonus" to="help/bonus">
+                  <Link className="header__left-bonus" to="/help/bonus">
                     Бонусы
                   </Link>
                   <CityCh store={this.props.store} />
@@ -440,6 +457,7 @@ const MenuPoints = observer(
                   {this.phone}
                 </div>
                 <div className="navigation__left">
+                  <a href="" className="ic i_qd"></a>
                   <button className="btn btn_primary btn-menu">
                     {" "}
                     <span className="ic i_menu"></span> Каталог
@@ -663,7 +681,7 @@ const MenuPoints = observer(
                     </span>
                     {this.service}
                   </span>
-                  <Link className="header__left-bonus" to="help/bonus">
+                  <Link className="header__left-bonus" to="/help/bonus">
                     Бонусы
                   </Link>
                 </div>
