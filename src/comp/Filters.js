@@ -206,7 +206,8 @@ const Filters = observer(
                     }}
                   ></input>
                   <p>₽</p>
-                  <button
+                  <button 
+                    className = "btn"
                     onClick={() => {
                       if (this.minPriceLocal) {
                         activeFilters.minPrice = this.minPriceLocal;
@@ -221,7 +222,7 @@ const Filters = observer(
                       filtration();
                     }}
                   >
-                    ok
+                    Применить
                   </button>
                 </div>
               </div>

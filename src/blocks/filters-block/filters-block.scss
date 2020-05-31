@@ -18,6 +18,10 @@
   .main-filers-block {
     margin-bottom: 20px;
     &.price {
+      position: relative;
+      @include max($t){
+        position: static;
+      }
       div {
         display: flex;
         align-items: center;
@@ -67,7 +71,17 @@
         }
 
         button {
-          width: 40px;
+          margin-left: 10px;
+          z-index: 9;
+          position: absolute;
+          right: -100px;
+          @include max($t){
+            right: -70px;
+          }
+          @include max($s){
+            right: 0;
+            position: relative;
+          }
         }
       }
     }
@@ -91,7 +105,7 @@
       right: 0;
       top: 0;
       color: $a_middle;
-      // transition: initial;
+      transition: all 0.2s;
     }
     &:hover{
       color: $g_middle;
@@ -347,6 +361,23 @@
         opacity: 1;
       }
   }
+  @include max($s){
+    width: 280px;
+    right: 0;
+    left: auto;
+    top: 0;
+    height: 100vh;
+    position: fixed;
+    z-index: 99;
+    transform: translateX(280px);
+    transition: all 0.2s;
+    &.visible{
+      transform: translate(0);
+    }
+    .sidebar__inner{
+      max-height: 100vh;
+    }
+  }
 }
 
 .sort{
@@ -359,6 +390,9 @@
     display: none;
     @include max($t){
       display: inline-block;
+    }
+    @include max($s){
+      display: none;
     }
     &:hover,&.active{
       color: $g_middle;

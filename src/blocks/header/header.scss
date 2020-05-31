@@ -82,6 +82,14 @@
       color: $g_middle;
     }
   }
+  .i_filter{
+    font-size: 21px;
+    margin-right: 15px;
+    margin-left: -36px;
+    &:hover{
+      color: $g_middle;
+    }
+  }
   &__btn-city{
     overflow: hidden;
     max-width: 145px;

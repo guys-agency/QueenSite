@@ -124,7 +124,7 @@ const MenuPoints = observer(
     };
 
     closeNav = (e) => {
-      $(".body").removeClass("no-scroll");
+      $("body").removeClass("no-scroll");
       $(".navigation").removeClass("visible");
       $(".sidebar-overlay").removeClass("active");
       $(".menu-point").removeClass("active");
@@ -437,6 +437,14 @@ const MenuPoints = observer(
                 </Link>
 
                 {this.phone}
+
+                <button className="ic i_filter vis-s " onClick={(e) => {
+                  e.target.classList.toggle("active");
+                  document.querySelector(".catalog__bar").classList.toggle('visible')
+                  document
+                    .querySelector(".sidebar-overlay")
+                    .classList.add("active");
+                }}></button>
 
                 <button
                   className="cart ic i_bag"
@@ -772,6 +780,9 @@ const MenuPoints = observer(
                 $(".navigation").removeClass("visible");
                 e.target.classList.remove("active");
                 document.querySelector(".sidebar").classList.remove("visible");
+                if (document.querySelector(".catalog__bar")) {
+                  document.querySelector(".catalog__bar").classList.remove('visible')
+                }
               }}
             ></div>
           </>

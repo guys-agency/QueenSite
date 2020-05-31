@@ -95,7 +95,7 @@ const ProductCardContainer = observer(
                     <button className="dropdown__list-item item" onClick={this.sortClick}>Сначала подешевле</button>
                   </div>
                 </div>
-                <button className="ic i_filter vis-t" onClick={(e)=>{
+                <button className="ic i_filter" onClick={(e)=>{
                   e.target.classList.toggle("active");
                   document.querySelector(".catalog__bar").classList.toggle('visible')
                 }}></button>
