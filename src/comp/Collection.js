@@ -91,8 +91,12 @@ const Collection = observer(
       api
         .getCollection(this.props.slug)
         .then((data) => {
+          this.props.store.nameMainCat = "";
+          this.props.store.nameSecondCat = "";
+          this.props.store.cleaningActiveFilters();
           console.log("data :>> ", data);
-          this.props.store.filtration(data.collData[0].products);
+          this.props.store.prodSlugs = data.collData[0].products;
+          this.props.store.filtration();
         })
         .catch((err) => {
           console.log("err :>> ", err);

@@ -11,7 +11,7 @@ const FilterPoint = observer(
 
     clickHandler = (filterPoint) => {
       const { objectName, data, name } = this.props;
-      const { activeFilters, filtration } = this.props.store;
+      const { activeFilters, filtration, prodSlugs } = this.props.store;
 
       if (objectName === "measure") {
         const number = Object.keys(activeFilters[objectName]).indexOf(name);
@@ -86,7 +86,7 @@ const FilterPoint = observer(
           <h3
             className="filter__name"
             onClick={(e) => {
-              e.target.classList.toggle('active');
+              e.target.classList.toggle("active");
               if (classStyle.includes("active")) {
                 this.setState({ classStyle: "filter__container" });
               } else {

@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
 import React from "react";
 import StickySidebar from "sticky-sidebar";
+import { Link, NavLink } from "react-router-dom";
 const { Component } = React;
 
 const Filters = observer(
@@ -51,6 +52,7 @@ const Filters = observer(
         minPrice,
         maxPrice,
         filtration,
+        activeCats,
       } = this.props.store;
 
       const { parentName, childName } = this.props;
@@ -62,27 +64,121 @@ const Filters = observer(
       //   this.props.store.nameMainCat = parentName;
       //   this.props.store.nameSecondCat = childName;
       // }
+      const menu = [];
+      activeCats.forEach((elem, i) => {
+        const childsPoints = [];
+
+        elem.childs.sort((prev, next) => {
+          if (prev.name < next.name) return -1;
+          if (prev.name < next.name) return 1;
+        });
+        elem.childs.sort().forEach((child, iCh) => {
+          //убрать tr, так как будут поля с транскрипцией в бд
+          childsPoints.push(
+            <li key={child.name}>
+              <NavLink
+                to={`/catalog/${elem.slug}/${child.slug}`}
+                onClick={this.closeNav}
+              >
+                {child.name}
+              </NavLink>
+            </li>
+          );
+        });
+        if (elem.name === "Сервировка стола") {
+          menu[0] = (
+            <li>
+              <h5>
+                {elem.name}
+                <span className="ic i_drop"></span>
+              </h5>
+              <ul>{childsPoints}</ul>
+            </li>
+          );
+        } else if (elem.name === "Для приготовления") {
+          menu[1] = (
+            <li>
+              <h5>
+                {elem.name}
+                <span className="ic i_drop"></span>
+              </h5>
+              <ul>{childsPoints}</ul>
+            </li>
+          );
+        } else if (elem.name === "Напитки") {
+          menu[2] = (
+            <li>
+              <h5>
+                {elem.name}
+                <span className="ic i_drop"></span>
+              </h5>
+              <ul>{childsPoints}</ul>
+            </li>
+          );
+        } else if (elem.name === "Кофе и чай") {
+          menu[3] = (
+            <li>
+              <h5>
+                {elem.name}
+                <span className="ic i_drop"></span>
+              </h5>
+              <ul>{childsPoints}</ul>
+            </li>
+          );
+        } else if (elem.name === "Аксесуары для стола") {
+          menu[4] = (
+            <li>
+              <h5>
+                {elem.name}
+                <span className="ic i_drop"></span>
+              </h5>
+              <ul>{childsPoints}</ul>
+            </li>
+          );
+        } else if (elem.name === "Интерьер") {
+          menu[5] = (
+            <li>
+              <h5>
+                {elem.name}
+                <span className="ic i_drop"></span>
+              </h5>
+              <ul>{childsPoints}</ul>
+            </li>
+          );
+        } else if (elem.name === "Наборы") {
+          menu[6] = (
+            <li>
+              <h5>
+                {elem.name}
+                <span className="ic i_drop"></span>
+              </h5>
+              <ul>{childsPoints}</ul>
+            </li>
+          );
+        } else if (elem.name === "Сервизы") {
+          menu[7] = (
+            <li>
+              <h5>
+                {elem.name}
+                <span className="ic i_drop"></span>
+              </h5>
+              <ul>{childsPoints}</ul>
+            </li>
+          );
+        }
+
+        // this.menuContainer.push(
+        //   <Dropdown key={i} text={elem.name} pointing className="link item">
+        //     <Dropdown.Menu>{childsPoints}</Dropdown.Menu>
+        //   </Dropdown>
+        // );
+      });
+
       return (
         <div id="sidebar" className="">
           <div className="sidebar__inner">
             <div className="categories-block">
-              <ul>
-                <li>
-                  <h5>Кофе и чай <span className="ic i_drop"></span></h5>
-                  <ul>
-                    <li>Чайная пара</li>
-                    <li>Кофейная пара</li>
-                  </ul>
-                </li>
-
-                <li>
-                  <h5>Кофе и чай <span className="ic i_drop"></span></h5>
-                  <ul>
-                    <li>Чайная пара</li>
-                    <li>Кофейная пара</li>
-                  </ul>
-                </li>
-              </ul>
+              <ul>{menu}</ul>
             </div>
             <div className="filters-block">
               <div className="main-filers-block price">
