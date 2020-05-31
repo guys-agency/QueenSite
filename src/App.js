@@ -14,7 +14,6 @@ import ProductCardContainer from "./comp/ProductCardContainer";
 import CartPage from "./comp/CartPage";
 import Finish from "./comp/Finish";
 
-
 import CardView from "./comp/CardView";
 import MainPage from "./comp/MainPage";
 
@@ -204,19 +203,22 @@ const MainScreen = observer(
             />
 
             <Route
-              path="/collections"
-              render={() => (
+              path="/collections/:slug"
+              render={(propsRout) => (
                 <div className="main-screen">
-                  <Collections />
+                  <Collection
+                    store={this.props.store}
+                    slug={propsRout.match.params.slug}
+                  />
                 </div>
               )}
             />
 
             <Route
-              path="/collection"
+              path="/collections"
               render={() => (
                 <div className="main-screen">
-                  <Collection />
+                  <Collections store={this.props.store} />
                 </div>
               )}
             />

@@ -69,6 +69,53 @@ class Api {
       Promise.reject(res.json());
     });
   }
+
+  setOrderData(data) {
+    return fetch(SERVER_URL + "/create-order", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }).then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      Promise.reject(res.json());
+    });
+  }
+
+  getAllCollections() {
+    return fetch(SERVER_URL + "/collections", {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      Promise.reject(res.json());
+    });
+  }
+
+  getCollection(slug) {
+    return fetch(SERVER_URL + "/collection", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ slug }),
+    }).then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      Promise.reject(res.json());
+    });
+  }
 }
 
 const api = new Api();
