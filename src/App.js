@@ -128,7 +128,11 @@ const MainScreen = observer(
               render={(routProps) => <MainPage store={this.props.store} />}
             />
             <Route
-              path={["/catalog/:parentName/:childName", "/catalog"]}
+              path={[
+                "/catalog/:parentName",
+                "/catalog/:parentName/:childName",
+                "/catalog",
+              ]}
               render={(routProps) => (
                 (this.props.store.nameMainCat =
                   routProps.match.params.parentName),
@@ -136,11 +140,14 @@ const MainScreen = observer(
                   routProps.match.params.childName),
                 this.props.store.cleaningActiveFilters(),
                 this.props.store.filtration(),
+                (this.props.store.activeCats = this.props.store.fullCats),
                 (
                   <div className="main-screen">
                     <div className="container">
                       <div className="row">
-                        <div className="col col-12"><h3 className="catalog-title">Каталог товаров</h3></div>
+                        <div className="col col-12">
+                          <h3 className="catalog-title">Каталог товаров</h3>
+                        </div>
                       </div>
                       <div className="row catalog">
                         <div className="col col-3">
@@ -212,12 +219,22 @@ const MainScreen = observer(
             <Route
               path="/collections/:slug"
               render={(propsRout) => (
-                <div className="main-screen">
-                  <Collection
-                    store={this.props.store}
-                    slug={propsRout.match.params.slug}
-                  />
-                </div>
+                (this.props.store.nameMainCat = ""),
+                (this.props.store.nameSecondCat = ""),
+                this.props.store.cleaningActiveFilters(),
+                (this.props.store.bannerFilter = {
+                  type: "collections",
+                  slug: propsRout.match.params.slug,
+                }),
+                this.props.store.filtration(),
+                (
+                  <div className="main-screen">
+                    <Collection
+                      store={this.props.store}
+                      slug={propsRout.match.params.slug}
+                    />
+                  </div>
+                )
               )}
             />
 
@@ -227,6 +244,70 @@ const MainScreen = observer(
                 <div className="main-screen">
                   <Collections store={this.props.store} />
                 </div>
+              )}
+            />
+
+            <Route
+              path="/main/:slug"
+              render={(propsRout) => (
+                (this.props.store.nameMainCat = ""),
+                (this.props.store.nameSecondCat = ""),
+                this.props.store.cleaningActiveFilters(),
+                (this.props.store.bannerFilter = {
+                  type: "main",
+                  slug: propsRout.match.params.slug,
+                }),
+                this.props.store.filtration(),
+                (
+                  <div className="main-screen">
+                    <Collection
+                      store={this.props.store}
+                      slug={propsRout.match.params.slug}
+                    />
+                  </div>
+                )
+              )}
+            />
+
+            <Route
+              path="/hits"
+              render={(propsRout) => (
+                (this.props.store.nameMainCat = ""),
+                (this.props.store.nameSecondCat = ""),
+                this.props.store.cleaningActiveFilters(),
+                this.props.store.activeFilters.attr.push("hit"),
+                this.props.store.filtration(),
+                (
+                  <div className="main-screen">
+                    <Collection
+                      store={this.props.store}
+                      slug={propsRout.match.params.slug}
+                    />
+                  </div>
+                )
+              )}
+            />
+
+            <Route
+              path="/actions/:slug"
+              render={(propsRout) => (
+                (this.props.store.nameMainCat = ""),
+                (this.props.store.nameSecondCat = ""),
+                this.props.store.cleaningActiveFilters(),
+                (this.props.store.bannerFilter = {
+                  type: "sale",
+                  slug: propsRout.match.params.slug,
+                }),
+                this.props.store.filtration(),
+                (
+                  <div className="main-screen">
+                    <Collection
+                      store={this.props.store}
+                      slug={propsRout.match.params.slug}
+                      sale={true}
+                    />
+                  </div>
+                )
               )}
             />
 

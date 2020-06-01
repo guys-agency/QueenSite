@@ -101,14 +101,62 @@ class Api {
     });
   }
 
-  getCollection(slug) {
+  getCollection(banner) {
     return fetch(SERVER_URL + "/collection", {
       method: "POST",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ slug }),
+      body: JSON.stringify(banner),
+    }).then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      Promise.reject(res.json());
+    });
+  }
+
+  search(value) {
+    return fetch(SERVER_URL + "/search", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ value }),
+    }).then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      Promise.reject(res.json());
+    });
+  }
+
+  getCity(city) {
+    return fetch(SERVER_URL + "/city", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ city }),
+    }).then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      Promise.reject(res.json());
+    });
+  }
+
+  timeDelivery(data) {
+    return fetch(SERVER_URL + "/time-delivery", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
     }).then((res) => {
       if (res.ok) {
         return res.json();

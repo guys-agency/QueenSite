@@ -8,7 +8,7 @@ const Collections = observer(
     state = {};
     render() {
       const { store } = this.props;
-      const { collectionsData } = store;
+      const { collections } = store.bannersData;
       const renderColl = [];
       const mainBan = [];
       const sortData = [];
@@ -16,17 +16,16 @@ const Collections = observer(
         navigator.userAgent
       );
 
-      if (collectionsData.length) {
-        collectionsData.forEach((el, i) => {
+      if (collections !== undefined) {
+        collections.forEach((el, i) => {
           if (i === 0) {
             mainBan.push(
               <Link
                 className="head-banner"
                 style={{
-                  backgroundImage:
-                    "url(" + "/image/hb/" + typeDevice
-                      ? el["image-mob-large"]
-                      : el["image-desc-large"] + ")",
+                  backgroundImage: `url(/image/banners/${
+                    typeDevice ? el["image-mob-large"] : el["image-desc-large"]
+                  })`,
                 }}
                 to={"collections/" + el.slug}
               ></Link>
@@ -37,13 +36,14 @@ const Collections = observer(
                 <Link
                   href="#"
                   className="banner banner_overlay main"
-                  style={{
-                    backgroundImage:
-                      "url(" + "/image/ideas/" + typeDevice
-                        ? el["image-mob-small"]
-                        : el["image-desc-small"] + ")",
-                  }}
                   to={"collections/" + el.slug}
+                  style={{
+                    backgroundImage: `url(/image/banners/${
+                      typeDevice
+                        ? el["image-mob-small"]
+                        : el["image-desc-small"]
+                    })`,
+                  }}
                 >
                   <div className="banner__desc">{el.name}</div>
                 </Link>
@@ -64,11 +64,11 @@ const Collections = observer(
         </div>
       );
     }
-    componentWillMount() {
-      if (!this.props.store.collectionsData.length) {
-        this.props.store.getCollections();
-      }
-    }
+    // componentWillMount() {
+    //   if (!this.props.store.collections.length) {
+    //     this.props.store.getCollections();
+    //   }
+    // }
   }
 );
 

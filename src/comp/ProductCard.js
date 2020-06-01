@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
 import React from "react";
 import { withRouter } from "react-router";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 import localStorage from "mobx-localstorage";
 
 const ProductCard = observer(function ProductCard(props) {
@@ -51,7 +52,7 @@ const ProductCard = observer(function ProductCard(props) {
     <div className="product" onClick={clickHandler}>
       <div className="product__image">
         <div className="product__image-wrp">
-          <img src={imagePath} />
+          <LazyLoadImage effect="blur" src={imagePath} />
           <div className="product__attr-cont">
             {data.hit && <div className="product__hit">Хит</div>}
             {data.sale && <div className="product__sale">Акция</div>}

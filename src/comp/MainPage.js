@@ -49,7 +49,10 @@ const MainPage = observer(
           });
           Object.keys(data[0].new).forEach((element) => {
             newContTime.push(
-              <div className="col col-3 col-t-4 col-s-6" key={data[0].new[element].slug}>
+              <div
+                className="col col-3 col-t-4 col-s-6"
+                key={data[0].new[element].slug}
+              >
                 <ProductCard
                   data={data[0].new[element]}
                   store={this.props.store}
@@ -83,40 +86,146 @@ const MainPage = observer(
     };
 
     render() {
-      const { hitCont, newCont, allCont, ready } = this.state;
+      const { hitCont, newCont } = this.state;
+      const { bannersData } = this.props.store;
+      const typeDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      );
+      const mainBanners = [];
+      const collLast = [];
+      const saleCont = [];
+      if (bannersData.main !== undefined) {
+        bannersData.main.forEach((elem) => {
+          mainBanners.push(
+            <Link
+              className="head-banner"
+              to={"/main/" + elem.slug}
+              style={{
+                backgroundImage: `url(/image/banners/${
+                  typeDevice
+                    ? elem["image-mob-large"]
+                    : elem["image-desc-large"]
+                })`,
+              }}
+            ></Link>
+          );
+        });
+
+        collLast.push(
+          <div className="row">
+            <div className="col col-7 col-s-12">
+              <Link
+                to={"collections/" + bannersData.collections[0].slug}
+                className="banner banner_overlay main"
+                style={{
+                  backgroundImage: `url(/image/banners/${
+                    typeDevice
+                      ? bannersData.collections[0]["image-mob-small"]
+                      : bannersData.collections[0]["image-desc-small"]
+                  })`,
+                }}
+              >
+                <div className="banner__desc">
+                  {bannersData.collections[0].name}
+                </div>
+              </Link>
+            </div>
+            <div className="items col col-5 col-s-12">
+              <div className="row row_inner">
+                <div className="col col-12">
+                  <Link
+                    to={"collections/" + bannersData.collections[1].slug}
+                    className="banner banner_overlay small"
+                    style={{
+                      backgroundImage: `url(/image/banners/${
+                        typeDevice
+                          ? bannersData.collections[1]["image-mob-small"]
+                          : bannersData.collections[1]["image-desc-small"]
+                      })`,
+                    }}
+                  >
+                    <div className="banner__desc">
+                      {bannersData.collections[0].name}
+                    </div>
+                  </Link>
+                </div>
+                <div className="col col-12">
+                  <Link
+                    to={"collections/" + bannersData.collections[2].slug}
+                    className="banner banner_overlay small"
+                    style={{
+                      backgroundImage: `url(/image/banners/${
+                        typeDevice
+                          ? bannersData.collections[2]["image-mob-small"]
+                          : bannersData.collections[2]["image-desc-small"]
+                      })`,
+                    }}
+                  >
+                    <div className="banner__desc">
+                      {bannersData.collections[0].name}
+                    </div>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+        saleCont.push(
+          <Link
+            to={"/actions/" + bannersData.sale[0].slug}
+            className="head-banner head-banner_action"
+            style={{
+              backgroundImage: `url(/image/banners/${
+                typeDevice
+                  ? bannersData.sale[0]["image-mob-large"]
+                  : bannersData.sale[0]["image-desc-large"]
+              })`,
+            }}
+          >
+            <div className="text">
+              <div className="label">Акция</div>
+              <h1>
+                {bannersData.sale[0].name} <span className="ic i_right"></span>
+              </h1>
+              <p>{bannersData.sale[0].description}</p>
+            </div>
+          </Link>
+        );
+      }
       //   this.getData();
-      const settings = {
-        dots: true,
-        infinite: true,
-        speed: 500,
-        slidesToShow: 1,
-        slidesToScroll: 1,
-      };
-      const settingsMulti = {
-        dots: true,
-        infinite: true,
-        speed: 500,
-        slidesToShow: 4,
-        slidesToScroll: 4,
-        // appendDots: (dots) => (
-        //   <div
-        //     style={{
-        //       backgroundColor: "#ddd",
-        //       borderRadius: "10px",
-        //       padding: "10px",
-        //     }}
-        //   >
-        //     <ul style={{ margin: "0px" }}> {dots} </ul>
-        //   </div>
-        // ),
-      };
-      const settingsBrand = {
-        className: "slider variable-width",
-        dots: true,
-        slidesToShow: 1,
-        slidesToScroll: 6,
-        variableWidth: true,
-      };
+      // const settings = {
+      //   dots: true,
+      //   infinite: true,
+      //   speed: 500,
+      //   slidesToShow: 1,
+      //   slidesToScroll: 1,
+      // };
+      // const settingsMulti = {
+      //   dots: true,
+      //   infinite: true,
+      //   speed: 500,
+      //   slidesToShow: 4,
+      //   slidesToScroll: 4,
+      //   // appendDots: (dots) => (
+      //   //   <div
+      //   //     style={{
+      //   //       backgroundColor: "#ddd",
+      //   //       borderRadius: "10px",
+      //   //       padding: "10px",
+      //   //     }}
+      //   //   >
+      //   //     <ul style={{ margin: "0px" }}> {dots} </ul>
+      //   //   </div>
+      //   // ),
+      // };
+      // const settingsBrand = {
+      //   className: "slider variable-width",
+      //   dots: true,
+      //   slidesToShow: 1,
+      //   slidesToScroll: 6,
+      //   variableWidth: true,
+      // };
 
       const headCar = {
         slidesPerView: 1,
@@ -162,7 +271,7 @@ const MainPage = observer(
           951: {
             slidesPerGroup: 4,
           },
-        }
+        },
       };
 
       const newCar = {
@@ -189,7 +298,7 @@ const MainPage = observer(
           951: {
             slidesPerGroup: 4,
           },
-        }
+        },
       };
 
       const brandCar = {
@@ -210,7 +319,6 @@ const MainPage = observer(
         },
       };
 
-
       const giftCar = {
         slidesPerView: "auto",
         speed: 500,
@@ -225,33 +333,23 @@ const MainPage = observer(
         <div className="main-page">
           <div className="head head_big">
             <div className="head-car">
-              <Swiper {...headCar}>
-                <Link
-                  className="head-banner"
-                  style={{
-                    backgroundImage: "url(" + "/image/hb/1.jpg" + ")",
-                  }}
-                ></Link>
-                <Link
-                  className="head-banner"
-                  style={{
-                    backgroundImage: "url(" + "/image/hb/2.jpg" + ")",
-                  }}
-                ></Link>
-              </Swiper>
+              {mainBanners.length ? (
+                <Swiper {...headCar}>{mainBanners}</Swiper>
+              ) : null}
             </div>
           </div>
           <div className="carousel carousel_product">
             <div className="container">
               <div className="title">
-                <a href="">
+                <Link to="/hits">
                   <h2 className="tilda">
                     Хиты продаж{" "}
                     <span className="link">
-                      <span className="hide-s">Ко всем хитам </span> <span className="ic i_right"></span>
+                      <span className="hide-s">Ко всем хитам </span>{" "}
+                      <span className="ic i_right"></span>
                     </span>
                   </h2>
-                </a>
+                </Link>
                 <p className="subtitle">Сложно определиться? Мы поможем</p>
               </div>
             </div>
@@ -407,7 +505,6 @@ const MainPage = observer(
                       <div className="banner__desc">До 2 000₽</div>
                     </a>
                   </div>
-
                 </Swiper>
               </div>
             </div>
@@ -420,7 +517,8 @@ const MainPage = observer(
                   <h2 className="tilda">
                     Новинки{" "}
                     <span className="link">
-                      <span className="hide-s">Все новинки</span> <span className="ic i_right"></span>
+                      <span className="hide-s">Все новинки</span>{" "}
+                      <span className="ic i_right"></span>
                     </span>
                   </h2>
                 </a>
@@ -429,7 +527,7 @@ const MainPage = observer(
             </div>
             <div className="container container_s">
               <div className="slider-cont">
-                {hitCont.length && <Swiper {...newCar}>{hitCont}</Swiper>}
+                {newCont.length && <Swiper {...newCar}>{newCont}</Swiper>}
               </div>
             </div>
           </div>
@@ -437,18 +535,19 @@ const MainPage = observer(
           <div className="collections-h">
             <div className="container">
               <div className="title">
-                <a href="">
+                <Link to="/collections">
                   <h2 className="dib">
                     Новые коллекции{" "}
                     <span className="link">
-                      <span className="hide-s">Все коллекции</span> <span className="ic i_right"></span>
+                      <span className="hide-s">Все коллекции</span>{" "}
+                      <span className="ic i_right"></span>
                     </span>
                   </h2>
-                </a>
+                </Link>
                 <p className="subtitle">Готовые решения для вашего дома</p>
               </div>
-
-              <div className="row">
+              {collLast}
+              {/* <div className="row">
                 <div className="col col-7 col-s-12">
                   <a
                     href="#"
@@ -486,14 +585,15 @@ const MainPage = observer(
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
 
           <div className="actions">
             <div className="action">
               <div className="head head_sm head_list">
-                <a
+                {saleCont}
+                {/* <a
                   href="#"
                   className="head-banner head-banner_action"
                   style={{
@@ -507,7 +607,7 @@ const MainPage = observer(
                     </h1>
                     <p>Подготовьтесь к любимому семейному празднику.</p>
                   </div>
-                </a>
+                </a> */}
               </div>
               {/* <div className="actions_banner">
               <div className="banner__desc">
@@ -556,7 +656,9 @@ const MainPage = observer(
                       </div>
                     </div>
                     <div className="col col-4 col-s-12">
-                      <button className="btn btn_primary btn_wide">Подписаться</button>
+                      <button className="btn btn_primary btn_wide">
+                        Подписаться
+                      </button>
                     </div>
                   </form>
                 </div>

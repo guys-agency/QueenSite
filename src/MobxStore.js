@@ -1,5 +1,6 @@
 import { observable, decorate, autorun } from "mobx";
 import $ from "jquery";
+import { Link, NavLink } from "react-router-dom";
 import FilterPoint from "./comp/FilterPoint";
 import ProductCard from "./comp/ProductCard";
 import React from "react";
@@ -33,7 +34,7 @@ class Store {
 
   countInProdPage = 1;
 
-  prodSlugs = [];
+  bannId = "";
 
   productValue = 0;
 
@@ -43,6 +44,8 @@ class Store {
   nameMainCat = "";
 
   nameSecondCat = "";
+
+  bannerFilter = {};
 
   fullCats = [];
 
@@ -76,12 +79,14 @@ class Store {
 
   city = "";
 
-  collectionsData = {};
+  bannersData = {};
+  collInMenu = [];
+  dataColl = [];
 
   auth = getCookie("auth") === undefined ? false : true;
-
+  //подумать НАД РЕШЕНИЕМ
   menuInFilt = autorun(() => {
-    if (this.prodSlugs.length) {
+    if (this.prodCats.length) {
       this.activeCats = this.prodCats;
     } else {
       this.activeCats = this.fullCats;
@@ -92,14 +97,39 @@ class Store {
     api
       .getAllCollections()
       .then((data) => {
-        const sortData = [];
-        Object.keys(data).forEach((el) => {
-          sortData.push(data[el]);
+        console.log("dataBanners :>> ", data);
+        this.bannersData = data[0];
+        const timeCollInMenu = [];
+        let ind = 0;
+        let sum = 0;
+        let timeCont = [];
+
+        this.bannersData.collections.forEach((elem) => {
+          if (ind < 4 && sum < this.bannersData.collections.length - 1) {
+            timeCont.push(
+              <li>
+                <NavLink to={"/collections/" + elem.slug}>{elem.name}</NavLink>
+              </li>
+            );
+            ind += 1;
+            sum += 1;
+          } else {
+            timeCont.push(
+              <li>
+                <NavLink to={"/collections/" + elem.slug}>{elem.name}</NavLink>
+              </li>
+            );
+            timeCollInMenu.push(
+              <div className="column">
+                <ul>{timeCont}</ul>
+              </div>
+            );
+            timeCont = [];
+            ind = 0;
+            sum += 1;
+          }
         });
-        sortData.sort((a, b) => {
-          return a.order - b.order;
-        });
-        this.collectionsData = sortData;
+        this.collInMenu = timeCollInMenu;
       })
       .catch((err) => {
         console.log("err :>> ", err);
@@ -191,7 +221,7 @@ class Store {
     }
   });
 
-  getData = (filterArray, bodyJSON, bodyJSONFilter) => {
+  getData = (filterArray, bodyJSON) => {
     const testContainer = [];
     if (!filterArray.length) {
       fetch(SERVER_URL, {
@@ -206,39 +236,20 @@ class Store {
           return res.json();
         })
         .then((data) => {
+          //продукты
           console.log("dataData1 :>> ", data);
-          Object.keys(data).forEach((element) => {
+          data[0].product.forEach((element) => {
             testContainer.push(
               <div className="col col-4 col-s-6">
-                <ProductCard
-                  key={data[element].slug}
-                  data={data[element]}
-                  store={this}
-                />
+                <ProductCard key={element.slug} data={element} store={this} />
               </div>
             );
           });
-          this.productsToRender = testContainer;
-        })
-        .catch((err) => {
-          console.log("err", err);
-        });
 
-      fetch(SERVER_URL + "/sort-names", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          credentials: "include",
-        },
-        body: JSON.stringify(bodyJSONFilter),
-      })
-        .then((res) => {
-          return res.json();
-        })
-        .then((data) => {
+          //Сортировка
           const sortData = {};
-
-          Object.keys(data).forEach((name) => {
+          console.log("data[0] :>> ", data[0]);
+          Object.keys(data[0].sort[0]).forEach((name) => {
             if (
               (name !== "_id") &
               (name !== "minPrice") &
@@ -246,13 +257,13 @@ class Store {
               (name !== "measure") &
               (name !== "count")
             ) {
-              sortData[name] = data[name].sort();
+              sortData[name] = data[0].sort[0][name].sort();
             } else if (name == "measure") {
               const newMeasure = [];
               const sortObj = {
                 names: [],
               };
-              data[name].forEach((elem) => {
+              data[0].sort[0][name].forEach((elem) => {
                 if (elem.name != "") {
                   if (!sortObj.names.includes(elem.name[0])) {
                     sortObj.names.push(elem.name[0]);
@@ -280,10 +291,10 @@ class Store {
               });
               sortData[name] = newMeasure;
             } else {
-              sortData[name] = data[name];
+              sortData[name] = data[0].sort[0][name];
             }
           });
-          this.productValue = data.count;
+          this.productValue = data[0].sort[0].count;
           this.paginatCont = [<Paginat store={this} />];
           this.categoryFilter = sortData;
 
@@ -294,11 +305,162 @@ class Store {
           //   return;
           // }
           console.log("data :>> ", data);
+
+          //СОЗДАНИЕ КАТЕГОРИЙ ПО ВЫБОРКЕ
+
+          if (data[0].cats !== undefined && !this.prodCats.length) {
+            const cats = {};
+            data[0].cats[0].cats.forEach((elemMain) => {
+              elemMain.forEach((elem) => {
+                if (cats[elem.slugName] !== undefined) {
+                  elem.childs.forEach((child, i) => {
+                    if (
+                      !cats[elem.slugName].childsNameArr.includes(
+                        elem.childsSlug[i]
+                      )
+                    ) {
+                      cats[elem.slugName].childs.push({
+                        name: child,
+                        slug: elem.childsSlug[i],
+                      });
+                      cats[elem.slugName].childsNameArr.push(
+                        elem.childsSlug[i]
+                      );
+                    }
+                  });
+                } else {
+                  cats[elem.slugName] = {
+                    name: elem.name,
+                    slug: elem.slugName,
+                  };
+                  if (cats[elem.slugName].childs === undefined) {
+                    cats[elem.slugName].childs = [];
+                    cats[elem.slugName].childsNameArr = [];
+                  }
+                  elem.childs.forEach((child, i) => {
+                    if (
+                      !cats[elem.slugName].childsNameArr.includes(
+                        elem.childsSlug[i]
+                      )
+                    ) {
+                      cats[elem.slugName].childs.push({
+                        name: child,
+                        slug: elem.childsSlug[i],
+                      });
+                      cats[elem.slugName].childsNameArr.push(
+                        elem.childsSlug[i]
+                      );
+                    }
+                  });
+                }
+              });
+            });
+            const catsArr = [];
+            Object.keys(cats).forEach((name) => {
+              catsArr.push(cats[name]);
+            });
+
+            catsArr.forEach((elem) => {
+              elem.childs.sort((a, b) => {
+                if (a < b) return -1; // a расположится раньше b
+                if (b < a) return 1; // b расположится раньше a
+                return 0;
+              });
+            });
+
+            //данные баннера
+            if (data.collData !== undefined && !this.dataColl.length) {
+              this.dataColl = data.collData;
+            }
+
+            console.log("data :>> ", data);
+            console.log("cats :>> ", catsArr);
+            this.prodCats = catsArr;
+            this.activeCats = this.prodCats;
+          }
+
           this.createFilterPointsContainers(sortData);
+          this.productsToRender = testContainer;
         })
         .catch((err) => {
           console.log("err", err);
         });
+
+      // fetch(SERVER_URL + "/sort-names", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //     credentials: "include",
+      //   },
+      //   body: JSON.stringify(bodyJSONFilter),
+      // })
+      //   .then((res) => {
+      //     return res.json();
+      //   })
+      //   .then((data) => {
+      //     const sortData = {};
+
+      //     Object.keys(data).forEach((name) => {
+      //       if (
+      //         (name !== "_id") &
+      //         (name !== "minPrice") &
+      //         (name !== "maxPrice") &
+      //         (name !== "measure") &
+      //         (name !== "count")
+      //       ) {
+      //         sortData[name] = data[name].sort();
+      //       } else if (name == "measure") {
+      //         const newMeasure = [];
+      //         const sortObj = {
+      //           names: [],
+      //         };
+      //         data[name].forEach((elem) => {
+      //           if (elem.name != "") {
+      //             if (!sortObj.names.includes(elem.name[0])) {
+      //               sortObj.names.push(elem.name[0]);
+      //             }
+      //             if (sortObj[elem.name]) {
+      //               sortObj[elem.name].push(Number(elem.value[0]));
+      //             } else {
+      //               sortObj[elem.name] = [Number(elem.value[0])];
+      //             }
+      //             if (!sortObj[elem.name + "Unit"]) {
+      //               sortObj[elem.name + "Unit"] = elem.unit;
+      //             }
+      //           }
+      //         });
+      //         sortObj.names.sort();
+
+      //         sortObj.names.forEach((sn) => {
+      //           newMeasure.push({
+      //             name: sn,
+      //             value: sortObj[sn].sort(function (a, b) {
+      //               return a - b;
+      //             }),
+      //             unit: sortObj[sn + "Unit"][0],
+      //           });
+      //         });
+      //         sortData[name] = newMeasure;
+      //       } else {
+      //         sortData[name] = data[name];
+      //       }
+      //     });
+      //     this.productValue = data.count;
+      //     this.paginatCont = [<Paginat store={this} />];
+      //     this.categoryFilter = sortData;
+
+      //     //временная заплатка
+      //     // if (Object.keys(data).length === 0) {
+      //     //   console.log("object123");
+      //     //   this.filtration();
+      //     //   return;
+      //     // }
+      //     console.log("data :>> ", data);
+      //     this.createFilterPointsContainers(sortData);
+      //   })
+      //   .catch((err) => {
+      //     console.log("err", err);
+      //   });
     } else {
       fetch(SERVER_URL, {
         method: "POST",
@@ -306,22 +468,16 @@ class Store {
           "Content-Type": "application/json",
           credentials: "include",
         },
-        body: JSON.stringify(
-          Object.assign(bodyJSON, {
-            $and: filterArray,
-          })
-        ),
+        body: JSON.stringify(bodyJSON),
       })
         .then((res) => {
           return res.json();
         })
         .then((data) => {
+          //продукты
           console.log("dataData2 :>> ", data);
-          console.log(
-            "Object.keys(data).length :>> ",
-            Object.keys(data).length
-          );
-          if (!Object.keys(data).length) {
+          console.log("Object.keys(data).length :>> ", data[0].product.length);
+          if (!data[0].product.length) {
             if (this.activeFilters.choosePoint.length) {
               this.activeFilters[
                 this.activeFilters.choosePoint[
@@ -332,45 +488,19 @@ class Store {
               this.filtration();
             }
           } else {
-            Object.keys(data).forEach((element) => {
+            data[0].product.forEach((element) => {
               testContainer.push(
                 <div className="col col-4">
-                  <ProductCard
-                    key={data[element].slug}
-                    data={data[element]}
-                    store={this}
-                  />
+                  <ProductCard key={element.slug} data={element} store={this} />
                 </div>
               );
             });
-
-            this.productsToRender = testContainer;
           }
-        })
-        .catch((err) => {
-          console.log("err", err);
-        });
 
-      fetch(SERVER_URL + "/sort-names", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          credentials: "include",
-        },
-        body: JSON.stringify(
-          Object.assign(bodyJSONFilter, {
-            $and: filterArray,
-          })
-        ),
-      })
-        .then((res) => {
-          return res.json();
-        })
-        .then((data) => {
-          console.log("data2 :>> ", data);
+          //сортировка
           const sortData = {};
-          if (Object.keys(data).length) {
-            Object.keys(data).forEach((name) => {
+          if (Object.keys(data[0].sort[0]).length) {
+            Object.keys(data[0].sort[0]).forEach((name) => {
               if (
                 (name !== "_id") &
                 (name !== "minPrice") &
@@ -378,13 +508,13 @@ class Store {
                 (name !== "measure") &
                 (name !== "count")
               ) {
-                sortData[name] = data[name].sort();
+                sortData[name] = data[0].sort[0][name].sort();
               } else if (name == "measure") {
                 const newMeasure = [];
                 const sortObj = {
                   names: [],
                 };
-                data[name].forEach((elem) => {
+                data[0].sort[0][name].forEach((elem) => {
                   if (elem.name != "") {
                     if (!sortObj.names.includes(elem.name[0])) {
                       sortObj.names.push(elem.name[0]);
@@ -412,17 +542,92 @@ class Store {
                 });
                 sortData[name] = newMeasure;
               } else {
-                sortData[name] = data[name];
+                sortData[name] = data[0].sort[0][name];
               }
             });
-            this.productValue = data.count;
+            this.productValue = data[0].sort[0].count;
             this.paginatCont.push(<Paginat store={this} />);
             this.createFilterPointsContainers(sortData);
+
+            this.productsToRender = testContainer;
           }
         })
         .catch((err) => {
           console.log("err", err);
         });
+
+      // fetch(SERVER_URL + "/sort-names", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //     credentials: "include",
+      //   },
+      //   body: JSON.stringify(
+      //     Object.assign(bodyJSONFilter, {
+      //       $and: filterArray,
+      //     })
+      //   ),
+      // })
+      //   .then((res) => {
+      //     return res.json();
+      //   })
+      //   .then((data) => {
+      //     console.log("data2 :>> ", data);
+      //     const sortData = {};
+      //     if (Object.keys(data).length) {
+      //       Object.keys(data).forEach((name) => {
+      //         if (
+      //           (name !== "_id") &
+      //           (name !== "minPrice") &
+      //           (name !== "maxPrice") &
+      //           (name !== "measure") &
+      //           (name !== "count")
+      //         ) {
+      //           sortData[name] = data[name].sort();
+      //         } else if (name == "measure") {
+      //           const newMeasure = [];
+      //           const sortObj = {
+      //             names: [],
+      //           };
+      //           data[name].forEach((elem) => {
+      //             if (elem.name != "") {
+      //               if (!sortObj.names.includes(elem.name[0])) {
+      //                 sortObj.names.push(elem.name[0]);
+      //               }
+      //               if (sortObj[elem.name]) {
+      //                 sortObj[elem.name].push(Number(elem.value[0]));
+      //               } else {
+      //                 sortObj[elem.name] = [Number(elem.value[0])];
+      //               }
+      //               if (!sortObj[elem.name + "Unit"]) {
+      //                 sortObj[elem.name + "Unit"] = elem.unit;
+      //               }
+      //             }
+      //           });
+      //           sortObj.names.sort();
+
+      //           sortObj.names.forEach((sn) => {
+      //             newMeasure.push({
+      //               name: sn,
+      //               value: sortObj[sn].sort(function (a, b) {
+      //                 return a - b;
+      //               }),
+      //               unit: sortObj[sn + "Unit"][0],
+      //             });
+      //           });
+      //           sortData[name] = newMeasure;
+      //         } else {
+      //           sortData[name] = data[name];
+      //         }
+      //       });
+      //       this.productValue = data.count;
+      //       this.paginatCont.push(<Paginat store={this} />);
+      //       this.createFilterPointsContainers(sortData);
+      //     }
+      //   })
+      //   .catch((err) => {
+      //     console.log("err", err);
+      //   });
     }
   };
 
@@ -442,7 +647,9 @@ class Store {
 
     this.activeFilters = Object.assign({}, clearFilters);
     this.categoryFilter = {};
-    this.prodSlugs = [];
+    this.bannerFilter = {};
+    this.prodCats = [];
+    this.dataColl = [];
   };
 
   filtration = () => {
@@ -499,46 +706,42 @@ class Store {
       });
     }
 
-    const bodyJSON = {
+    const prodJSON = {
       start: this.startPag,
       stop: this.stopPag,
     };
 
-    const bodyJSONFilter = {};
+    // if (this.prodSlugs.length) {
+    //   prodJSON.slug = { $in: this.prodSlugs };
 
-    if (this.prodSlugs.length) {
-      bodyJSON.slug = { $in: this.prodSlugs };
-      bodyJSONFilter.slug = { $in: this.prodSlugs };
-      this.activeCats = this.prodCats;
-    } else {
-      this.activeCats = this.fullCats;
+    //   this.activeCats = this.prodCats;
+    // } else {
+    //   this.activeCats = this.fullCats;
+    // }
+
+    if (this.nameMainCat !== "" && this.nameMainCat !== undefined) {
+      prodJSON["categories.slugName"] = this.nameMainCat;
     }
 
-    if (
-      this.nameMainCat !== "" &&
-      this.nameSecondCat !== "" &&
-      this.nameMainCat !== undefined &&
-      this.nameSecondCat !== undefined
-    ) {
-      bodyJSON["categories.slugName"] = this.nameMainCat;
-      bodyJSON["categories.childsSlug"] = this.nameSecondCat;
-      bodyJSONFilter["categories.slugName"] = this.nameMainCat;
-      bodyJSONFilter["categories.childsSlug"] = this.nameSecondCat;
+    if (this.nameSecondCat !== "" && this.nameSecondCat !== undefined) {
+      prodJSON["categories.childsSlug"] = this.nameSecondCat;
     }
 
     //переделать, что бы не было лишних запросов
     console.log("activeFilters :>> ", this.activeFilters);
 
-    console.log(
-      "filterArray :>> ",
-      filterArray,
-      "bodyJSON :>> ",
-      bodyJSON,
-      "bodyJSONFilter :>> ",
-      bodyJSONFilter
-    );
-
-    this.getData(filterArray, bodyJSON, bodyJSONFilter);
+    console.log("filterArray :>> ", filterArray, "bodyJSON :>> ", prodJSON);
+    const bodyJSON = {};
+    if (!filterArray.length) {
+      bodyJSON.prod = prodJSON;
+    } else {
+      bodyJSON.prod = Object.assign(prodJSON, { $and: filterArray });
+    }
+    if (this.bannerFilter.slug !== undefined) {
+      bodyJSON.banner = this.bannerFilter;
+    }
+    console.log("banner :>> ", this.bannerFilter);
+    this.getData(filterArray, bodyJSON);
   };
 
   createFilterPointsContainers = (availableFilters) => {
@@ -764,10 +967,12 @@ decorate(Store, {
   likeContainer: observable,
   likeData: observable,
   productInCartList: observable,
-  collectionsData: observable,
+  bannersData: observable,
   activeCats: observable,
   fullCats: observable,
   countInProdPage: observable,
+  collInMenu: observable,
+  dataColl: observable,
 });
 
 const store = new Store();

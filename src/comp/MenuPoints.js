@@ -33,6 +33,9 @@ const MenuPoints = observer(
     };
 
     menuContainer = [];
+    premium = [];
+    gifts = [];
+    interier = [];
 
     reglog = () => {};
     timeout = null;
@@ -275,6 +278,7 @@ const MenuPoints = observer(
           console.log("data :>> ", data);
           this.props.store.fullCats = data;
           const menu = {};
+
           data.forEach((elem, i) => {
             const childsPoints = [];
 
@@ -295,6 +299,7 @@ const MenuPoints = observer(
                 </li>
               );
             });
+
             if (elem.name === "Сервировка стола") {
               menu[0] = (
                 <div>
@@ -337,6 +342,7 @@ const MenuPoints = observer(
                   <ul>{childsPoints}</ul>
                 </div>
               );
+              this.interier.push(<ul>{childsPoints}</ul>);
             } else if (elem.name === "Наборы") {
               menu[6] = (
                 <div>
@@ -351,6 +357,29 @@ const MenuPoints = observer(
                   <ul>{childsPoints}</ul>
                 </div>
               );
+            } else if (elem.name === "Premium") {
+              this.premium.push(<ul>{childsPoints}</ul>);
+            } else if (elem.name === "Подарки") {
+              let ind = 0;
+              let sum = 0;
+              let timeCont = [];
+              childsPoints.forEach((elem) => {
+                if (ind < 3 && sum < childsPoints.length - 1) {
+                  timeCont.push(elem);
+                  ind += 1;
+                  sum += 1;
+                } else {
+                  timeCont.push(elem);
+                  this.gifts.push(
+                    <div className="column">
+                      <ul>{timeCont}</ul>
+                    </div>
+                  );
+                  timeCont = [];
+                  ind = 0;
+                  sum += 1;
+                }
+              });
             }
 
             // this.menuContainer.push(
@@ -397,6 +426,44 @@ const MenuPoints = observer(
     };
 
     render() {
+      const { collInMenu } = this.props.store;
+      // const { store } = this.props;
+      // const { collectionsData } = store;
+      // if (collectionsData.length) {
+      //   collectionsData.forEach((el, i) => {
+      //     if (i === 0) {
+      //       mainBan.push(
+      //         <Link
+      //           className="head-banner"
+      //           style={{
+      //             backgroundImage: `url(/image/banners/${
+      //               typeDevice ? el["image-mob-large"] : el["image-desc-large"]
+      //             })`,
+      //           }}
+      //           to={"collections/" + el.slug}
+      //         ></Link>
+      //       );
+      //     } else {
+      //       renderColl.push(
+      //         <div className="col" key={el.name}>
+      //           <Link
+      //             href="#"
+      //             className="banner banner_overlay main"
+      //             to={"collections/" + el.slug}
+      //             style={{
+      //               backgroundImage: `url(/image/banners/${
+      //                 typeDevice
+      //                   ? el["image-mob-small"]
+      //                   : el["image-desc-small"]
+      //               })`,
+      //             }}
+      //           >
+      //             <div className="banner__desc">{el.name}</div>
+      //           </Link>
+      //         </div>
+      //       );
+      //     }
+      //   });
       return (
         this.state.ready && (
           <>
@@ -438,13 +505,18 @@ const MenuPoints = observer(
 
                 {this.phone}
 
-                <button className="ic i_filter vis-s " onClick={(e) => {
-                  e.target.classList.toggle("active");
-                  document.querySelector(".catalog__bar").classList.toggle('visible')
-                  document
-                    .querySelector(".sidebar-overlay")
-                    .classList.add("active");
-                }}></button>
+                <button
+                  className="ic i_filter vis-s "
+                  onClick={(e) => {
+                    e.target.classList.toggle("active");
+                    document
+                      .querySelector(".catalog__bar")
+                      .classList.toggle("visible");
+                    document
+                      .querySelector(".sidebar-overlay")
+                      .classList.add("active");
+                  }}
+                ></button>
 
                 <button
                   className="cart ic i_bag"
@@ -489,19 +561,13 @@ const MenuPoints = observer(
                         >
                           <span className="ic i_left"></span> Назад
                         </button>
-                        <div className="column">
-                          <ul>
-                            <li>
-                              <a href="">Тест</a>
-                            </li>
-                          </ul>
-                        </div>
+                        {collInMenu}
                       </div>
                     </div>
                   </span>
 
                   <span className="menu__drop">
-                    <Link to="/premium" className="menu-point">
+                    <Link to="/catalog/premium" className="menu-point">
                       Премиум
                     </Link>
                     <div className="menu menu_sub">
@@ -517,19 +583,7 @@ const MenuPoints = observer(
                         >
                           <span className="ic i_left"></span> Назад
                         </button>
-                        <div className="column">
-                          <ul>
-                            <li>
-                              <a href="">Тест</a>
-                            </li>
-                            <li>
-                              <a href="">Тест</a>
-                            </li>
-                            <li>
-                              <a href="">Тест</a>
-                            </li>
-                          </ul>
-                        </div>
+                        <div className="column">{this.premium}</div>
                       </div>
                     </div>
                   </span>
@@ -548,7 +602,7 @@ const MenuPoints = observer(
                   </span> */}
 
                   <span className="menu__drop">
-                    <Link to="catalog/interer" className="menu-point">
+                    <Link to="/catalog/interer" className="menu-point">
                       Интерьер
                     </Link>
                     <div className="menu menu_sub">
@@ -563,16 +617,7 @@ const MenuPoints = observer(
                         >
                           <span className="ic i_left"></span> Назад
                         </button>
-                        <div className="column">
-                          <ul>
-                            <li>
-                              <a href="">Тест</a>
-                            </li>
-                            <li>
-                              <a href="">Тест</a>
-                            </li>
-                          </ul>
-                        </div>
+                        <div className="column">{this.interier}</div>
                       </div>
                     </div>
                   </span>
@@ -593,13 +638,7 @@ const MenuPoints = observer(
                         >
                           <span className="ic i_left"></span> Назад
                         </button>
-                        <div className="column">
-                          <ul>
-                            <li>
-                              <a href="">Тест 2</a>
-                            </li>
-                          </ul>
-                        </div>
+                        {this.gifts}
                       </div>
                     </div>
                   </span>
@@ -640,6 +679,11 @@ const MenuPoints = observer(
                       type="text"
                       className="search"
                       placeholder="Поиск"
+                      onChange={(e) => {
+                        if (e.target.value.length > 2) {
+                          api.search(e.target.value);
+                        }
+                      }}
                     ></input>
                     <button className="ic i_search"></button>
                   </form>
@@ -781,7 +825,9 @@ const MenuPoints = observer(
                 e.target.classList.remove("active");
                 document.querySelector(".sidebar").classList.remove("visible");
                 if (document.querySelector(".catalog__bar")) {
-                  document.querySelector(".catalog__bar").classList.remove('visible')
+                  document
+                    .querySelector(".catalog__bar")
+                    .classList.remove("visible");
                 }
               }}
             ></div>
@@ -790,8 +836,10 @@ const MenuPoints = observer(
       );
     }
 
-    componentDidMount() {
-      this.createMenu();
+    componentWillMount() {
+      if (!Object.keys(this.props.store.bannersData).length) {
+        this.props.store.getCollections();
+      }
     }
   }
 );

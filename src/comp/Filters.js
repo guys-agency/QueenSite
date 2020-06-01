@@ -51,6 +51,18 @@ const Filters = observer(
       e.target.nextElementSibling.classList.toggle("visible");
     };
 
+    setCats = (main, child, choose) => {
+      if (choose) {
+        this.props.store.nameMainCat = "";
+        this.props.store.nameSecondCat = "";
+        this.props.store.filtration();
+      } else {
+        this.props.store.nameMainCat = main;
+        this.props.store.nameSecondCat = child;
+        this.props.store.filtration();
+      }
+    };
+
     render() {
       const {
         filterPointsContainers,
@@ -61,6 +73,7 @@ const Filters = observer(
         maxPrice,
         filtration,
         activeCats,
+        prodCats,
       } = this.props.store;
 
       const { parentName, childName } = this.props;
@@ -84,12 +97,39 @@ const Filters = observer(
           //убрать tr, так как будут поля с транскрипцией в бд
           childsPoints.push(
             <li key={child.name}>
-              <NavLink
+              {prodCats.length ? (
+                <a
+                  onClick={(e) => {
+                    e.preventDefault();
+
+                    this.setCats(
+                      elem.slug,
+                      child.slug,
+                      e.target.classList.contains("active")
+                    );
+                    e.target.classList.toggle("active");
+                  }}
+                >
+                  {child.name}
+                </a>
+              ) : (
+                <NavLink
+                  to={`/catalog/${elem.slug}/${child.slug}`}
+                  onClick={() => {
+                    this.setCats(elem.slug, child.slug);
+                  }}
+                >
+                  {child.name}
+                </NavLink>
+              )}
+              {/* <NavLink
                 to={`/catalog/${elem.slug}/${child.slug}`}
-                onClick={this.closeNav}
+                onClick={()=>{
+                  this.setCats(elem.slug, child.slug)
+                }}
               >
                 {child.name}
-              </NavLink>
+              </NavLink> */}
             </li>
           );
         });
@@ -209,8 +249,8 @@ const Filters = observer(
                     }}
                   ></input>
                   <p>₽</p>
-                  <button 
-                    className = "btn"
+                  <button
+                    className="btn"
                     onClick={() => {
                       if (this.minPriceLocal) {
                         activeFilters.minPrice = this.minPriceLocal;

@@ -7,6 +7,9 @@ import Drift from "drift-zoom";
 import ProductCard from "./ProductCard";
 import Gallery from "./Gallery";
 import { SERVER_URL } from "../constants";
+import api from "./api";
+import moment from "moment";
+import num2str from "../ulits/nm2wrd";
 
 const { Component } = React;
 const historyAll = createBrowserHistory();
@@ -16,6 +19,7 @@ const CardView = observer(
   class CardView extends Component {
     state = {
       countInCart: 1,
+      timeDelivery: "",
     };
 
     fetchReady = false;
@@ -27,6 +31,7 @@ const CardView = observer(
 
     clickHandler = () => {
       const { store } = this.props;
+
       const data = store.cardContainer;
       const inCart = Object.keys(store.productInCartList).length
         ? Object.keys(store.productInCartList).indexOf(String(data.slug))
@@ -102,6 +107,44 @@ const CardView = observer(
     render() {
       const data = this.props.store.cardContainer;
       console.log("data120 :>> ", data);
+
+      const { timeDelivery } = this.state;
+
+      if (this.fetchReady) {
+        console.log("12 :>> ");
+        if (timeDelivery === "") {
+          console.log("123 :>> ");
+          const dataDeliv = {
+            senderId: 500001936,
+            from: {
+              geoId: 213,
+            },
+            to: {
+              geoId: localStorage.get("city").geoId,
+            },
+            dimensions: {
+              length: +data.dimensions.length,
+              width: +data.dimensions.width,
+              height: +data.dimensions.height,
+              weight: +data.weight,
+            },
+            deliveryType: "COURIER",
+          };
+
+          api
+            .timeDelivery({ data: dataDeliv })
+            .then((ok) => {
+              console.log("ok :>> ", ok);
+              const time = moment(
+                ok[0].delivery.calculatedDeliveryDateMin
+              ).diff(moment(), "days");
+              this.setState({ timeDelivery: time });
+            })
+            .catch((err) => {
+              console.log("err :>> ", err);
+            });
+        }
+      }
 
       if (!this.fetchReady && data !== undefined) {
         fetch(SERVER_URL + "/product/" + this.props.sku, {
@@ -307,7 +350,11 @@ const CardView = observer(
                               : "Нет на складе"}
                           </span>
                           <span className="product-p__delivery">
-                            Доставка <b>3-4 дня</b>
+                            Доставка от{" "}
+                            <b>
+                              {timeDelivery}{" "}
+                              {num2str(timeDelivery, ["дня", "дней", "дней"])}
+                            </b>
                           </span>
                           {storesAvali.length && (
                             <>
