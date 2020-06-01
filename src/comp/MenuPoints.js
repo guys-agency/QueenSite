@@ -623,9 +623,15 @@ const MenuPoints = observer(
                   </span>
 
                   <span className="menu__sub">
-                    <Link to="/gifts" className="menu-point">
+                    <a
+                      href=""
+                      className="menu-point"
+                      onClick={(e) => {
+                        e.preventDefault();
+                      }}
+                    >
                       Подарки
-                    </Link>
+                    </a>
                     <div className="menu menu_sub menu_gift">
                       <div className="container container_f">
                         <button
