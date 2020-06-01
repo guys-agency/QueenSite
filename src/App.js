@@ -31,6 +31,7 @@ import ShopsMap from "./comp/ShopsMap";
 import Help from "./comp/Help";
 import About from "./comp/About";
 import Footer from "./comp/Footer";
+import querySearch from "stringquery";
 
 import Swiper from "react-id-swiper";
 
@@ -129,11 +130,15 @@ const MainScreen = observer(
             />
             <Route
               path={[
-                "/catalog/:parentName",
                 "/catalog/:parentName/:childName",
+                "/catalog/:parentName",
                 "/catalog",
               ]}
               render={(routProps) => (
+                console.log(
+                  "querySearch(routProps.location.search)",
+                  querySearch(routProps.location.search)
+                ),
                 (this.props.store.nameMainCat =
                   routProps.match.params.parentName),
                 (this.props.store.nameSecondCat =

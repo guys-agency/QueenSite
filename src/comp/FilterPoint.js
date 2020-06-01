@@ -62,14 +62,24 @@ const FilterPoint = observer(
     };
 
     render() {
-      const { data, name } = this.props;
+      const { data, name, objectName } = this.props;
       const { classStyle } = this.state;
+      const { activeFilters } = this.props.store;
+
       const filterPoints = [];
       data.forEach((filterPoint) => {
         if (filterPoint != "") {
+          let number;
+          if (objectName === "measure") {
+            number = Object.keys(activeFilters[objectName]).indexOf(name);
+          } else {
+            number = activeFilters[objectName].indexOf(filterPoint);
+          }
           filterPoints.push(
             <span
-              className="filter__point"
+              className={
+                number === -1 ? "filter__point" : "filter__point active"
+              }
               onClick={(e) => {
                 e.target.classList.toggle("active");
                 this.clickHandler(filterPoint);

@@ -9,6 +9,7 @@ import localStorage from "mobx-localstorage";
 import getCookie from "./ulits/getCookie";
 import { SERVER_URL } from "./constants";
 import api from "./comp/api";
+import { useHistory } from "react-router-dom";
 
 //1http://134.122.81.119/api
 //127.0.0.1:3010
@@ -82,6 +83,8 @@ class Store {
   bannersData = {};
   collInMenu = [];
   dataColl = [];
+
+  searchQ = "";
 
   auth = getCookie("auth") === undefined ? false : true;
   //подумать НАД РЕШЕНИЕМ
@@ -246,6 +249,8 @@ class Store {
             );
           });
 
+          this.productsToRender = testContainer;
+
           //Сортировка
           const sortData = {};
           console.log("data[0] :>> ", data[0]);
@@ -305,7 +310,7 @@ class Store {
           //   return;
           // }
           console.log("data :>> ", data);
-
+          this.createFilterPointsContainers(sortData);
           //СОЗДАНИЕ КАТЕГОРИЙ ПО ВЫБОРКЕ
 
           if (data[0].cats !== undefined && !this.prodCats.length) {
@@ -378,9 +383,6 @@ class Store {
             this.prodCats = catsArr;
             this.activeCats = this.prodCats;
           }
-
-          this.createFilterPointsContainers(sortData);
-          this.productsToRender = testContainer;
         })
         .catch((err) => {
           console.log("err", err);
@@ -496,7 +498,7 @@ class Store {
               );
             });
           }
-
+          this.productsToRender = testContainer;
           //сортировка
           const sortData = {};
           if (Object.keys(data[0].sort[0]).length) {
@@ -548,8 +550,6 @@ class Store {
             this.productValue = data[0].sort[0].count;
             this.paginatCont.push(<Paginat store={this} />);
             this.createFilterPointsContainers(sortData);
-
-            this.productsToRender = testContainer;
           }
         })
         .catch((err) => {
@@ -655,7 +655,10 @@ class Store {
   filtration = () => {
     const filterArray = [];
 
+    console.log("search :>> ", window.location.href.split("?")[1]);
+
     if (this.activeFilters.count) {
+      let searchQt = "";
       this.activeFilters.choosePoint.forEach((filterName) => {
         const onePointFilter = [];
         if (filterName !== "choosePoint") {
@@ -668,6 +671,16 @@ class Store {
                 //   onePointFilter.push({ "attributes.name": filterValue.name,
                 //   "attributes.value": filterValue.value});
               });
+              if (!searchQt.length) {
+                searchQt =
+                  filterName + "=" + this.activeFilters[filterName].join();
+              } else {
+                searchQt +=
+                  ":" +
+                  filterName +
+                  "=" +
+                  this.activeFilters[filterName].join();
+              }
             }
           } else {
             if (Object.keys(this.activeFilters[filterName]).length) {
@@ -678,10 +691,21 @@ class Store {
                     $in: this.activeFilters[filterName][name],
                   },
                 });
+                if (!searchQt.length) {
+                  searchQt =
+                    name + "=" + this.activeFilters[filterName][name].join();
+                } else {
+                  searchQt +=
+                    ":" +
+                    name +
+                    "=" +
+                    this.activeFilters[filterName][name].join();
+                }
               });
             }
           }
         }
+        this.searchQ = searchQt;
         if (onePointFilter.length) {
           filterArray.push({ $or: onePointFilter });
         }
