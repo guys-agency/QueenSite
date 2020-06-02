@@ -193,39 +193,6 @@ const MainPage = observer(
           </Link>
         );
       }
-      //   this.getData();
-      // const settings = {
-      //   dots: true,
-      //   infinite: true,
-      //   speed: 500,
-      //   slidesToShow: 1,
-      //   slidesToScroll: 1,
-      // };
-      // const settingsMulti = {
-      //   dots: true,
-      //   infinite: true,
-      //   speed: 500,
-      //   slidesToShow: 4,
-      //   slidesToScroll: 4,
-      //   // appendDots: (dots) => (
-      //   //   <div
-      //   //     style={{
-      //   //       backgroundColor: "#ddd",
-      //   //       borderRadius: "10px",
-      //   //       padding: "10px",
-      //   //     }}
-      //   //   >
-      //   //     <ul style={{ margin: "0px" }}> {dots} </ul>
-      //   //   </div>
-      //   // ),
-      // };
-      // const settingsBrand = {
-      //   className: "slider variable-width",
-      //   dots: true,
-      //   slidesToShow: 1,
-      //   slidesToScroll: 6,
-      //   variableWidth: true,
-      // };
 
       const headCar = {
         slidesPerView: 1,
@@ -243,8 +210,7 @@ const MainPage = observer(
         navigation: {
           nextEl: ".swiper-button-next",
           prevEl: ".swiper-button-prev",
-        },
-        spaceBetween: 20,
+        }
       };
 
       const productCar = {
@@ -252,9 +218,6 @@ const MainPage = observer(
         slidesPerGroup: 2,
         speed: 800,
         draggable: true,
-        // autoplay: {
-        //   delay: 4000,
-        // },
         pagination: {
           el: ".swiper-pagination",
           type: "bullets",
@@ -279,9 +242,6 @@ const MainPage = observer(
         slidesPerGroup: 2,
         speed: 800,
         draggable: true,
-        // autoplay: {
-        //   delay: 4000,
-        // },
         pagination: {
           el: ".swiper-pagination",
           type: "bullets",

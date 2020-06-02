@@ -140,6 +140,8 @@
     opacity: 0;
     visibility: hidden;
     overflow: hidden;
+    display: flex;
+    flex-wrap: wrap;
     &::before{
       content: '';
       width: 100%;
