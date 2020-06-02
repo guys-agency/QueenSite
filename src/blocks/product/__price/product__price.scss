@@ -23,6 +23,7 @@
     @include max($s){
       font-size: 13px;
       width: 100%;
+      order: 1;
     }
   }
   .disc_perc{

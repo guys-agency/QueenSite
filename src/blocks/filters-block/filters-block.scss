@@ -391,6 +391,11 @@
   display: flex;
   margin-bottom: 30px;
   top: 90px;
+  .dropdown{
+    @include max($s){
+      width: 100%;
+    }
+  }
   .i_filter{
     margin-left: 20px;
     font-size: 21px;

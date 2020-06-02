@@ -175,7 +175,7 @@ const MenuPoints = observer(
       $(".menu-point").removeClass("active");
       $(".menu_sub").removeClass("visible");
       $(".header__drop").removeClass("visible");
-      $(".header__btn").removeClass("active");
+      $(".header__btn").removeClass("active");      
     };
 
     scrollNav = () => {
@@ -196,26 +196,34 @@ const MenuPoints = observer(
     }
 
     componentDidUpdate() {
-      //  $(window).width
-
       $(".header__btn").off("click", this.toggleHeader);
       $(".header__btn").on("click", this.toggleHeader);
 
       $(".btn-menu").off("click", this.toggleMenu);
       $(".btn-menu").on("click", this.toggleMenu);
 
-      if ($(window).width() > 760) {
-        $(".btn-menu").off("mouseenter", this.hoverMenuBtn);
-        $(".btn-menu").on("mouseenter", this.hoverMenuBtn);
+      var self = this;
+      $(window).on("resize", function () {
+        if ($(window).width() > 760) {
+          $(".btn-menu").off("mouseenter", self.hoverMenuBtn);
+          $(".btn-menu").on("mouseenter", self.hoverMenuBtn);
 
-        $(".menu-point").off("mouseenter", this.toggleDrop);
-        $(".menu-point").on("mouseenter", this.toggleDrop);
-        $(".menu_sub").off("mouseleave", this.offDrop);
-        $(".menu_sub").on("mouseleave", this.offDrop);
-      } else {
-        $(".menu-point").off("click", this.toggleDrop);
-        $(".menu-point").on("click", this.toggleDrop);
-      }
+          $(".menu-point").off("mouseenter", self.toggleDrop);
+          $(".menu-point").on("mouseenter", self.toggleDrop);
+          $(".menu_sub").off("mouseleave", self.offDrop);
+          $(".menu_sub").on("mouseleave", self.offDrop);
+          console.log(1);
+          
+        } else {
+          $(".btn-menu").off("mouseenter", self.hoverMenuBtn);
+          $(".menu-point").off("mouseenter", self.toggleDrop);
+          $(".menu_sub").off("mouseleave", self.offDrop);
+
+          $(".menu-point").off("click", self.toggleDrop);
+          $(".menu-point").on("click", self.toggleDrop);
+        }
+      }).resize();
+
       // window.onresize = function () {
       //   if (window.innerHeight > 760) {
       //     console.log(1);

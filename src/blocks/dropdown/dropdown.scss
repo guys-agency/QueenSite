@@ -15,6 +15,9 @@
         text-align: left;
         position: relative;
         transition: all 0.2s;
+        @include max($s){
+            width: 100%;
+        }
         &::after{
             @include icon;
             content: $i_drop;
@@ -52,8 +55,8 @@
         transform: translateY(-5px);
         .item{
             text-align: left;
-            padding-top: 3px;
-            padding-bottom: 3px;
+            padding-top: 5px;
+            padding-bottom: 5px;
             width: 100%;
             &:hover{
                 color: $g_middle;
