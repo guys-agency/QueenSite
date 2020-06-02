@@ -89,11 +89,11 @@ const Filters = observer(
       activeCats.forEach((elem, i) => {
         const childsPoints = [];
 
-        elem.childs.sort((prev, next) => {
-          if (prev.name < next.name) return -1;
-          if (prev.name < next.name) return 1;
-        });
-        elem.childs.sort().forEach((child, iCh) => {
+        // elem.childs.sort((prev, next) => {
+        //   if (prev.name < next.name) return -1;
+        //   if (prev.name < next.name) return 1;
+        // });
+        elem.childs.forEach((child, iCh) => {
           //убрать tr, так как будут поля с транскрипцией в бд
           childsPoints.push(
             <li key={child.name}>
@@ -113,12 +113,7 @@ const Filters = observer(
                   {child.name}
                 </a>
               ) : (
-                <NavLink
-                  to={`/catalog/${elem.slug}/${child.slug}`}
-                  onClick={() => {
-                    this.setCats(elem.slug, child.slug);
-                  }}
-                >
+                <NavLink to={`/catalog/${elem.slug}/${child.slug}`}>
                   {child.name}
                 </NavLink>
               )}

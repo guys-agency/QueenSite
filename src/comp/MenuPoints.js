@@ -276,7 +276,7 @@ const MenuPoints = observer(
         })
         .then((data) => {
           console.log("data :>> ", data);
-          this.props.store.fullCats = data;
+
           const menu = {};
 
           data.forEach((elem, i) => {
@@ -286,7 +286,7 @@ const MenuPoints = observer(
               if (prev.name < next.name) return -1;
               if (prev.name < next.name) return 1;
             });
-            elem.childs.sort().forEach((child, iCh) => {
+            elem.childs.forEach((child, iCh) => {
               //убрать tr, так как будут поля с транскрипцией в бд
               childsPoints.push(
                 <li key={child.name}>
@@ -388,6 +388,7 @@ const MenuPoints = observer(
             //   </Dropdown>
             // );
           });
+          this.props.store.fullCats = data;
           for (let index = 0; index < Object.keys(menu).length; index += 2) {
             this.menuContainer.push(
               <div className="column" key={index}>

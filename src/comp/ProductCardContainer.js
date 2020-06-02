@@ -1,14 +1,15 @@
 import { observer } from "mobx-react";
 import React from "react";
 import ProductCard from "./ProductCard";
+import { withRouter } from "react-router";
 import Paginat from "./paginat";
 
 const ProductCardContainer = observer(
   class ProductCardContainer extends React.Component {
-    state = { 
+    state = {
       ready: false,
-      sortLabel: "Сначала новые"
-     };
+      sortLabel: "Сначала новые",
+    };
 
     testContainer = [];
 
@@ -22,83 +23,80 @@ const ProductCardContainer = observer(
         el.classList.remove("active");
       });
 
-      e.target.classList.toggle('active');
+      e.target.classList.toggle("active");
 
-      this.setState({ sortLabel : e.target.textContent }); 
+      this.setState({ sortLabel: e.target.textContent });
 
-      document.querySelector(".dropdown__list").classList.remove('visible')
-      document.querySelector(".dropdown__label").classList.remove('active')
-    }
-
-    createProductContainer = () => {
-      fetch("http://127.0.0.1:3010", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ start: 0, stop: 50 }),
-      })
-        .then((res) => {
-          return res.json();
-        })
-        .then((data) => {
-          Object.keys(data).forEach((element) => {
-            this.testContainer.push(
-              <ProductCard
-                key={data[element].slug}
-                data={data[element]}
-                store={this.props.store}
-              />
-            );
-          });
-          this.props.store.productsToRender = this.testContainer;
-        })
-        .catch((err) => {
-          console.log("err", err);
-        });
-
-      fetch("http://127.0.0.1:3010/sort-names", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({}),
-      })
-        .then((res) => {
-          return res.json();
-        })
-        .then((data) => {
-          this.props.store.createFilterPointsContainers(data);
-        })
-        .catch((err) => {
-          console.log("err", err);
-        });
+      document.querySelector(".dropdown__list").classList.remove("visible");
+      document.querySelector(".dropdown__label").classList.remove("active");
     };
 
     render() {
+      const { searchQ } = this.props.store;
+      console.log(
+        "decodeURIComponent :>> ",
+        decodeURIComponent(this.props.history.location.search),
+        searchQ
+      );
+      // this.props.history.replace({ search: searchQ });
+      // if (
+      //   decodeURIComponent(this.props.history.location.search) !==
+      //   "?" + searchQ
+      // ) {
+      //   this.props.history.replace({ search: searchQ });
+      // }
+
       return (
         <div className="col col-9 col-t-12">
           <div className="row row_inner">
             <div className="col col-12">
               <div className="sort">
-              <div className="dropdown">
-                  <button className="dropdown__label" onClick={(e)=>{
-                    e.target.classList.toggle('active');
-                    e.target.nextElementSibling.classList.toggle('visible');
-                  }}>
+                <div className="dropdown">
+                  <button
+                    className="dropdown__label"
+                    onClick={(e) => {
+                      e.target.classList.toggle("active");
+                      e.target.nextElementSibling.classList.toggle("visible");
+                    }}
+                  >
                     {this.state.sortLabel}
                   </button>
                   <div className="dropdown__list">
-                    <button className="dropdown__list-item item" onClick={this.sortClick}>Сначала новые</button>
-                    <button className="dropdown__list-item item" onClick={this.sortClick}>Сначала старые</button>
-                    <button className="dropdown__list-item item" onClick={this.sortClick}>Сначала подороже</button>
-                    <button className="dropdown__list-item item" onClick={this.sortClick}>Сначала подешевле</button>
+                    <button
+                      className="dropdown__list-item item"
+                      onClick={this.sortClick}
+                    >
+                      Сначала новые
+                    </button>
+                    <button
+                      className="dropdown__list-item item"
+                      onClick={this.sortClick}
+                    >
+                      Сначала старые
+                    </button>
+                    <button
+                      className="dropdown__list-item item"
+                      onClick={this.sortClick}
+                    >
+                      Сначала подороже
+                    </button>
+                    <button
+                      className="dropdown__list-item item"
+                      onClick={this.sortClick}
+                    >
+                      Сначала подешевле
+                    </button>
                   </div>
                 </div>
-                <button className="ic i_filter" onClick={(e)=>{
-                  e.target.classList.toggle("active");
-                  document.querySelector(".catalog__bar").classList.toggle('visible')
-                }}></button>
+                <button
+                  className="ic i_filter"
+                  onClick={(e) => {
+                    e.target.classList.toggle("active");
+                    document
+                      .querySelector(".catalog__bar")
+                      .classList.toggle("visible");
+                  }}
+                ></button>
               </div>
             </div>
             {this.props.store.productsToRender}
@@ -114,4 +112,4 @@ const ProductCardContainer = observer(
   }
 );
 
-export default ProductCardContainer;
+export default withRouter(ProductCardContainer);

@@ -2,6 +2,7 @@ import { observer } from "mobx-react";
 import React from "react";
 import { withRouter } from "react-router";
 import { LazyLoadImage } from "react-lazy-load-image-component";
+// import "react-lazy-load-image-component/src/effects/blur.css";
 import localStorage from "mobx-localstorage";
 
 const ProductCard = observer(function ProductCard(props) {
@@ -39,7 +40,7 @@ const ProductCard = observer(function ProductCard(props) {
       addToLike();
     } else {
       store.cardContainer = data;
-      props.history.push(`/product/${data.slug}`, { test: "test" });
+      props.history.push(`/product/${data.slug}`);
 
       store.productPage = true;
       store.cartPage = false;

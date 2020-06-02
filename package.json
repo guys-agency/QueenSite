@@ -29,6 +29,7 @@
     "slick-carousel": "^1.8.1",
     "slugify": "^1.4.0",
     "sticky-sidebar": "^3.3.1",
+    "stringquery": "^1.0.8",
     "swiper": "^5.4.1",
     "transliteration": "^2.1.11",
     "yup": "^0.29.0"
