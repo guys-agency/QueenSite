@@ -50,7 +50,7 @@ const CityCh = observer(
                         c.forEach((one) => {
                           if (one.addressComponents.length < 6) {
                             renderCities.push(
-                              <li>
+                              <li key={one.geoId}>
                                 <button
                                   type="submit"
                                   onClick={(e) => {

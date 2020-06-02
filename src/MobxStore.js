@@ -110,7 +110,7 @@ class Store {
         this.bannersData.collections.forEach((elem) => {
           if (ind < 4 && sum < this.bannersData.collections.length - 1) {
             timeCont.push(
-              <li>
+              <li key={elem.slug}>
                 <NavLink to={"/collections/" + elem.slug}>{elem.name}</NavLink>
               </li>
             );
@@ -118,7 +118,7 @@ class Store {
             sum += 1;
           } else {
             timeCont.push(
-              <li>
+              <li key={elem.slug}>
                 <NavLink to={"/collections/" + elem.slug}>{elem.name}</NavLink>
               </li>
             );
@@ -224,32 +224,33 @@ class Store {
     }
   });
 
-  getData = (filterArray, bodyJSON) => {
+  getData = (bodyJSON, clearJSON) => {
     const testContainer = [];
-    if (!filterArray.length) {
+    console.log("this.categoryFilter :>> ", this.categoryFilter);
+    if (!Object.keys(this.categoryFilter).length) {
       fetch(SERVER_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           credentials: "include",
         },
-        body: JSON.stringify(bodyJSON),
+        body: JSON.stringify(clearJSON),
       })
         .then((res) => {
           return res.json();
         })
         .then((data) => {
           //продукты
-          console.log("dataData1 :>> ", data);
-          data[0].product.forEach((element) => {
-            testContainer.push(
-              <div className="col col-4 col-s-6">
-                <ProductCard key={element.slug} data={element} store={this} />
-              </div>
-            );
-          });
+          // console.log("dataData1 :>> ", data);
+          // data[0].product.forEach((element) => {
+          //   testContainer.push(
+          //     <div className="col col-4 col-s-6">
+          //       <ProductCard key={element.slug} data={element} store={this} />
+          //     </div>
+          //   );
+          // });
 
-          this.productsToRender = testContainer;
+          // this.productsToRender = testContainer;
 
           //Сортировка
           const sortData = {};
@@ -299,90 +300,91 @@ class Store {
               sortData[name] = data[0].sort[0][name];
             }
           });
-          this.productValue = data[0].sort[0].count;
-          this.paginatCont = [<Paginat store={this} />];
+          // this.productValue = data[0].sort[0].count;
+          // this.paginatCont = [<Paginat store={this} />];
           this.categoryFilter = sortData;
+          this.getData(bodyJSON, clearJSON);
 
-          //временная заплатка
-          // if (Object.keys(data).length === 0) {
-          //   console.log("object123");
-          //   this.filtration();
-          //   return;
-          // }
-          console.log("data :>> ", data);
-          this.createFilterPointsContainers(sortData);
+          // //временная заплатка
+          // // if (Object.keys(data).length === 0) {
+          // //   console.log("object123");
+          // //   this.filtration();
+          // //   return;
+          // // }
+          // console.log("data :>> ", data);
+          // this.createFilterPointsContainers(sortData);
           //СОЗДАНИЕ КАТЕГОРИЙ ПО ВЫБОРКЕ
 
-          if (data[0].cats !== undefined && !this.prodCats.length) {
-            const cats = {};
-            data[0].cats[0].cats.forEach((elemMain) => {
-              elemMain.forEach((elem) => {
-                if (cats[elem.slugName] !== undefined) {
-                  elem.childs.forEach((child, i) => {
-                    if (
-                      !cats[elem.slugName].childsNameArr.includes(
-                        elem.childsSlug[i]
-                      )
-                    ) {
-                      cats[elem.slugName].childs.push({
-                        name: child,
-                        slug: elem.childsSlug[i],
-                      });
-                      cats[elem.slugName].childsNameArr.push(
-                        elem.childsSlug[i]
-                      );
-                    }
-                  });
-                } else {
-                  cats[elem.slugName] = {
-                    name: elem.name,
-                    slug: elem.slugName,
-                  };
-                  if (cats[elem.slugName].childs === undefined) {
-                    cats[elem.slugName].childs = [];
-                    cats[elem.slugName].childsNameArr = [];
-                  }
-                  elem.childs.forEach((child, i) => {
-                    if (
-                      !cats[elem.slugName].childsNameArr.includes(
-                        elem.childsSlug[i]
-                      )
-                    ) {
-                      cats[elem.slugName].childs.push({
-                        name: child,
-                        slug: elem.childsSlug[i],
-                      });
-                      cats[elem.slugName].childsNameArr.push(
-                        elem.childsSlug[i]
-                      );
-                    }
-                  });
-                }
-              });
-            });
-            const catsArr = [];
-            Object.keys(cats).forEach((name) => {
-              catsArr.push(cats[name]);
-            });
+          // if (data[0].cats !== undefined && !this.prodCats.length) {
+          //   const cats = {};
+          //   data[0].cats[0].cats.forEach((elemMain) => {
+          //     elemMain.forEach((elem) => {
+          //       if (cats[elem.slugName] !== undefined) {
+          //         elem.childs.forEach((child, i) => {
+          //           if (
+          //             !cats[elem.slugName].childsNameArr.includes(
+          //               elem.childsSlug[i]
+          //             )
+          //           ) {
+          //             cats[elem.slugName].childs.push({
+          //               name: child,
+          //               slug: elem.childsSlug[i],
+          //             });
+          //             cats[elem.slugName].childsNameArr.push(
+          //               elem.childsSlug[i]
+          //             );
+          //           }
+          //         });
+          //       } else {
+          //         cats[elem.slugName] = {
+          //           name: elem.name,
+          //           slug: elem.slugName,
+          //         };
+          //         if (cats[elem.slugName].childs === undefined) {
+          //           cats[elem.slugName].childs = [];
+          //           cats[elem.slugName].childsNameArr = [];
+          //         }
+          //         elem.childs.forEach((child, i) => {
+          //           if (
+          //             !cats[elem.slugName].childsNameArr.includes(
+          //               elem.childsSlug[i]
+          //             )
+          //           ) {
+          //             cats[elem.slugName].childs.push({
+          //               name: child,
+          //               slug: elem.childsSlug[i],
+          //             });
+          //             cats[elem.slugName].childsNameArr.push(
+          //               elem.childsSlug[i]
+          //             );
+          //           }
+          //         });
+          //       }
+          //     });
+          //   });
+          //   const catsArr = [];
+          //   Object.keys(cats).forEach((name) => {
+          //     catsArr.push(cats[name]);
+          //   });
 
-            catsArr.forEach((elem) => {
-              elem.childs.sort((a, b) => {
-                if (a < b) return -1; // a расположится раньше b
-                if (b < a) return 1; // b расположится раньше a
-                return 0;
-              });
-            });
+          //   catsArr.forEach((elem) => {
+          //     elem.childs.sort((a, b) => {
+          //       if (a < b) return -1; // a расположится раньше b
+          //       if (b < a) return 1; // b расположится раньше a
+          //       return 0;
+          //     });
+          //   });
 
-            //данные баннера
-            if (data.collData !== undefined && !this.dataColl.length) {
-              this.dataColl = data.collData;
-            }
+          //   //данные баннера
+          //   if (data.collData !== undefined && !this.dataColl.length) {
+          //     this.dataColl = data.collData;
+          //   }
 
-            console.log("data :>> ", data);
-            console.log("cats :>> ", catsArr);
-            this.prodCats = catsArr;
-            this.activeCats = this.prodCats;
-          }
+          //   console.log("data :>> ", data);
+          //   console.log("cats :>> ", catsArr);
+          //   this.prodCats = catsArr;
+          //   this.activeCats = this.prodCats;
+          // }
         })
         .catch((err) => {
           console.log("err", err);
@@ -492,8 +494,8 @@ class Store {
           } else {
             data[0].product.forEach((element) => {
               testContainer.push(
-                <div className="col col-4 col-s-6">
-                  <ProductCard key={element.slug} data={element} store={this} />
+                <div className="col col-4 col-s-6" key={element.slug}>
+                  <ProductCard data={element} store={this} />
                 </div>
               );
             });
@@ -550,6 +552,78 @@ class Store {
             this.productValue = data[0].sort[0].count;
             this.paginatCont.push(<Paginat store={this} />);
             this.createFilterPointsContainers(sortData);
+
+            //КАТЕГОРИИ БАННЕРА
+            if (data[0].cats !== undefined && !this.prodCats.length) {
+              const cats = {};
+              data[0].cats[0].cats.forEach((elemMain) => {
+                elemMain.forEach((elem) => {
+                  if (cats[elem.slugName] !== undefined) {
+                    elem.childs.forEach((child, i) => {
+                      if (
+                        !cats[elem.slugName].childsNameArr.includes(
+                          elem.childsSlug[i]
+                        )
+                      ) {
+                        cats[elem.slugName].childs.push({
+                          name: child,
+                          slug: elem.childsSlug[i],
+                        });
+                        cats[elem.slugName].childsNameArr.push(
+                          elem.childsSlug[i]
+                        );
+                      }
+                    });
+                  } else {
+                    cats[elem.slugName] = {
+                      name: elem.name,
+                      slug: elem.slugName,
+                    };
+                    if (cats[elem.slugName].childs === undefined) {
+                      cats[elem.slugName].childs = [];
+                      cats[elem.slugName].childsNameArr = [];
+                    }
+                    elem.childs.forEach((child, i) => {
+                      if (
+                        !cats[elem.slugName].childsNameArr.includes(
+                          elem.childsSlug[i]
+                        )
+                      ) {
+                        cats[elem.slugName].childs.push({
+                          name: child,
+                          slug: elem.childsSlug[i],
+                        });
+                        cats[elem.slugName].childsNameArr.push(
+                          elem.childsSlug[i]
+                        );
+                      }
+                    });
+                  }
+                });
+              });
+              const catsArr = [];
+              Object.keys(cats).forEach((name) => {
+                catsArr.push(cats[name]);
+              });
+
+              catsArr.forEach((elem) => {
+                elem.childs.sort((a, b) => {
+                  if (a < b) return -1; // a расположится раньше b
+                  if (b < a) return 1; // b расположится раньше a
+                  return 0;
+                });
+              });
+
+              //данные баннера
+              if (data.collData !== undefined && !this.dataColl.length) {
+                this.dataColl = data.collData;
+              }
+
+              console.log("data :>> ", data);
+              console.log("cats :>> ", catsArr);
+              this.prodCats = catsArr;
+              this.activeCats = this.prodCats;
+            }
           }
         })
         .catch((err) => {
@@ -655,10 +729,42 @@ class Store {
   filtration = () => {
     const filterArray = [];
 
+    this.activeFilters = {
+      brand: [],
+      material: [],
+      country: [],
+      color: [],
+      measure: [],
+      count: 0,
+      choosePoint: [],
+      attr: [],
+      minPrice: 0,
+      maxPrice: 0,
+    };
+
     console.log("search :>> ", window.location.href.split("?")[1]);
 
+    const decodSearch = decodeURIComponent(window.location.href.split("?")[1]);
+    console.log("ddecodSearche :>> ", decodSearch);
+    if (decodSearch !== "undefined") {
+      decodSearch.split("&&").forEach((elem) => {
+        const elemSp = elem.split("=");
+        if (elemSp[0] !== "measure") {
+          this.activeFilters[elemSp[0]] = elemSp[1].split(",");
+          this.activeFilters.choosePoint.push(elemSp[0]);
+          this.activeFilters.count += elemSp.length;
+        } else {
+          const measEl = elemSp[1].split("!~");
+          this.activeFilters.measure[measEl[0]] = measEl[1].split(",");
+          this.activeFilters.count += measEl[1].split(",").length;
+          this.activeFilters.choosePoint.push("measure");
+        }
+      });
+      console.log(" this.activeFilters:>> ", this.activeFilters);
+    }
+    console.log("this.activeFilters :>> ", this.activeFilters);
     if (this.activeFilters.count) {
-      let searchQt = "";
+      // let searchQt = "";
       this.activeFilters.choosePoint.forEach((filterName) => {
         const onePointFilter = [];
         if (filterName !== "choosePoint") {
@@ -671,16 +777,16 @@ class Store {
                 //   onePointFilter.push({ "attributes.name": filterValue.name,
                 //   "attributes.value": filterValue.value});
               });
-              if (!searchQt.length) {
-                searchQt =
-                  filterName + "=" + this.activeFilters[filterName].join();
-              } else {
-                searchQt +=
-                  ":" +
-                  filterName +
-                  "=" +
-                  this.activeFilters[filterName].join();
-              }
+              // if (!searchQt.length) {
+              //   searchQt =
+              //     filterName + "=" + this.activeFilters[filterName].join();
+              // } else {
+              //   searchQt +=
+              //     ":" +
+              //     filterName +
+              //     "=" +
+              //     this.activeFilters[filterName].join();
+              // }
             }
           } else {
             if (Object.keys(this.activeFilters[filterName]).length) {
@@ -691,21 +797,21 @@ class Store {
                     $in: this.activeFilters[filterName][name],
                   },
                 });
-                if (!searchQt.length) {
-                  searchQt =
-                    name + "=" + this.activeFilters[filterName][name].join();
-                } else {
-                  searchQt +=
-                    ":" +
-                    name +
-                    "=" +
-                    this.activeFilters[filterName][name].join();
-                }
+                // if (!searchQt.length) {
+                //   searchQt =
+                //     name + "=" + this.activeFilters[filterName][name].join();
+                // } else {
+                //   searchQt +=
+                //     ":" +
+                //     name +
+                //     "=" +
+                //     this.activeFilters[filterName][name].join();
+                // }
               });
             }
           }
         }
-        this.searchQ = searchQt;
+        // this.searchQ = searchQt;
         if (onePointFilter.length) {
           filterArray.push({ $or: onePointFilter });
         }
@@ -756,16 +862,19 @@ class Store {
 
     console.log("filterArray :>> ", filterArray, "bodyJSON :>> ", prodJSON);
     const bodyJSON = {};
+    if (this.bannerFilter.slug !== undefined) {
+      bodyJSON.banner = this.bannerFilter;
+    }
+    const clearJSON = Object.assign({ ...bodyJSON }, prodJSON);
     if (!filterArray.length) {
       bodyJSON.prod = prodJSON;
     } else {
       bodyJSON.prod = Object.assign(prodJSON, { $and: filterArray });
     }
-    if (this.bannerFilter.slug !== undefined) {
-      bodyJSON.banner = this.bannerFilter;
-    }
-    console.log("banner :>> ", this.bannerFilter);
-    this.getData(filterArray, bodyJSON);
+
+    console.log("filterArray :>> ", filterArray);
+    console.log("bodyJSON :>> ", bodyJSON);
+    this.getData(bodyJSON, { prod: clearJSON });
   };
 
   createFilterPointsContainers = (availableFilters) => {
@@ -777,11 +886,11 @@ class Store {
     const optPoints = [];
     Object.keys(availableFilters).forEach((filterType) => {
       if (filterType == "brand") {
-        if (this.activeFilters.choosePoint.indexOf(filterType) != -1) {
+        if (this.activeFilters.choosePoint.includes(filterType)) {
           Object.keys(this.categoryFilter).forEach((name) => {
             if (
               name !== filterType &&
-              this.activeFilters.choosePoint.indexOf(name) == -1
+              this.activeFilters.choosePoint.indexOf(name) === -1
             ) {
               this.categoryFilter[name] = availableFilters[name];
             }

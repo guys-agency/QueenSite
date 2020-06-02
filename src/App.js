@@ -139,11 +139,16 @@ const MainScreen = observer(
                   "querySearch(routProps.location.search)",
                   querySearch(routProps.location.search)
                 ),
+                this.props.store.nameMainCat !==
+                  routProps.match.params.parentName ||
+                this.props.store.nameSecondCat !==
+                  routProps.match.params.childName
+                  ? this.props.store.cleaningActiveFilters()
+                  : null,
                 (this.props.store.nameMainCat =
                   routProps.match.params.parentName),
                 (this.props.store.nameSecondCat =
                   routProps.match.params.childName),
-                this.props.store.cleaningActiveFilters(),
                 this.props.store.filtration(),
                 (this.props.store.activeCats = this.props.store.fullCats),
                 (
