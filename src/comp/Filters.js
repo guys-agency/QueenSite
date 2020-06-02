@@ -130,7 +130,7 @@ const Filters = observer(
         });
         if (elem.name === "Сервировка стола") {
           menu[0] = (
-            <li>
+            <li key={elem.name}>
               <h5 className="categories-block__name" onClick={this.subCat}>
                 {elem.name}
                 <span className="ic i_drop"></span>
@@ -140,7 +140,7 @@ const Filters = observer(
           );
         } else if (elem.name === "Для приготовления") {
           menu[1] = (
-            <li>
+            <li key={elem.name}>
               <h5 className="categories-block__name" onClick={this.subCat}>
                 {elem.name}
                 <span className="ic i_drop"></span>
@@ -150,7 +150,7 @@ const Filters = observer(
           );
         } else if (elem.name === "Напитки") {
           menu[2] = (
-            <li>
+            <li key={elem.name}>
               <h5 className="categories-block__name" onClick={this.subCat}>
                 {elem.name}
                 <span className="ic i_drop"></span>
@@ -160,7 +160,7 @@ const Filters = observer(
           );
         } else if (elem.name === "Кофе и чай") {
           menu[3] = (
-            <li>
+            <li key={elem.name}>
               <h5 className="categories-block__name" onClick={this.subCat}>
                 {elem.name}
                 <span className="ic i_drop"></span>
@@ -170,7 +170,7 @@ const Filters = observer(
           );
         } else if (elem.name === "Аксесуары для стола") {
           menu[4] = (
-            <li>
+            <li key={elem.name}>
               <h5 className="categories-block__name" onClick={this.subCat}>
                 {elem.name}
                 <span className="ic i_drop"></span>
@@ -180,7 +180,7 @@ const Filters = observer(
           );
         } else if (elem.name === "Интерьер") {
           menu[5] = (
-            <li>
+            <li key={elem.name}>
               <h5 className="categories-block__name" onClick={this.subCat}>
                 {elem.name}
                 <span className="ic i_drop"></span>
@@ -190,7 +190,7 @@ const Filters = observer(
           );
         } else if (elem.name === "Наборы") {
           menu[6] = (
-            <li>
+            <li key={elem.name}>
               <h5 className="categories-block__name" onClick={this.subCat}>
                 {elem.name}
                 <span className="ic i_drop"></span>
@@ -200,7 +200,7 @@ const Filters = observer(
           );
         } else if (elem.name === "Сервизы") {
           menu[7] = (
-            <li>
+            <li key={elem.name}>
               <h5 className="categories-block__name" onClick={this.subCat}>
                 {elem.name}
                 <span className="ic i_drop"></span>
@@ -279,6 +279,7 @@ const Filters = observer(
                   <label className="checkbox">
                     <input
                       type="checkbox"
+                      checked={activeFilters.attr.includes("hit")}
                       onChange={(e) => {
                         console.log(
                           "e.target.value",

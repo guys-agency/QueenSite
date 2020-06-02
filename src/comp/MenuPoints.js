@@ -302,42 +302,42 @@ const MenuPoints = observer(
 
             if (elem.name === "Сервировка стола") {
               menu[0] = (
-                <div>
+                <div key={elem.name}>
                   <h5>{elem.name}</h5>
                   <ul>{childsPoints}</ul>
                 </div>
               );
             } else if (elem.name === "Для приготовления") {
               menu[1] = (
-                <div>
+                <div key={elem.name}>
                   <h5>{elem.name}</h5>
                   <ul>{childsPoints}</ul>
                 </div>
               );
             } else if (elem.name === "Напитки") {
               menu[2] = (
-                <div>
+                <div key={elem.name}>
                   <h5>{elem.name}</h5>
                   <ul>{childsPoints}</ul>
                 </div>
               );
             } else if (elem.name === "Кофе и чай") {
               menu[3] = (
-                <div>
+                <div key={elem.name}>
                   <h5>{elem.name}</h5>
                   <ul>{childsPoints}</ul>
                 </div>
               );
             } else if (elem.name === "Аксесуары для стола") {
               menu[4] = (
-                <div>
+                <div key={elem.name}>
                   <h5>{elem.name}</h5>
                   <ul>{childsPoints}</ul>
                 </div>
               );
             } else if (elem.name === "Интерьер") {
               menu[5] = (
-                <div>
+                <div key={elem.name}>
                   <h5>{elem.name}</h5>
                   <ul>{childsPoints}</ul>
                 </div>
@@ -345,23 +345,24 @@ const MenuPoints = observer(
               this.interier.push(<ul>{childsPoints}</ul>);
             } else if (elem.name === "Наборы") {
               menu[6] = (
-                <div>
+                <div key={elem.name}>
                   <h5>{elem.name}</h5>
                   <ul>{childsPoints}</ul>
                 </div>
               );
             } else if (elem.name === "Сервизы") {
               menu[7] = (
-                <div>
+                <div key={elem.name}>
                   <h5>{elem.name}</h5>
                   <ul>{childsPoints}</ul>
                 </div>
               );
             } else if (elem.name === "Premium") {
-              this.premium.push(<ul>{childsPoints}</ul>);
+              this.premium.push(<ul key={elem.name}>{childsPoints}</ul>);
             } else if (elem.name === "Подарки") {
               let ind = 0;
               let sum = 0;
+              let key = 0;
               let timeCont = [];
               childsPoints.forEach((elem) => {
                 if (ind < 3 && sum < childsPoints.length - 1) {
@@ -371,10 +372,11 @@ const MenuPoints = observer(
                 } else {
                   timeCont.push(elem);
                   this.gifts.push(
-                    <div className="column">
+                    <div className="column" key={key}>
                       <ul>{timeCont}</ul>
                     </div>
                   );
+                  key += 1;
                   timeCont = [];
                   ind = 0;
                   sum += 1;

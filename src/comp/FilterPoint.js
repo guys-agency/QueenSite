@@ -1,5 +1,6 @@
 import { observer } from "mobx-react";
 import React from "react";
+import { withRouter } from "react-router";
 const { Component } = React;
 
 const FilterPoint = observer(
@@ -12,7 +13,8 @@ const FilterPoint = observer(
     clickHandler = (filterPoint) => {
       const { objectName, data, name } = this.props;
       const { activeFilters, filtration, prodSlugs } = this.props.store;
-
+      const start = new Date();
+      let searchQt = "";
       if (objectName === "measure") {
         const number = Object.keys(activeFilters[objectName]).indexOf(name);
         if (number === -1) {
@@ -20,10 +22,12 @@ const FilterPoint = observer(
 
           activeFilters.count += 1;
           activeFilters.choosePoint.push(objectName);
+          console.log("number :>> ", number);
         } else {
           const valueNumber = activeFilters[objectName][name].indexOf(
             String(filterPoint)
           );
+          console.log("valueNumber :>> ", valueNumber);
           if (valueNumber === -1) {
             activeFilters[objectName][name].push(String(filterPoint));
             activeFilters.count += 1;
@@ -56,30 +60,78 @@ const FilterPoint = observer(
           }
         }
       }
+      if (activeFilters.count) {
+        activeFilters.choosePoint.forEach((filterName) => {
+          if (filterName !== "choosePoint") {
+            if (filterName !== "measure") {
+              if (activeFilters[filterName].length) {
+                if (!searchQt.length) {
+                  searchQt =
+                    filterName + "=" + activeFilters[filterName].join();
+                } else {
+                  searchQt +=
+                    "&&" + filterName + "=" + activeFilters[filterName].join();
+                }
+              }
+            } else {
+              console.log("filterPoint", filterPoint);
+              if (Object.keys(activeFilters[filterName]).length) {
+                Object.keys(activeFilters[filterName]).forEach((ind) => {
+                  console.log("ind :>> ", activeFilters[filterName][ind]);
+                  if (!searchQt.length) {
+                    searchQt =
+                      filterName +
+                      "=" +
+                      name +
+                      "!~" +
+                      activeFilters[filterName][ind].join(",");
+                  } else {
+                    searchQt +=
+                      "&&" +
+                      filterName +
+                      "=" +
+                      name +
+                      "!~" +
+                      activeFilters[filterName][ind].join(",");
+                  }
+                });
+              }
+            }
+          }
+        });
+        // console.log("onePointFilter :>> ", onePointFilter);
+      }
       this.props.store.startPag = 0;
       this.props.store.stopPag = 42;
-      filtration();
+      console.log("TESTTESTTEST :>> ");
+      console.log("activeFilters!!!!!! :>> ", activeFilters);
+      const stop = new Date();
+      console.log("time :>> ", stop - start);
+      this.props.history.replace({ search: searchQt });
+      // filtration();
     };
 
     render() {
       const { data, name, objectName } = this.props;
       const { classStyle } = this.state;
       const { activeFilters } = this.props.store;
-
+      let act = false;
       const filterPoints = [];
       data.forEach((filterPoint) => {
         if (filterPoint != "") {
           let number;
           if (objectName === "measure") {
-            number = Object.keys(activeFilters[objectName]).indexOf(name);
+            if (Object.keys(activeFilters[objectName]).includes(name)) {
+              number = activeFilters[objectName][name].includes(
+                String(filterPoint)
+              );
+            }
           } else {
-            number = activeFilters[objectName].indexOf(filterPoint);
+            number = activeFilters[objectName].includes(filterPoint);
           }
           filterPoints.push(
             <span
-              className={
-                number === -1 ? "filter__point" : "filter__point active"
-              }
+              className={!number ? "filter__point" : "filter__point active"}
               onClick={(e) => {
                 e.target.classList.toggle("active");
                 this.clickHandler(filterPoint);
@@ -114,4 +166,4 @@ const FilterPoint = observer(
   }
 );
 
-export default FilterPoint;
+export default withRouter(FilterPoint);

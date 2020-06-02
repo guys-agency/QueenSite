@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import React from "react";
 import ProductCard from "./ProductCard";
-import { withRouter } from "react-router";
+
 import Paginat from "./paginat";
 
 const ProductCardContainer = observer(
@@ -33,11 +33,11 @@ const ProductCardContainer = observer(
 
     render() {
       const { searchQ } = this.props.store;
-      console.log(
-        "decodeURIComponent :>> ",
-        decodeURIComponent(this.props.history.location.search),
-        searchQ
-      );
+      // console.log(
+      //   "decodeURIComponent :>> ",
+      //   decodeURIComponent(this.props.history.location.search),
+      //   searchQ
+      // );
       // this.props.history.replace({ search: searchQ });
       // if (
       //   decodeURIComponent(this.props.history.location.search) !==
@@ -112,4 +112,4 @@ const ProductCardContainer = observer(
   }
 );
 
-export default withRouter(ProductCardContainer);
+export default ProductCardContainer;
