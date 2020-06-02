@@ -204,6 +204,9 @@ code {
     background-position: bottom right;
     background-repeat: no-repeat;
     background-size: contain;
+    @include max(500px){
+      height: 170px;
+    }
     &:nth-child(3) {
       margin-right: 0px;
     }

@@ -494,7 +494,7 @@ class Store {
           } else {
             data[0].product.forEach((element) => {
               testContainer.push(
-                <div className="col col-4" key={element.slug}>
+                <div className="col col-4 col-s-6" key={element.slug}>
                   <ProductCard data={element} store={this} />
                 </div>
               );

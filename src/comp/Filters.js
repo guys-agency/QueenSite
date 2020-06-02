@@ -63,6 +63,10 @@ const Filters = observer(
       }
     };
 
+    componentWillUnmount(){
+        $(".head_filter").removeClass("visible");
+    }
+
     render() {
       const {
         filterPointsContainers,
