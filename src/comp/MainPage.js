@@ -473,7 +473,7 @@ const MainPage = observer(
               </div>
               <div className="gifts row">
                 <Swiper {...giftCar}>
-                  <div className="col col-4 col-t-5 col-s-7">
+                  <div className="col col-4 col-t-5 col-s-9">
                     <a
                       className="banner"
                       style={{
@@ -484,7 +484,7 @@ const MainPage = observer(
                     </a>
                   </div>
 
-                  <div className="col col-4 col-t-5 col-s-7">
+                  <div className="col col-4 col-t-5 col-s-9">
                     <a
                       className="banner"
                       style={{
@@ -495,7 +495,7 @@ const MainPage = observer(
                     </a>
                   </div>
 
-                  <div className="col col-4 col-t-5 col-s-7">
+                  <div className="col col-4 col-t-5 col-s-9">
                     <a
                       className="banner"
                       style={{

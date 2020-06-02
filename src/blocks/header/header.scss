@@ -89,6 +89,12 @@
     &:hover{
       color: $g_middle;
     }
+    opacity: 0;
+    visibility: hidden;
+    &.visible{
+      visibility: visible;
+      opacity: 1;
+    }
   }
   &__btn-city{
     overflow: hidden;

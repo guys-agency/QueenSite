@@ -216,7 +216,6 @@ const MenuPoints = observer(
         $(".menu-point").off("click", this.toggleDrop);
         $(".menu-point").on("click", this.toggleDrop);
       }
-
       // window.onresize = function () {
       //   if (window.innerHeight > 760) {
       //     console.log(1);
@@ -235,20 +234,25 @@ const MenuPoints = observer(
       //   }
       // };
 
-      $(window).resize(function () {
-        if ($(window).width() >= 760) {
-          console.log(1);
-          $(".btn-menu").off("mouseenter", this.hoverMenuBtn);
-          $(".btn-menu").on("mouseenter", this.hoverMenuBtn);
-          $(".menu-point").off("mouseenter", this.toggleDrop);
-          $(".menu-point").on("mouseenter", this.toggleDrop);
-          $(".menu_sub").off("mouseleave", this.offDrop);
-          $(".menu_sub").on("mouseleave", this.offDrop);
-        } else {
-          $(".menu-point").off("click", this.toggleDrop);
-          $(".menu-point").on("click", this.toggleDrop);
-        }
-      });
+      // $(window).resize(function () {
+      //   if ($(window).width() >= 760) {
+      //     console.log(1);
+      //     $(".btn-menu").off("mouseenter", this.hoverMenuBtn);
+      //     $(".btn-menu").on("mouseenter", this.hoverMenuBtn);
+      //     $(".menu-point").off("mouseenter", this.toggleDrop);
+      //     $(".menu-point").on("mouseenter", this.toggleDrop);
+      //     $(".menu_sub").off("mouseleave", this.offDrop);
+      //     $(".menu_sub").on("mouseleave", this.offDrop);
+      //   } else {
+      //     $(".menu-point").off("click", this.toggleDrop);
+      //     $(".menu-point").on("click", this.toggleDrop);
+      //   }
+      // });
+
+      if ($(".sidebar__inner").length) {
+        $(".head_filter").addClass("visible");
+      }
+    
 
       $(document).off("click", this.closeAll);
       $(document).on("click", this.closeAll);
@@ -507,7 +511,7 @@ const MenuPoints = observer(
                 {this.phone}
 
                 <button
-                  className="ic i_filter vis-s "
+                  className="ic i_filter head_filter vis-s "
                   onClick={(e) => {
                     e.target.classList.toggle("active");
                     document

@@ -8,12 +8,14 @@
     position: relative;
     padding: 50% 10px;
     overflow: hidden;
+    .lazy-load-image-background{
+      position: absolute;
+      top: 0;
+      left: 0px;
+      width: calc(100% + 1px);
+    }
   }
   img {
-    position: absolute;
-    top: 0;
-    left: 0px;
-    width: calc(100% + 1px);
-    max-height: 300px;
+    width: 100%;
   }
 }

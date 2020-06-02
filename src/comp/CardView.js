@@ -356,7 +356,7 @@ const CardView = observer(
                               {num2str(timeDelivery, ["дня", "дней", "дней"])}
                             </b>
                           </span>
-                          {storesAvali.length && (
+                          {storesAvali.length > 0 && (
                             <>
                               <button
                                 className="link dotted drop_shop-btn"

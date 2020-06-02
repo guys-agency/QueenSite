@@ -10,6 +10,7 @@
   align-items: center;
   @include max($s){
     font-size: 18px;
+    flex-wrap: wrap;
   }
   &_disc{
     color: $red;
@@ -21,6 +22,7 @@
     margin-right: 8px;
     @include max($s){
       font-size: 13px;
+      width: 100%;
     }
   }
   .disc_perc{

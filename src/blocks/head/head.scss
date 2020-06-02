@@ -39,6 +39,12 @@
             max-width: 1110px;
             @include c(x);
             bottom: 50px;
+            @include max(1160px){
+                max-width: 100%;
+                padding-left: 15px;
+                padding-right: 15px;
+                bottom: 15px;
+            }
             &-bullet{
                 box-shadow: $sh_btn;
             }

@@ -13,11 +13,11 @@ const Footer = observer(
 
                     <div className="container">
                         <div className="footer__logo-m">
-                            <a class="logo logo_vl" href="/">
-                                <span class="i_queen"></span>
-                                <span class="i_of"></span>
-                                <span class="i_bohemia"></span>
-                                <span class="i_qr"></span>
+                            <a className="logo logo_vl" href="/">
+                                <span className="i_queen"></span>
+                                <span className="i_of"></span>
+                                <span className="i_bohemia"></span>
+                                <span className="i_qr"></span>
                             </a>
                         </div>
                         <div className="footer__row">

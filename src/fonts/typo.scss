@@ -65,7 +65,7 @@ h3, h4, h5, h6, p, a, input, button{
 h1{
   font-size: 40px;
   @include max($s){
-    font-size: 27px;
+    font-size: 24px;
   }
 }
 
