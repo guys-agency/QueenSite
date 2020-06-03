@@ -376,10 +376,10 @@ const MainScreen = observer(
             />
 
             <Route
-              path="/finish"
-              render={() => (
+              path="/finish/:id"
+              render={(routProps) => (
                 <div className="main-screen">
-                  <Finish />
+                  <Finish id={routProps.match.params.id} />
                 </div>
               )}
             />

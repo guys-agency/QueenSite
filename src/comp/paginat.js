@@ -24,7 +24,8 @@ const Paginat = observer(
         i++
       ) {
         pointCont.push(
-          <div className="pagination__page"
+          <div
+            className="pagination__page"
             key={i}
             onClick={() => {
               if (i === countPage - 1) {

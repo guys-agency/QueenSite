@@ -358,6 +358,20 @@ const CartPage = observer(
                                 onInput={(e) => {
                                   this.setState({ adress: e.target.value });
                                 }}
+                                onChange={() => {
+                                  api
+                                    .getCity(
+                                      this.props.store.city +
+                                        " " +
+                                        this.state.adress
+                                    )
+                                    .then((ok) => {
+                                      console.log("okCity :>> ", ok);
+                                    })
+                                    .catch((err) => {
+                                      console.log("errCity :>> ", err);
+                                    });
+                                }}
                               />
                             </div>
                           </div>
@@ -705,7 +719,7 @@ const CartPage = observer(
                             name: productInCart[el].name,
                           };
                           if (productInCart[el].sale) {
-                            dataToSend[el].sale_price =
+                            dataToSend.prod[el].sale_price =
                               productInCart[el].sale_price;
                           }
                         });
@@ -713,7 +727,7 @@ const CartPage = observer(
                         dataToSend.sum = totalPrice;
                         dataToSend.email = this.state.email;
 
-                        console.log("delivery :>> ", dataToSend);
+                        console.log("delivery :>> ", delivery, dataToSend);
 
                         api
                           .setOrderData({

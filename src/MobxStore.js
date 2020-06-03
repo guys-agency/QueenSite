@@ -550,7 +550,7 @@ class Store {
               }
             });
             this.productValue = data[0].sort[0].count;
-            this.paginatCont.push(<Paginat store={this} />);
+            this.paginatCont = [<Paginat store={this} />];
             this.createFilterPointsContainers(sortData);
 
             //КАТЕГОРИИ БАННЕРА

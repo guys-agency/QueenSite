@@ -175,7 +175,7 @@ const MenuPoints = observer(
       $(".menu-point").removeClass("active");
       $(".menu_sub").removeClass("visible");
       $(".header__drop").removeClass("visible");
-      $(".header__btn").removeClass("active");      
+      $(".header__btn").removeClass("active");
     };
 
     scrollNav = () => {
@@ -203,26 +203,27 @@ const MenuPoints = observer(
       $(".btn-menu").on("click", this.toggleMenu);
 
       var self = this;
-      $(window).on("resize", function () {
-        if ($(window).width() > 760) {
-          $(".btn-menu").off("mouseenter", self.hoverMenuBtn);
-          $(".btn-menu").on("mouseenter", self.hoverMenuBtn);
+      $(window)
+        .on("resize", function () {
+          if ($(window).width() > 760) {
+            $(".btn-menu").off("mouseenter", self.hoverMenuBtn);
+            $(".btn-menu").on("mouseenter", self.hoverMenuBtn);
 
-          $(".menu-point").off("mouseenter", self.toggleDrop);
-          $(".menu-point").on("mouseenter", self.toggleDrop);
-          $(".menu_sub").off("mouseleave", self.offDrop);
-          $(".menu_sub").on("mouseleave", self.offDrop);
-          console.log(1);
-          
-        } else {
-          $(".btn-menu").off("mouseenter", self.hoverMenuBtn);
-          $(".menu-point").off("mouseenter", self.toggleDrop);
-          $(".menu_sub").off("mouseleave", self.offDrop);
+            $(".menu-point").off("mouseenter", self.toggleDrop);
+            $(".menu-point").on("mouseenter", self.toggleDrop);
+            $(".menu_sub").off("mouseleave", self.offDrop);
+            $(".menu_sub").on("mouseleave", self.offDrop);
+            console.log(1);
+          } else {
+            $(".btn-menu").off("mouseenter", self.hoverMenuBtn);
+            $(".menu-point").off("mouseenter", self.toggleDrop);
+            $(".menu_sub").off("mouseleave", self.offDrop);
 
-          $(".menu-point").off("click", self.toggleDrop);
-          $(".menu-point").on("click", self.toggleDrop);
-        }
-      }).resize();
+            $(".menu-point").off("click", self.toggleDrop);
+            $(".menu-point").on("click", self.toggleDrop);
+          }
+        })
+        .resize();
 
       // window.onresize = function () {
       //   if (window.innerHeight > 760) {
@@ -260,7 +261,6 @@ const MenuPoints = observer(
       if ($(".sidebar__inner").length) {
         $(".head_filter").addClass("visible");
       }
-    
 
       $(document).off("click", this.closeAll);
       $(document).on("click", this.closeAll);
@@ -822,7 +822,10 @@ const MenuPoints = observer(
                 />
               )}
               {this.state.popreg && (
-                <AuthSidebar closeSidebar={this.closeSidebar} />
+                <AuthSidebar
+                  closeSidebar={this.closeSidebar}
+                  store={this.props.store}
+                />
               )}
               {this.state.popCart && (
                 <CartSidebar

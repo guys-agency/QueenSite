@@ -164,6 +164,21 @@ class Api {
       Promise.reject(res.json());
     });
   }
+
+  getFinishData(id) {
+    return fetch(SERVER_URL + "/finish/" + id, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      Promise.reject(res.json());
+    });
+  }
 }
 
 const api = new Api();
