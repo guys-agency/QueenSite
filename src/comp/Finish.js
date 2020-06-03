@@ -75,7 +75,7 @@ const Finish = observer(
                     </p>
                     <form className="profile-p__card-login">
                       <div className="input-field">
-                        <label className="required" htmlFor="email">
+                        <label className="required active" htmlFor="email">
                           Email
                         </label>
                         <input
@@ -144,9 +144,11 @@ const Finish = observer(
                       {data.delivery.contacts.lastName}
                     </div>
                     <div className="user__contact">
-                      <div className="user__phone">
-                        {data.delivery.contacts.phone}
-                      </div>
+                      {data.delivery.contacts.phone &&(
+                        <div className="user__phone">
+                          {data.delivery.contacts.phone}
+                        </div>
+                      )}
                       <div className="user__mail">{data.user}</div>
                     </div>
                     <div className="user__address">

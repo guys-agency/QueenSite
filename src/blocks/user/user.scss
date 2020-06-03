@@ -9,7 +9,10 @@
         display: flex;       
     }
     &__mail{
-        margin-left: 20px;
+        // margin-left: 20px;
+    }
+    &__phone{
+        margin-right: 20px;
     }
     &__edit{
         border-top: 1px solid $gr_light;
