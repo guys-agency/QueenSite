@@ -26,25 +26,28 @@
   &__image{
     transition: all 0.3s;
   }
-  &:hover{
-    cursor: pointer;
-    .product{
-      &__action{
-        visibility: visible;
-        opacity: 1;
-        bottom: 10px;
-        transform: translateY(0px);
-      }
-      &__name{
-        color: $b_light;
-        text-decoration: underline;
-      }
-      &__image{
-        box-shadow: $sh_bottom;
-        transform: translateY(-2px);
+  @media (pointer: fine) {
+    &:hover{
+      cursor: pointer;
+      .product{
+        &__action{
+          visibility: visible;
+          opacity: 1;
+          bottom: 10px;
+          transform: translateY(0px);
+        }
+        &__name{
+          color: $b_light;
+          text-decoration: underline;
+        }
+        &__image{
+          box-shadow: $sh_bottom;
+          transform: translateY(-2px);
+        }
       }
     }
   }
+
   &_h{
     flex-direction: row;
     align-items: stretch;
