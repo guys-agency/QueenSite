@@ -213,7 +213,6 @@ const MenuPoints = observer(
             $(".menu-point").on("mouseenter", self.toggleDrop);
             $(".menu_sub").off("mouseleave", self.offDrop);
             $(".menu_sub").on("mouseleave", self.offDrop);
-            console.log(1);
           } else {
             $(".btn-menu").off("mouseenter", self.hoverMenuBtn);
             $(".menu-point").off("mouseenter", self.toggleDrop);
@@ -224,39 +223,6 @@ const MenuPoints = observer(
           }
         })
         .resize();
-
-      // window.onresize = function () {
-      //   if (window.innerHeight > 760) {
-      //     console.log(1);
-
-      //     $(".btn-menu").off("mouseenter", this.hoverMenuBtn);
-      //     $(".btn-menu").on("mouseenter", this.hoverMenuBtn);
-
-      //     $(".menu-point").off("mouseenter", this.toggleDrop);
-      //     $(".menu-point").on("mouseenter", this.toggleDrop);
-      //     $(".menu_sub").off("mouseleave", this.offDrop);
-      //     $(".menu_sub").on("mouseleave", this.offDrop);
-      //   }
-      //   if (window.innerWidth <= 760) {
-      //     $(".menu-point").off("click", this.toggleDrop);
-      //     $(".menu-point").on("click", this.toggleDrop);
-      //   }
-      // };
-
-      // $(window).resize(function () {
-      //   if ($(window).width() >= 760) {
-      //     console.log(1);
-      //     $(".btn-menu").off("mouseenter", this.hoverMenuBtn);
-      //     $(".btn-menu").on("mouseenter", this.hoverMenuBtn);
-      //     $(".menu-point").off("mouseenter", this.toggleDrop);
-      //     $(".menu-point").on("mouseenter", this.toggleDrop);
-      //     $(".menu_sub").off("mouseleave", this.offDrop);
-      //     $(".menu_sub").on("mouseleave", this.offDrop);
-      //   } else {
-      //     $(".menu-point").off("click", this.toggleDrop);
-      //     $(".menu-point").on("click", this.toggleDrop);
-      //   }
-      // });
 
       if ($(".sidebar__inner").length) {
         $(".head_filter").addClass("visible");
@@ -846,6 +812,8 @@ const MenuPoints = observer(
 
                 $("body").removeClass("no-scroll");
                 $(".navigation").removeClass("visible");
+                $(".header__drop_city").removeClass("active");
+                $(".city__btn").removeClass("active");
                 e.target.classList.remove("active");
                 document.querySelector(".sidebar").classList.remove("visible");
                 if (document.querySelector(".catalog__bar")) {

@@ -29,9 +29,9 @@ const CardView = observer(
     with = [];
     like = [];
 
-    clickHandler = () => {
+    clickHandler = (e) => {
       const { store } = this.props;
-
+      e.target.textContent = "Добавлено в корзину";
       const data = store.cardContainer;
       const inCart = Object.keys(store.productInCartList).length
         ? Object.keys(store.productInCartList).indexOf(String(data.slug))

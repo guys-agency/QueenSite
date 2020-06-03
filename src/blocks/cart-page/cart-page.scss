@@ -50,6 +50,14 @@
                 }
             }
         }
+        .header__drop_city{
+            @include max($s){
+                width: 280px;
+                left: auto;
+                right: 0;
+                position: fixed;
+            }
+        }
     }
 
     &__data{

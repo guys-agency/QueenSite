@@ -112,9 +112,15 @@
     &__available{
         position: relative;
         display: flex;
+        @include max($s){
+            flex-wrap: wrap;
+        }
         margin-top: 20px;
         &>span{
             margin-right: 20px;
+            @include max($s){
+                margin-bottom: 20px;
+            }
         }
         .drop{
             margin-top: 40px;

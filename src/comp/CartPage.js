@@ -210,6 +210,11 @@ const CartPage = observer(
                             document
                               .querySelector(".city__drop")
                               .classList.toggle("active");
+                            
+                            if ($(window).width() < 760) {
+                              $(".sidebar-overlay").addClass('active');
+                            }
+                            
                           }}
                         >
                           {this.props.store.city}{" "}

@@ -88,3 +88,7 @@
         }
     }
 }
+
+.swiper-container-fade .swiper-slide-active, .swiper-container-fade .swiper-slide-active .swiper-slide-active{
+    opacity: 1 !important
+}
