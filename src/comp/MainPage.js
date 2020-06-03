@@ -196,7 +196,7 @@ const MainPage = observer(
 
       const headCar = {
         slidesPerView: 1,
-        // effect: "fade",
+        effect: "fade",
         speed: 500,
         draggable: true,
         autoplay: {
