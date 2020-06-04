@@ -25,7 +25,11 @@ const Paginat = observer(
       ) {
         pointCont.push(
           <div
-            className="pagination__page"
+            className={
+              i === this.props.store.startPag / 42
+                ? "pagination__page active"
+                : "pagination__page"
+            }
             key={i}
             onClick={() => {
               if (i === countPage - 1) {

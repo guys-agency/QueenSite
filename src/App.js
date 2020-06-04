@@ -32,6 +32,7 @@ import Help from "./comp/Help";
 import About from "./comp/About";
 import Footer from "./comp/Footer";
 import querySearch from "stringquery";
+import $ from "jquery";
 
 import Swiper from "react-id-swiper";
 
@@ -126,7 +127,10 @@ const MainScreen = observer(
             <Route
               path="/"
               exact
-              render={(routProps) => <MainPage store={this.props.store} />}
+              render={(routProps) => (
+                $("html, body").animate({ scrollTop: 0 }, 500),
+                (<MainPage store={this.props.store} />)
+              )}
             />
             <Route
               path={[
@@ -144,6 +148,12 @@ const MainScreen = observer(
                 this.props.store.nameSecondCat !==
                   routProps.match.params.childName
                   ? this.props.store.cleaningActiveFilters()
+                  : null,
+                this.props.store.nameMainCat !==
+                  routProps.match.params.parentName ||
+                this.props.store.nameSecondCat !==
+                  routProps.match.params.childName
+                  ? $("html, body").animate({ scrollTop: 0 }, 500)
                   : null,
                 (this.props.store.nameMainCat =
                   routProps.match.params.parentName),
@@ -181,29 +191,33 @@ const MainScreen = observer(
             <Route
               path="/cart"
               render={() => (
-                <div
-                  className="main-screen"
-                  onClick={(e) => {
-                    e.stopPropagation();
+                $("html, body").animate({ scrollTop: 0 }, 500),
+                (
+                  <div
+                    className="main-screen"
+                    onClick={(e) => {
+                      e.stopPropagation();
 
-                    var container = document.querySelector(".city__drop");
-                    if (!container.contains(e.target)) {
-                      document
-                        .querySelector(".city__btn")
-                        .classList.remove("active");
-                      document
-                        .querySelector(".city__drop")
-                        .classList.remove("active");
-                    }
-                  }}
-                >
-                  <CartPage store={this.props.store} />
-                </div>
+                      var container = document.querySelector(".city__drop");
+                      if (!container.contains(e.target)) {
+                        document
+                          .querySelector(".city__btn")
+                          .classList.remove("active");
+                        document
+                          .querySelector(".city__drop")
+                          .classList.remove("active");
+                      }
+                    }}
+                  >
+                    <CartPage store={this.props.store} />
+                  </div>
+                )
               )}
             />
             <Route
               path="/product/:id"
               render={(propsRout) => (
+                $("html, body").animate({ scrollTop: 0 }, 500),
                 (this.props.store.countInProdPage = 1),
                 (
                   <div className="main-screen">
@@ -220,9 +234,12 @@ const MainScreen = observer(
             <Route
               path="/profile"
               render={() => (
-                <div className="main-screen">
-                  <Profile store={this.props.store} />
-                </div>
+                $("html, body").animate({ scrollTop: 0 }, 500),
+                (
+                  <div className="main-screen">
+                    <Profile store={this.props.store} />
+                  </div>
+                )
               )}
             />
 
@@ -231,7 +248,14 @@ const MainScreen = observer(
               render={(propsRout) => (
                 (this.props.store.nameMainCat = ""),
                 (this.props.store.nameSecondCat = ""),
-                this.props.store.cleaningActiveFilters(),
+                this.props.store.bannerFilter.slug !==
+                propsRout.match.params.slug
+                  ? this.props.store.cleaningActiveFilters()
+                  : null,
+                this.props.store.bannerFilter.slug !==
+                propsRout.match.params.slug
+                  ? $("html, body").animate({ scrollTop: 0 }, 500)
+                  : null,
                 (this.props.store.bannerFilter = {
                   type: "collections",
                   slug: propsRout.match.params.slug,
@@ -251,9 +275,12 @@ const MainScreen = observer(
             <Route
               path="/collections"
               render={() => (
-                <div className="main-screen">
-                  <Collections store={this.props.store} />
-                </div>
+                $("html, body").animate({ scrollTop: 0 }, 500),
+                (
+                  <div className="main-screen">
+                    <Collections store={this.props.store} />
+                  </div>
+                )
               )}
             />
 
@@ -262,9 +289,45 @@ const MainScreen = observer(
               render={(propsRout) => (
                 (this.props.store.nameMainCat = ""),
                 (this.props.store.nameSecondCat = ""),
-                this.props.store.cleaningActiveFilters(),
+                this.props.store.bannerFilter.slug !==
+                propsRout.match.params.slug
+                  ? this.props.store.cleaningActiveFilters()
+                  : null,
+                this.props.store.bannerFilter.slug !==
+                propsRout.match.params.slug
+                  ? $("html, body").animate({ scrollTop: 0 }, 500)
+                  : null,
                 (this.props.store.bannerFilter = {
                   type: "main",
+                  slug: propsRout.match.params.slug,
+                }),
+                this.props.store.filtration(),
+                (
+                  <div className="main-screen">
+                    <Collection
+                      store={this.props.store}
+                      slug={propsRout.match.params.slug}
+                    />
+                  </div>
+                )
+              )}
+            />
+
+            <Route
+              path="/ideas/:slug"
+              render={(propsRout) => (
+                (this.props.store.nameMainCat = ""),
+                (this.props.store.nameSecondCat = ""),
+                this.props.store.bannerFilter.slug !==
+                propsRout.match.params.slug
+                  ? this.props.store.cleaningActiveFilters()
+                  : null,
+                this.props.store.bannerFilter.slug !==
+                propsRout.match.params.slug
+                  ? $("html, body").animate({ scrollTop: 0 }, 500)
+                  : null,
+                (this.props.store.bannerFilter = {
+                  type: "ideas",
                   slug: propsRout.match.params.slug,
                 }),
                 this.props.store.filtration(),
@@ -284,6 +347,7 @@ const MainScreen = observer(
               render={(propsRout) => (
                 (this.props.store.nameMainCat = ""),
                 (this.props.store.nameSecondCat = ""),
+                $("html, body").animate({ scrollTop: 0 }, 500),
                 this.props.store.cleaningActiveFilters(),
                 this.props.store.activeFilters.attr.push("hit"),
                 this.props.store.filtration(),
@@ -303,7 +367,14 @@ const MainScreen = observer(
               render={(propsRout) => (
                 (this.props.store.nameMainCat = ""),
                 (this.props.store.nameSecondCat = ""),
-                this.props.store.cleaningActiveFilters(),
+                this.props.store.bannerFilter.slug !==
+                propsRout.match.params.slug
+                  ? this.props.store.cleaningActiveFilters()
+                  : null,
+                this.props.store.bannerFilter.slug !==
+                propsRout.match.params.slug
+                  ? $("html, body").animate({ scrollTop: 0 }, 500)
+                  : null,
                 (this.props.store.bannerFilter = {
                   type: "sale",
                   slug: propsRout.match.params.slug,
@@ -324,63 +395,84 @@ const MainScreen = observer(
             <Route
               path="/actions"
               render={() => (
-                <div className="main-screen">
-                  <Actions />
-                </div>
+                $("html, body").animate({ scrollTop: 0 }, 500),
+                (
+                  <div className="main-screen">
+                    <Actions />
+                  </div>
+                )
               )}
             />
 
             <Route
               path="/action"
               render={() => (
-                <div className="main-screen">
-                  <Action />
-                </div>
+                $("html, body").animate({ scrollTop: 0 }, 500),
+                (
+                  <div className="main-screen">
+                    <Action />
+                  </div>
+                )
               )}
             />
 
             <Route
               path="/shops"
               render={() => (
-                <div className="main-screen">
-                  <Shops />
-                </div>
+                $("html, body").animate({ scrollTop: 0 }, 500),
+                (
+                  <div className="main-screen">
+                    <Shops />
+                  </div>
+                )
               )}
             />
 
             <Route
               path="/shops-map"
               render={() => (
-                <div className="main-screen">
-                  <ShopsMap />
-                </div>
+                $("html, body").animate({ scrollTop: 0 }, 500),
+                (
+                  <div className="main-screen">
+                    <ShopsMap />
+                  </div>
+                )
               )}
             />
 
             <Route
               path={["/help/:options"]}
               render={(routProps) => (
-                <div className="main-screen">
-                  <Help path={routProps.match.params.options} />
-                </div>
+                $("html, body").animate({ scrollTop: 0 }, 500),
+                (
+                  <div className="main-screen">
+                    <Help path={routProps.match.params.options} />
+                  </div>
+                )
               )}
             />
 
             <Route
               path="/about"
               render={() => (
-                <div className="main-screen">
-                  <About />
-                </div>
+                $("html, body").animate({ scrollTop: 0 }, 500),
+                (
+                  <div className="main-screen">
+                    <About />
+                  </div>
+                )
               )}
             />
 
             <Route
               path="/finish/:id"
               render={(routProps) => (
-                <div className="main-screen">
-                  <Finish id={routProps.match.params.id} />
-                </div>
+                $("html, body").animate({ scrollTop: 0 }, 500),
+                (
+                  <div className="main-screen">
+                    <Finish id={routProps.match.params.id} />
+                  </div>
+                )
               )}
             />
           </Switch>

@@ -138,10 +138,19 @@ class Store {
         console.log("err :>> ", err);
       });
   };
-  addToLike = () => {
+  addToLike = (toUser) => {
     console.log("likeContainer :>> ", this.likeContainer);
     localStorage.set("like", this.likeContainer);
-    if (this.auth) {
+    if (this.auth && !toUser) {
+      const like = this.likeContainer;
+      api
+        .updateLike(like)
+        .then((ok) => {
+          console.log("ok", ok);
+        })
+        .catch((err) => {
+          console.log("err", err);
+        });
     }
     if (this.likeContainer.length) {
       api
@@ -212,10 +221,32 @@ class Store {
       this.city = localStorage.get("city").name;
     } else {
       const init = () => {
+        console.log("window.ymaps :>> ", window.ymaps);
         const geolocation = window.ymaps.geolocation;
+        console.log("geolocation :>> ", geolocation);
         if (geolocation) {
-          localStorage.set("city", { name: geolocation.city, sourse: "Y" });
-          this.city = geolocation.city;
+          api
+            .getCity(geolocation.region + " " + geolocation.city)
+            .then((data) => {
+              if (data.length) {
+                localStorage.set("city", {
+                  name:
+                    data[0].addressComponents[
+                      data[0].addressComponents.length - 1
+                    ].name,
+                  geoId: data[0].geoId,
+                  region: geolocation.region,
+                  sourse: "Y",
+                });
+              }
+              this.city =
+                data[0].addressComponents[
+                  data[0].addressComponents.length - 1
+                ].name;
+            })
+            .catch((err) => {
+              console.log("err :>> ", err);
+            });
         } else {
           console.log("Не удалось установить местоположение");
         }
@@ -225,6 +256,7 @@ class Store {
   });
 
   getData = (bodyJSON, clearJSON) => {
+    console.log("clearJSON :>> ", clearJSON);
     const testContainer = [];
     console.log("this.categoryFilter :>> ", this.categoryFilter);
     if (!Object.keys(this.categoryFilter).length) {
@@ -750,9 +782,13 @@ class Store {
       decodSearch.split("&&").forEach((elem) => {
         const elemSp = elem.split("=");
         if (elemSp[0] !== "measure") {
-          this.activeFilters[elemSp[0]] = elemSp[1].split(",");
-          this.activeFilters.choosePoint.push(elemSp[0]);
-          this.activeFilters.count += elemSp.length;
+          if (elemSp[0] === "minPrice" || elemSp[0] === "maxPrice") {
+            this.activeFilters[elemSp[0]] = +elemSp[1];
+          } else {
+            this.activeFilters[elemSp[0]] = elemSp[1].split(",");
+            this.activeFilters.choosePoint.push(elemSp[0]);
+            this.activeFilters.count += elemSp.length;
+          }
         } else {
           const measEl = elemSp[1].split("!~");
           this.activeFilters.measure[measEl[0]] = measEl[1].split(",");
@@ -862,19 +898,22 @@ class Store {
 
     console.log("filterArray :>> ", filterArray, "bodyJSON :>> ", prodJSON);
     const bodyJSON = {};
-    if (this.bannerFilter.slug !== undefined) {
-      bodyJSON.banner = this.bannerFilter;
-    }
-    const clearJSON = Object.assign({ ...bodyJSON }, prodJSON);
+
+    const clearJSON = {};
+    clearJSON.prod = Object.assign({ ...bodyJSON }, prodJSON);
     if (!filterArray.length) {
       bodyJSON.prod = prodJSON;
     } else {
       bodyJSON.prod = Object.assign(prodJSON, { $and: filterArray });
     }
+    if (this.bannerFilter.slug !== undefined) {
+      bodyJSON.banner = this.bannerFilter;
+      clearJSON.banner = this.bannerFilter;
+    }
 
     console.log("filterArray :>> ", filterArray);
     console.log("bodyJSON :>> ", bodyJSON);
-    this.getData(bodyJSON, { prod: clearJSON });
+    this.getData(bodyJSON, { ...clearJSON });
   };
 
   createFilterPointsContainers = (availableFilters) => {

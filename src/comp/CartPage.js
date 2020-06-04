@@ -18,7 +18,7 @@ const CartPage = observer(
       deliveryData: {},
       adress: "",
       flat: "",
-      flatcoub: "",
+      house: "",
       name: "",
       secondName: "",
       email: "",
@@ -98,15 +98,7 @@ const CartPage = observer(
       }
 
       console.log("auth :>> ", this.props.store.auth);
-      const {
-        adress,
-        flat,
-        flatcoub,
-        name,
-        secondName,
-        email,
-        tel,
-      } = this.state;
+      const { adress, flat, house, name, secondName, email, tel } = this.state;
 
       return (
         <div className="cart-page">
@@ -210,11 +202,10 @@ const CartPage = observer(
                             document
                               .querySelector(".city__drop")
                               .classList.toggle("active");
-                            
+
                             if ($(window).width() < 760) {
-                              $(".sidebar-overlay").addClass('active');
+                              $(".sidebar-overlay").addClass("active");
                             }
-                            
                           }}
                         >
                           {this.props.store.city}{" "}
@@ -235,44 +226,107 @@ const CartPage = observer(
                                     "e.target.value.length :>> ",
                                     e.target.value.length
                                   );
-                                  const rigthCities = [];
-                                  cities.some((el) => {
-                                    if (rigthCities.length < 3) {
-                                      if (
-                                        el
-                                          .toLowerCase()
-                                          .indexOf(
-                                            e.target.value.toLowerCase()
-                                          ) !== -1
-                                      ) {
-                                        rigthCities.push(el);
-                                      }
-                                      return false;
-                                    } else {
-                                      return true;
-                                    }
-                                  });
                                   const renderCities = [];
-                                  for (let index = 0; index < 3; index++) {
-                                    console.log("object :>> ", rigthCities);
-                                    renderCities.push(
-                                      <li>
-                                        <button
-                                          type="submit"
-                                          onClick={(e) => {
-                                            e.preventDefault();
-                                            localStorage.set("city", {
-                                              name: rigthCities[index],
-                                              sourse: "U",
-                                            });
-                                          }}
-                                        >
-                                          {rigthCities[index]}
-                                        </button>
-                                      </li>
-                                    );
-                                  }
-                                  this.setState({ cities: renderCities });
+                                  api
+                                    .getCity(e.target.value)
+                                    .then((c) => {
+                                      console.log("c :>> ", c);
+                                      c.forEach((one) => {
+                                        if (one.addressComponents.length < 6) {
+                                          renderCities.push(
+                                            <li key={one.geoId}>
+                                              <button
+                                                type="submit"
+                                                onClick={(e) => {
+                                                  e.preventDefault();
+                                                  $(
+                                                    ".header__drop"
+                                                  ).removeClass("visible");
+                                                  localStorage.set("city", {
+                                                    name:
+                                                      one.addressComponents[
+                                                        one.addressComponents
+                                                          .length - 1
+                                                      ].name,
+                                                    geoId: one.geoId,
+                                                    region:
+                                                      one.addressComponents[2]
+                                                        .name,
+                                                    sourse: "U",
+                                                  });
+
+                                                  document
+                                                    .querySelector(".city__btn")
+                                                    .classList.remove("active");
+
+                                                  document
+                                                    .querySelector(
+                                                      ".city__drop"
+                                                    )
+                                                    .classList.remove("active");
+
+                                                  if ($(window).width() < 760) {
+                                                    $(
+                                                      ".sidebar-overlay"
+                                                    ).removeClass("active");
+                                                  }
+                                                }}
+                                              >
+                                                {one.addressComponents[
+                                                  one.addressComponents.length -
+                                                    2
+                                                ].name +
+                                                  ", " +
+                                                  one.addressComponents[
+                                                    one.addressComponents
+                                                      .length - 1
+                                                  ].name}
+                                              </button>
+                                            </li>
+                                          );
+                                        }
+                                      });
+                                      this.setState({ cities: renderCities });
+                                    })
+                                    .catch((err) => {
+                                      console.log("err :>> ", err);
+                                    });
+                                  // const rigthCities = [];
+                                  // cities.some((el) => {
+                                  //   if (rigthCities.length < 3) {
+                                  //     if (
+                                  //       el
+                                  //         .toLowerCase()
+                                  //         .indexOf(e.target.value.toLowerCase()) !== -1
+                                  //     ) {
+                                  //       rigthCities.push(el);
+                                  //     }
+                                  //     return false;
+                                  //   } else {
+                                  //     return true;
+                                  //   }
+                                  // });
+
+                                  // for (let index = 0; index < 3; index++) {
+                                  //   console.log("object :>> ", rigthCities);
+                                  //   renderCities.push(
+                                  //     <li>
+                                  //       <button
+                                  //         type="submit"
+                                  //         onClick={(e) => {
+                                  //           e.preventDefault();
+                                  //           $(".header__drop").removeClass("visible");
+                                  //           localStorage.set("city", {
+                                  //             name: rigthCities[index],
+                                  //             sourse: "U",
+                                  //           });
+                                  //         }}
+                                  //       >
+                                  //         {rigthCities[index]}
+                                  //       </button>
+                                  //     </li>
+                                  //   );
+                                  // }
                                 }
                               }}
                               onFocus={(e) => {
@@ -340,7 +394,7 @@ const CartPage = observer(
                           <div className="col col-6 col-s-12">
                             <div className="input-field">
                               <label className="required" htmlFor="address">
-                                Адрес
+                                Улица
                               </label>
                               <input
                                 id="address"
@@ -363,20 +417,6 @@ const CartPage = observer(
                                 onInput={(e) => {
                                   this.setState({ adress: e.target.value });
                                 }}
-                                onChange={() => {
-                                  api
-                                    .getCity(
-                                      this.props.store.city +
-                                        " " +
-                                        this.state.adress
-                                    )
-                                    .then((ok) => {
-                                      console.log("okCity :>> ", ok);
-                                    })
-                                    .catch((err) => {
-                                      console.log("errCity :>> ", err);
-                                    });
-                                }}
                               />
                             </div>
                           </div>
@@ -384,10 +424,40 @@ const CartPage = observer(
                           <div className="col col-3 col-s-6">
                             <div className="input-field">
                               <label className="required" htmlFor="flat">
-                                Кв/Офис
+                                Дом
                               </label>
                               <input
                                 id="flat"
+                                type="text"
+                                value={house}
+                                onFocus={(e) => {
+                                  $(e.target)
+                                    .parent()
+                                    .find("label")
+                                    .addClass("active");
+                                }}
+                                onBlur={(e) => {
+                                  if (e.target.value === "") {
+                                    $(e.target)
+                                      .parent()
+                                      .find("label")
+                                      .removeClass("active");
+                                  }
+                                }}
+                                onInput={(e) => {
+                                  this.setState({ house: e.target.value });
+                                }}
+                              />
+                            </div>
+                          </div>
+
+                          <div className="col col-3 col-s-6">
+                            <div className="input-field">
+                              <label className="required" htmlFor="porch">
+                                Кв/Офис
+                              </label>
+                              <input
+                                id="porch"
                                 type="text"
                                 value={flat}
                                 onFocus={(e) => {
@@ -406,36 +476,6 @@ const CartPage = observer(
                                 }}
                                 onInput={(e) => {
                                   this.setState({ flat: e.target.value });
-                                }}
-                              />
-                            </div>
-                          </div>
-
-                          <div className="col col-3 col-s-6">
-                            <div className="input-field">
-                              <label className="required" htmlFor="porch">
-                                Подъезд
-                              </label>
-                              <input
-                                id="porch"
-                                type="text"
-                                value={flatcoub}
-                                onFocus={(e) => {
-                                  $(e.target)
-                                    .parent()
-                                    .find("label")
-                                    .addClass("active");
-                                }}
-                                onBlur={(e) => {
-                                  if (e.target.value === "") {
-                                    $(e.target)
-                                      .parent()
-                                      .find("label")
-                                      .removeClass("active");
-                                  }
-                                }}
-                                onInput={(e) => {
-                                  this.setState({ flatcoub: e.target.value });
                                 }}
                               />
                             </div>
@@ -664,24 +704,78 @@ const CartPage = observer(
                       className="btn btn_yellow"
                       onClick={() => {
                         //NEN
+                        console.log(
+                          "this.deliveryOrderData",
+                          this.deliveryOrderData
+                        );
+                        const { flat, house, adress } = this.state;
+                        if (
+                          this.deliveryOrderData.deliveryOption === undefined
+                        ) {
+                          $("html, body").animate(
+                            {
+                              scrollTop:
+                                $(".cart-page__delivery").offset().top -
+                                $(".navigation").height(),
+                            },
+                            500
+                          );
+                          return;
+                        } else {
+                          if (
+                            this.deliveryOrderData.deliveryType === "COURIER"
+                          ) {
+                            if (flat === "" || house === "" || adress === "") {
+                              $("html, body").animate(
+                                {
+                                  scrollTop:
+                                    $(".cart-page__delivery").offset().top -
+                                    $(".navigation").height(),
+                                },
+                                500
+                              );
+                              return;
+                            }
+                          }
+
+                          if (
+                            name === "" ||
+                            secondName === "" ||
+                            email === "" ||
+                            tel === ""
+                          ) {
+                            $("html, body").animate(
+                              {
+                                scrollTop:
+                                  $(".cart-page__data").offset().top -
+                                  $(".navigation").height(),
+                              },
+                              500
+                            );
+                            return;
+                          }
+                        }
+
                         console.log("productInCart", productInCart);
                         const senderId = "500001936";
+                        const cityLoc = localStorage.get("city");
+                        console.log("cityLoc", cityLoc);
 
                         const recipient = {
                           firstName: name,
                           middleName: "{string}",
                           lastName: secondName,
-                          email: email,
+                          email: email.toLowerCase(),
                           address: {
                             // "geoId": {int},
                             country: "Россия",
-                            region: "Татарстан",
-                            locality: "Казань",
-                            street: "Волкова",
-                            house: "2",
+                            region: cityLoc.region,
+                            locality: cityLoc.name,
+                            street: adress,
+                            house: house,
                             // "housing": "{string}",
                             // "building": "{string}",
-                            apartment: "5",
+                            apartment: flat,
                           },
                           // "pickupPointId": {int}
                         };
@@ -730,21 +824,21 @@ const CartPage = observer(
                         });
 
                         dataToSend.sum = totalPrice;
-                        dataToSend.email = this.state.email;
+                        dataToSend.email = this.state.email.toLowerCase();
 
                         console.log("delivery :>> ", delivery, dataToSend);
 
-                        api
-                          .setOrderData({
-                            delivery,
-                            dataToSend,
-                          })
-                          .then((data) => {
-                            console.log("data :>> ", data);
-                          })
-                          .catch((err) => {
-                            console.log("err :>> ", err);
-                          });
+                        // api
+                        //   .setOrderData({
+                        //     delivery,
+                        //     dataToSend,
+                        //   })
+                        //   .then((data) => {
+                        //     window.location.href = data.link;
+                        //   })
+                        //   .catch((err) => {
+                        //     console.log("err :>> ", err);
+                        //   });
                       }}
                     >
                       Зaказать

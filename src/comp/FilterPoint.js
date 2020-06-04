@@ -60,6 +60,7 @@ const FilterPoint = observer(
           }
         }
       }
+      console.log("activeFilters.count :>> ", activeFilters.count);
       if (activeFilters.count) {
         activeFilters.choosePoint.forEach((filterName) => {
           if (filterName !== "choosePoint") {
@@ -115,6 +116,7 @@ const FilterPoint = observer(
       const { data, name, objectName } = this.props;
       const { classStyle } = this.state;
       const { activeFilters } = this.props.store;
+      let active = false;
       let act = false;
       const filterPoints = [];
       data.forEach((filterPoint) => {
@@ -128,6 +130,9 @@ const FilterPoint = observer(
             }
           } else {
             number = activeFilters[objectName].includes(filterPoint);
+          }
+          if (number) {
+            active = true;
           }
           filterPoints.push(
             <span
@@ -143,24 +148,27 @@ const FilterPoint = observer(
           );
         }
       });
+
       return (
-        <div className="filter-block">
-          <h3
-            className="filter__name"
-            onClick={(e) => {
-              e.target.classList.toggle("active");
-              if (classStyle.includes("active")) {
-                this.setState({ classStyle: "filter__container" });
-              } else {
-                this.setState({ classStyle: "filter__container active" });
-              }
-            }}
-          >
-            {name}
-            <div className="ic i_drop"></div>
-          </h3>
-          <div className={classStyle}>{filterPoints}</div>
-        </div>
+        filterPoints.length > 0 && (
+          <div className="filter-block">
+            <h3
+              className={active ? "filter__name active" : "filter__name"}
+              onClick={(e) => {
+                e.target.classList.toggle("active");
+                if (classStyle.includes("active")) {
+                  this.setState({ classStyle: "filter__container" });
+                } else {
+                  this.setState({ classStyle: "filter__container active" });
+                }
+              }}
+            >
+              {name}
+              <div className="ic i_drop"></div>
+            </h3>
+            <div className={classStyle}>{filterPoints}</div>
+          </div>
+        )
       );
     }
   }

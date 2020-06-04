@@ -1,119 +1,130 @@
-button{
-    background-color: transparent;
-    border: 0;
-    padding: 0;
-    cursor: pointer;
-    color: $b_dark;
-    transition: all 0.3s;
-    &:focus {outline:0;}
+button {
+  background-color: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  color: $b_dark;
+  transition: all 0.3s;
+  &:focus {
+    outline: 0;
+  }
 }
 
-.btn{
-    background-color: white;
-    box-shadow: $sh_btn;
-    padding: 10px 13px;
-    border-radius: 30px;
-    font-weight: 400;
-    font-size: 16px;
-    color: $b_dark;
-    transition: all 0.3s;
-    text-align: center;
-    cursor: pointer;
-    border: 1px solid $gr_light;
-    display: inline-block;
+.btn {
+  background-color: white;
+  box-shadow: $sh_btn;
+  padding: 10px 13px;
+  border-radius: 30px;
+  font-weight: 400;
+  font-size: 16px;
+  color: $b_dark;
+  transition: all 0.3s;
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid $gr_light;
+  display: inline-block;
 
-    .ic{
-        &:before{
-            position: relative;
-            top: 1px;
-        }
+  .ic {
+    &:before {
+      position: relative;
+      top: 1px;
     }
-    &:hover{
-        box-shadow: $sh_no;
-        transform: translateY(1px);
-    }
-    
-    &_primary{
-        border: 1px solid $g_middle;
-        font-weight: 500;
-    }
+  }
+  &:hover {
+    box-shadow: $sh_no;
+    transform: translateY(1px);
+  }
 
-    &_yellow{
-        box-shadow: $sh_no;
-        border: 1px solid $g_middle;
-        background-color: $g_light;
-        font-weight: 500;
-        &:hover{
-            box-shadow: $sh_no;
-            transform: translateY(0px);
-            opacity: 0.7;
-        }
-    }
-    &_wide{
-        width: 100%;
-    }
-    &_bottom{
-        margin-top: auto;
-    }
-    .i_right{
-        position: relative;
-        top: 1px;
-    }
-}
+  &_primary {
+    border: 1px solid $g_middle;
+    font-weight: 500;
+  }
 
-.ic{
-    // transition: all 0.2s;
-}
+  &.close {
+    opacity: 0;
+    visibility: hidden;
+  }
 
-.i_fav{
+  &_yellow {
+    box-shadow: $sh_no;
+    border: 1px solid $g_middle;
+    background-color: $g_light;
+    font-weight: 500;
+    &:hover {
+      box-shadow: $sh_no;
+      transform: translateY(0px);
+      opacity: 0.7;
+    }
+  }
+  &_wide {
+    width: 100%;
+  }
+  &_bottom {
+    margin-top: auto;
+  }
+  .i_right {
     position: relative;
-    &::after{
-        content: $i_fav-f;
-        position: absolute;
-        left: 0;
-        opacity: 0;
-        color: $red;
-        transition: all 0.2s;
-    }
+    top: 1px;
+  }
 }
 
-.i_user{
-    position: relative;
-    &::after{
-        content: $i_user-f;
-        position: absolute;
-        left: 0;
-        opacity: 0;
-        transition: all 0.2s;
-    }
+.ic {
+  // transition: all 0.2s;
 }
 
-.i_bag{
-    position: relative;
-    &::after{
-        content: $i_bag-f;
-        position: absolute;
-        left: 0;
-        opacity: 0;
-        transition: all 0.2s;
-    }
+.i_fav {
+  position: relative;
+  &::after {
+    content: $i_fav-f;
+    position: absolute;
+    left: 0;
+    opacity: 0;
+    color: $red;
+    transition: all 0.2s;
+  }
 }
 
-.active{
-    &.i_fav, &.i_user, &.i_bag{
-        &::after{
-            opacity: 1;
-        }
-        &::before{
-            opacity: 0;
-        }
+.i_user {
+  position: relative;
+  &::after {
+    content: $i_user-f;
+    position: absolute;
+    left: 0;
+    opacity: 0;
+    transition: all 0.2s;
+  }
+}
+
+.i_bag {
+  position: relative;
+  &::after {
+    content: $i_bag-f;
+    position: absolute;
+    left: 0;
+    opacity: 0;
+    transition: all 0.2s;
+  }
+}
+
+.active {
+  &.i_fav,
+  &.i_user,
+  &.i_bag {
+    &::after {
+      opacity: 1;
     }
-    .i_fav, .i_user, .i_bag{
-        &::after{
-            opacity: 1;
-        }
-        &::before{
-            opacity: 0;
-        }
+    &::before {
+      opacity: 0;
     }
+  }
+  .i_fav,
+  .i_user,
+  .i_bag {
+    &::after {
+      opacity: 1;
+    }
+    &::before {
+      opacity: 0;
+    }
+  }
 }

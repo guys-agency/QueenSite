@@ -94,6 +94,7 @@ const MainPage = observer(
       const mainBanners = [];
       const collLast = [];
       const saleCont = [];
+      const ideasCon = [];
       if (bannersData.main !== undefined) {
         bannersData.main.forEach((elem) => {
           mainBanners.push(
@@ -192,6 +193,85 @@ const MainPage = observer(
             </div>
           </Link>
         );
+
+        ideasCon.push(
+          <div className="row ideas-block">
+            <div className="col col-5 col-t-12">
+              <Link
+                to={"/ideas/" + bannersData.ideas[0].slug}
+                href="#"
+                className="banner banner_overlay main-idea"
+                style={{
+                  backgroundImage: `url(/image/banners/${
+                    typeDevice
+                      ? bannersData.ideas[0]["image-mob-large"]
+                      : bannersData.ideas[0]["image-desc-large"]
+                  })`,
+                }}
+              >
+                <div className="banner__desc">{bannersData.ideas[0].name}</div>
+              </Link>
+            </div>
+            <div className="ideas col col-7 col-t-12">
+              <div className="row row_inner">
+                <div className="col col-6 col-s-12">
+                  <Link
+                    to={"/ideas/" + bannersData.ideas[1].slug}
+                    href="#"
+                    className="banner banner_overlay small"
+                    style={{
+                      backgroundImage: `url(/image/banners/${
+                        typeDevice
+                          ? bannersData.ideas[1]["image-mob-large"]
+                          : bannersData.ideas[1]["image-desc-large"]
+                      })`,
+                    }}
+                  >
+                    <div className="banner__desc">
+                      {bannersData.ideas[1].name}
+                    </div>
+                  </Link>
+                </div>
+                <div className="col col-6 col-s-12">
+                  <Link
+                    to={"/ideas/" + bannersData.ideas[2].slug}
+                    href="#"
+                    className="banner banner_overlay small"
+                    style={{
+                      backgroundImage: `url(/image/banners/${
+                        typeDevice
+                          ? bannersData.ideas[2]["image-mob-large"]
+                          : bannersData.ideas[2]["image-desc-large"]
+                      })`,
+                    }}
+                  >
+                    <div className="banner__desc">
+                      {bannersData.ideas[2].name}
+                    </div>
+                  </Link>
+                </div>
+                <div className="col col-12 col-s-12">
+                  <Link
+                    to={"/ideas/" + bannersData.ideas[3].slug}
+                    href="#"
+                    className="banner banner_overlay large"
+                    style={{
+                      backgroundImage: `url(/image/banners/${
+                        typeDevice
+                          ? bannersData.ideas[3]["image-mob-large"]
+                          : bannersData.ideas[3]["image-desc-large"]
+                      })`,
+                    }}
+                  >
+                    <div className="banner__desc">
+                      {bannersData.ideas[3].name}
+                    </div>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
       }
 
       const headCar = {
@@ -210,7 +290,7 @@ const MainPage = observer(
         navigation: {
           nextEl: ".swiper-button-next",
           prevEl: ".swiper-button-prev",
-        }
+        },
       };
 
       const productCar = {
@@ -378,7 +458,8 @@ const MainPage = observer(
               <div className="title">
                 <h2 className="tilda">Идеи</h2>
               </div>
-              <div className="row ideas-block">
+              {ideasCon}
+              {/* <div className="row ideas-block">
                 <div className="col col-5 col-t-12">
                   <a
                     href="#"
@@ -427,7 +508,7 @@ const MainPage = observer(
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
               <div className="title">
                 <h2>Подарки</h2>
               </div>

@@ -62,7 +62,16 @@ const AuthSidebar = observer(
                     password: values.password,
                   })
                   .then((data) => {
+                    console.log("data :>> ", data);
                     this.props.store.auth = true;
+                    const lc = this.props.store.likeContainer;
+                    data.likeProducts.forEach((prod) => {
+                      if (!this.props.store.likeContainer.includes(prod)) {
+                        lc.push(prod);
+                      }
+                    });
+                    this.props.store.likeContainer = lc;
+                    this.props.store.addToLike();
                   });
               }}
               //свойство, где описывыем нашу форму

@@ -49,7 +49,7 @@ const ProductCardContainer = observer(
       return (
         <div className="col col-9 col-t-12">
           <div className="row row_inner">
-            <div className="col col-12">
+            {/* <div className="col col-12">
               <div className="sort">
                 <div className="dropdown">
                   <button
@@ -98,7 +98,7 @@ const ProductCardContainer = observer(
                   }}
                 ></button>
               </div>
-            </div>
+            </div> */}
             {this.props.store.productsToRender}
             {this.props.store.paginatCont}
           </div>

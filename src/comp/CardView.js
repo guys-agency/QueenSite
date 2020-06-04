@@ -10,6 +10,7 @@ import { SERVER_URL } from "../constants";
 import api from "./api";
 import moment from "moment";
 import num2str from "../ulits/nm2wrd";
+import { Link } from "react-router-dom";
 
 const { Component } = React;
 const historyAll = createBrowserHistory();
@@ -28,6 +29,7 @@ const CardView = observer(
 
     with = [];
     like = [];
+    count = true;
 
     clickHandler = (e) => {
       const { store } = this.props;
@@ -110,9 +112,10 @@ const CardView = observer(
 
       const { timeDelivery } = this.state;
 
-      if (this.fetchReady) {
+      if (this.fetchReady && this.count) {
         console.log("12 :>> ");
         if (timeDelivery === "") {
+          this.count = false;
           console.log("123 :>> ");
           const dataDeliv = {
             senderId: 500001936,
@@ -277,7 +280,7 @@ const CardView = observer(
                   }
                 >
                   <div className="col col-6 col-t-5 col-s-12">
-                    <Gallery />
+                    <Gallery path={data.path_to_photo} />
                   </div>
                   <div className="col col-6 col-t-7 col-s-12">
                     <div className="product-p__description">
@@ -285,9 +288,12 @@ const CardView = observer(
                         <h4 className="product-p__name">{data.name}</h4>
                         <div className="product-p__article">
                           {"Артикул: " + data.slug}
-                          <a className="underline" href="">
+                          <Link
+                            className="underline"
+                            to={"/catalog?brand=" + data.brand}
+                          >
                             {data.brand}
-                          </a>
+                          </Link>
                         </div>
                         {data.sale ? (
                           <div className={"product__price product__price_disc"}>

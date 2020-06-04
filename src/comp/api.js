@@ -31,6 +31,11 @@ class Api {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
+    }).then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      Promise.reject(res.json());
     });
   }
 
@@ -51,6 +56,27 @@ class Api {
       headers: {
         "Content-Type": "application/json",
       },
+    }).then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      Promise.reject(res.json());
+    });
+  }
+
+  updateLike(like) {
+    return fetch(SERVER_URL + "/user-like", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ like: like }),
+    }).then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      Promise.reject(res.json());
     });
   }
 

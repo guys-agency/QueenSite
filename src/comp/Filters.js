@@ -2,6 +2,7 @@ import { observer } from "mobx-react";
 import React from "react";
 import StickySidebar from "sticky-sidebar";
 import { Link, NavLink } from "react-router-dom";
+import { withRouter } from "react-router";
 import $ from "jquery";
 const { Component } = React;
 
@@ -63,8 +64,8 @@ const Filters = observer(
       }
     };
 
-    componentWillUnmount(){
-        $(".head_filter").removeClass("visible");
+    componentWillUnmount() {
+      $(".head_filter").removeClass("visible");
     }
 
     render() {
@@ -237,6 +238,7 @@ const Filters = observer(
                     name="min"
                     onChange={(e) => {
                       this.minPriceLocal = e.target.value;
+                      $("#priceBtn").removeClass("close");
                     }}
                   ></input>
                   <p> до </p>
@@ -245,14 +247,30 @@ const Filters = observer(
                     name="max"
                     onChange={(e) => {
                       this.maxPriceLocal = e.target.value;
+                      $("#priceBtn").removeClass("close");
                     }}
                   ></input>
                   <p>₽</p>
                   <button
-                    className="btn"
+                    className="btn close"
+                    id="priceBtn"
                     onClick={() => {
+                      const sch = this.props.location.search;
+                      let nwS;
                       if (this.minPriceLocal) {
                         activeFilters.minPrice = this.minPriceLocal;
+
+                        if (sch.includes("minPrice")) {
+                          const sp = sch.split("minPrice");
+                          if (sp[1].indexOf("&&") !== -1) {
+                            const sec = sp.substr(sp[1].indexOf("&&"));
+                            nwS =
+                              sp[0] + "minPrice=" + this.minPriceLocal + sec;
+                          } else {
+                            nwS = sp[0] + "minPrice=" + this.minPriceLocal;
+                          }
+                        } else {
+                        }
                       } else {
                         activeFilters.minPrice = 0;
                       }
@@ -261,6 +279,16 @@ const Filters = observer(
                       } else {
                         activeFilters.maxPrice = 0;
                       }
+                      $("#priceBtn").addClass("close");
+                      console.log(
+                        "this.props.location :>> ",
+                        this.props.location
+                      );
+                      if (this.props.location.search !== "") {
+                        const sch = this.props.location.search;
+                        sch.includes("minPrice");
+                      }
+
                       filtration();
                     }}
                   >
@@ -296,7 +324,7 @@ const Filters = observer(
                     <span className="checkbox-btn"></span>
                     <i>Хиты продаж</i>
                   </label>
-                  <label className="checkbox checkbox_margin">
+                  {/* <label className="checkbox checkbox_margin">
                     <input
                       type="checkbox"
                       onChange={(e) => {
@@ -310,7 +338,7 @@ const Filters = observer(
                     />
                     <span className="checkbox-btn"></span>
                     <i>Премиум</i>
-                  </label>
+                  </label> */}
                   <label className="checkbox checkbox_margin">
                     <input
                       type="checkbox"
@@ -351,4 +379,4 @@ const Filters = observer(
     }
   }
 );
-export default Filters;
+export default withRouter(Filters);

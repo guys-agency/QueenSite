@@ -56,12 +56,14 @@ const CityCh = observer(
                                   onClick={(e) => {
                                     e.preventDefault();
                                     $(".header__drop").removeClass("visible");
+                                    console.log("one", one);
                                     localStorage.set("city", {
                                       name:
                                         one.addressComponents[
                                           one.addressComponents.length - 1
                                         ].name,
                                       geoId: one.geoId,
+                                      region: one.addressComponents[2].name,
                                       sourse: "U",
                                     });
                                   }}

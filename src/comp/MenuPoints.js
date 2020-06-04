@@ -521,7 +521,7 @@ const MenuPoints = observer(
                   {this.phone}
                 </div>
                 <div className="navigation__left">
-                  <a href="" className="ic i_qd"></a>
+                  <Link to="/" className="ic i_qd"></Link>
                   <button className="btn btn_primary btn-menu">
                     {" "}
                     <span className="ic i_menu"></span> Каталог
