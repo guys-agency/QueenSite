@@ -82,6 +82,12 @@
       color: $g_middle;
     }
   }
+  .tooltip{
+    display: none;
+    @include max($s){
+      display: block;
+    }
+  }
   .i_filter{
     font-size: 21px;
     margin-right: 15px;

@@ -88,10 +88,15 @@
     }
   &__buttons{
     display: flex;
+    position: relative;
     @include max($s){
+      position: static;
       margin-top: 20px;
       order: 2;
       justify-content: stretch;
+      .tooltip{
+        display: none;
+      }
       .i_bag{
         display: none;
       }

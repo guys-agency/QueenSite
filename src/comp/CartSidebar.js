@@ -43,7 +43,7 @@ const CartSidebar = observer(
       }
       return (
         <>
-          <p>Итого: {totalPrice.toLocaleString()} ₽</p>
+          <div className="sidebar__total"><b>Итого:</b> <b className="price">{totalPrice.toLocaleString()} ₽</b></div>
           <div className="sidebar__over">
             <div className="cart__list">{productList}</div>
           </div>

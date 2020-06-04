@@ -1,0 +1,27 @@
+.tooltip{
+  width: 280px;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: $sh_main;
+  padding: 15px;
+
+  &_cart{
+    position: absolute;
+    top: 60px;
+    right: 0;
+  }
+  &__content{
+    display: flex;
+    .ic{
+        font-size: 18px;
+        margin-right: 10px;
+    }
+    .text{
+        max-width: 280px;
+        height: 19px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+  }
+}
