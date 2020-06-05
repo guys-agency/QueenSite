@@ -2,6 +2,9 @@ textarea:focus, input:focus{
     outline: none;
 }
 
+textarea{
+    resize: none;
+}
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {

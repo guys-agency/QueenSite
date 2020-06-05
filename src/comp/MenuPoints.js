@@ -11,6 +11,7 @@ import RegistrationSchema from "../schemas/registrationSchema";
 import LoginSchema from "../schemas/loginSchema";
 import LikeSidebar from "./LikeSidebar";
 import AuthSidebar from "./AuthSidebar";
+import AskSidebar from "./AskSidebar";
 import CartSidebar from "./CartSidebar";
 import localStorage from "mobx-localstorage";
 import { withRouter } from "react-router";
@@ -25,6 +26,7 @@ const MenuPoints = observer(
       cities: [],
       ready: false,
       popreg: false,
+      sideAsk: false,
       reg: false,
       log: true,
       login: "",
@@ -44,7 +46,16 @@ const MenuPoints = observer(
 
     phone = (
       <div className="header__right">
-        <button className="link dotted ask">Задать вопрос</button>
+        <button className="link dotted ask" onClick={ ()=>{
+          document
+            .querySelector(".sidebar-overlay")
+            .classList.add("active");
+
+          document.querySelector("body").classList.add("no-scroll");
+
+          this.setState({ sideAsk: true })
+        }
+        }>Задать вопрос</button>
         <a href="tel:+78008085878" className="phone">
           +7 800 808-58-78
         </a>
@@ -404,6 +415,7 @@ const MenuPoints = observer(
         popreg: false,
         popCart: false,
         popLike: false,
+        sideAsk: false
       });
       document.querySelector(".sidebar-overlay").classList.remove("active");
       $("body").removeClass("no-scroll");
@@ -421,6 +433,8 @@ const MenuPoints = observer(
         popreg: false,
         popCart: false,
         popLike: false,
+        sideAsk: false
+
       });
     };
 
@@ -829,7 +843,7 @@ const MenuPoints = observer(
             <div
               className={
                 "sidebar" +
-                (this.state.popreg || this.state.popCart || this.state.popLike
+                (this.state.popreg || this.state.popCart || this.state.popLike || this.state.sideAsk
                   ? " visible"
                   : "")
               }
@@ -838,7 +852,7 @@ const MenuPoints = observer(
                 <button className="btn btn-head" onClick={this.hideSidebar}>
                   Свернуть
                 </button>
-                {!this.state.popreg && (
+                {!this.state.popreg || this.state.sideAsk && (
                   <button
                     className="link dotted"
                     onClick={() => {
@@ -857,6 +871,12 @@ const MenuPoints = observer(
               </div>
               {this.state.popLike && (
                 <LikeSidebar
+                  store={this.props.store}
+                  closeSidebar={this.closeSidebar}
+                />
+              )}
+              {this.state.sideAsk && (
+                <AskSidebar
                   store={this.props.store}
                   closeSidebar={this.closeSidebar}
                 />
@@ -882,6 +902,7 @@ const MenuPoints = observer(
                   popreg: false,
                   popCart: false,
                   popLike: false,
+                  sideAsk: false,
                 });
 
                 $("body").removeClass("no-scroll");
