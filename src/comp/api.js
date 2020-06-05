@@ -143,6 +143,21 @@ class Api {
     });
   }
 
+  getActions() {
+    return fetch(SERVER_URL + "/actions", {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      Promise.reject(res.json());
+    });
+  }
+
   search(value) {
     return fetch(SERVER_URL + "/search", {
       method: "POST",

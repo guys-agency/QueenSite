@@ -398,7 +398,7 @@ const MainScreen = observer(
                 $("html, body").animate({ scrollTop: 0 }, 500),
                 (
                   <div className="main-screen">
-                    <Actions />
+                    <Actions store={this.props.store} />
                   </div>
                 )
               )}
