@@ -562,36 +562,36 @@ const MainPage = observer(
               <div className="gifts row">
                 <Swiper {...giftCar}>
                   <div className="col col-4 col-t-5 col-s-9">
-                    <a
+                    <Link to="podarki/podarki_do_500_russian_ruble"
                       className="banner"
                       style={{
                         backgroundImage: "url(" + "/image/gifts/1.png" + ")",
                       }}
                     >
                       <div className="banner__desc">До 500₽</div>
-                    </a>
+                    </Link>
                   </div>
 
                   <div className="col col-4 col-t-5 col-s-9">
-                    <a
+                    <Link to="podarki/podarki_do_1000_russian_ruble"
                       className="banner"
                       style={{
                         backgroundImage: "url(" + "/image/gifts/2.png" + ")",
                       }}
                     >
                       <div className="banner__desc">До 1 000₽</div>
-                    </a>
+                    </Link>
                   </div>
 
                   <div className="col col-4 col-t-5 col-s-9">
-                    <a
+                    <Link to="podarki/podarki_do_2000_russian_ruble"
                       className="banner"
                       style={{
                         backgroundImage: "url(" + "/image/gifts/3.png" + ")",
                       }}
                     >
                       <div className="banner__desc">До 2 000₽</div>
-                    </a>
+                    </Link>
                   </div>
                 </Swiper>
               </div>
@@ -716,7 +716,7 @@ const MainPage = observer(
                 <div className="col col-6 col-s-12 col-middle subscribe__form">
                   <h3>Подпишитесь на новости</h3>
                   <p>
-                    <b>Скидка 5%</b> на первую покупку
+                    {/* <b>Скидка 5%</b> на первую покупку */}
                   </p>
                   <form className="row row_inner col-bottom">
                     <div className="col col-7 col-s-12">

@@ -1,8 +1,10 @@
 .navigation {
     .search {
-      background: #ffffff;
-
-      border: 1px solid $gr_middle;
+      background: transparent;
+      border: 1px solid $a_darkest;
+      @include max($s){
+        border: 1px solid $gr_middle;
+      }
       box-sizing: border-box;
       border-radius: 25px;
       padding-left: 20px;
@@ -21,9 +23,14 @@
 
       &::placeholder{
           opacity: 1;
+          color: #88A4BD;
+          @include max($s){
+            color: #bdbdbd;
+          }
       } 
 
       &:focus{
+        background: #ffffff;
         box-shadow: $sh_btn;
         border: 1px solid #fff;
         width: 300px;
@@ -116,6 +123,15 @@
           padding-left: 5px;
           font-family: "Excentra Pro", 'Times New Roman', Times, serif;
         }
+      }
+    }
+  }
+
+  &_w{
+    .search{
+      border: 1px solid $gr_middle;
+      &::placeholder{
+        color: #BDBDBD;
       }
     }
   }

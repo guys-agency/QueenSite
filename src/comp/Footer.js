@@ -25,40 +25,40 @@ const Footer = observer(
                   <a className="ic i_fb" href=""></a>
                   <a className="ic i_inst" href=""></a>
                 </div>
-                <a href="/" className="logo logo_sq">
+                <Link to="/" className="logo logo_sq">
                   <span className="i_queen"></span>
                   <span className="i_of"></span>
                   <span className="i_line-h"></span>
                   <span className="i_bohemia"></span>
                   <span className="i_qr"></span>
-                </a>
+                </Link>
               </div>
               <div className="footer__column">
                 <h4 className="white">Категории</h4>
                 <div className="footer__links-column">
                   <ul className="footer__links">
                     <li>
-                      <a href="/catalog/">Каталог</a>
+                      <Link to="/catalog/">Каталог</Link>
                     </li>
                     <li>
-                      <a href="/collections/">Коллекции</a>
+                      <Link to="/collections/">Коллекции</Link>
                     </li>
                     <li>
-                      <a href="/catalog/interer/">Интерьр</a>
+                      <Link to="/catalog/interer/">Интерьр</Link>
                     </li>
                     <li>
-                      <a href="/gifts/">Подарки</a>
+                      <Link to="/gifts/">Подарки</Link>
                     </li>
                   </ul>
                   <ul className="footer__links">
                     <li>
-                      <a href="/premium/">Premium</a>
+                      <Link to="/premium/">Premium</Link>
                     </li>
                     {/* <li>
-                                            <a href="">Милениум</a>
+                                            <Link to="">Милениум</Link>
                                         </li> */}
                     <li>
-                      <a href="actions">Акции</a>
+                      <Link to="actions">Акции</Link>
                     </li>
                   </ul>
                 </div>
@@ -68,28 +68,28 @@ const Footer = observer(
                 <div className="footer__links-column">
                   <ul className="footer__links">
                     <li>
-                      <a href="/about">О нас</a>
+                      <Link to="/about">О нас</Link>
                     </li>
                     <li>
-                      <a href="/help/delivery">Доставка</a>
+                      <Link to="/help/delivery">Доставка</Link>
                     </li>
                     <li>
-                      <a href="/help/payment">Оплата</a>
+                      <Link to="/help/payment">Оплата</Link>
                     </li>
 
                     <li>
-                      <a href="/help/garantie">Гарантия</a>
+                      <Link to="/help/garantie">Гарантия</Link>
                     </li>
                   </ul>
                   <ul className="footer__links">
                     <li>
-                      <a href="/help/return">Возврат</a>
+                      <Link to="/help/return">Возврат</Link>
                     </li>
                     <li>
-                      <a href="/help/Бонусы">Бонусы</a>
+                      <Link to="/help/Бонусы">Бонусы</Link>
                     </li>
                     <li>
-                      <a href="/help/offer">Публичная оферта</a>
+                      <Link to="/help/offer">Публичная оферта</Link>
                     </li>
                   </ul>
                 </div>

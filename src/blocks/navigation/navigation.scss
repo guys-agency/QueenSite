@@ -88,6 +88,10 @@
       }
     }
     .search {
+      border: 1px solid $gr_middle;
+      &::placeholder{
+        color: #BDBDBD;
+      }
       &:focus{
         box-shadow: none;
         border: 1px solid $gr_middle;
@@ -164,5 +168,8 @@
         }
       }
     }
+  }
+  &_dn{
+    display: none;
   }
 }

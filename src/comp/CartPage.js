@@ -8,6 +8,8 @@ import { Link } from "react-router-dom";
 import moment from "moment";
 import ProductList from "./ProductList";
 import api from "./api";
+import num2str from "../ulits/nm2wrd";
+
 const { Component } = React;
 
 //TODO: исправить вывод стоимости во время скидки
@@ -376,7 +378,7 @@ const CartPage = observer(
                               }{" "}
                               ₽/{" "}
                               <span className="b_gray">
-                                {deliveryData.time} дня
+                                {deliveryData.time}{" "}{num2str(deliveryData.time, ["дня", "дней", "дней"])}
                               </span>
                             </span>
                           </div>
@@ -684,7 +686,7 @@ const CartPage = observer(
                               ₽ /{" "}
                               <span className="b_gray">
                                 {" "}
-                                {deliveryData.time} дня
+                                {deliveryData.time}{" "}{num2str(deliveryData.time, ["дня", "дней", "дней"])}
                               </span>
                             </span>
                           </div>

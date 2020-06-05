@@ -13,6 +13,7 @@ const AuthSidebar = observer(
     state = {
       reg: false,
       log: true,
+      pass: false,
     };
     focusHandler = (e) => {
       $(e.target).parent().find("label").addClass("active");
@@ -28,9 +29,9 @@ const AuthSidebar = observer(
         <>
           <div className="tumbler">
             <button
-              className={this.state.log ? " active" : ""}
+              className={this.state.log || this.state.pass ? " active" : ""}
               onClick={() => {
-                this.setState({ reg: false, log: true });
+                this.setState({ reg: false, pass: false, log: true });
               }}
             >
               Вход
@@ -38,7 +39,7 @@ const AuthSidebar = observer(
             <button
               className={this.state.reg ? " active" : ""}
               onClick={() => {
-                this.setState({ reg: true, log: false });
+                this.setState({ reg: true, log: false, pass: false });
               }}
             >
               Регистрация
@@ -87,52 +88,89 @@ const AuthSidebar = observer(
                 values,
                 handleChange,
               }) => (
-                <form className=" visible" onSubmit={handleSubmit}>
-                  <div className="input-field">
-                    <label className="required" htmlFor="email">
-                      Email
-                    </label>
-                    <input
-                      id="email"
-                      name="email"
-                      type="text"
-                      onFocus={this.focusHandler}
-                      onBlur={this.blurHandler}
-                      value={values.email}
-                      onChange={handleChange}
-                    />
+                <>
+                    <form className=" visible" onSubmit={handleSubmit}>
+                      <div className="input-field">
+                        <label className="required" htmlFor="email">
+                          Email
+                        </label>
+                        <input
+                          id="email"
+                          name="email"
+                          type="text"
+                          onFocus={this.focusHandler}
+                          onBlur={this.blurHandler}
+                          value={values.email}
+                          onChange={handleChange}
+                        />
 
-                    <div className="field-error">{errors.email}</div>
-                  </div>
+                        <div className="field-error">{errors.email}</div>
+                      </div>
 
-                  <div className="input-field">
-                    <label className="required" htmlFor="password">
-                      Пароль
+                      <div className="input-field">
+                        <label className="required" htmlFor="password">
+                          Пароль
                     </label>
-                    <input
-                      name="password"
-                      type="password"
-                      id="password"
-                      onFocus={this.focusHandler}
-                      onBlur={this.blurHandler}
-                      value={values.password}
-                      onChange={handleChange}
-                    />
-                    {errors.password && touched.password && (
-                      <div className="field-error">{errors.password}</div>
-                    )}
-                  </div>
-                  <button type="submit" className="btn btn_primary">
-                    Войти
-                  </button>
-                  <button className="link dotted forgot-btn">
-                    Забыли пароль?
-                  </button>
-                </form>
+                        <input
+                          name="password"
+                          type="password"
+                          id="password"
+                          onFocus={this.focusHandler}
+                          onBlur={this.blurHandler}
+                          value={values.password}
+                          onChange={handleChange}
+                        />
+                        {errors.password && touched.password && (
+                          <div className="field-error">{errors.password}</div>
+                        )}
+                      </div>
+                      <button type="submit" className="btn btn_primary">
+                        Войти
+                      </button>
+                    </form>
+                    <br />
+                    <span className="mla link dotted forgot-btn" onClick={(e) => {
+                      this.setState({ pass: true, log: false });
+                    }}>
+                      Забыли пароль?
+                    </span>
+                </>
               )}
             </Formik>
           )}
 
+          {this.state.pass &&(
+            <>
+              <form className=" visible" action="">
+                <div className="input-field">
+                  <label className="required" htmlFor="email">
+                    Email
+                        </label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="text"
+                    onFocus={this.focusHandler}
+                    onBlur={this.blurHandler}
+                    // value={values.email}
+                    // onChange={handleChange}
+                  />
+
+                  {/* <div className="field-error">{errors.email}</div> */}
+                </div>
+
+                <button type="submit" className="btn btn_primary">
+                  Войти
+                </button>
+              </form>
+              <br />
+              <span className="mla link dotted forgot-btn" onClick={(e) => {
+                this.setState({ pass: false, log: true });
+              }}>
+                Вспомнили пароль?
+            </span>
+            </>
+          )}
           {/* <form className={this.state.log ? " visible" : ""}>
                 <div className="input-field">
                   <label className="required" htmlFor="email">
