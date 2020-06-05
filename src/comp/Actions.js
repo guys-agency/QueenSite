@@ -31,6 +31,7 @@ const Actions = observer(
           const renConTime = [];
           console.log("ok :>> ", data);
           Object.keys(data).forEach((nEl) => {
+            console.log("nEl :>> ", nEl);
             const prod = data[nEl].products.map((elProd) => {
               return (
                 <div className="col col-3 col-t-4 col-s-6" key={elProd.slug}>
@@ -43,9 +44,10 @@ const Actions = observer(
                 {/**
                  * ! У первой акции .head_big нет .head_list как у последующих
                  */}
+
                 <div
                   className={`head ${
-                    nEl === 0 ? "head_big" : "head_sm head_list"
+                    +nEl === 0 ? "head_big" : "head_sm head_list"
                   }`}
                 >
                   <Link
