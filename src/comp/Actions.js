@@ -44,9 +44,9 @@ const Actions = observer(
                  * ! У первой акции .head_big нет .head_list как у последующих
                  */}
                 <div
-                  className={
-                    "head" + nEl === 0 ? "head_big" : "head_sm head_list"
-                  }
+                  className={`head ${
+                    nEl === 0 ? "head_big" : "head_sm head_list"
+                  }`}
                 >
                   <Link
                     to={"actions/" + data[nEl].slug}
