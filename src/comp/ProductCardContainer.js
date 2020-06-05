@@ -8,7 +8,7 @@ const ProductCardContainer = observer(
   class ProductCardContainer extends React.Component {
     state = {
       ready: false,
-      sortLabel: "Сначала новые",
+      sortLabel: "По умолчанию",
     };
 
     testContainer = [];
@@ -24,7 +24,8 @@ const ProductCardContainer = observer(
       });
 
       e.target.classList.toggle("active");
-
+      this.props.store.sortInProd = e.target.textContent;
+      this.props.store.filtration();
       this.setState({ sortLabel: e.target.textContent });
 
       document.querySelector(".dropdown__list").classList.remove("visible");
@@ -49,7 +50,7 @@ const ProductCardContainer = observer(
       return (
         <div className="col col-9 col-t-12">
           <div className="row row_inner">
-            {/* <div className="col col-12">
+            <div className="col col-12">
               <div className="sort">
                 <div className="dropdown">
                   <button
@@ -62,29 +63,29 @@ const ProductCardContainer = observer(
                     {this.state.sortLabel}
                   </button>
                   <div className="dropdown__list">
-                    <button
+                    {/* <button
                       className="dropdown__list-item item"
                       onClick={this.sortClick}
                     >
                       Сначала новые
+                    </button> */}
+                    <button
+                      className="dropdown__list-item item"
+                      onClick={this.sortClick}
+                    >
+                      По умолчанию
                     </button>
                     <button
                       className="dropdown__list-item item"
                       onClick={this.sortClick}
                     >
-                      Сначала старые
+                      Сначала дороже
                     </button>
                     <button
                       className="dropdown__list-item item"
                       onClick={this.sortClick}
                     >
-                      Сначала подороже
-                    </button>
-                    <button
-                      className="dropdown__list-item item"
-                      onClick={this.sortClick}
-                    >
-                      Сначала подешевле
+                      Сначала дешевле
                     </button>
                   </div>
                 </div>
@@ -98,7 +99,7 @@ const ProductCardContainer = observer(
                   }}
                 ></button>
               </div>
-            </div> */}
+            </div>
             {this.props.store.productsToRender}
             {this.props.store.paginatCont}
           </div>
