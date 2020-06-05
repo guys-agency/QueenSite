@@ -28,48 +28,54 @@ const Profile = observer(
             console.log("err :>> ", err);
           });
       } else {
-        data.orders.forEach((order) => {
-          const prodCon = [];
-          Object.keys(order.products).map((prod) => {
-            console.log("moment(order.date) :>> ", moment(order.date));
-            prodCon.push(
-              <div className="item">
-                <span className="name">{order.products[prod].name}</span>
-                <span className="price">
-                  {order.products[prod].sale
-                    ? order.products[prod].sale_price.toLocaleString()
-                    : order.products[prod].regular_price.toLocaleString()}{" "}
-                  ₽
-                </span>
+        if (data !== undefined) {
+          data.orders.forEach((order) => {
+            const prodCon = [];
+            Object.keys(order.products).map((prod) => {
+              console.log("moment(order.date) :>> ", moment(order.date));
+              prodCon.push(
+                <div className="item">
+                  <span className="name">{order.products[prod].name}</span>
+                  <span className="price">
+                    {order.products[prod].sale
+                      ? order.products[prod].sale_price.toLocaleString()
+                      : order.products[
+                          prod
+                        ].regular_price.toLocaleString()}{" "}
+                    ₽
+                  </span>
+                </div>
+              );
+            });
+            orders.push(
+              <div className="orders-item">
+                <div className="orders-item__head">
+                  <h4>
+                    Заказ №{order.dbid} на сумму {order.sum.toLocaleString()}₽
+                  </h4>
+                  <div className="date">{}</div>
+                </div>
+                <div className="orders-item__desc">
+                  <div className="status">
+                    {order.status === "Created" ? "В обработке" : "Оплачен"}
+                  </div>
+                  <button
+                    className="link dotted"
+                    onClick={(e) => {
+                      e.target.classList.toggle("active");
+                      e.target
+                        .closest(".orders-item")
+                        .classList.toggle("active");
+                    }}
+                  >
+                    состав заказа <span className="ic i_drop"></span>
+                  </button>
+                </div>
+                <div className="orders-item__products">{prodCon}</div>
               </div>
             );
           });
-          orders.push(
-            <div className="orders-item">
-              <div className="orders-item__head">
-                <h4>
-                  Заказ №{order.dbid} на сумму {order.sum.toLocaleString()}₽
-                </h4>
-                <div className="date">{}</div>
-              </div>
-              <div className="orders-item__desc">
-                <div className="status">
-                  {order.status === "Created" ? "В обработке" : "Оплачен"}
-                </div>
-                <button
-                  className="link dotted"
-                  onClick={(e) => {
-                    e.target.classList.toggle("active");
-                    e.target.closest(".orders-item").classList.toggle("active");
-                  }}
-                >
-                  состав заказа <span className="ic i_drop"></span>
-                </button>
-              </div>
-              <div className="orders-item__products">{prodCon}</div>
-            </div>
-          );
-        });
+        }
       }
 
       console.log('getCookie("auth") :>> ', getCookie("auth"));

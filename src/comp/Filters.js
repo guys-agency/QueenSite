@@ -31,20 +31,80 @@ const Filters = observer(
       console.log("value :>> ", value);
       if (value) {
         console.log(" :>> test");
-        if (!activeFilters.attr.includes(name)) {
-          activeFilters.attr.push(name);
-          filtration();
+        if (name !== "premium") {
+          if (!activeFilters.attr.includes(name)) {
+            activeFilters.attr.push(name);
+            activeFilters.choosePoint.push("attr");
+          }
+        } else {
+          activeFilters.premium = !activeFilters.premium;
+          activeFilters.choosePoint.push("premium");
         }
       } else {
         console.log(
           "activeFilters.attr.includes(name) :>> ",
           activeFilters.attr.includes(name)
         );
-        if (activeFilters.attr.includes(name)) {
-          activeFilters.attr.splice(activeFilters.attr.indexOf(name), 1);
-          filtration();
+        if (name !== "premium") {
+          if (activeFilters.attr.includes(name)) {
+            activeFilters.attr.splice(activeFilters.attr.indexOf(name), 1);
+            activeFilters.choosePoint.splice(
+              activeFilters.choosePoint.indexOf("attr"),
+              1
+            );
+          }
+        } else {
+          activeFilters.premium = !activeFilters.premium;
+          activeFilters.choosePoint.splice("premium", 1);
         }
       }
+      let searchQt = "";
+      activeFilters.choosePoint.forEach((filterName) => {
+        if (filterName !== "choosePoint") {
+          if (filterName !== "measure") {
+            if (filterName === "maxPrice" || filterName === "minPrice") {
+              if (!searchQt.length) {
+                searchQt = filterName + "=" + activeFilters[filterName];
+              } else {
+                searchQt += "&&" + filterName + "=" + activeFilters[filterName];
+              }
+            } else {
+              if (activeFilters[filterName].length) {
+                if (!searchQt.length) {
+                  searchQt =
+                    filterName + "=" + activeFilters[filterName].join();
+                } else {
+                  searchQt +=
+                    "&&" + filterName + "=" + activeFilters[filterName].join();
+                }
+              }
+            }
+          } else {
+            if (Object.keys(activeFilters[filterName]).length) {
+              Object.keys(activeFilters[filterName]).forEach((ind) => {
+                console.log("ind :>> ", activeFilters[filterName][ind]);
+                if (!searchQt.length) {
+                  searchQt =
+                    filterName +
+                    "=" +
+                    ind +
+                    "!~" +
+                    activeFilters[filterName][ind].join(",");
+                } else {
+                  searchQt +=
+                    "&&" +
+                    filterName +
+                    "=" +
+                    ind +
+                    "!~" +
+                    activeFilters[filterName][ind].join(",");
+                }
+              });
+            }
+          }
+        }
+      });
+      this.props.history.replace({ search: searchQt });
     };
 
     subCat = (e) => {
@@ -401,7 +461,7 @@ const Filters = observer(
                           );
 
                           this.checkBoxHandler(
-                            "new",
+                            "premium",
                             $(e.target).is(":checked")
                           );
                         }}
@@ -414,6 +474,7 @@ const Filters = observer(
                     <label className="checkbox checkbox_margin">
                       <input
                         type="checkbox"
+                        checked={activeFilters.attr.includes("sale")}
                         onChange={(e) => {
                           console.log(
                             "e.target.value",
