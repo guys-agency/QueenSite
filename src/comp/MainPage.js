@@ -599,7 +599,7 @@ const MainPage = observer(
           </div>
 
           {newCont.length !== 0 && (
-            <div className="carousel carousel_product">
+            <div className="carousel carousel_product carousel_product-new">
               <div className="container">
                 <div className="title">
                   <Link to="/sale" href="">
