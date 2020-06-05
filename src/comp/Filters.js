@@ -308,55 +308,68 @@ const Filters = observer(
                 <h5>Дополнительно</h5>
                 <div>{optPointsContainers}</div>
                 <div>
-                  <label className="checkbox">
-                    <input
-                      type="checkbox"
-                      checked={activeFilters.attr.includes("hit")}
-                      onChange={(e) => {
-                        console.log(
-                          "e.target.value",
-                          $(e.target).is(":checked")
-                        );
+                  {!window.location.pathname.includes("hits") && (
+                    <label className="checkbox">
+                      <input
+                        type="checkbox"
+                        checked={activeFilters.attr.includes("hit")}
+                        onChange={(e) => {
+                          console.log(
+                            "e.target.value",
+                            $(e.target).is(":checked")
+                          );
 
-                        this.checkBoxHandler("hit", $(e.target).is(":checked"));
-                      }}
-                    />
-                    <span className="checkbox-btn"></span>
-                    <i>Хиты продаж</i>
-                  </label>
-                  {/* <label className="checkbox checkbox_margin">
-                    <input
-                      type="checkbox"
-                      onChange={(e) => {
-                        console.log(
-                          "e.target.value",
-                          $(e.target).is(":checked")
-                        );
+                          this.checkBoxHandler(
+                            "hit",
+                            $(e.target).is(":checked")
+                          );
+                        }}
+                      />
+                      <span className="checkbox-btn"></span>
+                      <i>Хиты продаж</i>
+                    </label>
+                  )}
 
-                        this.checkBoxHandler("new", $(e.target).is(":checked"));
-                      }}
-                    />
-                    <span className="checkbox-btn"></span>
-                    <i>Премиум</i>
-                  </label> */}
-                  <label className="checkbox checkbox_margin">
-                    <input
-                      type="checkbox"
-                      onChange={(e) => {
-                        console.log(
-                          "e.target.value",
-                          $(e.target).is(":checked")
-                        );
+                  {!window.location.pathname.includes("premium") && (
+                    <label className="checkbox checkbox_margin">
+                      <input
+                        type="checkbox"
+                        onChange={(e) => {
+                          console.log(
+                            "e.target.value",
+                            $(e.target).is(":checked")
+                          );
 
-                        this.checkBoxHandler(
-                          "sale",
-                          $(e.target).is(":checked")
-                        );
-                      }}
-                    />
-                    <span className="checkbox-btn"></span>
-                    <i>Со скидкой</i>
-                  </label>
+                          this.checkBoxHandler(
+                            "new",
+                            $(e.target).is(":checked")
+                          );
+                        }}
+                      />
+                      <span className="checkbox-btn"></span>
+                      <i>Премиум</i>
+                    </label>
+                  )}
+                  {!window.location.pathname.includes("sale") && (
+                    <label className="checkbox checkbox_margin">
+                      <input
+                        type="checkbox"
+                        onChange={(e) => {
+                          console.log(
+                            "e.target.value",
+                            $(e.target).is(":checked")
+                          );
+
+                          this.checkBoxHandler(
+                            "sale",
+                            $(e.target).is(":checked")
+                          );
+                        }}
+                      />
+                      <span className="checkbox-btn"></span>
+                      <i>Со скидкой</i>
+                    </label>
+                  )}
                 </div>
               </div>
             </div>

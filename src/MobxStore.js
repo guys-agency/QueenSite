@@ -55,6 +55,8 @@ class Store {
 
   activeCats = [];
 
+  searchText = "";
+
   cartCount = 0;
   productInCart = {};
   productInCartList =
@@ -989,11 +991,14 @@ class Store {
     console.log("bodyJSON :>> ", bodyJSON);
 
     if (pathname.includes("hits")) {
-      bodyJSON.hit = true;
+      bodyJSON.withCat = true;
     } else if (pathname.includes("sale")) {
-      bodyJSON.sale = true;
+      bodyJSON.withCat = true;
+      bodyJSON.search = this.searchText;
     } else if (pathname.includes("search")) {
-      bodyJSON.search = true;
+      bodyJSON.withCat = true;
+    } else if (pathname.includes("premium")) {
+      bodyJSON.withCat = true;
     }
     this.getData(bodyJSON, { ...clearJSON }, TStart);
   };

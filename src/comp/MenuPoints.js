@@ -81,7 +81,7 @@ const MenuPoints = observer(
       </div>
     );
 
-    search = (<></>);
+    searchValue = "";
 
     toggleMenu = (e) => {
       e.stopPropagation();
@@ -511,7 +511,11 @@ const MenuPoints = observer(
                     this.setState({ popCart: true });
                   }}
                 >
-                  <span className="i_bag__counter">9</span>
+                  <span className="i_bag__counter">
+                    {this.props.store.cartCount > 9
+                      ? 9
+                      : this.props.store.cartCount}
+                  </span>
                 </button>
 
                 <div className="tooltip tooltip_cart">
@@ -519,7 +523,7 @@ const MenuPoints = observer(
                     <span className="ic i_plus"></span>
                     <div className="text">
                       Кружка 370 мл Модерн, черная матовая
-                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -672,15 +676,19 @@ const MenuPoints = observer(
                   </span>
                 </div>
                 <div className="search-pos">
-                  <form className="search-wrp">
+                  <form
+                    className="search-wrp"
+                    onSubmit={() => {
+                      this.props.store.searchText = this.searchValue;
+                      this.props.history.push("/search/");
+                    }}
+                  >
                     <input
                       type="text"
                       className="search"
                       placeholder="Поиск"
                       onChange={(e) => {
-                        if (e.target.value.length > 2) {
-                          api.search(e.target.value);
-                        }
+                        this.searchValue = e.target.value;
                       }}
                     ></input>
                     <button className="ic i_search"></button>
@@ -713,7 +721,11 @@ const MenuPoints = observer(
                       this.setState({ popCart: true });
                     }}
                   >
-                    <span className="i_bag__counter">9</span>
+                    <span className="i_bag__counter">
+                      {this.props.store.cartCount > 9
+                        ? 9
+                        : this.props.store.cartCount}
+                    </span>
                   </button>
                   <div className="tooltip tooltip_cart">
                     <div className="tooltip__content">
