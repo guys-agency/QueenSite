@@ -474,7 +474,7 @@ const MainPage = observer(
                   <Link to="/catalog/?brand=Queen%20of%20Bohemia" className="slider-brand">
                     <img src="/image/logos/Queen of Bohemia NEW.jpg" />
                   </Link>
-                  <Link to="/catalog/?brand=http://127.0.0.1:3000/catalog/?brand=Langenthal" className="slider-brand">
+                  <Link to="/catalog/?brand=Langenthal" className="slider-brand">
                     <img src="/image/logos/Suisse Lagenthal logo white on color.png" />
                   </Link>
                 </Swiper>
