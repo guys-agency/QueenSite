@@ -54,8 +54,8 @@ const Actions = observer(
                     style={{
                       backgroundImage: `url(/image/banners/${
                         typeDevice
-                          ? data[0]["image-mob-large"]
-                          : data[0]["image-desc-large"]
+                          ? data[nEl]["image-mob-large"]
+                          : data[nEl]["image-desc-large"]
                       })`,
                     }}
                   >
