@@ -57,6 +57,8 @@ class Store {
 
   searchText = "";
 
+  sortInProd = "";
+
   cartCount = 0;
   productInCart = {};
   productInCartList =
@@ -999,6 +1001,11 @@ class Store {
       bodyJSON.search = this.searchText;
     } else if (pathname.includes("premium")) {
       bodyJSON.withCat = true;
+    }
+    if (this.sortInProd === "Сначала дороже") {
+      bodyJSON.sort = -1;
+    } else if (this.sortInProd === "Сначала дешевле") {
+      bodyJSON.sort = 1;
     }
     this.getData(bodyJSON, { ...clearJSON }, TStart);
   };
