@@ -4,17 +4,28 @@
   border-radius: 5px;
   box-shadow: $sh_main;
   padding: 15px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-2px);
+  transition: all 0.3s;
 
   &_cart{
     position: absolute;
     top: 60px;
     right: 0;
+    @include max($s){
+      right: 10px;
+      top: 70px;
+    }
   }
   &__content{
     display: flex;
     .ic{
         font-size: 18px;
         margin-right: 10px;
+        &.i_fav-f{
+          color: $red;
+        }
     }
     .text{
         max-width: 280px;
@@ -23,5 +34,11 @@
         text-overflow: ellipsis;
         white-space: nowrap;
     }
+  }
+
+  &.visible{
+    transform: translateY(0px);
+    opacity: 1;
+    visibility: visible;
   }
 }

@@ -21,6 +21,7 @@
         }
         &.active{
             background-color: $g_middle;
+            color: white;
         }
         &:last-child{
             margin-right: 0;

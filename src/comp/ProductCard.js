@@ -4,6 +4,7 @@ import { withRouter } from "react-router";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import localStorage from "mobx-localstorage";
+import $ from "jquery";
 
 const ProductCard = observer(function ProductCard(props) {
   const { data, store } = props;
@@ -24,18 +25,63 @@ const ProductCard = observer(function ProductCard(props) {
       if (inCart !== -1) {
         console.log("test123 :>> ");
 
+        $('.tooltip_cart').addClass('visible');
+        $('.tooltip_cart').find('.text').text(data.name);
+
+        $('.tooltip_cart').find('.ic').removeClass('i_fav');
+        $('.tooltip_cart').find('.ic').removeClass('i_plus');
+        $('.tooltip_cart').find('.ic').addClass('i_minus');
+
+        setTimeout(() => {
+          $('.tooltip_cart').removeClass('visible')
+        }, 2000)
+
         delete productInCartList[data.slug];
       } else {
         productInCartList[data.slug] = 1;
+
+        $('.tooltip_cart').find('.ic').removeClass('i_fav-f');
+        $('.tooltip_cart').find('.ic').removeClass('i_minus');
+        $('.tooltip_cart').find('.ic').addClass('i_plus');
+
+        $('.tooltip_cart').addClass('visible');
+        $('.tooltip_cart').find('.text').text(data.name)
+        setTimeout(() => {
+          $('.tooltip_cart').removeClass('visible')
+        }, 2000)
       }
+
+
+      
       addtoCart(true);
     } else if (e.target.classList.contains("i_fav")) {
       const { likeContainer, addToLike } = store;
 
       if (inLike !== -1) {
         likeContainer.splice(inLike, 1);
+
+
+        $('.tooltip_cart').addClass('visible');
+        $('.tooltip_cart').find('.text').text(data.name);
+
+        $('.tooltip_cart').find('.ic').removeClass('i_fav-f');
+        $('.tooltip_cart').find('.ic').removeClass('i_plus');
+        $('.tooltip_cart').find('.ic').addClass('i_minus');
+        setTimeout(() => {
+          $('.tooltip_cart').removeClass('visible')
+        }, 2000)
       } else {
         likeContainer.unshift(String(data.slug));
+
+        $('.tooltip_cart').addClass('visible');
+        $('.tooltip_cart').find('.text').text(data.name);
+
+        $('.tooltip_cart').find('.ic').removeClass('i_plus');
+        $('.tooltip_cart').find('.ic').removeClass('i_minus');
+        $('.tooltip_cart').find('.ic').addClass('i_fav-f');
+        setTimeout(() => {
+          $('.tooltip_cart').removeClass('visible')
+        }, 2000)
       }
       addToLike();
     } else {
