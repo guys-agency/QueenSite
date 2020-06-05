@@ -40,6 +40,7 @@ class Store {
   productValue = 0;
 
   filtCount = 0;
+  pathS = "";
 
   categoryFilter = {};
   nameMainCat = "";
@@ -698,8 +699,8 @@ class Store {
 
             catsArr.forEach((elem) => {
               elem.childs.sort((a, b) => {
-                if (a < b) return -1; // a расположится раньше b
-                if (b < a) return 1; // b расположится раньше a
+                if (a.name < b.name) return -1; // a расположится раньше b
+                if (b.name < a.name) return 1; // b расположится раньше a
                 return 0;
               });
             });
@@ -816,6 +817,7 @@ class Store {
     this.bannerFilter = {};
     this.prodCats = [];
     this.dataColl = [];
+    this.pathS = "";
   };
 
   filtration = () => {
@@ -860,6 +862,16 @@ class Store {
       console.log(" this.activeFilters:>> ", this.activeFilters);
     }
     console.log("this.activeFilters :>> ", this.activeFilters);
+    const pathname = window.location.pathname;
+    console.log("pathname", pathname);
+    if (pathname.includes("hits")) {
+      this.activeFilters.attr.push("hit");
+      this.activeFilters.count += 1;
+    } else if (pathname.includes("sale")) {
+      this.activeFilters.attr.push("sale");
+      this.activeFilters.count += 1;
+    }
+
     if (this.activeFilters.count) {
       // let searchQt = "";
       this.activeFilters.choosePoint.forEach((filterName) => {
@@ -975,6 +987,14 @@ class Store {
     delete clearJSON.prod.stop;
     console.log("filterArray :>> ", filterArray);
     console.log("bodyJSON :>> ", bodyJSON);
+
+    if (pathname.includes("hits")) {
+      bodyJSON.hit = true;
+    } else if (pathname.includes("sale")) {
+      bodyJSON.sale = true;
+    } else if (pathname.includes("search")) {
+      bodyJSON.search = true;
+    }
     this.getData(bodyJSON, { ...clearJSON }, TStart);
   };
 
