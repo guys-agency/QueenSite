@@ -448,7 +448,13 @@ const CardView = observer(
                                   "см"}
                               </li>
                               <li>{data.country}</li>
-                              <li>Объем: 320мл</li>
+                              {data.attributes.length !== 0 && (
+                                <li>
+                                  {data.attributes[0].name}:{" "}
+                                  {data.attributes[0].value +
+                                    data.attributes[0].unit}
+                                </li>
+                              )}
                               {/* <li>{data.brand}</li> */}
                             </ul>
                           </div>
@@ -475,15 +481,15 @@ const CardView = observer(
                 </div>
               </div>
             </div>
-            <div className="carousel carousel_product">
-              <div className="container">
-                <div className="title">
-                  <h3>С этим товаром покупают</h3>
+            {this.with.length !== 0 && (
+              <div className="carousel carousel_product">
+                <div className="container">
+                  <div className="title">
+                    <h3>С этим товаром покупают</h3>
+                  </div>
                 </div>
-              </div>
-              <div className="container container_s">
-                <div className="slider-cont">
-                  {this.with.length && (
+                <div className="container container_s">
+                  <div className="slider-cont">
                     <Swiper {...relativeCar}>
                       {this.with.map((el) => {
                         return (
@@ -497,37 +503,39 @@ const CardView = observer(
                         );
                       })}
                     </Swiper>
-                  )}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
 
-            <div className="carousel carousel_product">
-              <div className="container">
-                <div className="title">
-                  <h3 className="tilda">Похожие товары</h3>
+            {this.like.length !== 0 && (
+              <div className="carousel carousel_product">
+                <div className="container">
+                  <div className="title">
+                    <h3 className="tilda">Похожие товары</h3>
+                  </div>
+                </div>
+                <div className="container container_s">
+                  <div className="slider-cont">
+                    {this.like.length && (
+                      <Swiper {...sameCar}>
+                        {this.like.map((el) => {
+                          return (
+                            <div className="col col-3 col-t-4 col-s-6">
+                              <ProductCard
+                                key={el.slug}
+                                data={el}
+                                store={this.props.store}
+                              />
+                            </div>
+                          );
+                        })}
+                      </Swiper>
+                    )}
+                  </div>
                 </div>
               </div>
-              <div className="container container_s">
-                <div className="slider-cont">
-                  {this.like.length && (
-                    <Swiper {...sameCar}>
-                      {this.like.map((el) => {
-                        return (
-                          <div className="col col-3 col-t-4 col-s-6">
-                            <ProductCard
-                              key={el.slug}
-                              data={el}
-                              store={this.props.store}
-                            />
-                          </div>
-                        );
-                      })}
-                    </Swiper>
-                  )}
-                </div>
-              </div>
-            </div>
+            )}
           </div>
         )
       );

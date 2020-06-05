@@ -255,38 +255,345 @@ class Store {
     }
   });
 
-  getData = (bodyJSON, clearJSON) => {
+  getData = (bodyJSON, clearJSON, t) => {
     console.log("clearJSON :>> ", clearJSON);
     const testContainer = [];
     console.log("this.categoryFilter :>> ", this.categoryFilter);
-    if (!Object.keys(this.categoryFilter).length) {
-      fetch(SERVER_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          credentials: "include",
-        },
-        body: JSON.stringify(clearJSON),
+    // if (!Object.keys(this.categoryFilter).length) {
+    //   fetch(SERVER_URL, {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       credentials: "include",
+    //     },
+    //     body: JSON.stringify(clearJSON),
+    //   })
+    //     .then((res) => {
+    //       return res.json();
+    //     })
+    //     .then((data) => {
+    //       const TEndT = new Date();
+    //       console.log("TTTTTT11", TEndT - t);
+    //       //продукты
+    //       // console.log("dataData1 :>> ", data);
+    //       // data[0].product.forEach((element) => {
+    //       //   testContainer.push(
+    //       //     <div className="col col-4 col-s-6">
+    //       //       <ProductCard key={element.slug} data={element} store={this} />
+    //       //     </div>
+    //       //   );
+    //       // });
+
+    //       // this.productsToRender = testContainer;
+
+    //       //Сортировка
+    //       const sortData = {};
+    //       console.log("data[0] :>> ", data[0]);
+    //       Object.keys(data[0].sort[0]).forEach((name) => {
+    //         if (
+    //           (name !== "_id") &
+    //           (name !== "minPrice") &
+    //           (name !== "maxPrice") &
+    //           (name !== "measure") &
+    //           (name !== "count")
+    //         ) {
+    //           sortData[name] = data[0].sort[0][name].sort();
+    //         } else if (name == "measure") {
+    //           const newMeasure = [];
+    //           const sortObj = {
+    //             names: [],
+    //           };
+    //           data[0].sort[0][name].forEach((elem) => {
+    //             if (elem.name != "") {
+    //               if (!sortObj.names.includes(elem.name[0])) {
+    //                 sortObj.names.push(elem.name[0]);
+    //               }
+    //               if (sortObj[elem.name]) {
+    //                 sortObj[elem.name].push(Number(elem.value[0]));
+    //               } else {
+    //                 sortObj[elem.name] = [Number(elem.value[0])];
+    //               }
+    //               if (!sortObj[elem.name + "Unit"]) {
+    //                 sortObj[elem.name + "Unit"] = elem.unit;
+    //               }
+    //             }
+    //           });
+    //           sortObj.names.sort();
+
+    //           sortObj.names.forEach((sn) => {
+    //             newMeasure.push({
+    //               name: sn,
+    //               value: sortObj[sn].sort(function (a, b) {
+    //                 return a - b;
+    //               }),
+    //               unit: sortObj[sn + "Unit"][0],
+    //             });
+    //           });
+    //           sortData[name] = newMeasure;
+    //         } else {
+    //           sortData[name] = data[0].sort[0][name];
+    //         }
+    //       });
+    //       // this.productValue = data[0].sort[0].count;
+    //       // this.paginatCont = [<Paginat store={this} />];
+    //       this.categoryFilter = sortData;
+    //       this.getData(bodyJSON, clearJSON, t);
+
+    //       // //временная заплатка
+    //       // // if (Object.keys(data).length === 0) {
+    //       // //   console.log("object123");
+    //       // //   this.filtration();
+    //       // //   return;
+    //       // // }
+    //       // console.log("data :>> ", data);
+    //       // this.createFilterPointsContainers(sortData);
+    //       //СОЗДАНИЕ КАТЕГОРИЙ ПО ВЫБОРКЕ
+
+    //       // if (data[0].cats !== undefined && !this.prodCats.length) {
+    //       //   const cats = {};
+    //       //   data[0].cats[0].cats.forEach((elemMain) => {
+    //       //     elemMain.forEach((elem) => {
+    //       //       if (cats[elem.slugName] !== undefined) {
+    //       //         elem.childs.forEach((child, i) => {
+    //       //           if (
+    //       //             !cats[elem.slugName].childsNameArr.includes(
+    //       //               elem.childsSlug[i]
+    //       //             )
+    //       //           ) {
+    //       //             cats[elem.slugName].childs.push({
+    //       //               name: child,
+    //       //               slug: elem.childsSlug[i],
+    //       //             });
+    //       //             cats[elem.slugName].childsNameArr.push(
+    //       //               elem.childsSlug[i]
+    //       //             );
+    //       //           }
+    //       //         });
+    //       //       } else {
+    //       //         cats[elem.slugName] = {
+    //       //           name: elem.name,
+    //       //           slug: elem.slugName,
+    //       //         };
+    //       //         if (cats[elem.slugName].childs === undefined) {
+    //       //           cats[elem.slugName].childs = [];
+    //       //           cats[elem.slugName].childsNameArr = [];
+    //       //         }
+    //       //         elem.childs.forEach((child, i) => {
+    //       //           if (
+    //       //             !cats[elem.slugName].childsNameArr.includes(
+    //       //               elem.childsSlug[i]
+    //       //             )
+    //       //           ) {
+    //       //             cats[elem.slugName].childs.push({
+    //       //               name: child,
+    //       //               slug: elem.childsSlug[i],
+    //       //             });
+    //       //             cats[elem.slugName].childsNameArr.push(
+    //       //               elem.childsSlug[i]
+    //       //             );
+    //       //           }
+    //       //         });
+    //       //       }
+    //       //     });
+    //       //   });
+    //       //   const catsArr = [];
+    //       //   Object.keys(cats).forEach((name) => {
+    //       //     catsArr.push(cats[name]);
+    //       //   });
+
+    //       //   catsArr.forEach((elem) => {
+    //       //     elem.childs.sort((a, b) => {
+    //       //       if (a < b) return -1; // a расположится раньше b
+    //       //       if (b < a) return 1; // b расположится раньше a
+    //       //       return 0;
+    //       //     });
+    //       //   });
+
+    //       //   //данные баннера
+    //       //   if (data.collData !== undefined && !this.dataColl.length) {
+    //       //     this.dataColl = data.collData;
+    //       //   }
+
+    //       //   console.log("data :>> ", data);
+    //       //   console.log("cats :>> ", catsArr);
+    //       //   this.prodCats = catsArr;
+    //       //   this.activeCats = this.prodCats;
+    //       // }
+    //     })
+    //     .catch((err) => {
+    //       console.log("err", err);
+    //     });
+
+    //   // fetch(SERVER_URL + "/sort-names", {
+    //   //   method: "POST",
+    //   //   headers: {
+    //   //     "Content-Type": "application/json",
+    //   //     credentials: "include",
+    //   //   },
+    //   //   body: JSON.stringify(bodyJSONFilter),
+    //   // })
+    //   //   .then((res) => {
+    //   //     return res.json();
+    //   //   })
+    //   //   .then((data) => {
+    //   //     const sortData = {};
+
+    //   //     Object.keys(data).forEach((name) => {
+    //   //       if (
+    //   //         (name !== "_id") &
+    //   //         (name !== "minPrice") &
+    //   //         (name !== "maxPrice") &
+    //   //         (name !== "measure") &
+    //   //         (name !== "count")
+    //   //       ) {
+    //   //         sortData[name] = data[name].sort();
+    //   //       } else if (name == "measure") {
+    //   //         const newMeasure = [];
+    //   //         const sortObj = {
+    //   //           names: [],
+    //   //         };
+    //   //         data[name].forEach((elem) => {
+    //   //           if (elem.name != "") {
+    //   //             if (!sortObj.names.includes(elem.name[0])) {
+    //   //               sortObj.names.push(elem.name[0]);
+    //   //             }
+    //   //             if (sortObj[elem.name]) {
+    //   //               sortObj[elem.name].push(Number(elem.value[0]));
+    //   //             } else {
+    //   //               sortObj[elem.name] = [Number(elem.value[0])];
+    //   //             }
+    //   //             if (!sortObj[elem.name + "Unit"]) {
+    //   //               sortObj[elem.name + "Unit"] = elem.unit;
+    //   //             }
+    //   //           }
+    //   //         });
+    //   //         sortObj.names.sort();
+
+    //   //         sortObj.names.forEach((sn) => {
+    //   //           newMeasure.push({
+    //   //             name: sn,
+    //   //             value: sortObj[sn].sort(function (a, b) {
+    //   //               return a - b;
+    //   //             }),
+    //   //             unit: sortObj[sn + "Unit"][0],
+    //   //           });
+    //   //         });
+    //   //         sortData[name] = newMeasure;
+    //   //       } else {
+    //   //         sortData[name] = data[name];
+    //   //       }
+    //   //     });
+    //   //     this.productValue = data.count;
+    //   //     this.paginatCont = [<Paginat store={this} />];
+    //   //     this.categoryFilter = sortData;
+
+    //   //     //временная заплатка
+    //   //     // if (Object.keys(data).length === 0) {
+    //   //     //   console.log("object123");
+    //   //     //   this.filtration();
+    //   //     //   return;
+    //   //     // }
+    //   //     console.log("data :>> ", data);
+    //   //     this.createFilterPointsContainers(sortData);
+    //   //   })
+    //   //   .catch((err) => {
+    //   //     console.log("err", err);
+    //   //   });
+    // } else {
+    fetch(SERVER_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        credentials: "include",
+      },
+      body: JSON.stringify({ ...bodyJSON, clearJSON }),
+    })
+      .then((res) => {
+        return res.json();
       })
-        .then((res) => {
-          return res.json();
-        })
-        .then((data) => {
-          //продукты
-          // console.log("dataData1 :>> ", data);
-          // data[0].product.forEach((element) => {
-          //   testContainer.push(
-          //     <div className="col col-4 col-s-6">
-          //       <ProductCard key={element.slug} data={element} store={this} />
-          //     </div>
-          //   );
-          // });
+      .then((data) => {
+        const TEnd = new Date();
+        console.log("TTTTTT", TEnd - t);
+        //продукты
+        console.log("dataData2 :>> ", data);
+        console.log("Object.keys(data).length :>> ", data[0].product.length);
+        if (!data[0].product.length) {
+          if (this.activeFilters.choosePoint.length) {
+            this.activeFilters[
+              this.activeFilters.choosePoint[
+                this.activeFilters.choosePoint.length - 1
+              ]
+            ] = [];
+            this.activeFilters.choosePoint.pop();
+            this.filtration();
+          }
+        } else {
+          data[0].product.forEach((element) => {
+            testContainer.push(
+              <div className="col col-4 col-s-6" key={element.slug}>
+                <ProductCard data={element} store={this} />
+              </div>
+            );
+          });
+        }
+        this.productsToRender = testContainer;
 
-          // this.productsToRender = testContainer;
+        if (!Object.keys(this.categoryFilter).length) {
+          //стартовый фильтр
+          const sortDataClear = {};
 
-          //Сортировка
-          const sortData = {};
-          console.log("data[0] :>> ", data[0]);
+          Object.keys(data[0].clearSort[0]).forEach((name) => {
+            if (
+              (name !== "_id") &
+              (name !== "minPrice") &
+              (name !== "maxPrice") &
+              (name !== "measure") &
+              (name !== "count")
+            ) {
+              sortDataClear[name] = data[0].clearSort[0][name].sort();
+            } else if (name == "measure") {
+              const newMeasure = [];
+              const sortObj = {
+                names: [],
+              };
+              data[0].sort[0][name].forEach((elem) => {
+                if (elem.name != "") {
+                  if (!sortObj.names.includes(elem.name[0])) {
+                    sortObj.names.push(elem.name[0]);
+                  }
+                  if (sortObj[elem.name]) {
+                    sortObj[elem.name].push(Number(elem.value[0]));
+                  } else {
+                    sortObj[elem.name] = [Number(elem.value[0])];
+                  }
+                  if (!sortObj[elem.name + "Unit"]) {
+                    sortObj[elem.name + "Unit"] = elem.unit;
+                  }
+                }
+              });
+              sortObj.names.sort();
+
+              sortObj.names.forEach((sn) => {
+                newMeasure.push({
+                  name: sn,
+                  value: sortObj[sn].sort(function (a, b) {
+                    return a - b;
+                  }),
+                  unit: sortObj[sn + "Unit"][0],
+                });
+              });
+              sortDataClear[name] = newMeasure;
+            } else {
+              sortDataClear[name] = data[0].clearSort[0][name];
+            }
+          });
+          // this.productValue = data[0].sort[0].count;
+          // this.paginatCont = [<Paginat store={this} />];
+          this.categoryFilter = sortDataClear;
+        }
+        //сортировка
+        const sortData = {};
+        if (Object.keys(data[0].sort[0]).length) {
           Object.keys(data[0].sort[0]).forEach((name) => {
             if (
               (name !== "_id") &
@@ -332,409 +639,162 @@ class Store {
               sortData[name] = data[0].sort[0][name];
             }
           });
-          // this.productValue = data[0].sort[0].count;
-          // this.paginatCont = [<Paginat store={this} />];
-          this.categoryFilter = sortData;
-          this.getData(bodyJSON, clearJSON);
+          this.productValue = data[0].sort[0].count;
+          this.paginatCont = [<Paginat store={this} />];
+          this.createFilterPointsContainers(sortData);
 
-          // //временная заплатка
-          // // if (Object.keys(data).length === 0) {
-          // //   console.log("object123");
-          // //   this.filtration();
-          // //   return;
-          // // }
-          // console.log("data :>> ", data);
-          // this.createFilterPointsContainers(sortData);
-          //СОЗДАНИЕ КАТЕГОРИЙ ПО ВЫБОРКЕ
-
-          // if (data[0].cats !== undefined && !this.prodCats.length) {
-          //   const cats = {};
-          //   data[0].cats[0].cats.forEach((elemMain) => {
-          //     elemMain.forEach((elem) => {
-          //       if (cats[elem.slugName] !== undefined) {
-          //         elem.childs.forEach((child, i) => {
-          //           if (
-          //             !cats[elem.slugName].childsNameArr.includes(
-          //               elem.childsSlug[i]
-          //             )
-          //           ) {
-          //             cats[elem.slugName].childs.push({
-          //               name: child,
-          //               slug: elem.childsSlug[i],
-          //             });
-          //             cats[elem.slugName].childsNameArr.push(
-          //               elem.childsSlug[i]
-          //             );
-          //           }
-          //         });
-          //       } else {
-          //         cats[elem.slugName] = {
-          //           name: elem.name,
-          //           slug: elem.slugName,
-          //         };
-          //         if (cats[elem.slugName].childs === undefined) {
-          //           cats[elem.slugName].childs = [];
-          //           cats[elem.slugName].childsNameArr = [];
-          //         }
-          //         elem.childs.forEach((child, i) => {
-          //           if (
-          //             !cats[elem.slugName].childsNameArr.includes(
-          //               elem.childsSlug[i]
-          //             )
-          //           ) {
-          //             cats[elem.slugName].childs.push({
-          //               name: child,
-          //               slug: elem.childsSlug[i],
-          //             });
-          //             cats[elem.slugName].childsNameArr.push(
-          //               elem.childsSlug[i]
-          //             );
-          //           }
-          //         });
-          //       }
-          //     });
-          //   });
-          //   const catsArr = [];
-          //   Object.keys(cats).forEach((name) => {
-          //     catsArr.push(cats[name]);
-          //   });
-
-          //   catsArr.forEach((elem) => {
-          //     elem.childs.sort((a, b) => {
-          //       if (a < b) return -1; // a расположится раньше b
-          //       if (b < a) return 1; // b расположится раньше a
-          //       return 0;
-          //     });
-          //   });
-
-          //   //данные баннера
-          //   if (data.collData !== undefined && !this.dataColl.length) {
-          //     this.dataColl = data.collData;
-          //   }
-
-          //   console.log("data :>> ", data);
-          //   console.log("cats :>> ", catsArr);
-          //   this.prodCats = catsArr;
-          //   this.activeCats = this.prodCats;
-          // }
-        })
-        .catch((err) => {
-          console.log("err", err);
-        });
-
-      // fetch(SERVER_URL + "/sort-names", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //     credentials: "include",
-      //   },
-      //   body: JSON.stringify(bodyJSONFilter),
-      // })
-      //   .then((res) => {
-      //     return res.json();
-      //   })
-      //   .then((data) => {
-      //     const sortData = {};
-
-      //     Object.keys(data).forEach((name) => {
-      //       if (
-      //         (name !== "_id") &
-      //         (name !== "minPrice") &
-      //         (name !== "maxPrice") &
-      //         (name !== "measure") &
-      //         (name !== "count")
-      //       ) {
-      //         sortData[name] = data[name].sort();
-      //       } else if (name == "measure") {
-      //         const newMeasure = [];
-      //         const sortObj = {
-      //           names: [],
-      //         };
-      //         data[name].forEach((elem) => {
-      //           if (elem.name != "") {
-      //             if (!sortObj.names.includes(elem.name[0])) {
-      //               sortObj.names.push(elem.name[0]);
-      //             }
-      //             if (sortObj[elem.name]) {
-      //               sortObj[elem.name].push(Number(elem.value[0]));
-      //             } else {
-      //               sortObj[elem.name] = [Number(elem.value[0])];
-      //             }
-      //             if (!sortObj[elem.name + "Unit"]) {
-      //               sortObj[elem.name + "Unit"] = elem.unit;
-      //             }
-      //           }
-      //         });
-      //         sortObj.names.sort();
-
-      //         sortObj.names.forEach((sn) => {
-      //           newMeasure.push({
-      //             name: sn,
-      //             value: sortObj[sn].sort(function (a, b) {
-      //               return a - b;
-      //             }),
-      //             unit: sortObj[sn + "Unit"][0],
-      //           });
-      //         });
-      //         sortData[name] = newMeasure;
-      //       } else {
-      //         sortData[name] = data[name];
-      //       }
-      //     });
-      //     this.productValue = data.count;
-      //     this.paginatCont = [<Paginat store={this} />];
-      //     this.categoryFilter = sortData;
-
-      //     //временная заплатка
-      //     // if (Object.keys(data).length === 0) {
-      //     //   console.log("object123");
-      //     //   this.filtration();
-      //     //   return;
-      //     // }
-      //     console.log("data :>> ", data);
-      //     this.createFilterPointsContainers(sortData);
-      //   })
-      //   .catch((err) => {
-      //     console.log("err", err);
-      //   });
-    } else {
-      fetch(SERVER_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          credentials: "include",
-        },
-        body: JSON.stringify(bodyJSON),
-      })
-        .then((res) => {
-          return res.json();
-        })
-        .then((data) => {
-          //продукты
-          console.log("dataData2 :>> ", data);
-          console.log("Object.keys(data).length :>> ", data[0].product.length);
-          if (!data[0].product.length) {
-            if (this.activeFilters.choosePoint.length) {
-              this.activeFilters[
-                this.activeFilters.choosePoint[
-                  this.activeFilters.choosePoint.length - 1
-                ]
-              ] = [];
-              this.activeFilters.choosePoint.pop();
-              this.filtration();
-            }
-          } else {
-            data[0].product.forEach((element) => {
-              testContainer.push(
-                <div className="col col-4 col-s-6" key={element.slug}>
-                  <ProductCard data={element} store={this} />
-                </div>
-              );
-            });
-          }
-          this.productsToRender = testContainer;
-          //сортировка
-          const sortData = {};
-          if (Object.keys(data[0].sort[0]).length) {
-            Object.keys(data[0].sort[0]).forEach((name) => {
-              if (
-                (name !== "_id") &
-                (name !== "minPrice") &
-                (name !== "maxPrice") &
-                (name !== "measure") &
-                (name !== "count")
-              ) {
-                sortData[name] = data[0].sort[0][name].sort();
-              } else if (name == "measure") {
-                const newMeasure = [];
-                const sortObj = {
-                  names: [],
-                };
-                data[0].sort[0][name].forEach((elem) => {
-                  if (elem.name != "") {
-                    if (!sortObj.names.includes(elem.name[0])) {
-                      sortObj.names.push(elem.name[0]);
+          //КАТЕГОРИИ БАННЕРА
+          if (data[0].cats !== undefined && !this.prodCats.length) {
+            const cats = {};
+            data[0].cats[0].cats.forEach((elemMain) => {
+              elemMain.forEach((elem) => {
+                if (cats[elem.slugName] !== undefined) {
+                  elem.childs.forEach((child, i) => {
+                    if (
+                      !cats[elem.slugName].childsNameArr.includes(
+                        elem.childsSlug[i]
+                      )
+                    ) {
+                      cats[elem.slugName].childs.push({
+                        name: child,
+                        slug: elem.childsSlug[i],
+                      });
+                      cats[elem.slugName].childsNameArr.push(
+                        elem.childsSlug[i]
+                      );
                     }
-                    if (sortObj[elem.name]) {
-                      sortObj[elem.name].push(Number(elem.value[0]));
-                    } else {
-                      sortObj[elem.name] = [Number(elem.value[0])];
-                    }
-                    if (!sortObj[elem.name + "Unit"]) {
-                      sortObj[elem.name + "Unit"] = elem.unit;
-                    }
-                  }
-                });
-                sortObj.names.sort();
-
-                sortObj.names.forEach((sn) => {
-                  newMeasure.push({
-                    name: sn,
-                    value: sortObj[sn].sort(function (a, b) {
-                      return a - b;
-                    }),
-                    unit: sortObj[sn + "Unit"][0],
                   });
-                });
-                sortData[name] = newMeasure;
-              } else {
-                sortData[name] = data[0].sort[0][name];
-              }
-            });
-            this.productValue = data[0].sort[0].count;
-            this.paginatCont = [<Paginat store={this} />];
-            this.createFilterPointsContainers(sortData);
-
-            //КАТЕГОРИИ БАННЕРА
-            if (data[0].cats !== undefined && !this.prodCats.length) {
-              const cats = {};
-              data[0].cats[0].cats.forEach((elemMain) => {
-                elemMain.forEach((elem) => {
-                  if (cats[elem.slugName] !== undefined) {
-                    elem.childs.forEach((child, i) => {
-                      if (
-                        !cats[elem.slugName].childsNameArr.includes(
-                          elem.childsSlug[i]
-                        )
-                      ) {
-                        cats[elem.slugName].childs.push({
-                          name: child,
-                          slug: elem.childsSlug[i],
-                        });
-                        cats[elem.slugName].childsNameArr.push(
-                          elem.childsSlug[i]
-                        );
-                      }
-                    });
-                  } else {
-                    cats[elem.slugName] = {
-                      name: elem.name,
-                      slug: elem.slugName,
-                    };
-                    if (cats[elem.slugName].childs === undefined) {
-                      cats[elem.slugName].childs = [];
-                      cats[elem.slugName].childsNameArr = [];
-                    }
-                    elem.childs.forEach((child, i) => {
-                      if (
-                        !cats[elem.slugName].childsNameArr.includes(
-                          elem.childsSlug[i]
-                        )
-                      ) {
-                        cats[elem.slugName].childs.push({
-                          name: child,
-                          slug: elem.childsSlug[i],
-                        });
-                        cats[elem.slugName].childsNameArr.push(
-                          elem.childsSlug[i]
-                        );
-                      }
-                    });
+                } else {
+                  cats[elem.slugName] = {
+                    name: elem.name,
+                    slug: elem.slugName,
+                  };
+                  if (cats[elem.slugName].childs === undefined) {
+                    cats[elem.slugName].childs = [];
+                    cats[elem.slugName].childsNameArr = [];
                   }
-                });
+                  elem.childs.forEach((child, i) => {
+                    if (
+                      !cats[elem.slugName].childsNameArr.includes(
+                        elem.childsSlug[i]
+                      )
+                    ) {
+                      cats[elem.slugName].childs.push({
+                        name: child,
+                        slug: elem.childsSlug[i],
+                      });
+                      cats[elem.slugName].childsNameArr.push(
+                        elem.childsSlug[i]
+                      );
+                    }
+                  });
+                }
               });
-              const catsArr = [];
-              Object.keys(cats).forEach((name) => {
-                catsArr.push(cats[name]);
+            });
+            const catsArr = [];
+            Object.keys(cats).forEach((name) => {
+              catsArr.push(cats[name]);
+            });
+
+            catsArr.forEach((elem) => {
+              elem.childs.sort((a, b) => {
+                if (a < b) return -1; // a расположится раньше b
+                if (b < a) return 1; // b расположится раньше a
+                return 0;
               });
+            });
 
-              catsArr.forEach((elem) => {
-                elem.childs.sort((a, b) => {
-                  if (a < b) return -1; // a расположится раньше b
-                  if (b < a) return 1; // b расположится раньше a
-                  return 0;
-                });
-              });
-
-              //данные баннера
-              if (data.collData !== undefined && !this.dataColl.length) {
-                this.dataColl = data.collData;
-              }
-
-              console.log("data :>> ", data);
-              console.log("cats :>> ", catsArr);
-              this.prodCats = catsArr;
-              this.activeCats = this.prodCats;
+            //данные баннера
+            if (data.collData !== undefined && !this.dataColl.length) {
+              this.dataColl = data.collData;
             }
+
+            console.log("data :>> ", data);
+            console.log("cats :>> ", catsArr);
+            this.prodCats = catsArr;
+            this.activeCats = this.prodCats;
           }
-        })
-        .catch((err) => {
-          console.log("err", err);
-        });
+        }
+        const TEndQ = new Date();
+        console.log("TTTTTT", TEndQ - t);
+      })
+      .catch((err) => {
+        console.log("err", err);
+      });
 
-      // fetch(SERVER_URL + "/sort-names", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //     credentials: "include",
-      //   },
-      //   body: JSON.stringify(
-      //     Object.assign(bodyJSONFilter, {
-      //       $and: filterArray,
-      //     })
-      //   ),
-      // })
-      //   .then((res) => {
-      //     return res.json();
-      //   })
-      //   .then((data) => {
-      //     console.log("data2 :>> ", data);
-      //     const sortData = {};
-      //     if (Object.keys(data).length) {
-      //       Object.keys(data).forEach((name) => {
-      //         if (
-      //           (name !== "_id") &
-      //           (name !== "minPrice") &
-      //           (name !== "maxPrice") &
-      //           (name !== "measure") &
-      //           (name !== "count")
-      //         ) {
-      //           sortData[name] = data[name].sort();
-      //         } else if (name == "measure") {
-      //           const newMeasure = [];
-      //           const sortObj = {
-      //             names: [],
-      //           };
-      //           data[name].forEach((elem) => {
-      //             if (elem.name != "") {
-      //               if (!sortObj.names.includes(elem.name[0])) {
-      //                 sortObj.names.push(elem.name[0]);
-      //               }
-      //               if (sortObj[elem.name]) {
-      //                 sortObj[elem.name].push(Number(elem.value[0]));
-      //               } else {
-      //                 sortObj[elem.name] = [Number(elem.value[0])];
-      //               }
-      //               if (!sortObj[elem.name + "Unit"]) {
-      //                 sortObj[elem.name + "Unit"] = elem.unit;
-      //               }
-      //             }
-      //           });
-      //           sortObj.names.sort();
+    // fetch(SERVER_URL + "/sort-names", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     credentials: "include",
+    //   },
+    //   body: JSON.stringify(
+    //     Object.assign(bodyJSONFilter, {
+    //       $and: filterArray,
+    //     })
+    //   ),
+    // })
+    //   .then((res) => {
+    //     return res.json();
+    //   })
+    //   .then((data) => {
+    //     console.log("data2 :>> ", data);
+    //     const sortData = {};
+    //     if (Object.keys(data).length) {
+    //       Object.keys(data).forEach((name) => {
+    //         if (
+    //           (name !== "_id") &
+    //           (name !== "minPrice") &
+    //           (name !== "maxPrice") &
+    //           (name !== "measure") &
+    //           (name !== "count")
+    //         ) {
+    //           sortData[name] = data[name].sort();
+    //         } else if (name == "measure") {
+    //           const newMeasure = [];
+    //           const sortObj = {
+    //             names: [],
+    //           };
+    //           data[name].forEach((elem) => {
+    //             if (elem.name != "") {
+    //               if (!sortObj.names.includes(elem.name[0])) {
+    //                 sortObj.names.push(elem.name[0]);
+    //               }
+    //               if (sortObj[elem.name]) {
+    //                 sortObj[elem.name].push(Number(elem.value[0]));
+    //               } else {
+    //                 sortObj[elem.name] = [Number(elem.value[0])];
+    //               }
+    //               if (!sortObj[elem.name + "Unit"]) {
+    //                 sortObj[elem.name + "Unit"] = elem.unit;
+    //               }
+    //             }
+    //           });
+    //           sortObj.names.sort();
 
-      //           sortObj.names.forEach((sn) => {
-      //             newMeasure.push({
-      //               name: sn,
-      //               value: sortObj[sn].sort(function (a, b) {
-      //                 return a - b;
-      //               }),
-      //               unit: sortObj[sn + "Unit"][0],
-      //             });
-      //           });
-      //           sortData[name] = newMeasure;
-      //         } else {
-      //           sortData[name] = data[name];
-      //         }
-      //       });
-      //       this.productValue = data.count;
-      //       this.paginatCont.push(<Paginat store={this} />);
-      //       this.createFilterPointsContainers(sortData);
-      //     }
-      //   })
-      //   .catch((err) => {
-      //     console.log("err", err);
-      //   });
-    }
+    //           sortObj.names.forEach((sn) => {
+    //             newMeasure.push({
+    //               name: sn,
+    //               value: sortObj[sn].sort(function (a, b) {
+    //                 return a - b;
+    //               }),
+    //               unit: sortObj[sn + "Unit"][0],
+    //             });
+    //           });
+    //           sortData[name] = newMeasure;
+    //         } else {
+    //           sortData[name] = data[name];
+    //         }
+    //       });
+    //       this.productValue = data.count;
+    //       this.paginatCont.push(<Paginat store={this} />);
+    //       this.createFilterPointsContainers(sortData);
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     console.log("err", err);
+    //   });
+    // }
   };
 
   cleaningActiveFilters = () => {
@@ -759,6 +819,7 @@ class Store {
   };
 
   filtration = () => {
+    const TStart = new Date();
     const filterArray = [];
 
     this.activeFilters = {
@@ -910,10 +971,11 @@ class Store {
       bodyJSON.banner = this.bannerFilter;
       clearJSON.banner = this.bannerFilter;
     }
-
+    delete clearJSON.prod.start;
+    delete clearJSON.prod.stop;
     console.log("filterArray :>> ", filterArray);
     console.log("bodyJSON :>> ", bodyJSON);
-    this.getData(bodyJSON, { ...clearJSON });
+    this.getData(bodyJSON, { ...clearJSON }, TStart);
   };
 
   createFilterPointsContainers = (availableFilters) => {

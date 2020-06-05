@@ -11,8 +11,8 @@ const FilterPoint = observer(
     };
 
     clickHandler = (filterPoint) => {
-      const { objectName, data, name } = this.props;
-      const { activeFilters, filtration, prodSlugs } = this.props.store;
+      const { objectName, name } = this.props;
+      const { activeFilters } = this.props.store;
       const start = new Date();
       let searchQt = "";
       if (objectName === "measure") {

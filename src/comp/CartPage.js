@@ -828,17 +828,17 @@ const CartPage = observer(
 
                         console.log("delivery :>> ", delivery, dataToSend);
 
-                        // api
-                        //   .setOrderData({
-                        //     delivery,
-                        //     dataToSend,
-                        //   })
-                        //   .then((data) => {
-                        //     window.location.href = data.link;
-                        //   })
-                        //   .catch((err) => {
-                        //     console.log("err :>> ", err);
-                        //   });
+                        api
+                          .setOrderData({
+                            delivery,
+                            dataToSend,
+                          })
+                          .then((data) => {
+                            window.location.href = data.link;
+                          })
+                          .catch((err) => {
+                            console.log("err :>> ", err);
+                          });
                       }}
                     >
                       Зaказать

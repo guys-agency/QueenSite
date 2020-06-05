@@ -18,7 +18,7 @@ const Collection = observer(
       );
 
       if (dataColl.length) {
-        if (this.props.sale === undefined) {
+        if (dataColl[0].type !== "sale") {
           collRender.push(
             <>
               <div className="head head_big">
@@ -35,16 +35,18 @@ const Collection = observer(
                   ></div>
                 </div>
               </div>
-              <div className="container">
-                <div className="row">
-                  <div className="col col-3"></div>
-                  <div className="col col-8">
-                    <div className="collections__desc">
-                      {dataColl[0].description}
+              {dataColl[0].description !== "" && (
+                <div className="container">
+                  <div className="row">
+                    <div className="col col-3"></div>
+                    <div className="col col-8">
+                      <div className="collections__desc">
+                        {dataColl[0].description}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              )}
             </>
           );
         } else {
@@ -64,7 +66,9 @@ const Collection = observer(
                 <h1>
                   {dataColl[0].name} <span className="ic i_right"></span>
                 </h1>
-                <p>{dataColl[0].description}</p>
+                {dataColl[0].description !== "" && (
+                  <p>{dataColl[0].description}</p>
+                )}
               </div>
             </div>
           );

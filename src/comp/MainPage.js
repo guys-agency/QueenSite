@@ -146,7 +146,7 @@ const MainPage = observer(
                     }}
                   >
                     <div className="banner__desc">
-                      {bannersData.collections[0].name}
+                      {bannersData.collections[1].name}
                     </div>
                   </Link>
                 </div>
@@ -163,7 +163,7 @@ const MainPage = observer(
                     }}
                   >
                     <div className="banner__desc">
-                      {bannersData.collections[0].name}
+                      {bannersData.collections[2].name}
                     </div>
                   </Link>
                 </div>
