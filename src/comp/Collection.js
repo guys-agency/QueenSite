@@ -78,22 +78,26 @@ const Collection = observer(
       }
 
       return (
-        <div className="collections">
-          {collRender}
-          <div className="container">
-            <div className="row"></div>
-          </div>
-          <div className="main-screen">
-            <div className="container">
-              <div className="row catalog">
-                <div className="col col-3">
-                  <Filters store={this.props.store} />
+        dataColl.length !== 0 && (
+          <div
+            className={dataColl[0].type !== "sale" ? "collections" : "actions"}
+          >
+            {collRender}
+            {/* <div className="container">
+              <div className="row"></div>
+            </div> */}
+            <div className="main-screen">
+              <div className="container">
+                <div className="row catalog">
+                  <div className="col col-3">
+                    <Filters store={this.props.store} />
+                  </div>
+                  <ProductCardContainer store={this.props.store} />
                 </div>
-                <ProductCardContainer store={this.props.store} />
               </div>
             </div>
           </div>
-        </div>
+        )
       );
     }
     // componentDidMount() {

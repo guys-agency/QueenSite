@@ -405,12 +405,25 @@ const MainScreen = observer(
             />
 
             <Route
-              path="/action"
-              render={() => (
+              path="/search"
+              render={(routProps) => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
                 (
                   <div className="main-screen">
-                    <Action />
+                    <div className="container">
+                      <div className="row">
+                        <div className="col col-12">
+                          <h3 className="catalog-title">Поиск</h3>
+                        </div>
+                      </div>
+                      <div className="row catalog">
+                        <ProductCardContainer
+                          store={this.props.store}
+                          parentName={routProps.match.params.parentName}
+                          childName={routProps.match.params.childName}
+                        />
+                      </div>
+                    </div>
                   </div>
                 )
               )}
