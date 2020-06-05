@@ -468,7 +468,7 @@ const CardView = observer(
                                   drop.classList.toggle("visible");
                                 }}
                               >
-                                Есть в {storesAvali.length} магазинах{" "}
+                                Есть в {storesAvali.length}{" "}{num2str(storesAvali.length, ["магазине", "магазинах", "магазинах"])}{" "}
                                 <span className="ic i_drop"></span>
                               </button>
                               <div className="drop drop_shop">
