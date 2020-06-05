@@ -424,7 +424,7 @@ const MainPage = observer(
           <div className="carousel carousel_brand">
             <div className="container">
               <div className="title">
-                <h2>Бренды</h2> 
+                <h2>Бренды</h2>
               </div>
 
               <div className="slider-cont slider-cont_brand">
@@ -456,25 +456,43 @@ const MainPage = observer(
                   <Link to="/catalog/?brand=Diva" className="slider-brand">
                     <img src="/image/logos/diva.jpg" />
                   </Link>
-                  <Link to="/catalog/?brand=Easy%20Life" className="slider-brand">
+                  <Link
+                    to="/catalog/?brand=Easy%20Life"
+                    className="slider-brand"
+                  >
                     <img src="/image/logos/easylife logo.jpg" />
                   </Link>
-                  <Link to="/catalog/?brand=G.Benedikt" className="slider-brand">
+                  <Link
+                    to="/catalog/?brand=G.Benedikt"
+                    className="slider-brand"
+                  >
                     <img src="/image/logos/G. Benedikt logo white on color.png" />
                   </Link>
                   <Link to="/catalog/?brand=Lilien" className="slider-brand">
                     <img src="/image/logos/Lilien Austria logo white on color.png" />
                   </Link>
-                  <Link to="/catalog/?brand=Stara%20Role" className="slider-brand">
+                  <Link
+                    to="/catalog/?brand=Stara%20Role"
+                    className="slider-brand"
+                  >
                     <img src="/image/logos/MZ logo.jpg" />
                   </Link>
-                  <Link to="/catalog/?brand=Queen%20Anne" className="slider-brand">
+                  <Link
+                    to="/catalog/?brand=Queen%20Anne"
+                    className="slider-brand"
+                  >
                     <img src="/image/logos/queen anne.jpg" />
                   </Link>
-                  <Link to="/catalog/?brand=Queen%20of%20Bohemia" className="slider-brand">
+                  <Link
+                    to="/catalog/?brand=Queen%20of%20Bohemia"
+                    className="slider-brand"
+                  >
                     <img src="/image/logos/Queen of Bohemia NEW.jpg" />
                   </Link>
-                  <Link to="/catalog/?brand=Langenthal" className="slider-brand">
+                  <Link
+                    to="/catalog/?brand=Langenthal"
+                    className="slider-brand"
+                  >
                     <img src="/image/logos/Suisse Lagenthal logo white on color.png" />
                   </Link>
                 </Swiper>
@@ -580,27 +598,29 @@ const MainPage = observer(
             </div>
           </div>
 
-          <div className="carousel carousel_product">
-            <div className="container">
-              <div className="title">
-                <a href="">
-                  <h2 className="tilda">
-                    Новинки{" "}
-                    <span className="link">
-                      <span className="hide-s">Все новинки</span>{" "}
-                      <span className="ic i_right"></span>
-                    </span>
-                  </h2>
-                </a>
-                <p className="subtitle">Сложно определиться? Мы поможем</p>
+          {newCont.length !== 0 && (
+            <div className="carousel carousel_product">
+              <div className="container">
+                <div className="title">
+                  <Link to="/sale" href="">
+                    <h2 className="tilda">
+                      Новинки{" "}
+                      <span className="link">
+                        <span className="hide-s">Все новинки</span>{" "}
+                        <span className="ic i_right"></span>
+                      </span>
+                    </h2>
+                  </Link>
+                  <p className="subtitle">Сложно определиться? Мы поможем</p>
+                </div>
+              </div>
+              <div className="container container_s">
+                <div className="slider-cont">
+                  <Swiper {...newCar}>{newCont}</Swiper>
+                </div>
               </div>
             </div>
-            <div className="container container_s">
-              <div className="slider-cont">
-                {newCont.length && <Swiper {...newCar}>{newCont}</Swiper>}
-              </div>
-            </div>
-          </div>
+          )}
 
           <div className="collections-h">
             <div className="container">
