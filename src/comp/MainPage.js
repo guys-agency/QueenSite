@@ -34,6 +34,7 @@ const MainPage = observer(
           return res.json();
         })
         .then((data) => {
+          console.log("data :>> ", data);
           Object.keys(data[0].hit).forEach((element, i) => {
             hitContTime.push(
               <div
@@ -50,7 +51,7 @@ const MainPage = observer(
           Object.keys(data[0].new).forEach((element) => {
             newContTime.push(
               <div
-                className="col col-3 col-t-4 col-s-6"
+                className="swiper-slide col col-3 col-t-4 col-s-6"
                 key={data[0].new[element].slug}
               >
                 <ProductCard
@@ -86,7 +87,7 @@ const MainPage = observer(
     };
 
     render() {
-      const { hitCont, newCont } = this.state;
+      const { hitCont, newCont, allCont } = this.state;
       const { bannersData } = this.props.store;
       const typeDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
         navigator.userAgent
@@ -173,25 +174,41 @@ const MainPage = observer(
         );
 
         saleCont.push(
-          <Link
-            to={"/actions/" + bannersData.sale[0].slug}
-            className="head-banner head-banner_action"
-            style={{
-              backgroundImage: `url(/image/banners/${
-                typeDevice
-                  ? bannersData.sale[0]["image-mob-large"]
-                  : bannersData.sale[0]["image-desc-large"]
-              })`,
-            }}
-          >
-            <div className="text">
-              <div className="label">Акция</div>
-              <h1>
-                {bannersData.sale[0].name} <span className="ic i_right"></span>
-              </h1>
-              <p>{bannersData.sale[0].description}</p>
+          <div className="actions">
+            <div className="action">
+              <div className="head head_sm head_list">
+                <Link
+                  to={"/actions/" + bannersData.sale[0].slug}
+                  className="head-banner head-banner_action"
+                  style={{
+                    backgroundImage: `url(/image/banners/${
+                      typeDevice
+                        ? bannersData.sale[0]["image-mob-large"]
+                        : bannersData.sale[0]["image-desc-large"]
+                    })`,
+                  }}
+                >
+                  <div className="text">
+                    <div className="label">Акция</div>
+                    <h1>
+                      {bannersData.sale[0].name}{" "}
+                      <span className="ic i_right"></span>
+                    </h1>
+                    <p>{bannersData.sale[0].description}</p>
+                  </div>
+                </Link>
+              </div>
+              <div className="container container_f">
+                <div className="row">{allCont}</div>
+                <Link
+                  to={"/actions/" + bannersData.sale[0].slug}
+                  className="btn btn_primary"
+                >
+                  Посмотреть еще
+                </Link>
+              </div>
             </div>
-          </Link>
+          </div>
         );
 
         ideasCon.push(
@@ -412,16 +429,28 @@ const MainPage = observer(
 
               <div className="slider-cont slider-cont_brand">
                 <Swiper {...brandCar}>
-                  <Link to="/catalog/?brand=Bohemia%20Crystall" className="slider-brand">
+                  <Link
+                    to="/catalog/?brand=Bohemia%20Crystall"
+                    className="slider-brand"
+                  >
                     <img src="/image/logos/Bohemia Crystall.png" />
                   </Link>
-                  <Link to="/catalog/?brand=Aurum%20Crystal" className="slider-brand">
+                  <Link
+                    to="/catalog/?brand=Aurum%20Crystal"
+                    className="slider-brand"
+                  >
                     <img src="/image/logos/Aurum design.jpg" />
                   </Link>
-                  <Link to="/catalog/?brand=Crystal%20Art" className="slider-brand">
+                  <Link
+                    to="/catalog/?brand=Crystal%20Art"
+                    className="slider-brand"
+                  >
                     <img src="/image/logos/Crystal Art.JPG" />
                   </Link>
-                  <Link to="/catalog/?brand=Porcelaine%20Czech%20Gold%20Hands" className="slider-brand">
+                  <Link
+                    to="/catalog/?brand=Porcelaine%20Czech%20Gold%20Hands"
+                    className="slider-brand"
+                  >
                     <img src="/image/logos/Czech_Gold_Hands_Logo_1(1).jpg" />
                   </Link>
                   <Link to="/catalog/?brand=Diva" className="slider-brand">
@@ -630,11 +659,11 @@ const MainPage = observer(
             </div>
           </div>
 
-          <div className="actions">
+          {/* <div className="actions">
             <div className="action">
-              <div className="head head_sm head_list">
-                {saleCont}
-                {/* <a
+              <div className="head head_sm head_list"> */}
+          {saleCont}
+          {/* <a
                   href="#"
                   className="head-banner head-banner_action"
                   style={{
@@ -649,18 +678,18 @@ const MainPage = observer(
                     <p>Подготовьтесь к любимому семейному празднику.</p>
                   </div>
                 </a> */}
-              </div>
-              {/* <div className="actions_banner">
+          {/* </div> */}
+          {/* <div className="actions_banner">
               <div className="banner__desc">
                   Вкусное вино
                 </div>
             </div> */}
-              <div className="container container_f">
-                <div className="row">{newCont}</div>
+          {/* <div className="container container_f">
+                <div className="row">{allCont}</div>
                 <button className="btn btn_primary">Посмотреть еще</button>
               </div>
             </div>
-          </div>
+          </div> */}
           <div className="subscribe">
             <div className="container">
               <div className="row">
