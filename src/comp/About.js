@@ -81,18 +81,18 @@ const About = observer(
               <div className="col col-4 col-t-5 col-s-12">
                 <div className="help__contact">
                   <div>
-                    <a href="+74957440050">
+                    <a href="tel:+74957440050">
                       <b>+7 495 744-00-50</b>
                     </a>{" "}
                     — центральный офис
                   </div>
                   <div>
-                    <a href="+78008085878">
+                    <a href="tel:+78008085878">
                       <b>+7 800 808-58-78</b>
                     </a>{" "}
                     — центральный офис
                   </div>
-                  <a href="" className="underline">
+                  <a href="mailto:info@queenbohemia.ru" className="underline">
                     info@queenbohemia.ru
                   </a>
                   <button className="link dotted ask">Задать вопрос</button>

@@ -407,7 +407,7 @@ const MainPage = observer(
           <div className="carousel carousel_brand">
             <div className="container">
               <div className="title">
-                <h2>Бренды</h2>
+                <h2>Бренды</h2> 
               </div>
 
               <div className="slider-cont slider-cont_brand">
@@ -424,28 +424,28 @@ const MainPage = observer(
                   <Link to="/catalog/?brand=Porcelaine%20Czech%20Gold%20Hands" className="slider-brand">
                     <img src="/image/logos/Czech_Gold_Hands_Logo_1(1).jpg" />
                   </Link>
-                  <Link to="/catalog/" className="slider-brand">
+                  <Link to="/catalog/?brand=Diva" className="slider-brand">
                     <img src="/image/logos/diva.jpg" />
                   </Link>
-                  <Link to="/catalog/" className="slider-brand">
+                  <Link to="/catalog/?brand=Easy%20Life" className="slider-brand">
                     <img src="/image/logos/easylife logo.jpg" />
                   </Link>
-                  <Link to="/catalog/" className="slider-brand">
+                  <Link to="/catalog/?brand=G.Benedikt" className="slider-brand">
                     <img src="/image/logos/G. Benedikt logo white on color.png" />
                   </Link>
-                  <Link to="/catalog/" className="slider-brand">
+                  <Link to="/catalog/?brand=Lilien" className="slider-brand">
                     <img src="/image/logos/Lilien Austria logo white on color.png" />
                   </Link>
-                  <Link to="/catalog/" className="slider-brand">
+                  <Link to="/catalog/?brand=Stara%20Role" className="slider-brand">
                     <img src="/image/logos/MZ logo.jpg" />
                   </Link>
-                  <Link to="/catalog/" className="slider-brand">
+                  <Link to="/catalog/?brand=Queen%20Anne" className="slider-brand">
                     <img src="/image/logos/queen anne.jpg" />
                   </Link>
-                  <Link to="/catalog/" className="slider-brand">
+                  <Link to="/catalog/?brand=Queen%20of%20Bohemia" className="slider-brand">
                     <img src="/image/logos/Queen of Bohemia NEW.jpg" />
                   </Link>
-                  <Link to="/catalog/" className="slider-brand">
+                  <Link to="/catalog/?brand=http://127.0.0.1:3000/catalog/?brand=Langenthal" className="slider-brand">
                     <img src="/image/logos/Suisse Lagenthal logo white on color.png" />
                   </Link>
                 </Swiper>
