@@ -514,6 +514,8 @@ const MenuPoints = observer(
                   <span className="i_bag__counter">
                     {this.props.store.cartCount > 9
                       ? 9
+                      : this.props.store.cartCount === 0
+                      ? ""
                       : this.props.store.cartCount}
                   </span>
                 </button>
@@ -676,13 +678,7 @@ const MenuPoints = observer(
                   </span>
                 </div>
                 <div className="search-pos">
-                  <form
-                    className="search-wrp"
-                    onSubmit={() => {
-                      this.props.store.searchText = this.searchValue;
-                      this.props.history.push("/search/");
-                    }}
-                  >
+                  <form className="search-wrp">
                     <input
                       type="text"
                       className="search"
@@ -691,7 +687,14 @@ const MenuPoints = observer(
                         this.searchValue = e.target.value;
                       }}
                     ></input>
-                    <button className="ic i_search"></button>
+                    <button
+                      className="ic i_search"
+                      onClick={(e) => {
+                        this.props.store.searchText = this.searchValue;
+                        this.props.history.push("/search");
+                        e.preventDefault();
+                      }}
+                    ></button>
                   </form>
                 </div>
                 <div className="navigation__buttons">
@@ -724,6 +727,8 @@ const MenuPoints = observer(
                     <span className="i_bag__counter">
                       {this.props.store.cartCount > 9
                         ? 9
+                        : this.props.store.cartCount === 0
+                        ? ""
                         : this.props.store.cartCount}
                     </span>
                   </button>

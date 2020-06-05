@@ -843,7 +843,7 @@ class Store {
 
     const decodSearch = decodeURIComponent(window.location.href.split("?")[1]);
     console.log("ddecodSearche :>> ", decodSearch);
-    if (decodSearch !== "undefined") {
+    if (decodSearch !== "undefined" && decodSearch !== "") {
       decodSearch.split("&&").forEach((elem) => {
         const elemSp = elem.split("=");
         if (elemSp[0] !== "measure") {
