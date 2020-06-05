@@ -1,4 +1,4 @@
-module.exports.createSubscribeMail = (data) => {
+module.exports.createWelcomeMail = (data) => {
     let prodLineHTML = "";
     return `<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml"
     xmlns:o="urn:schemas-microsoft-com:office:office" class="gr__dev_motorfirst_ru">
