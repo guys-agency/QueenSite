@@ -13,7 +13,6 @@ import num2str from "../ulits/nm2wrd";
 import { Link } from "react-router-dom";
 import $ from "jquery";
 
-
 const { Component } = React;
 const historyAll = createBrowserHistory();
 
@@ -34,45 +33,54 @@ const CardView = observer(
     like = [];
     count = true;
 
+    inLike = this.props.store.likeContainer.length
+      ? this.props.store.likeContainer.indexOf(
+          String(this.props.store.cardContainer.slug)
+        )
+      : -1;
+
+    inCart = Object.keys(this.props.store.productInCartList).length
+      ? Object.keys(this.props.store.productInCartList).indexOf(
+          String(this.props.store.cardContainer.slug)
+        )
+      : -1;
+
     clickHandler = (e) => {
       const { store } = this.props;
       // e.target.textContent = "Добавлено в корзину";
-      e.target.classList.toggle('active')
+      e.target.classList.toggle("active");
       const data = store.cardContainer;
-      const inCart = Object.keys(store.productInCartList).length
-        ? Object.keys(store.productInCartList).indexOf(String(data.slug))
-        : -1;
 
       const { productInCartList, addtoCart } = store;
-      console.log("inCart :>> ", inCart);
+      console.log("inCart :>> ", this.inCart);
       console.log("data :>> ", data);
-      if (inCart !== -1) {
+      if (this.inCart !== -1) {
         console.log("test123 :>> ");
 
-        $('.tooltip_cart').addClass('visible');
-        $('.tooltip_cart').find('.text').text(data.name);
+        $(".tooltip_cart").addClass("visible");
+        $(".tooltip_cart").find(".text").text(data.name);
 
-        $('.tooltip_cart').find('.ic').removeClass('i_fav');
-        $('.tooltip_cart').find('.ic').removeClass('i_plus');
-        $('.tooltip_cart').find('.ic').addClass('i_minus');
+        $(".tooltip_cart").find(".ic").removeClass("i_fav");
+        $(".tooltip_cart").find(".ic").removeClass("i_plus");
+        $(".tooltip_cart").find(".ic").addClass("i_minus");
 
         setTimeout(() => {
-          $('.tooltip_cart').removeClass('visible')
-        }, 2000)
+          $(".tooltip_cart").removeClass("visible");
+        }, 2000);
 
         delete productInCartList[data.slug];
       } else {
         console.log("data :>> ", data);
-        $('.tooltip_cart').find('.ic').removeClass('i_fav-f');
-        $('.tooltip_cart').find('.ic').removeClass('i_minus');
-        $('.tooltip_cart').find('.ic').addClass('i_plus');
+        $(".tooltip_cart").find(".ic").removeClass("i_fav-f");
+        $(".tooltip_cart").find(".ic").removeClass("i_minus");
+        $(".tooltip_cart").find(".ic").addClass("i_plus");
 
-        $('.tooltip_cart').addClass('visible');
-        $('.tooltip_cart').find('.text').text(data.name)
+        $(".tooltip_cart").addClass("visible");
+        $(".tooltip_cart").find(".text").text(data.name);
         setTimeout(() => {
-          $('.tooltip_cart').removeClass('visible')
-        }, 2000)
-        
+          $(".tooltip_cart").removeClass("visible");
+        }, 2000);
+
         productInCartList[data.slug] = store.countInProdPage;
       }
       addtoCart(true);
@@ -111,44 +119,40 @@ const CardView = observer(
       // store.cartCount += 1;
     };
 
-    clickFav = (e) =>{
+    clickFav = (e) => {
       const { store } = this.props;
       const data = store.cardContainer;
-      const inLike = store.likeContainer.length
-        ? store.likeContainer.indexOf(String(data.slug))
-        : -1;
+
       const { likeContainer, addToLike } = store;
 
+      e.target.classList.toggle("active");
+      if (this.inLike !== -1) {
+        likeContainer.splice(this.inLike, 1);
 
-      e.target.classList.toggle('active');
-      if (inLike !== -1) {
-        likeContainer.splice(inLike, 1);
+        $(".tooltip_cart").addClass("visible");
+        $(".tooltip_cart").find(".text").text(data.name);
 
-
-        $('.tooltip_cart').addClass('visible');
-        $('.tooltip_cart').find('.text').text(data.name);
-
-        $('.tooltip_cart').find('.ic').removeClass('i_fav-f');
-        $('.tooltip_cart').find('.ic').removeClass('i_plus');
-        $('.tooltip_cart').find('.ic').addClass('i_minus');
+        $(".tooltip_cart").find(".ic").removeClass("i_fav-f");
+        $(".tooltip_cart").find(".ic").removeClass("i_plus");
+        $(".tooltip_cart").find(".ic").addClass("i_minus");
         setTimeout(() => {
-          $('.tooltip_cart').removeClass('visible')
-        }, 2000)
+          $(".tooltip_cart").removeClass("visible");
+        }, 2000);
       } else {
         likeContainer.unshift(String(data.slug));
 
-        $('.tooltip_cart').addClass('visible');
-        $('.tooltip_cart').find('.text').text(data.name);
+        $(".tooltip_cart").addClass("visible");
+        $(".tooltip_cart").find(".text").text(data.name);
 
-        $('.tooltip_cart').find('.ic').removeClass('i_plus');
-        $('.tooltip_cart').find('.ic').removeClass('i_minus');
-        $('.tooltip_cart').find('.ic').addClass('i_fav-f');
+        $(".tooltip_cart").find(".ic").removeClass("i_plus");
+        $(".tooltip_cart").find(".ic").removeClass("i_minus");
+        $(".tooltip_cart").find(".ic").addClass("i_fav-f");
         setTimeout(() => {
-          $('.tooltip_cart').removeClass('visible')
-        }, 2000)
+          $(".tooltip_cart").removeClass("visible");
+        }, 2000);
       }
       addToLike();
-    }
+    };
 
     close = () => {
       historyAll.goBack();
@@ -317,6 +321,18 @@ const CardView = observer(
         });
       }
 
+      const inLike = this.props.store.likeContainer.length
+        ? this.props.store.likeContainer.indexOf(
+            String(this.props.store.cardContainer.slug)
+          )
+        : -1;
+
+      const inCart = Object.keys(this.props.store.productInCartList).length
+        ? Object.keys(this.props.store.productInCartList).indexOf(
+            String(this.props.store.cardContainer.slug)
+          )
+        : -1;
+
       return (
         this.fetchReady && (
           <div
@@ -391,7 +407,12 @@ const CardView = observer(
                             className="btn btn_primary"
                             onClick={this.clickHandler}
                           >
-                            <span className="ic i_bag "></span> В корзину
+                            <span
+                              className={
+                                "ic i_bag " + (inCart === -1 ? "" : " active")
+                              }
+                            ></span>{" "}
+                            {inCart === -1 ? "В корзину" : " В корзинe"}
                           </button>
                           <div className="product__counter">
                             <button
@@ -409,7 +430,12 @@ const CardView = observer(
                               onClick={this.clickPlus}
                             ></button>
                           </div>
-                          <button className="ic i_fav" onClick={this.clickFav}></button>
+                          <button
+                            className={
+                              "ic i_fav" + (inLike === -1 ? "" : " active")
+                            }
+                            onClick={this.clickFav}
+                          ></button>
                         </div>
                         <div className="product-p__available">
                           <span
