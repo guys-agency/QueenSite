@@ -510,7 +510,18 @@ const MenuPoints = observer(
 
                     this.setState({ popCart: true });
                   }}
-                ></button>
+                >
+                  <span className="i_bag__counter">9</span>
+                </button>
+
+                <div className="tooltip tooltip_cart">
+                  <div className="tooltip__content">
+                    <span className="ic i_plus"></span>
+                    <div className="text">
+                      Кружка 370 мл Модерн, черная матовая
+                      </div>
+                  </div>
+                </div>
               </div>
             </div>
             <div className="navigation">
@@ -701,7 +712,17 @@ const MenuPoints = observer(
 
                       this.setState({ popCart: true });
                     }}
-                  ></button>
+                  >
+                    <span className="i_bag__counter">9</span>
+                  </button>
+                  <div className="tooltip tooltip_cart">
+                    <div className="tooltip__content">
+                      <span className="ic i_plus"></span>
+                      <div className="text">
+                        Кружка 370 мл Модерн, черная матовая
+                      </div>
+                    </div>
+                  </div>
                   <button
                     className="profile ic i_user"
                     onClick={() => {
