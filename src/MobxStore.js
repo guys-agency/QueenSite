@@ -994,9 +994,9 @@ class Store {
       bodyJSON.withCat = true;
     } else if (pathname.includes("sale")) {
       bodyJSON.withCat = true;
-      bodyJSON.search = this.searchText;
     } else if (pathname.includes("search")) {
       bodyJSON.withCat = true;
+      bodyJSON.search = this.searchText;
     } else if (pathname.includes("premium")) {
       bodyJSON.withCat = true;
     }

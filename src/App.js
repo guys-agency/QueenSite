@@ -478,7 +478,7 @@ const MainScreen = observer(
                     <div className="container">
                       <div className="row">
                         <div className="col col-12">
-                          <h3 className="catalog-title">Хиты</h3>
+                          <h3 className="catalog-title">Поиск</h3>
                         </div>
                       </div>
                       <div className="row catalog">
