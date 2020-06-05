@@ -562,7 +562,7 @@ const MainPage = observer(
               <div className="gifts row">
                 <Swiper {...giftCar}>
                   <div className="col col-4 col-t-5 col-s-9">
-                    <Link to="podarki/podarki_do_500_russian_ruble"
+                    <Link to="/catalog/podarki/podarki_do_500_russian_ruble"
                       className="banner"
                       style={{
                         backgroundImage: "url(" + "/image/gifts/1.png" + ")",
@@ -573,7 +573,7 @@ const MainPage = observer(
                   </div>
 
                   <div className="col col-4 col-t-5 col-s-9">
-                    <Link to="podarki/podarki_do_1000_russian_ruble"
+                    <Link to="/catalog/podarki/podarki_do_1000_russian_ruble"
                       className="banner"
                       style={{
                         backgroundImage: "url(" + "/image/gifts/2.png" + ")",
@@ -584,7 +584,7 @@ const MainPage = observer(
                   </div>
 
                   <div className="col col-4 col-t-5 col-s-9">
-                    <Link to="podarki/podarki_do_2000_russian_ruble"
+                    <Link to="/catalog/podarki/podarki_do_2000_russian_ruble"
                       className="banner"
                       style={{
                         backgroundImage: "url(" + "/image/gifts/3.png" + ")",
