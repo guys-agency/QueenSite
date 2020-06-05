@@ -106,7 +106,9 @@ const Filters = observer(
                 <a
                   onClick={(e) => {
                     e.preventDefault();
-                    $('.categories-block__child').find('.active').removeClass('active');
+                    $(".categories-block__child")
+                      .find(".active")
+                      .removeClass("active");
 
                     this.setCats(
                       elem.slug,
@@ -237,8 +239,12 @@ const Filters = observer(
                   <input
                     placeholder={minPrice}
                     name="min"
+                    type="number"
+                    value={
+                      activeFilters.minPrice > 0 ? activeFilters.minPrice : null
+                    }
                     onChange={(e) => {
-                      this.minPriceLocal = e.target.value;
+                      activeFilters.minPrice = e.target.value;
                       $("#priceBtn").removeClass("close");
                     }}
                   ></input>
@@ -246,8 +252,12 @@ const Filters = observer(
                   <input
                     placeholder={maxPrice}
                     name="max"
+                    type="number"
+                    value={
+                      activeFilters.maxPrice > 0 ? activeFilters.maxPrice : null
+                    }
                     onChange={(e) => {
-                      this.maxPriceLocal = e.target.value;
+                      activeFilters.maxPrice = e.target.value;
                       $("#priceBtn").removeClass("close");
                     }}
                   ></input>
@@ -256,41 +266,90 @@ const Filters = observer(
                     className="btn close"
                     id="priceBtn"
                     onClick={() => {
-                      const sch = this.props.location.search;
-                      let nwS;
-                      if (this.minPriceLocal) {
-                        activeFilters.minPrice = this.minPriceLocal;
+                      if (activeFilters.maxPrice > 0) {
+                        activeFilters.choosePoint.push("maxPrice");
+                        activeFilters.count += 1;
+                      } else {
+                        activeFilters.choosePoint.splice(
+                          activeFilters.choosePoint.indexOf("maxPrice"),
+                          1
+                        );
+                      }
+                      if (activeFilters.minPrice > 0) {
+                        activeFilters.choosePoint.push("minPrice");
+                        activeFilters.count += 1;
+                      } else {
+                        activeFilters.choosePoint.splice(
+                          activeFilters.choosePoint.indexOf("minPrice"),
+                          1
+                        );
+                      }
 
-                        if (sch.includes("minPrice")) {
-                          const sp = sch.split("minPrice");
-                          if (sp[1].indexOf("&&") !== -1) {
-                            const sec = sp.substr(sp[1].indexOf("&&"));
-                            nwS =
-                              sp[0] + "minPrice=" + this.minPriceLocal + sec;
+                      let searchQt = "";
+                      activeFilters.choosePoint.forEach((filterName) => {
+                        if (filterName !== "choosePoint") {
+                          if (filterName !== "measure") {
+                            if (
+                              filterName === "maxPrice" ||
+                              filterName === "minPrice"
+                            ) {
+                              if (!searchQt.length) {
+                                searchQt =
+                                  filterName + "=" + activeFilters[filterName];
+                              } else {
+                                searchQt +=
+                                  "&&" +
+                                  filterName +
+                                  "=" +
+                                  activeFilters[filterName];
+                              }
+                            } else {
+                              if (activeFilters[filterName].length) {
+                                if (!searchQt.length) {
+                                  searchQt =
+                                    filterName +
+                                    "=" +
+                                    activeFilters[filterName].join();
+                                } else {
+                                  searchQt +=
+                                    "&&" +
+                                    filterName +
+                                    "=" +
+                                    activeFilters[filterName].join();
+                                }
+                              }
+                            }
                           } else {
-                            nwS = sp[0] + "minPrice=" + this.minPriceLocal;
+                            if (Object.keys(activeFilters[filterName]).length) {
+                              Object.keys(activeFilters[filterName]).forEach(
+                                (ind) => {
+                                  console.log(
+                                    "ind :>> ",
+                                    activeFilters[filterName][ind]
+                                  );
+                                  if (!searchQt.length) {
+                                    searchQt =
+                                      filterName +
+                                      "=" +
+                                      ind +
+                                      "!~" +
+                                      activeFilters[filterName][ind].join(",");
+                                  } else {
+                                    searchQt +=
+                                      "&&" +
+                                      filterName +
+                                      "=" +
+                                      ind +
+                                      "!~" +
+                                      activeFilters[filterName][ind].join(",");
+                                  }
+                                }
+                              );
+                            }
                           }
-                        } else {
                         }
-                      } else {
-                        activeFilters.minPrice = 0;
-                      }
-                      if (this.maxPriceLocal) {
-                        activeFilters.maxPrice = this.maxPriceLocal;
-                      } else {
-                        activeFilters.maxPrice = 0;
-                      }
-                      $("#priceBtn").addClass("close");
-                      console.log(
-                        "this.props.location :>> ",
-                        this.props.location
-                      );
-                      if (this.props.location.search !== "") {
-                        const sch = this.props.location.search;
-                        sch.includes("minPrice");
-                      }
-
-                      filtration();
+                      });
+                      this.props.history.replace({ search: searchQt });
                     }}
                   >
                     Применить

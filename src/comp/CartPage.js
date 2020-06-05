@@ -97,6 +97,8 @@ const CartPage = observer(
           totalFullprice +=
             productInCartList[el] * productInCart[el].regular_price;
         });
+      } else {
+        this.props.history.push("/");
       }
 
       console.log("auth :>> ", this.props.store.auth);

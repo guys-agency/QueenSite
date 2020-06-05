@@ -530,7 +530,73 @@ class Store {
               ]
             ] = [];
             this.activeFilters.choosePoint.pop();
-            this.filtration();
+            if (this.activeFilters.count) {
+              let searchQt = "";
+              this.activeFilters.choosePoint.forEach((filterName) => {
+                if (filterName !== "choosePoint") {
+                  if (filterName !== "measure") {
+                    if (
+                      filterName === "maxPrice" ||
+                      filterName === "minPrice"
+                    ) {
+                      if (!searchQt.length) {
+                        searchQt =
+                          filterName + "=" + this.activeFilters[filterName];
+                      } else {
+                        searchQt +=
+                          "&&" +
+                          filterName +
+                          "=" +
+                          this.activeFilters[filterName];
+                      }
+                    } else {
+                      if (this.activeFilters[filterName].length) {
+                        if (!searchQt.length) {
+                          searchQt =
+                            filterName +
+                            "=" +
+                            this.activeFilters[filterName].join();
+                        } else {
+                          searchQt +=
+                            "&&" +
+                            filterName +
+                            "=" +
+                            this.activeFilters[filterName].join();
+                        }
+                      }
+                    }
+                  } else {
+                    if (Object.keys(this.activeFilters[filterName]).length) {
+                      Object.keys(this.activeFilters[filterName]).forEach(
+                        (ind) => {
+                          console.log(
+                            "ind :>> ",
+                            this.activeFilters[filterName][ind]
+                          );
+                          if (!searchQt.length) {
+                            searchQt =
+                              filterName +
+                              "=" +
+                              ind +
+                              "!~" +
+                              this.activeFilters[filterName][ind].join(",");
+                          } else {
+                            searchQt +=
+                              "&&" +
+                              filterName +
+                              "=" +
+                              ind +
+                              "!~" +
+                              this.activeFilters[filterName][ind].join(",");
+                          }
+                        }
+                      );
+                    }
+                  }
+                }
+              });
+              this.props.history.replace({ search: searchQt });
+            }
           }
         } else {
           data[0].product.forEach((element) => {
@@ -933,12 +999,12 @@ class Store {
     }
 
     if (this.activeFilters.maxPrice | this.activeFilters.minPrice) {
-      const price = { regular_price: {} };
+      const price = { price: {} };
       if (this.activeFilters.maxPrice) {
-        price.regular_price["$lte"] = Number(this.activeFilters.maxPrice);
+        price.price["$lte"] = Number(this.activeFilters.maxPrice);
       }
       if (this.activeFilters.minPrice) {
-        price.regular_price["$gte"] = Number(this.activeFilters.minPrice);
+        price.price["$gte"] = Number(this.activeFilters.minPrice);
       }
       filterArray.push(price);
     }
@@ -1000,6 +1066,8 @@ class Store {
       bodyJSON.withCat = true;
       bodyJSON.search = this.searchText;
     } else if (pathname.includes("premium")) {
+      bodyJSON.withCat = true;
+    } else if (pathname.includes("podarki")) {
       bodyJSON.withCat = true;
     }
     if (this.sortInProd === "Сначала дороже") {

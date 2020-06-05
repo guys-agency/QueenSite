@@ -342,6 +342,10 @@ const MenuPoints = observer(
               let sum = 0;
               let key = 0;
               let timeCont = [];
+              childsPoints.sort((prev, next) => {
+                if (prev.name < next.name) return -1;
+                if (prev.name < next.name) return 1;
+              });
               childsPoints.forEach((elem) => {
                 if (ind < 3 && sum < childsPoints.length - 1) {
                   timeCont.push(elem);
@@ -697,9 +701,9 @@ const MenuPoints = observer(
                         </button>
                         <div className="column">
                           <ul>
-                            <li>
+                            {/* <li>
                               <a href="">Распродажа</a>
-                            </li>
+                            </li> */}
                             <li>
                               <a href="/actions">Акции</a>
                             </li>

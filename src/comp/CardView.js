@@ -54,7 +54,12 @@ const CardView = observer(
       const { productInCartList, addtoCart } = store;
       console.log("inCart :>> ", this.inCart);
       console.log("data :>> ", data);
-      if (this.inCart !== -1) {
+      const inCart = Object.keys(this.props.store.productInCartList).length
+        ? Object.keys(this.props.store.productInCartList).indexOf(
+            String(this.props.store.cardContainer.slug)
+          )
+        : -1;
+      if (inCart !== -1) {
         console.log("test123 :>> ");
 
         $(".tooltip_cart").addClass("visible");
@@ -124,10 +129,15 @@ const CardView = observer(
       const data = store.cardContainer;
 
       const { likeContainer, addToLike } = store;
+      const inLike = this.props.store.likeContainer.length
+        ? this.props.store.likeContainer.indexOf(
+            String(this.props.store.cardContainer.slug)
+          )
+        : -1;
 
       e.target.classList.toggle("active");
-      if (this.inLike !== -1) {
-        likeContainer.splice(this.inLike, 1);
+      if (inLike !== -1) {
+        likeContainer.splice(inLike, 1);
 
         $(".tooltip_cart").addClass("visible");
         $(".tooltip_cart").find(".text").text(data.name);
