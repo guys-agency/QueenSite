@@ -406,6 +406,21 @@ const MenuPoints = observer(
       $(".navigation").removeClass("visible");
     };
 
+    hideSidebar = (e) => {
+
+      if (!$(".navigation").hasClass("visible")) {
+        document.querySelector(".sidebar-overlay").classList.remove("active");
+        $("body").removeClass("no-scroll");
+      }
+
+      this.setState({
+        popreg: false,
+        popCart: false,
+        popLike: false,
+      });
+    };
+
+
     render() {
       const { collInMenu } = this.props.store;
       // const { store } = this.props;
@@ -448,8 +463,17 @@ const MenuPoints = observer(
       return (
         this.state.ready && (
           <>
+            {console.log(window.location.pathname)}
             {/* <Menu>{this.menuContainer}</Menu> */}
-            <div className="header">
+            <div className={"header " + 
+              (window.location.pathname.includes("catalog") || 
+              window.location.pathname.includes("profile") ||
+              window.location.pathname.includes("about") ||
+              window.location.pathname.includes("product") || 
+              window.location.pathname.includes("help") ? 'header_w ' :' ')
+              + (window.location.pathname.includes("finish") ||
+              window.location.pathname.includes("cart") ? 'header_dn ' : ' ')
+            }>
               <div className="container container_f">
                 <button
                   className="ic i_menu mobile-menu"
@@ -530,7 +554,15 @@ const MenuPoints = observer(
                 </div>
               </div>
             </div>
-            <div className="navigation">
+            <div className={"navigation " +
+              (window.location.pathname.includes("catalog") ||
+                window.location.pathname.includes("profile") ||
+                window.location.pathname.includes("about") ||
+                window.location.pathname.includes("product") ||
+                window.location.pathname.includes("help") ? 'navigation_w ' : ' ')
+              + (window.location.pathname.includes("finish") ||
+                window.location.pathname.includes("cart") ? 'navigation_dn ' : ' ')
+            }>
               <div className="container container_f">
                 <div className="navigation__city-ch">
                   <h5>Ваш город:</h5>
@@ -691,7 +723,6 @@ const MenuPoints = observer(
                       className="ic i_search"
                       onClick={(e) => {
                         this.props.store.searchText = this.searchValue;
-                        this.props.store.cleaningActiveFilters();
                         this.props.history.push("/search");
                         e.preventDefault();
                       }}
@@ -800,7 +831,7 @@ const MenuPoints = observer(
               }
             >
               <div className="sidebar__head">
-                <button className="btn btn-head" onClick={this.closeSidebar}>
+                <button className="btn btn-head" onClick={this.hideSidebar}>
                   Свернуть
                 </button>
                 {!this.state.popreg && (

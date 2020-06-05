@@ -7,7 +7,7 @@ const FilterPoint = observer(
   class FilterPoint extends Component {
     state = {
       inFilter: false,
-      classStyle: "filter__container",
+      classStyle: " ",
     };
 
     clickHandler = (filterPoint) => {
@@ -152,21 +152,25 @@ const FilterPoint = observer(
       return (
         filterPoints.length > 0 && (
           <div className="filter-block">
+            {/* {active ? this.setState({ classStyle: "filter__container" }) : this.setState({ classStyle: "filter__container active" })} */}
             <h3
               className={active ? "filter__name active" : "filter__name"}
               onClick={(e) => {
                 e.target.classList.toggle("active");
-                if (classStyle.includes("active")) {
-                  this.setState({ classStyle: "filter__container" });
-                } else {
-                  this.setState({ classStyle: "filter__container active" });
-                }
+                e.target.nextElementSibling.classList.toggle("active");
+                // if (classStyle.includes("active")) {
+                //   this.setState({ classStyle: " " });
+                // } else {
+                //   this.setState({ classStyle: "active" });
+                // }
               }}
             >
               {name}
               <div className="ic i_drop"></div>
             </h3>
-            <div className={classStyle}>{filterPoints}</div>
+           
+            <div className={"filter__container " + (active ? "active" : "")}>{filterPoints}</div>
+
           </div>
         )
       );

@@ -117,4 +117,35 @@
       height: 20px;
     }
   }
+
+  .logo_vl{
+    color: $b_dark;
+    .i_of{
+      color: $b_dark;
+    }
+    &:hover{
+      color: $b_light;
+      .i_of{
+        color: $b_light;
+      }
+    }
+  }
+  &_w{
+    .logo_vl{
+      color: $b_dark;
+      .i_of{
+        color: $g_middle;
+      }
+      &:hover{
+        opacity: 1;
+        color: $g_middle;
+        .i_of{
+          color: $g_middle;
+        }
+      }
+    }
+  }
+  &_dn{
+    display: none;
+  }
 }
