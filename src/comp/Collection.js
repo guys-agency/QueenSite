@@ -51,24 +51,26 @@ const Collection = observer(
           );
         } else {
           collRender.push(
-            <div
-              className="head-banner head-banner_action"
-              style={{
-                backgroundImage: `url(/image/banners/${
-                  typeDevice
-                    ? dataColl[0]["image-mob-large"]
-                    : dataColl[0]["image-desc-large"]
-                })`,
-              }}
-            >
-              <div className="text">
-                <div className="label">Акция</div>
-                <h1>
-                  {dataColl[0].name} <span className="ic i_right"></span>
-                </h1>
-                {dataColl[0].description !== "" && (
-                  <p>{dataColl[0].description}</p>
-                )}
+            <div className="head head_big">
+              <div
+                className="head-banner head-banner_action"
+                style={{
+                  backgroundImage: `url(/image/banners/${
+                    typeDevice
+                      ? dataColl[0]["image-mob-large"]
+                      : dataColl[0]["image-desc-large"]
+                  })`,
+                }}
+              >
+                <div className="text">
+                  <div className="label">Акция</div>
+                  <h1>
+                    {dataColl[0].name} <span className="ic i_right"></span>
+                  </h1>
+                  {dataColl[0].description !== "" && (
+                    <p>{dataColl[0].description}</p>
+                  )}
+                </div>
               </div>
             </div>
           );
