@@ -1,4 +1,6 @@
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml"
+module.exports.createAskMail = (data) => {
+    let prodLineHTML = "";
+    return `<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml"
     xmlns:o="urn:schemas-microsoft-com:office:office" class="gr__dev_motorfirst_ru">
 
 <head>
@@ -68,8 +70,8 @@
                         <tbody>
                             <tr>
                                 <td align="left" valign="middle" style="padding: 0px 12px 0px 12px">
-                                    <a href="http://queenbohemia.ru" style="display: block;width: 100%;height: 100%;">
-                                        <img src="https://queenbohemia.ru/image/mail/logo.png" alt="Queen of Bohemia" width="253px"
+                                    <a href="http://dev.queenbohemia.ru" style="display: block;width: 100%;height: 100%;">
+                                        <img src="https://dev.queenbohemia.ru/image/mail/logo.png" alt="Queen of Bohemia" width="253px"
                                             height="35px" style="display: block;width: 253px;height: 35px;">
                                     </a>
                                 </td>
@@ -104,18 +106,13 @@
                                             <tbody>
                                                 <tr>
                                                     <td align="left" valign="top" style="padding-right:16px;padding-top:1px;font-size:24px">
-                                                        <img src="https://queenbohemia.ru/image/mail/chat.png"
+                                                        <img src="https://dev.queenbohemia.ru/image/mail/chat.png"
                                                             alt="" width="24px" height="24px" style="display:block" class="CToWUd">
                                                     </td>
                         
                                                     <td align="left" valign="top"
                                                         style="min-height:28px;font-size:22px;line-height:28px;font-family:Arial,Helvetica,sans-serif;color:#00094D;letter-spacing:0.24px;text-transform:uppercase">
-                                                        <b>Заказ <small>№</small>24976</b>
-                                                    </td>
-                        
-                                                    <td align="left" valign="bottom"
-                                                        style="padding:1px 0px 1px 24px;font-size:10px;line-height:20px;color:#999b9b;letter-spacing:0.16px">
-                                                        Создан 22 октября 2019
+                                                        <b>Ззадан вопрос</b>
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -168,7 +165,7 @@
                                                                         <b style="display:block;padding-bottom:4px;font-size:10px;line-height:16px;color:#718DA7">Вопрос</b>
                                                 
                                                                         <div style="font-size:12px;line-height:20px;color:#00094D;letter-spacing:0.24px;border: 1px solid #E3E2E3;box-sizing: border-box;border-radius: 5px; padding: 12px;">
-                                                                            Заказ №20571 оплата вам видна? Статус так и не изменился? Когда отправка?                                                                                     
+                                                                            ${data.question}                                                                                 
                                                                         </div>
                                                                     </td>
                                                                 </tr>
@@ -187,7 +184,7 @@
                                                                         <b style="display:block;padding-bottom:4px;font-size:10px;line-height:16px;color:#718DA7">Имя</b>
                                                     
                                                                         <div style="font-size:12px;line-height:20px;color:#00094D;letter-spacing:0.24px">
-                                                                            Тест
+                                                                            ${data.name}                                                                                 
                                                                         </div>
                                                                     </td>
                                                                 </tr>
@@ -197,7 +194,7 @@
                                                                         <b style="display:block;padding-bottom:4px;font-size:10px;line-height:16px;color:#718DA7">Email</b>
                                                     
                                                                         <div style="font-size:12px;line-height:20px;color:#00094D;letter-spacing:0.24px">
-                                                                            cacopu23@gmail.com
+                                                                            ${data.mail}                                                                                 
                                                                         </div>
                                                                     </td>
                                                                 </tr>
@@ -242,7 +239,7 @@
                                                     <td align="left" valign="middle" style="padding-right: 12px;">
                                                         <a href="https://instagram.com/queenbohemia/"
                                                             style="display: inline-block;padding: 12px 12px 12px 0px;color: #ffffff;text-decoration: none;">
-                                                            <img src="https://queenbohemia.ru/image/mail/inst.png"
+                                                            <img src="https://dev.queenbohemia.ru/image/mail/inst.png"
                                                                 width="16px" height="16px" alt="instagram"
                                                                 style="display: block;">
                                                         </a>
@@ -263,8 +260,8 @@
                                     <td align="right" valign="middle"
                                         style="padding: 0px 12px 0px 12px; color: #ffffff;font-size: 10px;">
                                         <a
-                                            href="https://queenbohemia.ru"
-                                            style="color: #ffffff;text-decoration: none;">queenbohemia.ru</a>&nbsp;©&nbsp;2013&nbsp;—&nbsp;2019
+                                            href="https://dev.queenbohemia.ru"
+                                            style="color: #ffffff;text-decoration: none;">dev.queenbohemia.ru</a>&nbsp;©&nbsp;2013&nbsp;—&nbsp;2019
                                         Все права защищены.
                                     </td>
                                 </tr>
@@ -284,4 +281,5 @@
 
 </body>
 
-</html>
+</html>`;
+};

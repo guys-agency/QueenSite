@@ -106,6 +106,7 @@ const Filters = observer(
                 <a
                   onClick={(e) => {
                     e.preventDefault();
+                    $('.categories-block__child').find('.active').removeClass('active');
 
                     this.setCats(
                       elem.slug,

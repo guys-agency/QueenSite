@@ -1,4 +1,6 @@
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml"
+module.exports.createSubscribeMail = (data) => {
+    let prodLineHTML = "";
+    return `<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml"
     xmlns:o="urn:schemas-microsoft-com:office:office" class="gr__dev_motorfirst_ru">
 
 <head>
@@ -108,14 +110,14 @@
                                                             <tr>
                                                                 <td align="left" valign="top"
                                                                     style="padding-right:16px;padding-top:1px;font-size:24px">
-                                                                    <img src="https://queenbohemia.ru/image/mail/password.png"
+                                                                    <img src="https://queenbohemia.ru/image/mail/handshake.png"
                                                                         alt="" width="24px" height="24px"
                                                                         style="display:block" class="CToWUd">
                                                                 </td>
 
                                                                 <td align="left" valign="top"
                                                                     style="min-height:28px;font-size:22px;line-height:28px;font-family:Arial,Helvetica,sans-serif;color:#00094D;letter-spacing:0.24px;text-transform:uppercase">
-                                                                    <b>Смена пароля</b>
+                                                                    <b>Добро пожаловать!</b>
                                                                 </td>
                                                             </tr>
                                                         </tbody>
@@ -130,19 +132,17 @@
                                                         style="table-layout:fixed;border-collapse:collapse">
                                                         <tbody>
                                                             <tr>
+
                                                                 <td align="left"
                                                                     style="padding:32px 12px 0px 0px;font-size:14px;line-height:20px;color:#00094D;letter-spacing:0.24px">
-                                                                    На сайте queenbohemia.ru было запрошено восстановление пароля.
+                                                                    Мы рады видеть вас в числе зарегистрированных пользователей сайта <a href="https://queenbohemia.ru">queenbohemia.ru</a>
+                                                                    <br><br>
+                                                                    Воспользуйтесь всеми преимуществами доступными для Вас:
+                                                                    отслеживайте статус доставки, историю заказов, сохраняйте понравившиеся товары навсегда!
                                                                 </td>
                                                             </tr>
-                                                            <tr>
+                                                            <!-- <tr>
                                                                 <td style="padding-top: 20px;">
-                                                                    <b style="font-size: 12px; color:#718DA7">Временный пароль:</b>
-                                                                    <br><br>
-                                                                    <span
-                                                                        style="padding: 11px 15px 11px 15px;border: 1px solid #F1F1F1;border-radius: 30px;font-weight: bold;font-size: 14px;line-height: 18px; margin-right: 10px;">
-                                                                        Nen9VXHC
-                                                                    </span>
                                                                     <a href="" style="
                                                                         background-color: white;
                                                                         padding: 10px 13px;
@@ -156,20 +156,10 @@
                                                                         display: inline-block;
                                                                         text-decoration: none;
                                                                         ">
-                                                                            В личный кабинет
+                                                                            Перейти в личный кабинет
                                                                     </a>
                                                                 </td>
-                                                            </tr>
-
-
-                                                            <tr>
-                                                                <td align="left"
-                                                                    style="padding:32px 12px 0px 0px;font-size:12px;line-height:20px;color:#00094D;letter-spacing:0.24px">
-                                                                    Вы не запрашивали изменение пароля?
-                                                                    <br>
-                                                                    Незамедлительно обратитесь по телефону +7 800 808-58-78 или сообщите нам об этом в обратном письме.
-                                                                </td>
-                                                            </tr>
+                                                            </tr> -->
                                                         </tbody>
                                                     </table>
                                                 </td>
@@ -252,4 +242,5 @@
 
 </body>
 
-</html>
+</html>`;
+};

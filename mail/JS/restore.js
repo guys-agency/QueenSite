@@ -1,4 +1,6 @@
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml"
+module.exports.createRestoreMail = (data) => {
+    let prodLineHTML = "";
+    return `<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml"
     xmlns:o="urn:schemas-microsoft-com:office:office" class="gr__dev_motorfirst_ru">
 
 <head>
@@ -132,7 +134,7 @@
                                                             <tr>
                                                                 <td align="left"
                                                                     style="padding:32px 12px 0px 0px;font-size:14px;line-height:20px;color:#00094D;letter-spacing:0.24px">
-                                                                    На сайте queenbohemia.ru было запрошено восстановление пароля.
+                                                                    На сайте <a href="https://queenbohemia.ru">queenbohemia.ru</a> было запрошено восстановление пароля.
                                                                 </td>
                                                             </tr>
                                                             <tr>
@@ -141,23 +143,8 @@
                                                                     <br><br>
                                                                     <span
                                                                         style="padding: 11px 15px 11px 15px;border: 1px solid #F1F1F1;border-radius: 30px;font-weight: bold;font-size: 14px;line-height: 18px; margin-right: 10px;">
-                                                                        Nen9VXHC
+                                                                        ${data.pass}
                                                                     </span>
-                                                                    <a href="" style="
-                                                                        background-color: white;
-                                                                        padding: 10px 13px;
-                                                                        border-radius: 30px;
-                                                                        font-weight: 400;
-                                                                        font-size: 14px;
-                                                                        font-weight: bold;
-                                                                        color: #00094d;
-                                                                        text-align: center;
-                                                                        border: 1px solid #DAB958;
-                                                                        display: inline-block;
-                                                                        text-decoration: none;
-                                                                        ">
-                                                                            В личный кабинет
-                                                                    </a>
                                                                 </td>
                                                             </tr>
 
@@ -252,4 +239,5 @@
 
 </body>
 
-</html>
+</html>`;
+};
