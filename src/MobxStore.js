@@ -31,6 +31,7 @@ class Store {
     attr: [],
     minPrice: 0,
     maxPrice: 0,
+    premium: false,
   };
 
   countInProdPage = 1;
@@ -880,6 +881,7 @@ class Store {
       attr: [],
       minPrice: 0,
       maxPrice: 0,
+      premium: false,
     };
 
     this.activeFilters = Object.assign({}, clearFilters);
@@ -905,6 +907,7 @@ class Store {
       attr: [],
       minPrice: 0,
       maxPrice: 0,
+      premium: false,
     };
 
     console.log("search :>> ", window.location.href.split("?")[1]);
@@ -934,7 +937,7 @@ class Store {
     console.log("this.activeFilters :>> ", this.activeFilters);
     const pathname = window.location.pathname;
     console.log("pathname", pathname);
-    if (pathname.includes("hits")) {
+    if (pathname.includes("hits") || pathname.includes("hit")) {
       this.activeFilters.attr.push("hit");
       this.activeFilters.count += 1;
     } else if (pathname.includes("sale")) {
@@ -948,7 +951,10 @@ class Store {
         const onePointFilter = [];
         if (filterName !== "choosePoint") {
           if (filterName !== "measure") {
-            if (this.activeFilters[filterName].length) {
+            if (
+              this.activeFilters[filterName].length &&
+              filterName !== "attr"
+            ) {
               this.activeFilters[filterName].forEach((filterValue) => {
                 onePointFilter.push({ [filterName]: filterValue });
                 // } else {
@@ -1034,6 +1040,12 @@ class Store {
 
     if (this.nameSecondCat !== "" && this.nameSecondCat !== undefined) {
       prodJSON["categories.childsSlug"] = this.nameSecondCat;
+    }
+
+    if (this.activeFilters.premium) {
+      prodJSON["categories.slugName"] = {
+        $all: [prodJSON["categories.slugName"], "premium"],
+      };
     }
 
     //переделать, что бы не было лишних запросов
