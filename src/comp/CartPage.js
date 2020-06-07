@@ -378,7 +378,12 @@ const CartPage = observer(
                               }{" "}
                               ₽/{" "}
                               <span className="b_gray">
-                                {deliveryData.time}{" "}{num2str(deliveryData.time, ["дня", "дней", "дней"])}
+                                {deliveryData.time}{" "}
+                                {num2str(deliveryData.time, [
+                                  "дня",
+                                  "дней",
+                                  "дней",
+                                ])}
                               </span>
                             </span>
                           </div>
@@ -686,7 +691,12 @@ const CartPage = observer(
                               ₽ /{" "}
                               <span className="b_gray">
                                 {" "}
-                                {deliveryData.time}{" "}{num2str(deliveryData.time, ["дня", "дней", "дней"])}
+                                {deliveryData.time}{" "}
+                                {num2str(deliveryData.time, [
+                                  "дня",
+                                  "дней",
+                                  "дней",
+                                ])}
                               </span>
                             </span>
                           </div>
