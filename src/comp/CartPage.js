@@ -777,7 +777,7 @@ const CartPage = observer(
 
                         const recipient = {
                           firstName: name,
-                          middleName: "{string}",
+                          // middleName: "{string}",
                           lastName: secondName,
                           email: email.toLowerCase(),
                           address: {
@@ -809,7 +809,8 @@ const CartPage = observer(
                         );
                         deliveryOrderData.deliveryOption.partnerId = this.deliveryOrderData.deliveryOption.partner;
                         deliveryOrderData.deliveryOption.delivery = this.deliveryOrderData.deliveryOption.cost.delivery;
-
+                        deliveryOrderData.deliveryOption.deliveryForCustomer = this.deliveryOrderData.deliveryOption.cost.deliveryForCustomer;
+                        this.deliverySend.cost.fullyPrepaid = true;
                         const delivery = {
                           ...this.deliverySend,
                           recipient,

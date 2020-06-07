@@ -46,16 +46,18 @@ const MenuPoints = observer(
 
     phone = (
       <div className="header__right">
-        <button className="link dotted ask" onClick={ ()=>{
-          document
-            .querySelector(".sidebar-overlay")
-            .classList.add("active");
+        <button
+          className="link dotted ask"
+          onClick={() => {
+            document.querySelector(".sidebar-overlay").classList.add("active");
 
-          document.querySelector("body").classList.add("no-scroll");
+            document.querySelector("body").classList.add("no-scroll");
 
-          this.setState({ sideAsk: true })
-        }
-        }>Задать вопрос</button>
+            this.setState({ sideAsk: true });
+          }}
+        >
+          Задать вопрос
+        </button>
         <a href="tel:+78008085878" className="phone">
           +7 800 808-58-78
         </a>
@@ -415,7 +417,7 @@ const MenuPoints = observer(
         popreg: false,
         popCart: false,
         popLike: false,
-        sideAsk: false
+        sideAsk: false,
       });
       document.querySelector(".sidebar-overlay").classList.remove("active");
       $("body").removeClass("no-scroll");
@@ -423,7 +425,6 @@ const MenuPoints = observer(
     };
 
     hideSidebar = (e) => {
-
       if (!$(".navigation").hasClass("visible")) {
         document.querySelector(".sidebar-overlay").classList.remove("active");
         $("body").removeClass("no-scroll");
@@ -433,11 +434,9 @@ const MenuPoints = observer(
         popreg: false,
         popCart: false,
         popLike: false,
-        sideAsk: false
-
+        sideAsk: false,
       });
     };
-
 
     render() {
       const { collInMenu } = this.props.store;
@@ -483,15 +482,22 @@ const MenuPoints = observer(
           <>
             {console.log(window.location.pathname)}
             {/* <Menu>{this.menuContainer}</Menu> */}
-            <div className={"header " + 
-              (window.location.pathname.includes("catalog") || 
-              window.location.pathname.includes("profile") ||
-              window.location.pathname.includes("about") ||
-              window.location.pathname.includes("product") || 
-              window.location.pathname.includes("help") ? 'header_w ' :' ')
-              + (window.location.pathname.includes("finish") ||
-              window.location.pathname.includes("cart") ? 'header_dn ' : ' ')
-            }>
+            <div
+              className={
+                "header " +
+                (window.location.pathname.includes("catalog") ||
+                window.location.pathname.includes("profile") ||
+                window.location.pathname.includes("about") ||
+                window.location.pathname.includes("product") ||
+                window.location.pathname.includes("help")
+                  ? "header_w "
+                  : " ") +
+                (window.location.pathname.includes("finish") ||
+                window.location.pathname.includes("cart")
+                  ? "header_dn "
+                  : " ")
+              }
+            >
               <div className="container container_f">
                 <button
                   className="ic i_menu mobile-menu"
@@ -572,15 +578,22 @@ const MenuPoints = observer(
                 </div>
               </div>
             </div>
-            <div className={"navigation " +
-              (window.location.pathname.includes("catalog") ||
+            <div
+              className={
+                "navigation " +
+                (window.location.pathname.includes("catalog") ||
                 window.location.pathname.includes("profile") ||
                 window.location.pathname.includes("about") ||
                 window.location.pathname.includes("product") ||
-                window.location.pathname.includes("help") ? 'navigation_w ' : ' ')
-              + (window.location.pathname.includes("finish") ||
-                window.location.pathname.includes("cart") ? 'navigation_dn ' : ' ')
-            }>
+                window.location.pathname.includes("help")
+                  ? "navigation_w "
+                  : " ") +
+                (window.location.pathname.includes("finish") ||
+                window.location.pathname.includes("cart")
+                  ? "navigation_dn "
+                  : " ")
+              }
+            >
               <div className="container container_f">
                 <div className="navigation__city-ch">
                   <h5>Ваш город:</h5>
@@ -843,7 +856,10 @@ const MenuPoints = observer(
             <div
               className={
                 "sidebar" +
-                (this.state.popreg || this.state.popCart || this.state.popLike || this.state.sideAsk
+                (this.state.popreg ||
+                this.state.popCart ||
+                this.state.popLike ||
+                this.state.sideAsk
                   ? " visible"
                   : "")
               }
@@ -852,22 +868,23 @@ const MenuPoints = observer(
                 <button className="btn btn-head" onClick={this.hideSidebar}>
                   Свернуть
                 </button>
-                {!this.state.popreg || this.state.sideAsk && (
-                  <button
-                    className="link dotted"
-                    onClick={() => {
-                      if (this.state.popLike) {
-                        this.props.store.likeContainer = [];
-                        this.props.store.addToLike();
-                      } else {
-                        this.props.store.productInCartList = {};
-                        this.props.store.addtoCart(true);
-                      }
-                    }}
-                  >
-                    Очистить
-                  </button>
-                )}
+                {!this.state.popreg ||
+                  (this.state.sideAsk && (
+                    <button
+                      className="link dotted"
+                      onClick={() => {
+                        if (this.state.popLike) {
+                          this.props.store.likeContainer = [];
+                          this.props.store.addToLike();
+                        } else {
+                          this.props.store.productInCartList = {};
+                          this.props.store.addtoCart(true);
+                        }
+                      }}
+                    >
+                      Очистить
+                    </button>
+                  ))}
               </div>
               {this.state.popLike && (
                 <LikeSidebar

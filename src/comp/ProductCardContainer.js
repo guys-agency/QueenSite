@@ -51,54 +51,56 @@ const ProductCardContainer = observer(
         <div className="col col-9 col-t-12">
           <div className="row row_inner">
             <div className="col col-12">
-              <div className="sort">
-                <div className="dropdown">
-                  <button
-                    className="dropdown__label"
-                    onClick={(e) => {
-                      e.target.classList.toggle("active");
-                      e.target.nextElementSibling.classList.toggle("visible");
-                    }}
-                  >
-                    {this.state.sortLabel}
-                  </button>
-                  <div className="dropdown__list">
-                    {/* <button
+              {!window.location.pathname.includes("profile") && (
+                <div className="sort">
+                  <div className="dropdown">
+                    <button
+                      className="dropdown__label"
+                      onClick={(e) => {
+                        e.target.classList.toggle("active");
+                        e.target.nextElementSibling.classList.toggle("visible");
+                      }}
+                    >
+                      {this.state.sortLabel}
+                    </button>
+                    <div className="dropdown__list">
+                      {/* <button
                       className="dropdown__list-item item"
                       onClick={this.sortClick}
                     >
                       Сначала новые
                     </button> */}
-                    <button
-                      className="dropdown__list-item item"
-                      onClick={this.sortClick}
-                    >
-                      По умолчанию
-                    </button>
-                    <button
-                      className="dropdown__list-item item"
-                      onClick={this.sortClick}
-                    >
-                      Сначала дороже
-                    </button>
-                    <button
-                      className="dropdown__list-item item"
-                      onClick={this.sortClick}
-                    >
-                      Сначала дешевле
-                    </button>
+                      <button
+                        className="dropdown__list-item item"
+                        onClick={this.sortClick}
+                      >
+                        По умолчанию
+                      </button>
+                      <button
+                        className="dropdown__list-item item"
+                        onClick={this.sortClick}
+                      >
+                        Сначала дороже
+                      </button>
+                      <button
+                        className="dropdown__list-item item"
+                        onClick={this.sortClick}
+                      >
+                        Сначала дешевле
+                      </button>
+                    </div>
                   </div>
+                  <button
+                    className="ic i_filter"
+                    onClick={(e) => {
+                      e.target.classList.toggle("active");
+                      document
+                        .querySelector(".catalog__bar")
+                        .classList.toggle("visible");
+                    }}
+                  ></button>
                 </div>
-                <button
-                  className="ic i_filter"
-                  onClick={(e) => {
-                    e.target.classList.toggle("active");
-                    document
-                      .querySelector(".catalog__bar")
-                      .classList.toggle("visible");
-                  }}
-                ></button>
-              </div>
+              )}
             </div>
             {this.props.store.productsToRender}
             {this.props.store.paginatCont}

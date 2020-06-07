@@ -555,7 +555,10 @@ const MainScreen = observer(
                 $("html, body").animate({ scrollTop: 0 }, 500),
                 (
                   <div className="main-screen">
-                    <Finish id={routProps.match.params.id} />
+                    <Finish
+                      id={routProps.match.params.id}
+                      store={this.props.store}
+                    />
                   </div>
                 )
               )}

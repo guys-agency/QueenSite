@@ -2,6 +2,8 @@ import { observer } from "mobx-react";
 import React from "react";
 import $ from "jquery";
 import api from "./api";
+import { Formik } from "formik";
+import RegistrationSchema from "../schemas/registrationSchema";
 
 const { Component } = React;
 
@@ -60,20 +62,22 @@ const Finish = observer(
                     <br />
                     Скоро с Вами свяжется менеджер для подтверждения.
                   </p>
-                  <p>
-                    <button className="link dotted">
-                      <span className="ic i_user"></span> Войдите
-                    </button>
-                    , чтобы отслеживать статус заказа
-                  </p>
-                  <div className="profile-p__card">
-                    <p>
-                      <b>Не зарегистрированы?</b>
-                      <br />
-                      Копите бонусы и отслеживайте заказы в личном кабинете,
-                      осталось только придумать пароль:
-                    </p>
-                    <form className="profile-p__card-login">
+                  {!this.props.store.auth && (
+                    <>
+                      <p>
+                        <button className="link dotted">
+                          <span className="ic i_user"></span> Войдите
+                        </button>
+                        , чтобы отслеживать статус заказа
+                      </p>
+                      <div className="profile-p__card">
+                        <p>
+                          <b>Не зарегистрированы?</b>
+                          <br />
+                          Копите бонусы и отслеживайте заказы в личном кабинете,
+                          осталось только придумать пароль:
+                        </p>
+                        {/* <form className="profile-p__card-login">
                       <div className="input-field">
                         <label className="required active" htmlFor="email">
                           Email
@@ -113,8 +117,110 @@ const Finish = observer(
                           "
                         </i>
                       </label>
-                    </form>
-                  </div>
+                    </form> */}
+                        <Formik
+                          //инициализируем значения input-ов
+                          initialValues={{
+                            email: data.user,
+
+                            password: "",
+
+                            acceptedTerms: true,
+                          }}
+                          //подключаем схему валидации, которую описали выше
+                          validationSchema={RegistrationSchema}
+                          //определяем, что будет происходить при вызове onsubmit
+                          onSubmit={(values, { setSubmitting }) => {
+                            console.log("values :>> ", values);
+                            api.regist({
+                              name: data.delivery.recipient.firstName,
+                              email: values.email.toLowerCase(),
+                              password: values.password,
+                            });
+                          }}
+                          //свойство, где описывыем нашу форму
+                          //errors-ошибки валидации формы
+                          //touched-поля формы, которые мы "затронули",
+                          //то есть, в которых что-то ввели
+                        >
+                          {({
+                            errors,
+                            touched,
+                            handleSubmit,
+                            isSubmitting,
+                            values,
+                            handleChange,
+                          }) => (
+                            <form
+                              className="profile-p__card-login"
+                              onSubmit={handleSubmit}
+                            >
+                              <div className="input-field">
+                                <label
+                                  className="required active"
+                                  htmlFor="email"
+                                >
+                                  E-mail
+                                </label>
+                                <input
+                                  id="email"
+                                  name="email"
+                                  type="text"
+                                  onFocus={this.focusHandler}
+                                  onBlur={this.blurHandler}
+                                  value={values.email}
+                                  onChange={handleChange}
+                                />
+                                <div className="field-error">
+                                  {errors.email}
+                                </div>
+                              </div>
+
+                              <div className="input-field">
+                                <label className="required" htmlFor="password">
+                                  Пароль
+                                </label>
+                                <input
+                                  id="password"
+                                  name="password"
+                                  type="password"
+                                  onFocus={this.focusHandler}
+                                  onBlur={this.blurHandler}
+                                  value={values.password}
+                                  onChange={handleChange}
+                                />
+                                <div className="field-error">
+                                  {errors.password}
+                                </div>
+                              </div>
+
+                              <button className="btn btn_primary" type="submit">
+                                Регистрация
+                              </button>
+                              <label className="checkbox checkbox_margin">
+                                <input
+                                  type="checkbox"
+                                  name="acceptedTerms"
+                                  id=""
+                                  value={values.acceptedTerms}
+                                  onChange={handleChange}
+                                  checked={values.acceptedTerms}
+                                />
+                                <span className="checkbox-btn"></span>
+                                <i>
+                                  Согласен с условиями "
+                                  <a className="underline" href="">
+                                    Публичной оферты
+                                  </a>
+                                  "
+                                </i>
+                              </label>
+                            </form>
+                          )}
+                        </Formik>
+                      </div>
+                    </>
+                  )}
                 </div>
                 <div className="col col-1"></div>
                 <div className="col col-4">
@@ -144,7 +250,7 @@ const Finish = observer(
                       {data.delivery.contacts.lastName}
                     </div>
                     <div className="user__contact">
-                      {data.delivery.contacts.phone &&(
+                      {data.delivery.contacts.phone && (
                         <div className="user__phone">
                           {data.delivery.contacts.phone}
                         </div>
