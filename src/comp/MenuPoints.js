@@ -728,11 +728,11 @@ const MenuPoints = observer(
                         </button>
                         <div className="column">
                           <ul>
-                            {/* <li>
-                              <a href="">Распродажа</a>
-                            </li> */}
                             <li>
-                              <a href="/actions">Акции</a>
+                              <NavLink to="/closeout">Распродажа</NavLink>
+                            </li>
+                            <li>
+                              <NavLink to="/actions">Акции</NavLink>
                             </li>
                           </ul>
                         </div>

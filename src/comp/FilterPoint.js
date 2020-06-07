@@ -118,7 +118,7 @@ const FilterPoint = observer(
       const { data, name, objectName } = this.props;
       const { classStyle } = this.state;
       const { activeFilters } = this.props.store;
-      let active = false;
+
       let act = false;
       const filterPoints = [];
       data.forEach((filterPoint) => {
@@ -133,9 +133,7 @@ const FilterPoint = observer(
           } else {
             number = activeFilters[objectName].includes(filterPoint);
           }
-          if (number) {
-            active = true;
-          }
+
           filterPoints.push(
             <span
               className={!number ? "filter__point" : "filter__point active"}
@@ -156,7 +154,7 @@ const FilterPoint = observer(
           <div className="filter-block">
             {/* {active ? this.setState({ classStyle: "filter__container" }) : this.setState({ classStyle: "filter__container active" })} */}
             <h3
-              className={active ? "filter__name active" : "filter__name"}
+              className={classStyle ? "filter__name active" : "filter__name"}
               onClick={(e) => {
                 e.target.classList.toggle("active");
                 // e.target.nextElementSibling.classList.toggle("active");

@@ -29,8 +29,8 @@ class Store {
     count: 0,
     choosePoint: [],
     attr: [],
-    minPrice: 0,
-    maxPrice: 0,
+    minPrice: "",
+    maxPrice: "",
     premium: false,
   };
 
@@ -881,8 +881,8 @@ class Store {
       count: 0,
       choosePoint: [],
       attr: [],
-      minPrice: 0,
-      maxPrice: 0,
+      minPrice: "",
+      maxPrice: "",
       premium: false,
     };
 
@@ -907,8 +907,8 @@ class Store {
       count: 0,
       choosePoint: [],
       attr: [],
-      minPrice: 0,
-      maxPrice: 0,
+      minPrice: "",
+      maxPrice: "",
       premium: false,
     };
 
@@ -920,8 +920,12 @@ class Store {
       decodSearch.split("&&").forEach((elem) => {
         const elemSp = elem.split("=");
         if (elemSp[0] !== "measure") {
-          if (elemSp[0] === "minPrice" || elemSp[0] === "maxPrice") {
-            this.activeFilters[elemSp[0]] = +elemSp[1];
+          if (
+            elemSp[0] === "minPrice" ||
+            elemSp[0] === "maxPrice" ||
+            elemSp[0] === "premium"
+          ) {
+            this.activeFilters[elemSp[0]] = elemSp[1];
           } else {
             this.activeFilters[elemSp[0]] = elemSp[1].split(",");
             this.activeFilters.choosePoint.push(elemSp[0]);
@@ -951,7 +955,7 @@ class Store {
       // let searchQt = "";
       this.activeFilters.choosePoint.forEach((filterName) => {
         const onePointFilter = [];
-        if (filterName !== "choosePoint") {
+        if (filterName !== "choosePoint" && filterName !== "premium") {
           if (filterName !== "measure") {
             if (
               this.activeFilters[filterName].length &&
@@ -1022,6 +1026,9 @@ class Store {
         filterArray.push({ [elem]: true });
       });
     }
+    if (pathname.includes("closeout")) {
+      filterArray.push({ closeout: true });
+    }
 
     const prodJSON = {
       start: this.startPag,
@@ -1074,7 +1081,7 @@ class Store {
 
     if (pathname.includes("hits")) {
       bodyJSON.withCat = true;
-    } else if (pathname.includes("sale")) {
+    } else if (pathname.includes("closeout")) {
       bodyJSON.withCat = true;
     } else if (pathname.includes("search")) {
       bodyJSON.withCat = true;

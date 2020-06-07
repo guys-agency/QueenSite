@@ -69,13 +69,25 @@ const Filters = observer(
                 searchQt += "&&" + filterName + "=" + activeFilters[filterName];
               }
             } else {
-              if (activeFilters[filterName].length) {
+              if (name !== "premium") {
+                if (activeFilters[filterName].length) {
+                  if (!searchQt.length) {
+                    searchQt =
+                      filterName + "=" + activeFilters[filterName].join();
+                  } else {
+                    searchQt +=
+                      "&&" +
+                      filterName +
+                      "=" +
+                      activeFilters[filterName].join();
+                  }
+                }
+              } else {
                 if (!searchQt.length) {
-                  searchQt =
-                    filterName + "=" + activeFilters[filterName].join();
+                  searchQt = filterName + "=" + activeFilters[filterName];
                 } else {
                   searchQt +=
-                    "&&" + filterName + "=" + activeFilters[filterName].join();
+                    "&&" + filterName + "=" + activeFilters[filterName];
                 }
               }
             }
@@ -104,6 +116,7 @@ const Filters = observer(
           }
         }
       });
+      console.log("searchQt :>> ", searchQt);
       this.props.history.replace({ search: searchQt });
     };
 
@@ -301,11 +314,20 @@ const Filters = observer(
                     name="min"
                     type="number"
                     value={
-                      activeFilters.minPrice > 0 ? activeFilters.minPrice : null
+                      activeFilters.minPrice.length > 0
+                        ? activeFilters.minPrice
+                        : null
                     }
                     onChange={(e) => {
                       activeFilters.minPrice = e.target.value;
-                      $("#priceBtn").removeClass("close");
+                      if (e.target.value.length > 0) {
+                        $("#priceBtn").removeClass("close");
+                      } else if (
+                        activeFilters.maxPrice.length === 0 &&
+                        activeFilters.minPrice.length === 0
+                      ) {
+                        $("#priceBtn").addClass("close");
+                      }
                     }}
                   ></input>
                   <p> до </p>
@@ -314,11 +336,20 @@ const Filters = observer(
                     name="max"
                     type="number"
                     value={
-                      activeFilters.maxPrice > 0 ? activeFilters.maxPrice : null
+                      activeFilters.maxPrice.length > 0
+                        ? activeFilters.maxPrice
+                        : null
                     }
                     onChange={(e) => {
                       activeFilters.maxPrice = e.target.value;
-                      $("#priceBtn").removeClass("close");
+                      if (e.target.value.length > 0) {
+                        $("#priceBtn").removeClass("close");
+                      } else if (
+                        activeFilters.maxPrice.length === 0 &&
+                        activeFilters.minPrice.length === 0
+                      ) {
+                        $("#priceBtn").addClass("close");
+                      }
                     }}
                   ></input>
                   <p>₽</p>
@@ -420,10 +451,12 @@ const Filters = observer(
                 <h5>Фильтры</h5>
                 <div>{filterPointsContainers}</div>
               </div>
-              <div className="main-filers-block">
-                <h5>Размеры</h5>
-                <div>{measurePointsContainers}</div>
-              </div>
+              {measurePointsContainers.length > 0 && (
+                <div className="main-filers-block">
+                  <h5>Размеры</h5>
+                  <div>{measurePointsContainers}</div>
+                </div>
+              )}
               <div className="main-filers-block">
                 <h5>Дополнительно</h5>
                 <div>{optPointsContainers}</div>
@@ -454,6 +487,7 @@ const Filters = observer(
                     <label className="checkbox checkbox_margin">
                       <input
                         type="checkbox"
+                        checked={activeFilters.premium === "true"}
                         onChange={(e) => {
                           console.log(
                             "e.target.value",

@@ -382,22 +382,22 @@ const MainScreen = observer(
             />
 
             <Route
-              path="/sale"
+              path="/closeout"
               render={(routProps) => (
                 (this.props.store.nameMainCat = ""),
                 (this.props.store.nameSecondCat = ""),
                 $("html, body").animate({ scrollTop: 0 }, 500),
-                this.props.store.pathS !== "sale"
+                this.props.store.pathS !== "closeout"
                   ? this.props.store.cleaningActiveFilters()
                   : null,
-                (this.props.store.pathS = "sale"),
+                (this.props.store.pathS = "closeout"),
                 this.props.store.filtration(),
                 (
                   <div className="main-screen">
                     <div className="container">
                       <div className="row">
                         <div className="col col-12">
-                          <h3 className="catalog-title">Хиты</h3>
+                          <h3 className="catalog-title">Распродажа</h3>
                         </div>
                       </div>
                       <div className="row catalog">
