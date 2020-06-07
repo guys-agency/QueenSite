@@ -596,7 +596,9 @@ class Store {
                   }
                 }
               });
-              this.props.history.replace({ search: searchQt });
+              window.history.replaceState(null, null, "?" + searchQt);
+              this.filtration();
+              return;
             }
           }
         } else {
@@ -610,59 +612,59 @@ class Store {
         }
         this.productsToRender = testContainer;
 
-        if (!Object.keys(this.categoryFilter).length) {
-          //стартовый фильтр
-          const sortDataClear = {};
+        // if (!Object.keys(this.categoryFilter).length) {
+        //стартовый фильтр
+        const sortDataClear = {};
 
-          Object.keys(data[0].clearSort[0]).forEach((name) => {
-            if (
-              (name !== "_id") &
-              (name !== "minPrice") &
-              (name !== "maxPrice") &
-              (name !== "measure") &
-              (name !== "count")
-            ) {
-              sortDataClear[name] = data[0].clearSort[0][name].sort();
-            } else if (name == "measure") {
-              const newMeasure = [];
-              const sortObj = {
-                names: [],
-              };
-              data[0].sort[0][name].forEach((elem) => {
-                if (elem.name != "") {
-                  if (!sortObj.names.includes(elem.name[0])) {
-                    sortObj.names.push(elem.name[0]);
-                  }
-                  if (sortObj[elem.name]) {
-                    sortObj[elem.name].push(Number(elem.value[0]));
-                  } else {
-                    sortObj[elem.name] = [Number(elem.value[0])];
-                  }
-                  if (!sortObj[elem.name + "Unit"]) {
-                    sortObj[elem.name + "Unit"] = elem.unit;
-                  }
+        Object.keys(data[0].clearSort[0]).forEach((name) => {
+          if (
+            (name !== "_id") &
+            (name !== "minPrice") &
+            (name !== "maxPrice") &
+            (name !== "measure") &
+            (name !== "count")
+          ) {
+            sortDataClear[name] = data[0].clearSort[0][name].sort();
+          } else if (name == "measure") {
+            const newMeasure = [];
+            const sortObj = {
+              names: [],
+            };
+            data[0].sort[0][name].forEach((elem) => {
+              if (elem.name != "") {
+                if (!sortObj.names.includes(elem.name[0])) {
+                  sortObj.names.push(elem.name[0]);
                 }
-              });
-              sortObj.names.sort();
+                if (sortObj[elem.name]) {
+                  sortObj[elem.name].push(Number(elem.value[0]));
+                } else {
+                  sortObj[elem.name] = [Number(elem.value[0])];
+                }
+                if (!sortObj[elem.name + "Unit"]) {
+                  sortObj[elem.name + "Unit"] = elem.unit;
+                }
+              }
+            });
+            sortObj.names.sort();
 
-              sortObj.names.forEach((sn) => {
-                newMeasure.push({
-                  name: sn,
-                  value: sortObj[sn].sort(function (a, b) {
-                    return a - b;
-                  }),
-                  unit: sortObj[sn + "Unit"][0],
-                });
+            sortObj.names.forEach((sn) => {
+              newMeasure.push({
+                name: sn,
+                value: sortObj[sn].sort(function (a, b) {
+                  return a - b;
+                }),
+                unit: sortObj[sn + "Unit"][0],
               });
-              sortDataClear[name] = newMeasure;
-            } else {
-              sortDataClear[name] = data[0].clearSort[0][name];
-            }
-          });
-          // this.productValue = data[0].sort[0].count;
-          // this.paginatCont = [<Paginat store={this} />];
-          this.categoryFilter = sortDataClear;
-        }
+            });
+            sortDataClear[name] = newMeasure;
+          } else {
+            sortDataClear[name] = data[0].clearSort[0][name];
+          }
+        });
+        // this.productValue = data[0].sort[0].count;
+        // this.paginatCont = [<Paginat store={this} />];
+        this.categoryFilter = sortDataClear;
+        // }
         //сортировка
         const sortData = {};
         if (Object.keys(data[0].sort[0]).length) {
@@ -1099,7 +1101,7 @@ class Store {
     const optPoints = [];
     Object.keys(availableFilters).forEach((filterType) => {
       if (filterType == "brand") {
-        if (this.activeFilters.choosePoint.includes(filterType)) {
+        if (this.activeFilters.choosePoint.indexOf(filterType) === 0) {
           Object.keys(this.categoryFilter).forEach((name) => {
             if (
               name !== filterType &&
@@ -1129,7 +1131,7 @@ class Store {
           );
         }
       } else if (filterType == "material") {
-        if (this.activeFilters.choosePoint.indexOf(filterType) != -1) {
+        if (this.activeFilters.choosePoint.indexOf(filterType) === 0) {
           Object.keys(this.categoryFilter).forEach((name) => {
             if (
               name !== filterType &&
@@ -1159,7 +1161,7 @@ class Store {
           );
         }
       } else if (filterType == "country") {
-        if (this.activeFilters.choosePoint.indexOf(filterType) != -1) {
+        if (this.activeFilters.choosePoint.indexOf(filterType) === 0) {
           Object.keys(this.categoryFilter).forEach((name) => {
             if (
               name !== filterType &&
@@ -1189,7 +1191,7 @@ class Store {
           );
         }
       } else if (filterType == "color") {
-        if (this.activeFilters.choosePoint.indexOf(filterType) != -1) {
+        if (this.activeFilters.choosePoint.indexOf(filterType) === 0) {
           Object.keys(this.categoryFilter).forEach((name) => {
             if (
               name !== filterType &&
@@ -1219,7 +1221,7 @@ class Store {
           );
         }
       } else if (filterType == "measure") {
-        if (this.activeFilters.choosePoint.indexOf(filterType) != -1) {
+        if (this.activeFilters.choosePoint.indexOf(filterType) === 0) {
           Object.keys(this.categoryFilter).forEach((name) => {
             if (
               name !== filterType &&

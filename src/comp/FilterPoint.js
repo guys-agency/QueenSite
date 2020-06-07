@@ -7,7 +7,9 @@ const FilterPoint = observer(
   class FilterPoint extends Component {
     state = {
       inFilter: false,
-      classStyle: " ",
+      classStyle: this.props.store.activeFilters.choosePoint.includes(
+        this.props.objectName
+      ),
     };
 
     clickHandler = (filterPoint) => {
@@ -157,20 +159,19 @@ const FilterPoint = observer(
               className={active ? "filter__name active" : "filter__name"}
               onClick={(e) => {
                 e.target.classList.toggle("active");
-                e.target.nextElementSibling.classList.toggle("active");
-                // if (classStyle.includes("active")) {
-                //   this.setState({ classStyle: " " });
-                // } else {
-                //   this.setState({ classStyle: "active" });
-                // }
+                // e.target.nextElementSibling.classList.toggle("active");
+                this.setState({ classStyle: !classStyle });
               }}
             >
               {name}
               <div className="ic i_drop"></div>
             </h3>
-           
-            <div className={"filter__container " + (active ? "active" : "")}>{filterPoints}</div>
 
+            <div
+              className={"filter__container " + (classStyle ? "active" : "")}
+            >
+              {filterPoints}
+            </div>
           </div>
         )
       );
