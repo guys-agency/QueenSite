@@ -318,16 +318,22 @@ const Filters = observer(
                         ? activeFilters.minPrice
                         : null
                     }
+                    onBlur={() => {
+                      $("#priceBtn").addClass("close");
+                    }}
+                    onFocus={() => {
+                      $("#priceBtn").removeClass("close");
+                    }}
                     onChange={(e) => {
                       activeFilters.minPrice = e.target.value;
-                      if (e.target.value.length > 0) {
-                        $("#priceBtn").removeClass("close");
-                      } else if (
-                        activeFilters.maxPrice.length === 0 &&
-                        activeFilters.minPrice.length === 0
-                      ) {
-                        $("#priceBtn").addClass("close");
-                      }
+                      // if (e.target.value.length > 0) {
+                      //   $("#priceBtn").removeClass("close");
+                      // } else if (
+                      //   activeFilters.maxPrice.length === 0 &&
+                      //   activeFilters.minPrice.length === 0
+                      // ) {
+                      //   $("#priceBtn").addClass("close");
+                      // }
                     }}
                   ></input>
                   <p> до </p>
@@ -340,16 +346,22 @@ const Filters = observer(
                         ? activeFilters.maxPrice
                         : null
                     }
+                    onBlur={() => {
+                      $("#priceBtn").addClass("close");
+                    }}
+                    onFocus={() => {
+                      $("#priceBtn").removeClass("close");
+                    }}
                     onChange={(e) => {
                       activeFilters.maxPrice = e.target.value;
-                      if (e.target.value.length > 0) {
-                        $("#priceBtn").removeClass("close");
-                      } else if (
-                        activeFilters.maxPrice.length === 0 &&
-                        activeFilters.minPrice.length === 0
-                      ) {
-                        $("#priceBtn").addClass("close");
-                      }
+                      // if (e.target.value.length > 0) {
+                      //   $("#priceBtn").removeClass("close");
+                      // } else if (
+                      //   activeFilters.maxPrice.length === 0 &&
+                      //   activeFilters.minPrice.length === 0
+                      // ) {
+                      //   $("#priceBtn").addClass("close");
+                      // }
                     }}
                   ></input>
                   <p>₽</p>

@@ -430,69 +430,63 @@ const MainPage = observer(
               <div className="slider-cont slider-cont_brand">
                 <Swiper {...brandCar}>
                   <Link
-                    to="/catalog/?brand=Bohemia%20Crystall"
+                    to="/catalog?brand=Bohemia%20Crystall"
                     className="slider-brand"
                   >
                     <img src="/image/logos/Bohemia Crystall.png" />
                   </Link>
                   <Link
-                    to="/catalog/?brand=Aurum%20Crystal"
+                    to="/catalog?brand=Aurum%20Crystal"
                     className="slider-brand"
                   >
                     <img src="/image/logos/Aurum design.jpg" />
                   </Link>
                   <Link
-                    to="/catalog/?brand=Crystal%20Art"
+                    to="/catalog?brand=Crystal%20Art"
                     className="slider-brand"
                   >
                     <img src="/image/logos/Crystal Art.JPG" />
                   </Link>
                   <Link
-                    to="/catalog/?brand=Porcelaine%20Czech%20Gold%20Hands"
+                    to="/catalog?brand=Porcelaine%20Czech%20Gold%20Hands"
                     className="slider-brand"
                   >
                     <img src="/image/logos/Czech_Gold_Hands_Logo_1(1).jpg" />
                   </Link>
-                  <Link to="/catalog/?brand=Diva" className="slider-brand">
+                  <Link to="/catalog?brand=Diva" className="slider-brand">
                     <img src="/image/logos/diva.jpg" />
                   </Link>
                   <Link
-                    to="/catalog/?brand=Easy%20Life"
+                    to="/catalog?brand=Easy%20Life"
                     className="slider-brand"
                   >
                     <img src="/image/logos/easylife logo.jpg" />
                   </Link>
-                  <Link
-                    to="/catalog/?brand=G.Benedikt"
-                    className="slider-brand"
-                  >
+                  <Link to="/catalog?brand=G.Benedikt" className="slider-brand">
                     <img src="/image/logos/G. Benedikt logo white on color.png" />
                   </Link>
-                  <Link to="/catalog/?brand=Lilien" className="slider-brand">
+                  <Link to="/catalog?brand=Lilien" className="slider-brand">
                     <img src="/image/logos/Lilien Austria logo white on color.png" />
                   </Link>
                   <Link
-                    to="/catalog/?brand=Stara%20Role"
+                    to="/catalog?brand=Stara%20Role"
                     className="slider-brand"
                   >
                     <img src="/image/logos/MZ logo.jpg" />
                   </Link>
                   <Link
-                    to="/catalog/?brand=Queen%20Anne"
+                    to="/catalog?brand=Queen%20Anne"
                     className="slider-brand"
                   >
                     <img src="/image/logos/queen anne.jpg" />
                   </Link>
                   <Link
-                    to="/catalog/?brand=Queen%20of%20Bohemia"
+                    to="/catalog?brand=Queen%20of%20Bohemia"
                     className="slider-brand"
                   >
                     <img src="/image/logos/Queen of Bohemia NEW.jpg" />
                   </Link>
-                  <Link
-                    to="/catalog/?brand=Langenthal"
-                    className="slider-brand"
-                  >
+                  <Link to="/catalog?brand=Langenthal" className="slider-brand">
                     <img src="/image/logos/Suisse Lagenthal logo white on color.png" />
                   </Link>
                 </Swiper>
@@ -562,7 +556,8 @@ const MainPage = observer(
               <div className="gifts row">
                 <Swiper {...giftCar}>
                   <div className="col col-4 col-t-5 col-s-9">
-                    <Link to="/catalog/podarki/podarki_do_500_russian_ruble"
+                    <Link
+                      to="/catalog/podarki/podarki_do_500_russian_ruble"
                       className="banner"
                       style={{
                         backgroundImage: "url(" + "/image/gifts/1.png" + ")",
@@ -573,7 +568,8 @@ const MainPage = observer(
                   </div>
 
                   <div className="col col-4 col-t-5 col-s-9">
-                    <Link to="/catalog/podarki/podarki_do_1000_russian_ruble"
+                    <Link
+                      to="/catalog/podarki/podarki_do_1000_russian_ruble"
                       className="banner"
                       style={{
                         backgroundImage: "url(" + "/image/gifts/2.png" + ")",
@@ -584,7 +580,8 @@ const MainPage = observer(
                   </div>
 
                   <div className="col col-4 col-t-5 col-s-9">
-                    <Link to="/catalog/podarki/podarki_do_2000_russian_ruble"
+                    <Link
+                      to="/catalog/podarki/podarki_do_2000_russian_ruble"
                       className="banner"
                       style={{
                         backgroundImage: "url(" + "/image/gifts/3.png" + ")",
@@ -715,9 +712,7 @@ const MainPage = observer(
               <div className="row">
                 <div className="col col-6 col-s-12 col-middle subscribe__form">
                   <h3>Подпишитесь на новости</h3>
-                  <p>
-                    {/* <b>Скидка 5%</b> на первую покупку */}
-                  </p>
+                  <p>{/* <b>Скидка 5%</b> на первую покупку */}</p>
                   <form className="row row_inner col-bottom">
                     <div className="col col-7 col-s-12">
                       <div className="input-field">
