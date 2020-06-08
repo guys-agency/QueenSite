@@ -110,6 +110,9 @@ code {
   img {
     height: 100%;
   }
+  &:hover{
+    transform: translateY(-3px);
+  }
 }
 
 .main-page {
