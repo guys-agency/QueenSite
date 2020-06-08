@@ -96,8 +96,11 @@ const Breadcrumbs = observer(
           );
         }
       }
-
-      return brRend;
+     return (
+        <div className="breadcrumbs">
+          {brRend}
+        </div>
+      )
     }
   }
 );
