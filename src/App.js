@@ -388,6 +388,45 @@ const MainScreen = observer(
             />
 
             <Route
+              path="/new"
+              render={(routProps) => (
+                (this.props.store.nameMainCat = ""),
+                (this.props.store.nameSecondCat = ""),
+                $("html, body").animate({ scrollTop: 0 }, 500),
+                this.props.store.pathS !== "new"
+                  ? this.props.store.cleaningActiveFilters()
+                  : null,
+                (this.props.store.pathS = "new"),
+                this.props.store.filtration(),
+                (
+                  <div className="main-screen">
+                    <div className="container">
+                      <div className="row">
+                        <div className="col col-12">
+                          <h3 className="catalog-title">Новинки</h3>
+                        </div>
+                      </div>
+                      <div className="row catalog">
+                        <div className="col col-3">
+                          <Filters
+                            store={this.props.store}
+                            parentName={routProps.match.params.parentName}
+                            childName={routProps.match.params.childName}
+                          />
+                        </div>
+                        <ProductCardContainer
+                          store={this.props.store}
+                          parentName={routProps.match.params.parentName}
+                          childName={routProps.match.params.childName}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )
+              )}
+            />
+
+            <Route
               path="/closeout"
               render={(routProps) => (
                 (this.props.store.nameMainCat = ""),

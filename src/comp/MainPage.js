@@ -601,7 +601,7 @@ const MainPage = observer(
             <div className="carousel carousel_product carousel_product-new">
               <div className="container">
                 <div className="title">
-                  <Link to="/sale" href="">
+                  <Link to="/new">
                     <h2 className="tilda">
                       Новинки{" "}
                       <span className="link">

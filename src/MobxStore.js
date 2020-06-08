@@ -64,6 +64,10 @@ class Store {
 
   sortInProd = "";
 
+  canSale = false;
+  canPremium = false;
+  canHit = false;
+
   cartCount = 0;
   productInCart = {};
   productInCartList =
@@ -623,6 +627,7 @@ class Store {
         this.productsToRender = testContainer;
 
         // if (!Object.keys(this.categoryFilter).length) {
+
         //стартовый фильтр
         const sortDataClear = {};
 
@@ -684,7 +689,10 @@ class Store {
               (name !== "minPrice") &
               (name !== "maxPrice") &
               (name !== "measure") &
-              (name !== "count")
+              (name !== "count") &
+              (name !== "sale") &
+              (name !== "hit") &
+              (name !== "premium")
             ) {
               sortData[name] = data[0].sort[0][name].sort();
             } else if (name == "measure") {
@@ -723,6 +731,21 @@ class Store {
               sortData[name] = data[0].sort[0][name];
             }
           });
+          if (data[0].sort[0].sale.includes("true")) {
+            this.canSale = true;
+          } else {
+            this.canSale = false;
+          }
+          if (data[0].sort[0].hit.includes("true")) {
+            this.canHit = true;
+          } else {
+            this.canHit = false;
+          }
+          if (data[0].sort[0].premium.includes("premium")) {
+            this.canPremium = true;
+          } else {
+            this.canPremium = false;
+          }
           this.productValue = data[0].sort[0].count;
           this.paginatCont = [<Paginat store={this} />];
           this.createFilterPointsContainers(sortData);
@@ -960,8 +983,13 @@ class Store {
     if (pathname.includes("hits") || pathname.includes("hit=")) {
       this.activeFilters.attr.push("hit");
       this.activeFilters.count += 1;
-    } else if (pathname.includes("sale")) {
+    }
+    if (pathname.includes("sale")) {
       this.activeFilters.attr.push("sale");
+      this.activeFilters.count += 1;
+    }
+    if (pathname.includes("new")) {
+      this.activeFilters.attr.push("new");
       this.activeFilters.count += 1;
     }
 
@@ -1094,6 +1122,9 @@ class Store {
     console.log("bodyJSON :>> ", bodyJSON);
 
     if (pathname.includes("hits")) {
+      bodyJSON.withCat = true;
+    }
+    if (pathname.includes("new")) {
       bodyJSON.withCat = true;
     } else if (pathname.includes("closeout")) {
       bodyJSON.withCat = true;
@@ -1344,6 +1375,9 @@ decorate(Store, {
   dataColl: observable,
   sideAsk: observable,
   menuAccor: observable,
+  canHit: observable,
+  canPremium: observable,
+  canSale: observable,
 });
 
 const store = new Store();
