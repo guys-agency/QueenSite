@@ -18,6 +18,7 @@ input[type=number] {
 
 input[type="text"], input[type="password"], input[type="tel"], textarea{
     border: 0;
+    border-radius: 0px;
     font-size: 16px;
     border-bottom: 1px solid $gr_middle;
     color: $b_dark;

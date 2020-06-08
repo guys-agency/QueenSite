@@ -215,8 +215,7 @@ const MainPage = observer(
           <div className="row ideas-block">
             <div className="col col-5 col-t-12">
               <Link
-                to={"/ideas/" + bannersData.ideas[0].slug}
-                href="#"
+                to={"/ideas/" + bannersData.ideas[0].slug}                
                 className="banner banner_overlay main-idea"
                 style={{
                   backgroundImage: `url(/image/banners/${
@@ -234,7 +233,6 @@ const MainPage = observer(
                 <div className="col col-6 col-s-12">
                   <Link
                     to={"/ideas/" + bannersData.ideas[1].slug}
-                    href="#"
                     className="banner banner_overlay small"
                     style={{
                       backgroundImage: `url(/image/banners/${
@@ -252,7 +250,6 @@ const MainPage = observer(
                 <div className="col col-6 col-s-12">
                   <Link
                     to={"/ideas/" + bannersData.ideas[2].slug}
-                    href="#"
                     className="banner banner_overlay small"
                     style={{
                       backgroundImage: `url(/image/banners/${
@@ -270,7 +267,6 @@ const MainPage = observer(
                 <div className="col col-12 col-s-12">
                   <Link
                     to={"/ideas/" + bannersData.ideas[3].slug}
-                    href="#"
                     className="banner banner_overlay large"
                     style={{
                       backgroundImage: `url(/image/banners/${

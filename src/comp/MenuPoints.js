@@ -237,9 +237,9 @@ const MenuPoints = observer(
         })
         .resize();
 
-      if ($(".sidebar__inner").length) {
-        $(".head_filter").addClass("visible");
-      }
+      // if ($(".sort").length) {
+      //   $(".head_filter").addClass("visible");
+      // }
 
       $(document).off("click", this.closeAll);
       $(document).on("click", this.closeAll);
@@ -493,6 +493,10 @@ const MenuPoints = observer(
                 window.location.pathname.includes("profile") ||
                 window.location.pathname.includes("about") ||
                 window.location.pathname.includes("product") ||
+                window.location.pathname.includes("closeout") ||
+                window.location.pathname.includes("ideas") ||
+                window.location.pathname.includes("hits") ||
+                window.location.pathname.includes("new") ||
                 window.location.pathname.includes("help")
                   ? "header_w "
                   : " ") +
@@ -539,7 +543,17 @@ const MenuPoints = observer(
                 {this.phone}
 
                 <button
-                  className="ic i_filter head_filter vis-s "
+                  className={"ic i_filter head_filter vis-s " +
+                  (window.location.pathname.includes("catalog") ||
+                    window.location.pathname.includes("collections/") ||
+                    window.location.pathname.includes("actions/") ||
+                    window.location.pathname.includes("main/") ||
+                    window.location.pathname.includes("closeout") ||
+                    window.location.pathname.includes("ideas") ||
+                    window.location.pathname.includes("hits")
+                    ? "visible "
+                    : " ")
+                  }
                   onClick={(e) => {
                     e.target.classList.toggle("active");
                     document
@@ -589,6 +603,10 @@ const MenuPoints = observer(
                 window.location.pathname.includes("profile") ||
                 window.location.pathname.includes("about") ||
                 window.location.pathname.includes("product") ||
+                window.location.pathname.includes("closeout") ||
+                window.location.pathname.includes("ideas") ||
+                window.location.pathname.includes("hits") ||
+                window.location.pathname.includes("new") ||
                 window.location.pathname.includes("help")
                   ? "navigation_w "
                   : " ") +

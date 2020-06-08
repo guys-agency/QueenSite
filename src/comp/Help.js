@@ -142,7 +142,20 @@ const Help = observer(
                   <a href="mailto:info@queenbohemia.ru" className="underline">
                     info@queenbohemia.ru
                   </a>
-                  <button className="link dotted ask">Задать вопрос</button>
+                  <button
+                    className="link dotted ask"
+                    onClick={() => {
+                      document
+                        .querySelector(".sidebar-overlay")
+                        .classList.add("active");
+
+                      document.querySelector("body").classList.add("no-scroll");
+
+                      this.props.store.sideAsk = true;
+                    }}
+                  >
+                    Задать вопрос
+                  </button>
                 </div>
               </div>
             </div>
