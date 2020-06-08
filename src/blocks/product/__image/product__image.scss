@@ -2,13 +2,13 @@
   position: relative;
   margin-bottom: 13px;
   width: 100%;
+    border: 1px solid #f2f2f2;
+    border-radius: 3px;
 
 
   padding: 50% 10px;
   overflow: hidden;
   &-wrp{
-    border-radius: 3px;
-    border: 1px solid #f2f2f2;
 
     position: absolute;
     top: 0;
