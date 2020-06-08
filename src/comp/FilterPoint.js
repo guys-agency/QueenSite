@@ -85,7 +85,7 @@ const FilterPoint = observer(
                     searchQt =
                       filterName +
                       "=" +
-                      name +
+                      ind +
                       "!~" +
                       activeFilters[filterName][ind].join(",");
                   } else {
@@ -93,7 +93,7 @@ const FilterPoint = observer(
                       "&&" +
                       filterName +
                       "=" +
-                      name +
+                      ind +
                       "!~" +
                       activeFilters[filterName][ind].join(",");
                   }
@@ -107,7 +107,9 @@ const FilterPoint = observer(
       this.props.store.startPag = 0;
       this.props.store.stopPag = 42;
       console.log("TESTTESTTEST :>> ");
-      console.log("activeFilters!!!!!! :>> ", activeFilters);
+      console.log("activeFilters!!!!!! :>> ", activeFilters.brand);
+      console.log("activeFiltersMEAS :>> ", activeFilters.measure);
+      console.log("searchQt :>> ", searchQt);
       const stop = new Date();
       console.log("time :>> ", stop - start);
       this.props.history.replace({ search: searchQt });
