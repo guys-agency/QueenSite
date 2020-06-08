@@ -264,3 +264,11 @@ code {
 .mla{
   margin-left: auto;
 }
+
+.field-error{
+  position: absolute;
+  font-size: 12px;
+  bottom: -20px;
+  right: 0;
+  color: $red;
+}
