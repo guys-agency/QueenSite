@@ -1,13 +1,17 @@
+//
+// @import "./ulits/semantic-ui-css/semantic.min.css";
+// @import "./ulits/swiper.css";
+
 //SETTINGS
-@import "./vars/size.scss"; 
-@import "./vars/colors.scss"; 
-@import "./vars/shadows.scss"; 
-@import "./vars/icons.scss"; 
-@import "./vars/mix.scss"; 
-@import "./fonts/font.scss"; 
-@import "./fonts/icons.scss"; 
-@import "./fonts/typo.scss"; 
-@import "./blocks/input/input.scss"; 
+@import "./vars/size.scss";
+@import "./vars/colors.scss";
+@import "./vars/shadows.scss";
+@import "./vars/icons.scss";
+@import "./vars/mix.scss";
+@import "./fonts/font.scss";
+@import "./fonts/icons.scss";
+@import "./fonts/typo.scss";
+@import "./blocks/input/input.scss";
 @import "./blocks/grid/grid.scss";
 
 //ELEMENTS
@@ -48,16 +52,16 @@
 @import "./blocks/help/help.scss";
 @import "./blocks/about/about.scss";
 
-
-
+//LAZY-LOAD
+// @import "./ulits/blur.css";
 
 body {
   margin: 0;
-  font-family: "Excentra Pro", 'Times New Roman', Times, serif;
+  font-family: "Excentra Pro", "Times New Roman", Times, serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: $b_dark;
-  &.no-scroll{
+  &.no-scroll {
     overflow-y: hidden;
   }
 }
@@ -73,20 +77,20 @@ code {
   }
 }
 
-.vis-s{
+.vis-s {
   display: none;
-  @include max($s){
+  @include max($s) {
     display: inline-block;
   }
 }
 
-.hide-s{
-  @include max($s){
+.hide-s {
+  @include max($s) {
     display: none;
   }
 }
 
-.catalog{
+.catalog {
   margin-top: 30px;
   position: relative;
 }
@@ -112,7 +116,7 @@ code {
   width: 100%;
   flex: 1;
 }
-.main-screen{
+.main-screen {
   flex: 1;
 }
 
@@ -165,10 +169,10 @@ code {
 
 .main-idea {
   height: 460px;
-  @include max($t){
+  @include max($t) {
     margin-bottom: 20px;
   }
-  @include max($s){
+  @include max($s) {
     height: 220px;
   }
 }
@@ -192,7 +196,7 @@ code {
 
 .gifts {
   display: block;
-  .swiper-container{
+  .swiper-container {
     padding-top: 10px;
     padding-bottom: 15px;
   }
@@ -205,7 +209,7 @@ code {
     background-position: bottom right;
     background-repeat: no-repeat;
     background-size: contain;
-    @include max(500px){
+    @include max(500px) {
       height: 170px;
     }
     &:nth-child(3) {
@@ -247,20 +251,20 @@ code {
   justify-content: space-between;
 }
 
-.i_bag{
+.i_bag {
   position: relative;
-  &__counter{
+  &__counter {
     position: absolute;
     font-size: 11px;
     font-weight: 600;
     @include c(x);
     top: 16px;
-    @include max($s){
+    @include max($s) {
       top: 7px;
     }
   }
 }
 
-.mla{
+.mla {
   margin-left: auto;
 }

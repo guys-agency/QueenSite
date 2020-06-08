@@ -192,9 +192,13 @@ const CardView = observer(
 
       const { timeDelivery } = this.state;
 
-      if (this.fetchReady && this.count) {
+      if (data.slug === +this.props.sku && this.count) {
         console.log("12 :>> ");
-        if (timeDelivery === "") {
+        if (
+          timeDelivery === "" &&
+          localStorage.get("city") !== null &&
+          localStorage.get("city") !== undefined
+        ) {
           this.count = false;
           console.log("123 :>> ");
           const dataDeliv = {
@@ -229,7 +233,7 @@ const CardView = observer(
         }
       }
 
-      if (!this.fetchReady && data !== undefined) {
+      if (data.slug !== +this.props.sku || this.with.length === 0) {
         fetch(SERVER_URL + "/product/" + this.props.sku, {
           method: "GET",
           headers: {
@@ -313,7 +317,7 @@ const CardView = observer(
 
       const storesAvali = [];
 
-      if (this.fetchReady) {
+      if (data.slug === +this.props.sku) {
         data.stores.forEach((el) => {
           if (+el.count > 0) {
             storesAvali.push(
@@ -344,7 +348,7 @@ const CardView = observer(
         : -1;
 
       return (
-        this.fetchReady && (
+        data.slug === +this.props.sku && (
           <div
             className="card-view-container"
             onClick={(e) => {
@@ -478,7 +482,12 @@ const CardView = observer(
                                   drop.classList.toggle("visible");
                                 }}
                               >
-                                Есть в {storesAvali.length}{" "}{num2str(storesAvali.length, ["магазине", "магазинах", "магазинах"])}{" "}
+                                Есть в {storesAvali.length}{" "}
+                                {num2str(storesAvali.length, [
+                                  "магазине",
+                                  "магазинах",
+                                  "магазинах",
+                                ])}{" "}
                                 <span className="ic i_drop"></span>
                               </button>
                               <div className="drop drop_shop">

@@ -99,7 +99,20 @@ const Footer = observer(
                 <a href="tel:+78008085878">
                   <h4 className="white">+7 800 808-58-78</h4>
                 </a>
-                <button className="link dotted ask">Задать вопрос</button>
+                <button
+                  className="link dotted ask"
+                  onClick={() => {
+                    document
+                      .querySelector(".sidebar-overlay")
+                      .classList.add("active");
+
+                    document.querySelector("body").classList.add("no-scroll");
+
+                    this.props.store.sideAsk = true;
+                  }}
+                >
+                  Задать вопрос
+                </button>
                 <div>
                   <a className="underline" href="mailto:info@queenbohemia.ru">
                     info@queenbohemia.ru
