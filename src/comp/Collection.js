@@ -51,7 +51,7 @@ const Collection = observer(
           );
         } else {
           collRender.push(
-            <div className="head head_big">
+            <div className="head head_big head_no-link">
               <div
                 className="head-banner head-banner_action"
                 style={{

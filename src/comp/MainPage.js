@@ -426,10 +426,22 @@ const MainPage = observer(
               <div className="slider-cont slider-cont_brand">
                 <Swiper {...brandCar}>
                   <Link
+                    to="/catalog?brand=Crystalite%20Bohemia"
+                    className="slider-brand"
+                  >
+                    <img src="/image/logos/cbm.png" />
+                  </Link>
+                  <Link
                     to="/catalog?brand=Bohemia%20Crystall"
                     className="slider-brand"
                   >
                     <img src="/image/logos/Bohemia Crystall.png" />
+                  </Link>
+                  <Link
+                    to="/catalog?brand=Queen%20of%20Bohemia"
+                    className="slider-brand"
+                  >
+                    <img src="/image/logos/Queen of Bohemia NEW.jpg" />
                   </Link>
                   <Link
                     to="/catalog?brand=Aurum%20Crystal"
@@ -475,12 +487,6 @@ const MainPage = observer(
                     className="slider-brand"
                   >
                     <img src="/image/logos/queen anne.jpg" />
-                  </Link>
-                  <Link
-                    to="/catalog?brand=Queen%20of%20Bohemia"
-                    className="slider-brand"
-                  >
-                    <img src="/image/logos/Queen of Bohemia NEW.jpg" />
                   </Link>
                   <Link to="/catalog?brand=Langenthal" className="slider-brand">
                     <img src="/image/logos/Suisse Lagenthal logo white on color.png" />

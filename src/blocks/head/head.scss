@@ -144,4 +144,15 @@
             }
         }
     }
+
+    &_no-link{
+        .i_right{
+            display: none;
+        }
+        .head-banner_action{
+            &:hover{
+                transform: translateY(0);
+            }  
+        }
+    }
 }
