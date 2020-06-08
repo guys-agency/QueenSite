@@ -731,17 +731,17 @@ class Store {
               sortData[name] = data[0].sort[0][name];
             }
           });
-          if (data[0].sort[0].sale.includes("true")) {
+          if (data[0].sort[0].sale.includes(true)) {
             this.canSale = true;
           } else {
             this.canSale = false;
           }
-          if (data[0].sort[0].hit.includes("true")) {
+          if (data[0].sort[0].hit.includes(true)) {
             this.canHit = true;
           } else {
             this.canHit = false;
           }
-          if (data[0].sort[0].premium.includes("premium")) {
+          if (data[0].sort[0].premium[0].includes("premium")) {
             this.canPremium = true;
           } else {
             this.canPremium = false;
