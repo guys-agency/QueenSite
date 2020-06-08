@@ -32,6 +32,7 @@ import Help from "./comp/Help";
 import About from "./comp/About";
 import Footer from "./comp/Footer";
 import querySearch from "stringquery";
+import Breadcrumbs from "./comp/breadcrumbs";
 import $ from "jquery";
 
 import Swiper from "react-id-swiper";
@@ -166,6 +167,11 @@ const MainScreen = observer(
                     <div className="container">
                       <div className="row">
                         <div className="col col-12">
+                          <Breadcrumbs
+                            name={routProps.match.params.parentName}
+                            child={routProps.match.params.childName}
+                            store={this.props.store}
+                          />
                           <h3 className="catalog-title">Каталог товаров</h3>
                         </div>
                       </div>
@@ -577,7 +583,7 @@ const MainScreen = observer(
               (this.props.store.cartPage && (
                 <CartPage store={this.props.store} />
               ))} */}
-          <Footer />
+          <Footer store={this.props.store} />
         </>
       );
     }

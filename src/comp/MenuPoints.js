@@ -26,7 +26,7 @@ const MenuPoints = observer(
       cities: [],
       ready: false,
       popreg: false,
-      sideAsk: false,
+
       reg: false,
       log: true,
       login: "",
@@ -53,7 +53,7 @@ const MenuPoints = observer(
 
             document.querySelector("body").classList.add("no-scroll");
 
-            this.setState({ sideAsk: true });
+            this.props.store.sideAsk = true;
           }}
         >
           Задать вопрос
@@ -273,11 +273,15 @@ const MenuPoints = observer(
           data.forEach((elem, i) => {
             const childsPoints = [];
 
+            this.props.store.menuAccor[elem.slug] = elem.name;
+
             elem.childs.sort((prev, next) => {
               if (prev.name < next.name) return -1;
               if (prev.name < next.name) return 1;
+              return 1;
             });
             elem.childs.forEach((child, iCh) => {
+              this.props.store.menuAccor[child.slug] = child.name;
               //убрать tr, так как будут поля с транскрипцией в бд
               childsPoints.push(
                 <li key={child.name}>
@@ -358,6 +362,7 @@ const MenuPoints = observer(
               childsPoints.sort((prev, next) => {
                 if (prev.name < next.name) return -1;
                 if (prev.name < next.name) return 1;
+                return 1;
               });
               childsPoints.forEach((elem) => {
                 if (ind < 3 && sum < childsPoints.length - 1) {
@@ -417,8 +422,8 @@ const MenuPoints = observer(
         popreg: false,
         popCart: false,
         popLike: false,
-        sideAsk: false,
       });
+      this.props.store.sideAsk = false;
       document.querySelector(".sidebar-overlay").classList.remove("active");
       $("body").removeClass("no-scroll");
       $(".navigation").removeClass("visible");
@@ -434,7 +439,6 @@ const MenuPoints = observer(
         popreg: false,
         popCart: false,
         popLike: false,
-        sideAsk: false,
       });
     };
 
@@ -877,17 +881,17 @@ const MenuPoints = observer(
                 (this.state.popreg ||
                 this.state.popCart ||
                 this.state.popLike ||
-                this.state.sideAsk
+                this.props.store.sideAsk
                   ? " visible"
                   : "")
               }
             >
               <div className="sidebar__head">
-                <button className="btn btn-head" onClick={this.hideSidebar}>
+                <button className="btn btn-head" onClick={this.closeSidebar}>
                   Свернуть
                 </button>
                 {!this.state.popreg ||
-                  (this.state.sideAsk && (
+                  (this.props.store.sideAsk && (
                     <button
                       className="link dotted"
                       onClick={() => {
@@ -910,7 +914,7 @@ const MenuPoints = observer(
                   closeSidebar={this.closeSidebar}
                 />
               )}
-              {this.state.sideAsk && (
+              {this.props.store.sideAsk && (
                 <AskSidebar
                   store={this.props.store}
                   closeSidebar={this.closeSidebar}
@@ -937,9 +941,8 @@ const MenuPoints = observer(
                   popreg: false,
                   popCart: false,
                   popLike: false,
-                  sideAsk: false,
                 });
-
+                this.props.store.sideAsk = false;
                 $("body").removeClass("no-scroll");
                 $(".navigation").removeClass("visible");
                 $(".header__drop_city").removeClass("active");

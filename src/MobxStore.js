@@ -48,6 +48,10 @@ class Store {
 
   nameSecondCat = "";
 
+  sideAsk = false;
+
+  menuAccor = {};
+
   bannerFilter = {};
 
   fullCats = [];
@@ -67,7 +71,7 @@ class Store {
       ? {}
       : localStorage.get("productInCart");
 
-  cardContainer = [];
+  cardContainer = {};
 
   productPage = false;
   cartPage = false;
@@ -92,7 +96,10 @@ class Store {
 
   searchQ = "";
 
-  auth = getCookie("auth") === undefined ? false : true;
+  auth =
+    getCookie("auth") === undefined || getCookie("auth") === null
+      ? false
+      : true;
   //подумать НАД РЕШЕНИЕМ
   menuInFilt = autorun(() => {
     if (this.prodCats.length) {
@@ -223,7 +230,10 @@ class Store {
 
   cityCheck = autorun(() => {
     console.log('localStorage.get("city") :>> ', localStorage.get("city"));
-    if (localStorage.get("city")) {
+    if (
+      localStorage.get("city") !== undefined &&
+      localStorage.get("city") !== null
+    ) {
       this.city = localStorage.get("city").name;
     } else {
       const init = () => {
@@ -892,6 +902,8 @@ class Store {
     this.prodCats = [];
     this.dataColl = [];
     this.pathS = "";
+    this.startPag = 0;
+    this.stopPag = 42;
   };
 
   filtration = () => {
@@ -923,7 +935,9 @@ class Store {
           if (
             elemSp[0] === "minPrice" ||
             elemSp[0] === "maxPrice" ||
-            elemSp[0] === "premium"
+            elemSp[0] === "premium" ||
+            elemSp[0] === "sale" ||
+            elemSp[0] === "hit"
           ) {
             this.activeFilters[elemSp[0]] = elemSp[1];
           } else {
@@ -943,7 +957,7 @@ class Store {
     console.log("this.activeFilters :>> ", this.activeFilters);
     const pathname = window.location.pathname;
     console.log("pathname", pathname);
-    if (pathname.includes("hits") || pathname.includes("hit")) {
+    if (pathname.includes("hits") || pathname.includes("hit=")) {
       this.activeFilters.attr.push("hit");
       this.activeFilters.count += 1;
     } else if (pathname.includes("sale")) {
@@ -1100,8 +1114,8 @@ class Store {
   };
 
   createFilterPointsContainers = (availableFilters) => {
-    this.minPrice = availableFilters.minPrice;
-    this.maxPrice = availableFilters.maxPrice;
+    this.minPrice = this.categoryFilter.minPrice;
+    this.maxPrice = this.categoryFilter.maxPrice;
 
     const filterPoints = [];
     const measurePoints = [];
@@ -1328,6 +1342,8 @@ decorate(Store, {
   countInProdPage: observable,
   collInMenu: observable,
   dataColl: observable,
+  sideAsk: observable,
+  menuAccor: observable,
 });
 
 const store = new Store();

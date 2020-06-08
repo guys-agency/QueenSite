@@ -325,7 +325,11 @@ const Filters = observer(
                       $("#priceBtn").removeClass("close");
                     }}
                     onChange={(e) => {
-                      activeFilters.minPrice = e.target.value;
+                      if (
+                        e.target.value > minPrice &&
+                        e.target.value < maxPrice
+                      )
+                        activeFilters.minPrice = e.target.value;
                       // if (e.target.value.length > 0) {
                       //   $("#priceBtn").removeClass("close");
                       // } else if (
@@ -353,7 +357,14 @@ const Filters = observer(
                       $("#priceBtn").removeClass("close");
                     }}
                     onChange={(e) => {
-                      activeFilters.maxPrice = e.target.value;
+                      if (
+                        e.target.value > minPrice &&
+                        e.target.value < maxPrice
+                      ) {
+                        activeFilters.maxPrice = e.target.value;
+                      } else {
+                        activeFilters.maxPrice = maxPrice;
+                      }
                       // if (e.target.value.length > 0) {
                       //   $("#priceBtn").removeClass("close");
                       // } else if (
@@ -369,23 +380,28 @@ const Filters = observer(
                     className="btn close"
                     id="priceBtn"
                     onClick={() => {
-                      if (activeFilters.maxPrice > 0) {
-                        activeFilters.choosePoint.push("maxPrice");
-                        activeFilters.count += 1;
-                      } else {
-                        activeFilters.choosePoint.splice(
-                          activeFilters.choosePoint.indexOf("maxPrice"),
-                          1
-                        );
-                      }
-                      if (activeFilters.minPrice > 0) {
+                      if (+activeFilters.minPrice > 0) {
                         activeFilters.choosePoint.push("minPrice");
                         activeFilters.count += 1;
                       } else {
-                        activeFilters.choosePoint.splice(
-                          activeFilters.choosePoint.indexOf("minPrice"),
-                          1
-                        );
+                        if (activeFilters.choosePoint.includes("minPrice")) {
+                          activeFilters.choosePoint.splice(
+                            activeFilters.choosePoint.indexOf("minPrice"),
+                            1
+                          );
+                        }
+                      }
+                      if (+activeFilters.maxPrice > 0) {
+                        console.log("2 :>> ", 2);
+                        activeFilters.choosePoint.push("maxPrice");
+                        activeFilters.count += 1;
+                      } else {
+                        if (activeFilters.choosePoint.includes("maxPrice")) {
+                          activeFilters.choosePoint.splice(
+                            activeFilters.choosePoint.indexOf("maxPrice"),
+                            1
+                          );
+                        }
                       }
 
                       let searchQt = "";
