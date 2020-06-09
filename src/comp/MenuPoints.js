@@ -895,7 +895,7 @@ const MenuPoints = observer(
                 <button className="btn btn-head" onClick={this.closeSidebar}>
                   Свернуть
                 </button>
-                {(!this.state.popreg || !this.props.store.sideAsk) && (
+                {(this.state.popLike || this.state.popCart) && (
                   <button
                     className="link dotted"
                     onClick={() => {
