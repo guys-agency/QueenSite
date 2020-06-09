@@ -4,6 +4,7 @@ import $ from "jquery";
 import api from "./api";
 import { Formik } from "formik";
 import RegistrationSchema from "../schemas/registrationSchema";
+import { withRouter } from "react-router";
 
 const { Component } = React;
 
@@ -12,6 +13,8 @@ const Finish = observer(
     state = {
       ready: false,
       data: {},
+      stopMess: "",
+      err: false,
     };
     focusHandler = (e) => {
       $(e.target).parent().find("label").addClass("active");
@@ -29,6 +32,7 @@ const Finish = observer(
         api
           .getFinishData(this.props.id)
           .then((data) => {
+            console.log("data :>> ", data);
             this.setState({ data: data._doc, ready: true });
           })
           .catch((err) => {
@@ -62,10 +66,23 @@ const Finish = observer(
                     <br />
                     Скоро с Вами свяжется менеджер для подтверждения.
                   </p>
-                  {!this.props.store.auth && (
+                  {!this.props.store.auth ? (
                     <>
                       <p>
-                        <button className="link dotted">
+                        <button
+                          className="link dotted"
+                          onClick={() => {
+                            document
+                              .querySelector(".sidebar-overlay")
+                              .classList.add("active");
+
+                            document
+                              .querySelector("body")
+                              .classList.add("no-scroll");
+
+                            this.props.store.sideLogin = true;
+                          }}
+                        >
                           <span className="ic i_user"></span> Войдите
                         </button>
                         , чтобы отслеживать статус заказа
@@ -132,11 +149,29 @@ const Finish = observer(
                           //определяем, что будет происходить при вызове onsubmit
                           onSubmit={(values, { setSubmitting }) => {
                             console.log("values :>> ", values);
-                            api.regist({
-                              name: data.delivery.recipient.firstName,
-                              email: values.email.toLowerCase(),
-                              password: values.password,
-                            });
+                            api
+                              .regist({
+                                name: data.delivery.recipient.firstName,
+                                email: values.email.toLowerCase(),
+                                password: values.password,
+                              })
+                              .then((ok) => {
+                                console.log("ok", ok);
+                                if (ok.status === 201) {
+                                  this.props.history.push("/profile");
+                                } else if (ok.status === 400) {
+                                  this.setState({
+                                    stopMess: ok.message,
+                                    err: true,
+                                  });
+                                  setTimeout(() => {
+                                    this.setState({ err: false });
+                                  }, 3000);
+                                }
+                              })
+                              .catch((err) => {
+                                console.log("err2 :>> ", err);
+                              });
                           }}
                           //свойство, где описывыем нашу форму
                           //errors-ошибки валидации формы
@@ -172,7 +207,9 @@ const Finish = observer(
                                   onChange={handleChange}
                                 />
                                 <div className="field-error">
-                                  {errors.email}
+                                  {this.state.err
+                                    ? this.state.stopMess
+                                    : errors.email}
                                 </div>
                               </div>
 
@@ -220,6 +257,15 @@ const Finish = observer(
                         </Formik>
                       </div>
                     </>
+                  ) : (
+                    <button
+                      className="btn btn_primary"
+                      onClick={() => {
+                        this.props.history.push("/profile");
+                      }}
+                    >
+                      <span className="ic i_user"></span>В личный кабинет
+                    </button>
                   )}
                 </div>
                 <div className="col col-1"></div>
@@ -232,13 +278,18 @@ const Finish = observer(
                         <span className="name">Доставка</span>
                         <span className="price">
                           {data.delivery.deliveryForCustomer.toLocaleString()}₽
-                          / <span className="b_gray">3-4 дня</span>
+                          {/* / <span className="b_gray">3-4 дня</span> */}
                         </span>
                       </div>
 
                       <div className="item">
                         <b className="name">Итого</b>
-                        <b className="price">{data.sum.toLocaleString()}₽</b>
+                        <b className="price">
+                          {(
+                            data.sum + data.delivery.deliveryForCustomer
+                          ).toLocaleString()}
+                          ₽
+                        </b>
                       </div>
                     </div>
                   </div>
@@ -274,4 +325,4 @@ const Finish = observer(
   }
 );
 
-export default Finish;
+export default withRouter(Finish);

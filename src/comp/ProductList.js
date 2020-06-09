@@ -45,7 +45,7 @@ const ProductList = observer(
               <img
                 src={
                   data.path_to_photo !== undefined
-                    ? "/image/products/" + data.path_to_photo[0]
+                    ? "/image/items/" + data.path_to_photo[0]
                     : "/image/Category/Product-card/Placeholder.png"
                 }
               />

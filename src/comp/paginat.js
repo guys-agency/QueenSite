@@ -51,6 +51,27 @@ const Paginat = observer(
           </div>
         );
       }
+      if (countPage > 5 && !(this.props.store.startPag / 42 > countPage - 4)) {
+        pointCont.push(
+          <>
+            <p> ... </p>
+            <div
+              className={"pagination__page"}
+              key={countPage}
+              onClick={() => {
+                this.props.store.startPag = 42 * (countPage - 1);
+                this.props.store.stopPag = productValue;
+
+                $("html, body").animate({ scrollTop: 0 }, 500);
+                this.setState({ midlPage: countPage });
+                filtration();
+              }}
+            >
+              {countPage}
+            </div>
+          </>
+        );
+      }
       return <div className="pagination">{pointCont}</div>;
     }
   }

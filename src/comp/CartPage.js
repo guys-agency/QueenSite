@@ -30,6 +30,8 @@ const CartPage = observer(
     deliveryOrderData = {};
     deliverySend = {};
 
+    order = {};
+
     deteleProduct = (el) => {
       const { productInCartList, addtoCart } = this.props.store;
       delete productInCartList[el];
@@ -521,7 +523,21 @@ const CartPage = observer(
                   <h3 className="tilda">Данные</h3>
                   <p>Для получения потребуется паспорт с указанными данными</p>
                   <p>
-                    <a className="link dotted">
+                    <a
+                      className="link dotted"
+                      onClick={(e) => {
+                        document
+                          .querySelector(".sidebar-overlay")
+                          .classList.add("active");
+
+                        document
+                          .querySelector("body")
+                          .classList.add("no-scroll");
+
+                        this.props.store.sideLogin = true;
+                        e.preventDefault();
+                      }}
+                    >
                       <span className="ic i_user"></span>{" "}
                       <span className="fw_m b_dark">Войдите</span>
                     </a>{" "}
@@ -716,6 +732,7 @@ const CartPage = observer(
 
                     <button
                       className="btn btn_yellow"
+                      id="createOrder"
                       onClick={() => {
                         //NEN
                         console.log(
@@ -780,22 +797,43 @@ const CartPage = observer(
                           // middleName: "{string}",
                           lastName: secondName,
                           email: email.toLowerCase(),
-                          address: {
-                            // "geoId": {int},
-                            country: "Россия",
-                            region: cityLoc.region,
-                            locality: cityLoc.name,
-                            street: adress,
-                            house: house,
-                            // "housing": "{string}",
-                            // "building": "{string}",
-                            apartment: flat,
-                          },
+                          // address: {
+                          //   // "geoId": {int},
+                          //   country: "Россия",
+                          //   region: cityLoc.region,
+                          //   locality: cityLoc.name,
+                          //   street: adress,
+                          //   house: house,
+                          //   // "housing": "{string}",
+                          //   // "building": "{string}",
+                          //   apartment: flat,
+                          // },
                           // "pickupPointId": {int}
+                        };
+
+                        const cost = {
+                          paymentMethod: "CARD",
+                          assessedValue: totalPrice,
+                          fullyPrepaid: true,
+                          manualDeliveryForCustomer:
+                            deliveryData.deliveryOption.cost
+                              .deliveryForCustomer,
+                        };
+
+                        const addressData = {
+                          geoId: localStorage.get("city").geoId,
+                          country: "Россия",
+                          region: cityLoc.region,
+                          locality: cityLoc.name,
+                          street: adress,
+                          house: house,
+                          // "housing": "{string}",
+                          // "building": "{string}",
+                          apartment: flat,
                         };
                         const contacts = [
                           {
-                            type: "CONTACT",
+                            type: "RECIPIENT",
                             phone: String(tel),
                             // "additional": "{string}",
                             firstName: name,
@@ -803,6 +841,17 @@ const CartPage = observer(
                             lastName: secondName,
                           },
                         ];
+
+                        this.order = {
+                          recipient: recipient,
+                          address: addressData,
+                          cost: cost,
+                          contacts: contacts,
+                        };
+
+                        console.log("this.order :>> ", this.order);
+                        window.widget.setOrderInfo(this.order);
+                        window.widget.createOrder();
                         const deliveryOrderData = Object.assign(
                           { ...this.deliveryOrderData.deliveryOption.cost },
                           this.deliveryOrderData
@@ -934,7 +983,7 @@ const CartPage = observer(
       };
 
       this.deliverySend = { ...cart, ...order };
-
+      console.log("cart :>> ", cart);
       this.YaDeliveryFunc(window, cart, order, city);
     };
 
@@ -947,9 +996,9 @@ const CartPage = observer(
           // После инициализации виджета автоматически определяется регион пользователя.
           // Перед отображением виджета этот регион можно получить методом getRegion...
 
-          widget.getRegionsByName(city).then((regions) => {
-            widget.setRegion({ id: regions[0].id });
-          });
+          // widget.getRegionsByName(city).then((regions) => {
+          widget.setRegion({ id: localStorage.get("city").geoId });
+          // });
 
           // ...или изменить, передав идентификатор в аргументе метода setRegion. Узнать
           // идентификатор региона по его названию можно с помощью метода
@@ -990,7 +1039,13 @@ const CartPage = observer(
           // отправить их в Доставку. В аргументе метода нужно передать объект с информацией
           // о заказе. Подробнее об объекте order.
           // const form = document.getElementById("checkout");
-          // form.addEventListener("submit", () => widget.setOrderInfo(order));
+          window.widget = widget;
+          // $("#createOrder").addEventListener("submit", () =>
+          //   setTimeout(() => {
+          //     widget.setOrderInfo(this.order);
+          //     widget.createOrder();
+          //   }, 1000)
+          // );
         };
 
         const failureCallback = (error) => {

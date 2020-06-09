@@ -49,6 +49,7 @@ class Store {
   nameSecondCat = "";
 
   sideAsk = false;
+  sideLogin = false;
 
   menuAccor = {};
 
@@ -150,6 +151,12 @@ class Store {
           }
         });
         this.collInMenu = timeCollInMenu;
+
+        Object.keys(this.bannersData).forEach((type) => {
+          this.bannersData[type].forEach((elem) => {
+            this.menuAccor[elem.slug] = elem.name;
+          });
+        });
       })
       .catch((err) => {
         console.log("err :>> ", err);
@@ -1107,6 +1114,7 @@ class Store {
 
     const clearJSON = {};
     clearJSON.prod = Object.assign({ ...bodyJSON }, prodJSON);
+
     if (!filterArray.length) {
       bodyJSON.prod = prodJSON;
     } else {
@@ -1128,6 +1136,7 @@ class Store {
       bodyJSON.withCat = true;
     } else if (pathname.includes("closeout")) {
       bodyJSON.withCat = true;
+      clearJSON.prod["$and"] = [{ closeout: true }];
     } else if (pathname.includes("search")) {
       bodyJSON.withCat = true;
       bodyJSON.search = this.searchText;
@@ -1155,13 +1164,12 @@ class Store {
       if (filterType == "brand") {
         if (this.activeFilters.choosePoint.indexOf(filterType) === 0) {
           Object.keys(this.categoryFilter).forEach((name) => {
-            if (
-              name !== filterType &&
-              this.activeFilters.choosePoint.indexOf(name) === -1
-            ) {
+            if (name !== filterType) {
               this.categoryFilter[name] = availableFilters[name];
             }
           });
+        }
+        if (this.activeFilters.choosePoint.includes(filterType)) {
           filterPoints.push(
             <FilterPoint
               name="Бренды"
@@ -1185,13 +1193,12 @@ class Store {
       } else if (filterType == "material") {
         if (this.activeFilters.choosePoint.indexOf(filterType) === 0) {
           Object.keys(this.categoryFilter).forEach((name) => {
-            if (
-              name !== filterType &&
-              this.activeFilters.choosePoint.indexOf(name) == -1
-            ) {
+            if (name !== filterType) {
               this.categoryFilter[name] = availableFilters[name];
             }
           });
+        }
+        if (this.activeFilters.choosePoint.includes(filterType)) {
           filterPoints.push(
             <FilterPoint
               name="Материалы"
@@ -1215,13 +1222,12 @@ class Store {
       } else if (filterType == "country") {
         if (this.activeFilters.choosePoint.indexOf(filterType) === 0) {
           Object.keys(this.categoryFilter).forEach((name) => {
-            if (
-              name !== filterType &&
-              this.activeFilters.choosePoint.indexOf(name) == -1
-            ) {
+            if (name !== filterType) {
               this.categoryFilter[name] = availableFilters[name];
             }
           });
+        }
+        if (this.activeFilters.choosePoint.includes(filterType)) {
           filterPoints.push(
             <FilterPoint
               name="Страны"
@@ -1242,16 +1248,15 @@ class Store {
             />
           );
         }
-      } else if (filterType == "color") {
+      } else if (filterType === "color") {
         if (this.activeFilters.choosePoint.indexOf(filterType) === 0) {
           Object.keys(this.categoryFilter).forEach((name) => {
-            if (
-              name !== filterType &&
-              this.activeFilters.choosePoint.indexOf(name) == -1
-            ) {
+            if (name !== filterType) {
               this.categoryFilter[name] = availableFilters[name];
             }
           });
+        }
+        if (this.activeFilters.choosePoint.includes(filterType)) {
           filterPoints.push(
             <FilterPoint
               name="Цвета"
@@ -1272,16 +1277,15 @@ class Store {
             />
           );
         }
-      } else if (filterType == "measure") {
+      } else if (filterType === "measure") {
         if (this.activeFilters.choosePoint.indexOf(filterType) === 0) {
           Object.keys(this.categoryFilter).forEach((name) => {
-            if (
-              name !== filterType &&
-              this.activeFilters.choosePoint.indexOf(name) == -1
-            ) {
+            if (name !== filterType) {
               this.categoryFilter[name] = availableFilters[name];
             }
           });
+        }
+        if (this.activeFilters.choosePoint.includes(filterType)) {
           this.categoryFilter[filterType].forEach((meas) => {
             if (
               meas.name === "Кол-во персон" ||
@@ -1378,6 +1382,7 @@ decorate(Store, {
   canHit: observable,
   canPremium: observable,
   canSale: observable,
+  sideLogin: observable,
 });
 
 const store = new Store();

@@ -12,11 +12,7 @@ class Api {
       body: JSON.stringify(data),
     })
       .then((res) => {
-        console.log("res", res);
         return res.json();
-      })
-      .then((data) => {
-        console.log("dataReg :>> ", data);
       })
       .catch((err) => {
         console.log("err", err);
@@ -36,6 +32,19 @@ class Api {
         return res.json();
       }
       Promise.reject(res.json());
+    });
+  }
+
+  restorePass(data) {
+    return fetch(SERVER_URL + "/restore-pass", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }).then((res) => {
+      return res.json();
     });
   }
 
@@ -218,6 +227,19 @@ class Api {
         return res.json();
       }
       Promise.reject(res.json());
+    });
+  }
+
+  sendQestion(data) {
+    return fetch(SERVER_URL + "/question", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }).then((res) => {
+      return res.json();
     });
   }
 }

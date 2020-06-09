@@ -90,7 +90,7 @@ const ProductCard = observer(function ProductCard(props) {
     }
   };
 
-  let imagePath = "/image/products/" + data.path_to_photo[0];
+  let imagePath = "/image/items/" + data.path_to_photo[0];
 
   return (
     <div className="product" onClick={clickHandler}>
