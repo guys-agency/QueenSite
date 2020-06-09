@@ -54,7 +54,7 @@ const Paginat = observer(
       if (countPage > 5 && !(this.props.store.startPag / 42 > countPage - 4)) {
         pointCont.push(
           <>
-            <p> ... </p>
+            <div className="pagination__more"> ... </div>
             <div
               className={"pagination__page"}
               key={countPage}
