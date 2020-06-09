@@ -20,7 +20,7 @@ const Help = observer(
 
     delivery = (
       <div className="col col-8 col-t-7 col-s-12 help__desc">
-
+        <p>Мы оперативно доставляем заказы по всем регионам России различными способами, которые доступны на странице оформления заказа.</p>
       </div>
     );
     return = (
