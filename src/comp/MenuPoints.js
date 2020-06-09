@@ -82,14 +82,17 @@ const MenuPoints = observer(
             <Link to="/help/payment">Оплата</Link>
           </li>
           <li>
+            <Link to="/help/garantie">Гарантия</Link>
+          </li>
+          <li>
             <Link to="/help/return">Возврат</Link>
           </li>
           <li>
             <Link to="/help/offer">Публичная оферта</Link>
           </li>
-          <li>
+          {/* <li>
             <Link to="/help/bonus">Бонусы</Link>
-          </li>
+          </li> */}
         </ul>
       </div>
     );
@@ -524,9 +527,9 @@ const MenuPoints = observer(
                     </span>
                     {this.service}
                   </span>
-                  <Link className="header__left-bonus" to="/help/bonus">
+                  {/* <Link className="header__left-bonus" to="/help/bonus">
                     Бонусы
-                  </Link>
+                  </Link> */}
                   <CityCh store={this.props.store} />
                 </div>
                 {/* <Link className="logo" to="/">
@@ -855,9 +858,9 @@ const MenuPoints = observer(
                     </span>
                     {this.service}
                   </span>
-                  <Link className="header__left-bonus" to="/help/bonus">
+                  {/* <Link className="header__left-bonus" to="/help/bonus">
                     Бонусы
-                  </Link>
+                  </Link> */}
                 </div>
                 <div className="menu menu_mega">
                   <div className="container container_f">

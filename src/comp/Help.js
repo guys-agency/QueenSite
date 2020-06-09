@@ -6,6 +6,57 @@ const { Component } = React;
 const Help = observer(
   class Help extends Component {
     state = {};
+    payment = (
+      <div className="col col-8 col-t-7 col-s-12 help__desc">
+        <h3>Банковской картой</h3>
+      </div>
+    ); 
+    
+    offer = (
+      <div className="col col-8 col-t-7 col-s-12 help__desc">
+
+      </div>
+    );
+
+    delivery = (
+      <div className="col col-8 col-t-7 col-s-12 help__desc">
+
+      </div>
+    );
+    return = (
+      <div className="col col-8 col-t-7 col-s-12 help__desc">
+        <p>Вернуть товар, приобретенный в
+        онлайн магазине Queen of Bohemia совсем не сложно.
+        Правила возврата просты и регламентируются Законом «О защите правпотребителей».</p>
+        <p><a className="underline" href="https://queenbohemia.ru/image/docs/Образец возврат.docx" target="_blank" rel="noopener noreferrer">Скачать  заявление  о  возврате</a></p>
+        <h3>Общие правила</h3>
+        <ol>
+          <li>Срок возврата — 14 дней с момента получения товара</li>
+          <li>Пожалуйста, верните нам товар в полной комплектации, со всеми упаковками и наклейками</li>
+          <li>Не забудьте приложить чек от покупки. </li>
+          <li>Способ возврата денежных средств равен способу оплаты покупки.</li>
+        </ol>
+        <h3>При оплате картой:</h3>
+        <ol>
+          <li>Товар необходимо отправить по адресу: 105082, г. Москва, Переведеновский пер, д.13 к.18 офис 307.</li>
+          <li>Пожалуйста, не забудьте заполнить заявление о возврате и положить его вместе  с  товаром и чеком от покупки.</li>
+          <li>В течение 5 дней после получения возврата вам на карту будет перечислена оплата за товар.</li>
+        </ol>
+        <h3>При оплате наличными курьеру: <small>(для жителей Москвы и ближайшего Подмосковья)</small></h3>
+        <ol>
+          <li>В случае возврата наличными вам будет предложено подъехать в любой наш  розничный магазин по адресам,  указанным на  сайте. </li>
+          <li>Пожалуйста, не забудьте кассовый чек и паспорт. </li>
+        </ol>
+        <h3>Выявили скрытые дефекты? <small>(любые дефекты кроме боя и сколов)</small></h3>
+        <ol>
+          <li>
+            Вернуть их можно по всем указанным вверху правилам в течении 2 лет с момента приобретения товара, за исключением требований к использованию по назначению. В этом случае требование к наличию упаковки и стикеров/наклеек не обязательно.
+          </li>
+          <li>Начать общение рекомендуем со звонка менеджеру интернет-магазина и высылкой фото, подтверждающего брак.</li>
+          <li>Мы работаем только с качественными европейскими производителями и вероятность производственного дефекта крайне мала.</li>
+        </ol>
+      </div>
+    );
     garantie = (
       <div className="col col-8 col-t-7 col-s-12 help__desc">
         <h3>Общие положения</h3>
@@ -25,10 +76,10 @@ const Help = observer(
         <h3>Гарантийный случай</h3>
         <p>
           Если наступил гарантийный случай с приобретенным на нашем сайте
-          товаром, Вам необходимо связаться с нами по телефону
-          <a href="+74957440050">+7 495 744-00-50</a> и подробно рассказать об
+          товаром, Вам необходимо связаться с нами по телефону{" "}
+          <a className="underline" href="+78008085878">+7 800 808-58-78</a> и подробно рассказать об
           обстоятельствах, а также прислать фотографии товара на почту{" "}
-          <a href="mailto:help@queenbohemia.ru">help@queenbohemia.ru</a>
+          <a className="underline" href="mailto:help@queenbohemia.ru">help@queenbohemia.ru</a>{" "}
           или через мессенджеры по номеру мобильного телефона менеджера.
         </p>
         <p>
@@ -55,6 +106,12 @@ const Help = observer(
     render() {
       if (this.props.path === "garantie") {
         this.renderBlock = this.garantie;
+      } else if (this.props.path === "return") {
+        this.renderBlock = this.return;
+      } else if (this.props.path === "payment") {
+        this.renderBlock = this.payment;
+      } else if (this.props.path === "offer") {
+        this.renderBlock = this.offer;
       } else if (this.props.path === "delivery") {
         this.renderBlock = this.delivery;
       }
@@ -110,7 +167,7 @@ const Help = observer(
                 </NavLink>
               </li>
 
-              <li>
+              {/* <li>
                 <NavLink
                   activeClassName="active"
                   to="/help/bonus"
@@ -118,7 +175,7 @@ const Help = observer(
                 >
                   Бонусы
                 </NavLink>
-              </li>
+              </li> */}
             </div>
           </ul>
           <div className="container help__cont">
