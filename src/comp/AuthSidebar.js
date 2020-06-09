@@ -5,6 +5,7 @@ import { Formik } from "formik";
 import RegistrationSchema from "../schemas/registrationSchema";
 import $ from "jquery";
 import LoginSchema from "../schemas/loginSchema";
+import RestoreSchema from "../schemas/restoreSchema";
 
 const { Component } = React;
 
@@ -89,87 +90,140 @@ const AuthSidebar = observer(
                 handleChange,
               }) => (
                 <>
-                    <form className=" visible" onSubmit={handleSubmit}>
-                      <div className="input-field">
-                        <label className="required" htmlFor="email">
-                          Email
-                        </label>
-                        <input
-                          id="email"
-                          name="email"
-                          type="text"
-                          onFocus={this.focusHandler}
-                          onBlur={this.blurHandler}
-                          value={values.email}
-                          onChange={handleChange}
-                        />
+                  <form className=" visible" onSubmit={handleSubmit}>
+                    <div className="input-field">
+                      <label className="required" htmlFor="email">
+                        Email
+                      </label>
+                      <input
+                        id="email"
+                        name="email"
+                        type="text"
+                        onFocus={this.focusHandler}
+                        onBlur={this.blurHandler}
+                        value={values.email}
+                        onChange={handleChange}
+                      />
 
-                        <div className="field-error">{errors.email}</div>
-                      </div>
+                      <div className="field-error">{errors.email}</div>
+                    </div>
 
-                      <div className="input-field">
-                        <label className="required" htmlFor="password">
-                          Пароль
-                    </label>
-                        <input
-                          name="password"
-                          type="password"
-                          id="password"
-                          onFocus={this.focusHandler}
-                          onBlur={this.blurHandler}
-                          value={values.password}
-                          onChange={handleChange}
-                        />
-                        {errors.password && touched.password && (
-                          <div className="field-error">{errors.password}</div>
-                        )}
-                      </div>
-                      <button type="submit" className="btn btn_primary">
-                        Войти
-                      </button>
-                    </form>
-                    <br />
-                    <span className="mla link dotted forgot-btn" onClick={(e) => {
+                    <div className="input-field">
+                      <label className="required" htmlFor="password">
+                        Пароль
+                      </label>
+                      <input
+                        name="password"
+                        type="password"
+                        id="password"
+                        onFocus={this.focusHandler}
+                        onBlur={this.blurHandler}
+                        value={values.password}
+                        onChange={handleChange}
+                      />
+                      {errors.password && touched.password && (
+                        <div className="field-error">{errors.password}</div>
+                      )}
+                    </div>
+                    <button type="submit" className="btn btn_primary">
+                      Войти
+                    </button>
+                  </form>
+                  <br />
+                  <span
+                    className="mla link dotted forgot-btn"
+                    onClick={(e) => {
                       this.setState({ pass: true, log: false });
-                    }}>
-                      Забыли пароль?
-                    </span>
+                    }}
+                  >
+                    Забыли пароль?
+                  </span>
                 </>
               )}
             </Formik>
           )}
 
-          {this.state.pass &&(
-            <>
-              <form className=" visible" action="">
-                <div className="input-field">
-                  <label className="required" htmlFor="email">
-                    Email
-                        </label>
-                  <input
-                    id="email"
-                    name="email"
-                    type="text"
-                    onFocus={this.focusHandler}
-                    onBlur={this.blurHandler}
-                    // value={values.email}
-                    // onChange={handleChange}
-                  />
+          {this.state.pass && (
+            <Formik
+              //инициализируем значения input-ов
+              initialValues={{
+                email: "",
+              }}
+              //подключаем схему валидации, которую описали выше
+              validationSchema={RestoreSchema}
+              //определяем, что будет происходить при вызове onsubmit
+              onSubmit={(values, { setSubmitting }) => {
+                api
+                  .restorePass({
+                    email: values.email.toLowerCase(),
+                  })
+                  .then((data) => {
+                    console.log("data :>> ", data);
+                    $("#restorePass").text(data.message);
+                    if (data.status === 201) {
+                      $("#restorePass").addClass("success");
+                    } else {
+                      $("#restorePass").addClass("error");
+                    }
+                    setTimeout(() => {
+                      $("#restorePass").removeClass("success");
+                      $("#restorePass").removeClass("error");
+                      $("#restorePass").text("Восстановить пароль");
+                    }, 3000);
+                  });
+              }}
+              //свойство, где описывыем нашу форму
+              //errors-ошибки валидации формы
+              //touched-поля формы, которые мы "затронули",
+              //то есть, в которых что-то ввели
+            >
+              {({
+                errors,
+                touched,
+                handleSubmit,
+                isSubmitting,
+                values,
+                handleChange,
+              }) => (
+                <>
+                  <form className=" visible" action="" onSubmit={handleSubmit}>
+                    <div className="input-field">
+                      <label className="required" htmlFor="email">
+                        Email
+                      </label>
+                      <input
+                        id="email"
+                        name="email"
+                        type="text"
+                        onFocus={this.focusHandler}
+                        onBlur={this.blurHandler}
+                        value={values.email}
+                        onChange={handleChange}
+                      />
 
-                  {/* <div className="field-error">{errors.email}</div> */}
-                </div>
+                      <div className="field-error">{errors.email}</div>
+                    </div>
 
-                <button type="submit" className="btn btn_primary">
-                  Войти
-                </button>
-              </form>
-              <br />
-              <span className="mla link dotted forgot-btn" onClick={(e) => {
-                this.setState({ pass: false, log: true });
-              }}>
-                Вспомнили пароль?
-            </span>
-            </>
+                    <button
+                      type="submit"
+                      className="btn btn_primary"
+                      id="restorePass"
+                    >
+                      Восстановить пароль
+                    </button>
+                  </form>
+                  <br />
+                  <span
+                    className="mla link dotted forgot-btn"
+                    onClick={(e) => {
+                      this.setState({ pass: false, log: true });
+                    }}
+                  >
+                    Вспомнили пароль?
+                  </span>
+                </>
+              )}
+            </Formik>
           )}
           {/* <form className={this.state.log ? " visible" : ""}>
                 <div className="input-field">

@@ -35,6 +35,19 @@ class Api {
     });
   }
 
+  restorePass(data) {
+    return fetch(SERVER_URL + "/restore-pass", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }).then((res) => {
+      return res.json();
+    });
+  }
+
   logout() {
     return fetch(SERVER_URL + "/logout", {
       method: "GET",
