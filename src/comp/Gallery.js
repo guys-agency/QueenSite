@@ -43,15 +43,15 @@ const Gallery = (props) => {
       <div className="main-img" key={i}>
         <img
           className="drift"
-          src={"/image/products/" + p}
-          data-zoom={"/image/products/" + p}
+          src={"/image/items/" + p}
+          data-zoom={"/image/items/" + p}
           alt=""
         />
       </div>
     );
     small.push(
       <div className="thumb-img" key={i}>
-        <img src={"/image/products/" + p} alt="" />
+        <img src={"/image/items/" + p} alt="" />
       </div>
     );
   });

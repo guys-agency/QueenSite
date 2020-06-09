@@ -172,7 +172,15 @@ const MainScreen = observer(
                             child={routProps.match.params.childName}
                             store={this.props.store}
                           />
-                          <h3 className="catalog-title">Каталог товаров</h3>
+                          <h3 className="catalog-title">
+                            {routProps.match.params.childName
+                              ? this.props.store.menuAccor[
+                                  routProps.match.params.childName
+                                ]
+                              : this.props.store.menuAccor[
+                                  routProps.match.params.parentName
+                                ]}
+                          </h3>
                         </div>
                       </div>
                       <div className="row catalog">
@@ -431,7 +439,9 @@ const MainScreen = observer(
               render={(routProps) => (
                 (this.props.store.nameMainCat = ""),
                 (this.props.store.nameSecondCat = ""),
-                $("html, body").animate({ scrollTop: 0 }, 500),
+                this.props.store.pathS !== "closeout"
+                  ? $("html, body").animate({ scrollTop: 0 }, 500)
+                  : null,
                 this.props.store.pathS !== "closeout"
                   ? this.props.store.cleaningActiveFilters()
                   : null,
@@ -442,6 +452,7 @@ const MainScreen = observer(
                     <div className="container">
                       <div className="row">
                         <div className="col col-12">
+                          <Breadcrumbs store={this.props.store} />
                           <h3 className="catalog-title">Распродажа</h3>
                         </div>
                       </div>

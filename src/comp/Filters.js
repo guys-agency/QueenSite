@@ -155,6 +155,7 @@ const Filters = observer(
       } = this.props.store;
 
       const { parentName, childName } = this.props;
+      const pathname = window.location.pathname;
       // let minPriceLocal = 0;
       // let maxPriceLocal = 0;
       // if () {
@@ -212,81 +213,201 @@ const Filters = observer(
         if (elem.name === "Сервировка стола") {
           menu[0] = (
             <li key={elem.name}>
-              <h5 className="categories-block__name" onClick={this.subCat}>
+              <h5
+                className={
+                  pathname.includes(elem.slug)
+                    ? "categories-block__name active"
+                    : "categories-block__name"
+                }
+                onClick={this.subCat}
+              >
                 {elem.name}
                 <span className="ic i_drop"></span>
               </h5>
-              <ul className="categories-block__child">{childsPoints}</ul>
+              <ul
+                className={
+                  pathname.includes(elem.slug)
+                    ? "categories-block__child visible"
+                    : "categories-block__child"
+                }
+              >
+                {childsPoints}
+              </ul>
             </li>
           );
         } else if (elem.name === "Для приготовления") {
           menu[1] = (
             <li key={elem.name}>
-              <h5 className="categories-block__name" onClick={this.subCat}>
+              <h5
+                className={
+                  pathname.includes(elem.slug)
+                    ? "categories-block__name active"
+                    : "categories-block__name"
+                }
+                onClick={this.subCat}
+              >
                 {elem.name}
                 <span className="ic i_drop"></span>
               </h5>
-              <ul className="categories-block__child">{childsPoints}</ul>
+              <ul
+                className={
+                  pathname.includes(elem.slug)
+                    ? "categories-block__child visible"
+                    : "categories-block__child"
+                }
+              >
+                {childsPoints}
+              </ul>
             </li>
           );
         } else if (elem.name === "Напитки") {
           menu[2] = (
             <li key={elem.name}>
-              <h5 className="categories-block__name" onClick={this.subCat}>
+              <h5
+                className={
+                  pathname.includes(elem.slug)
+                    ? "categories-block__name active"
+                    : "categories-block__name"
+                }
+                onClick={this.subCat}
+              >
                 {elem.name}
                 <span className="ic i_drop"></span>
               </h5>
-              <ul className="categories-block__child">{childsPoints}</ul>
+              <ul
+                className={
+                  pathname.includes(elem.slug)
+                    ? "categories-block__child visible"
+                    : "categories-block__child"
+                }
+              >
+                {childsPoints}
+              </ul>
             </li>
           );
         } else if (elem.name === "Кофе и чай") {
           menu[3] = (
             <li key={elem.name}>
-              <h5 className="categories-block__name" onClick={this.subCat}>
+              <h5
+                className={
+                  pathname.includes(elem.slug)
+                    ? "categories-block__name active"
+                    : "categories-block__name"
+                }
+                onClick={this.subCat}
+              >
                 {elem.name}
                 <span className="ic i_drop"></span>
               </h5>
-              <ul className="categories-block__child">{childsPoints}</ul>
+              <ul
+                className={
+                  pathname.includes(elem.slug)
+                    ? "categories-block__child visible"
+                    : "categories-block__child"
+                }
+              >
+                {childsPoints}
+              </ul>
             </li>
           );
         } else if (elem.name === "Аксесуары для стола") {
           menu[4] = (
             <li key={elem.name}>
-              <h5 className="categories-block__name" onClick={this.subCat}>
+              <h5
+                className={
+                  pathname.includes(elem.slug)
+                    ? "categories-block__name active"
+                    : "categories-block__name"
+                }
+                onClick={this.subCat}
+              >
                 {elem.name}
                 <span className="ic i_drop"></span>
               </h5>
-              <ul className="categories-block__child">{childsPoints}</ul>
+              <ul
+                className={
+                  pathname.includes(elem.slug)
+                    ? "categories-block__child visible"
+                    : "categories-block__child"
+                }
+              >
+                {childsPoints}
+              </ul>
             </li>
           );
         } else if (elem.name === "Интерьер") {
           menu[5] = (
             <li key={elem.name}>
-              <h5 className="categories-block__name" onClick={this.subCat}>
+              <h5
+                className={
+                  pathname.includes(elem.slug)
+                    ? "categories-block__name active"
+                    : "categories-block__name"
+                }
+                onClick={this.subCat}
+              >
                 {elem.name}
                 <span className="ic i_drop"></span>
               </h5>
-              <ul className="categories-block__child">{childsPoints}</ul>
+              <ul
+                className={
+                  pathname.includes(elem.slug)
+                    ? "categories-block__child visible"
+                    : "categories-block__child"
+                }
+              >
+                {childsPoints}
+              </ul>
             </li>
           );
         } else if (elem.name === "Наборы") {
           menu[6] = (
             <li key={elem.name}>
-              <h5 className="categories-block__name" onClick={this.subCat}>
+              <h5
+                className={
+                  pathname.includes(elem.slug)
+                    ? "categories-block__name active"
+                    : "categories-block__name"
+                }
+                onClick={this.subCat}
+              >
                 {elem.name}
                 <span className="ic i_drop"></span>
               </h5>
-              <ul className="categories-block__child">{childsPoints}</ul>
+              <ul
+                className={
+                  pathname.includes(elem.slug)
+                    ? "categories-block__child visible"
+                    : "categories-block__child"
+                }
+              >
+                {childsPoints}
+              </ul>
             </li>
           );
         } else if (elem.name === "Сервизы") {
           menu[7] = (
             <li key={elem.name}>
-              <h5 className="categories-block__name" onClick={this.subCat}>
+              <h5
+                className={
+                  pathname.includes(elem.slug)
+                    ? "categories-block__name active"
+                    : "categories-block__name"
+                }
+                onClick={this.subCat}
+              >
                 {elem.name}
                 <span className="ic i_drop"></span>
               </h5>
-              <ul className="categories-block__child">{childsPoints}</ul>
+              <ul
+                className={
+                  pathname.includes(elem.slug)
+                    ? "categories-block__child visible"
+                    : "categories-block__child"
+                }
+              >
+                {childsPoints}
+              </ul>
             </li>
           );
         }

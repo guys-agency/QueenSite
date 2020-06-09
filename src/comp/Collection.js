@@ -3,6 +3,7 @@ import React from "react";
 import api from "./api";
 import Filters from "./Filters";
 import ProductCardContainer from "./ProductCardContainer";
+import Breadcrumbs from "./breadcrumbs";
 const { Component } = React;
 
 const Collection = observer(
@@ -100,6 +101,7 @@ const Collection = observer(
             </div>
             <div className="main-screen">
               <div className="container">
+                <Breadcrumbs name={this.props.slug} store={this.props.store} />
                 <div className="row catalog">
                   <div className="col col-3">
                     <Filters store={this.props.store} />

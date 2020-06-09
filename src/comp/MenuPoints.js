@@ -424,6 +424,7 @@ const MenuPoints = observer(
         popLike: false,
       });
       this.props.store.sideAsk = false;
+      this.props.store.sideLogin = false;
       document.querySelector(".sidebar-overlay").classList.remove("active");
       $("body").removeClass("no-scroll");
       $(".navigation").removeClass("visible");
@@ -543,16 +544,17 @@ const MenuPoints = observer(
                 {this.phone}
 
                 <button
-                  className={"ic i_filter head_filter vis-s " +
-                  (window.location.pathname.includes("catalog") ||
+                  className={
+                    "ic i_filter head_filter vis-s " +
+                    (window.location.pathname.includes("catalog") ||
                     window.location.pathname.includes("collections/") ||
                     window.location.pathname.includes("actions/") ||
                     window.location.pathname.includes("main/") ||
                     window.location.pathname.includes("closeout") ||
                     window.location.pathname.includes("ideas") ||
                     window.location.pathname.includes("hits")
-                    ? "visible "
-                    : " ")
+                      ? "visible "
+                      : " ")
                   }
                   onClick={(e) => {
                     e.target.classList.toggle("active");
@@ -839,7 +841,7 @@ const MenuPoints = observer(
                           .querySelector("body")
                           .classList.add("no-scroll");
 
-                        this.setState({ popreg: true });
+                        this.props.store.sideLogin = true;
                       }
                     }}
                   >
@@ -878,7 +880,7 @@ const MenuPoints = observer(
             <div
               className={
                 "sidebar" +
-                (this.state.popreg ||
+                (this.props.store.sideLogin ||
                 this.state.popCart ||
                 this.state.popLike ||
                 this.props.store.sideAsk
@@ -890,23 +892,22 @@ const MenuPoints = observer(
                 <button className="btn btn-head" onClick={this.closeSidebar}>
                   Свернуть
                 </button>
-                {!this.state.popreg ||
-                  (this.props.store.sideAsk && (
-                    <button
-                      className="link dotted"
-                      onClick={() => {
-                        if (this.state.popLike) {
-                          this.props.store.likeContainer = [];
-                          this.props.store.addToLike();
-                        } else {
-                          this.props.store.productInCartList = {};
-                          this.props.store.addtoCart(true);
-                        }
-                      }}
-                    >
-                      Очистить
-                    </button>
-                  ))}
+                {(!this.state.popreg || !this.props.store.sideAsk) && (
+                  <button
+                    className="link dotted"
+                    onClick={() => {
+                      if (this.state.popLike) {
+                        this.props.store.likeContainer = [];
+                        this.props.store.addToLike();
+                      } else {
+                        this.props.store.productInCartList = {};
+                        this.props.store.addtoCart(true);
+                      }
+                    }}
+                  >
+                    Очистить
+                  </button>
+                )}
               </div>
               {this.state.popLike && (
                 <LikeSidebar
@@ -920,7 +921,7 @@ const MenuPoints = observer(
                   closeSidebar={this.closeSidebar}
                 />
               )}
-              {this.state.popreg && (
+              {this.props.store.sideLogin && (
                 <AuthSidebar
                   closeSidebar={this.closeSidebar}
                   store={this.props.store}
@@ -938,10 +939,10 @@ const MenuPoints = observer(
               className="sidebar-overlay"
               onClick={(e) => {
                 this.setState({
-                  popreg: false,
                   popCart: false,
                   popLike: false,
                 });
+                this.props.store.sideLogin = false;
                 this.props.store.sideAsk = false;
                 $("body").removeClass("no-scroll");
                 $(".navigation").removeClass("visible");

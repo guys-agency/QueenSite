@@ -521,7 +521,21 @@ const CartPage = observer(
                   <h3 className="tilda">Данные</h3>
                   <p>Для получения потребуется паспорт с указанными данными</p>
                   <p>
-                    <a className="link dotted">
+                    <a
+                      className="link dotted"
+                      onClick={(e) => {
+                        document
+                          .querySelector(".sidebar-overlay")
+                          .classList.add("active");
+
+                        document
+                          .querySelector("body")
+                          .classList.add("no-scroll");
+
+                        this.props.store.sideLogin = true;
+                        e.preventDefault();
+                      }}
+                    >
                       <span className="ic i_user"></span>{" "}
                       <span className="fw_m b_dark">Войдите</span>
                     </a>{" "}
