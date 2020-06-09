@@ -5,6 +5,13 @@
     }
     &__desc{
         padding-right: 30px;
+        ol{
+            font-size: 14px;
+            padding-left: 15px;
+            li{
+                margin-bottom: 5px;
+            }
+        }
     }
     &__contact{
         padding-top: 30px;
@@ -34,5 +41,9 @@
     }
     h3{
         padding-top: 10px;
+        small{
+            display: block;
+            font-size: 14px;
+        }
     }
 }

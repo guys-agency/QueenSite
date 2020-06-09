@@ -85,9 +85,9 @@ const Footer = observer(
                     <li>
                       <Link to="/help/return">Возврат</Link>
                     </li>
-                    <li>
+                    {/* <li>
                       <Link to="/help/Бонусы">Бонусы</Link>
-                    </li>
+                    </li> */}
                     <li>
                       <Link to="/help/offer">Публичная оферта</Link>
                     </li>
