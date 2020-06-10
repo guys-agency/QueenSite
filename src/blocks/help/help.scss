@@ -5,11 +5,18 @@
     }
     &__desc{
         padding-right: 30px;
-        ol{
-            font-size: 14px;
-            padding-left: 15px;
+        ol, ul{
+            font-size: 16px;
+            padding-left: 20px;
             li{
-                margin-bottom: 5px;
+                margin-bottom: 8px;
+            }
+        }
+        p{
+            ol{
+                li{
+                    // font-size: 16px;
+                }
             }
         }
     }
