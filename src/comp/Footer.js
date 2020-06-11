@@ -22,11 +22,11 @@ const Footer = observer(
               <div className="footer__column">
                 <h4 className="white">Наши новости</h4>
                 <div className="social">
+                  {/* <a className="ic i_fb" href="https://www.instagram.com/queenbohemia.ru/"></a> */}
                   <a
-                    className="ic i_fb"
+                    className="ic i_inst"
                     href="https://www.instagram.com/queenbohemia.ru/"
                   ></a>
-                  {/* <a className="ic i_inst" href=""></a> */}
                 </div>
                 <Link to="/" className="logo logo_sq">
                   <span className="i_queen"></span>
