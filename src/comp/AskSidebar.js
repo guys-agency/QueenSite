@@ -39,7 +39,18 @@ const AskSidebar = observer(
                 question: values.question,
               })
               .then((data) => {
-                console.log("data :>> ", data);
+                $("#askBtn").text(data.message);
+                if (data.status === 200) {
+                  $("#askBtn").text(data.message);
+                  $("#askBtn").addClass("success");
+                } else {
+                  $("#askBtn").addClass("error");
+                }
+                setTimeout(() => {
+                  $("#askBtn").removeClass("success");
+                  $("#askBtn").removeClass("error");
+                  $("#askBtn").text("Отправить");
+                }, 3000);
               });
           }}
           //свойство, где описывыем нашу форму
@@ -114,7 +125,7 @@ const AskSidebar = observer(
                   <div className="field-error">{errors.question}</div>
                 )}
               </div>
-              <button type="submit" className="btn btn_primary">
+              <button type="submit" className="btn btn_primary" id="askBtn">
                 Отправить
               </button>
               <label className="checkbox checkbox_margin">

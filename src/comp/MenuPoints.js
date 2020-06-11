@@ -2,13 +2,6 @@ import { observer } from "mobx-react";
 import React from "react";
 import $ from "jquery";
 import { Link, NavLink } from "react-router-dom";
-import LikeButton from "./LikeButton";
-import { Dropdown, Menu, Checkbox } from "semantic-ui-react";
-import Cart from "./Cart";
-import api from "./api";
-import { Formik, Field, Form } from "formik";
-import RegistrationSchema from "../schemas/registrationSchema";
-import LoginSchema from "../schemas/loginSchema";
 import LikeSidebar from "./LikeSidebar";
 import AuthSidebar from "./AuthSidebar";
 import AskSidebar from "./AskSidebar";
@@ -16,6 +9,7 @@ import CartSidebar from "./CartSidebar";
 import localStorage from "mobx-localstorage";
 import { withRouter } from "react-router";
 import { cities, SERVER_URL } from "../constants";
+import ChangeSidebar from "./ChangeProfileData";
 import CityCh from "./CityCh";
 
 const { Component } = React;
@@ -279,9 +273,23 @@ const MenuPoints = observer(
             this.props.store.menuAccor[elem.slug] = elem.name;
 
             elem.childs.sort((prev, next) => {
-              if (prev.name < next.name) return -1;
-              if (prev.name < next.name) return 1;
-              return 1;
+              if (prev.name.includes(" до ") && next.name.includes(" до ")) {
+                if (
+                  +prev.name.split(" до ")[1].split(" ")[0] <
+                  +next.name.split(" до ")[1].split(" ")[0]
+                )
+                  return -1;
+                if (
+                  +prev.name.split(" до ")[1].split(" ")[0] >
+                  +next.name.split(" до ")[1].split(" ")[0]
+                )
+                  return 1;
+                return 1;
+              } else {
+                if (prev.name < next.name) return -1;
+                if (prev.name > next.name) return 1;
+                return 1;
+              }
             });
             elem.childs.forEach((child, iCh) => {
               this.props.store.menuAccor[child.slug] = child.name;
@@ -362,13 +370,21 @@ const MenuPoints = observer(
               let sum = 0;
               let key = 0;
               let timeCont = [];
-              childsPoints.sort((prev, next) => {
-                if (prev.name < next.name) return -1;
-                if (prev.name < next.name) return 1;
-                return 1;
-              });
+              // childsPoints.sort((prev, next) => {
+              //   console.log("object :>> ", prev, next);
+              //   if (prev.name.includes(" до ") && next.name.includes(" до ")) {
+              //     if (+prev.name.split(" до ")[1] < +next.name.split(" до ")[1])
+              //       return -1;
+              //     if (prev.name < next.name) return 1;
+              //     return 1;
+              //   } else {
+              //     if (prev.name < next.name) return -1;
+              //     if (prev.name > next.name) return 1;
+              //     return 1;
+              //   }
+              // });
               childsPoints.forEach((elem) => {
-                if (ind < 3 && sum < childsPoints.length - 1) {
+                if (ind < 4 && sum < childsPoints.length - 1) {
                   timeCont.push(elem);
                   ind += 1;
                   sum += 1;
@@ -393,6 +409,7 @@ const MenuPoints = observer(
             //   </Dropdown>
             // );
           });
+
           this.props.store.fullCats = data;
           for (let index = 0; index < Object.keys(menu).length; index += 2) {
             this.menuContainer.push(
@@ -402,7 +419,6 @@ const MenuPoints = observer(
               </div>
             );
           }
-
           this.setState({ ready: true });
         })
         .catch((err) => {
@@ -428,6 +444,7 @@ const MenuPoints = observer(
       });
       this.props.store.sideAsk = false;
       this.props.store.sideLogin = false;
+      this.props.store.changeSide = false;
       document.querySelector(".sidebar-overlay").classList.remove("active");
       $("body").removeClass("no-scroll");
       $(".navigation").removeClass("visible");
@@ -886,7 +903,8 @@ const MenuPoints = observer(
                 (this.props.store.sideLogin ||
                 this.state.popCart ||
                 this.state.popLike ||
-                this.props.store.sideAsk
+                this.props.store.sideAsk ||
+                this.props.store.changeSide
                   ? " visible"
                   : "")
               }
@@ -920,6 +938,12 @@ const MenuPoints = observer(
               )}
               {this.props.store.sideAsk && (
                 <AskSidebar
+                  store={this.props.store}
+                  closeSidebar={this.closeSidebar}
+                />
+              )}
+              {this.props.store.changeSide && (
+                <ChangeSidebar
                   store={this.props.store}
                   closeSidebar={this.closeSidebar}
                 />

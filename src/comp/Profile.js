@@ -7,6 +7,7 @@ import moment from "moment";
 import { Link } from "react-router-dom";
 import ProductCard from "./ProductCard";
 import ProductCardContainer from "./ProductCardContainer";
+import ChangeProfileData from "./ChangeProfileData";
 const { Component } = React;
 
 const Profile = observer(
@@ -15,76 +16,83 @@ const Profile = observer(
     data = {};
     orders = [];
     render() {
-      const { ready } = this.state;
+      // const { ready } = this.state;
 
-      const { data } = this;
-      if (!ready) {
-        api
-          .getUserData()
-          .then((data) => {
-            console.log("data :>> ", data);
-            // this.props.store.addToLike(true);
-            this.data = data;
-            this.setState({ ready: true });
-          })
-          .catch((err) => {
-            console.log("err :>> ", err);
-          });
-      } else {
-        if (data !== undefined && this.orders.length === 0) {
-          data.orders.forEach((order) => {
-            const prodCon = [];
-            Object.keys(order.products).map((prod) => {
-              console.log("moment(order.date) :>> ", moment(order.date));
-              prodCon.push(
-                <div className="item">
-                  <span className="name">{order.products[prod].name}</span>
-                  <span className="price">
-                    {order.products[prod].sale
-                      ? order.products[prod].sale_price.toLocaleString()
-                      : order.products[
-                          prod
-                        ].regular_price.toLocaleString()}{" "}
-                    ₽
-                  </span>
+      const data = this.props.store.userData;
+      if (this.props.store.auth) {
+        if (Object.keys(data).length === 0) {
+          api
+            .getUserData()
+            .then((data) => {
+              console.log("data :>> ", data);
+              // this.props.store.addToLike(true);
+              this.data = data;
+              this.props.store.userData = data;
+              this.setState({ ready: true });
+            })
+            .catch((err) => {
+              console.log("err :>> ", err);
+            });
+        } else {
+          if (data !== undefined && this.orders.length === 0) {
+            data.orders.forEach((order) => {
+              const prodCon = [];
+              Object.keys(order.products).map((prod) => {
+                console.log("moment(order.date) :>> ", moment(order.date));
+                prodCon.push(
+                  <div className="item">
+                    <span className="name">{order.products[prod].name}</span>
+                    <span className="price">
+                      {order.products[prod].sale
+                        ? order.products[prod].sale_price.toLocaleString()
+                        : order.products[
+                            prod
+                          ].regular_price.toLocaleString()}{" "}
+                      ₽
+                    </span>
+                  </div>
+                );
+              });
+              this.orders.push(
+                <div className="orders-item">
+                  <div className="orders-item__head">
+                    <h4>
+                      Заказ №{order.dbid} на сумму {order.sum.toLocaleString()}₽
+                    </h4>
+                    <div className="date">{}</div>
+                  </div>
+                  <div className="orders-item__desc">
+                    <div className="status">
+                      {order.status === "Created" ? "В обработке" : "Оплачен"}
+                    </div>
+                    <button
+                      className="link dotted"
+                      onClick={(e) => {
+                        e.target.classList.toggle("active");
+                        e.target
+                          .closest(".orders-item")
+                          .classList.toggle("active");
+                      }}
+                    >
+                      состав заказа <span className="ic i_drop"></span>
+                    </button>
+                  </div>
+                  <div className="orders-item__products">{prodCon}</div>
                 </div>
               );
             });
-            this.orders.push(
-              <div className="orders-item">
-                <div className="orders-item__head">
-                  <h4>
-                    Заказ №{order.dbid} на сумму {order.sum.toLocaleString()}₽
-                  </h4>
-                  <div className="date">{}</div>
-                </div>
-                <div className="orders-item__desc">
-                  <div className="status">
-                    {order.status === "Created" ? "В обработке" : "Оплачен"}
-                  </div>
-                  <button
-                    className="link dotted"
-                    onClick={(e) => {
-                      e.target.classList.toggle("active");
-                      e.target
-                        .closest(".orders-item")
-                        .classList.toggle("active");
-                    }}
-                  >
-                    состав заказа <span className="ic i_drop"></span>
-                  </button>
-                </div>
-                <div className="orders-item__products">{prodCon}</div>
-              </div>
-            );
-          });
+          }
+        }
+
+        console.log('getCookie("auth") :>> ', getCookie("auth"));
+        console.log("orders :>> ", this.orders);
+      } else {
+        if (Object.keys(this.props.store.fullCats).length !== 0) {
+          this.props.history.push("/#profile");
         }
       }
-
-      console.log('getCookie("auth") :>> ', getCookie("auth"));
-      console.log("orders :>> ", this.orders);
       return (
-        ready && (
+        Object.keys(data).length !== 0 && (
           <div className="profile-p">
             <ul className="small-nav">
               <div className="container container_f">
@@ -193,7 +201,22 @@ const Profile = observer(
                           <div className="user__mail">{data.user.email}</div>
                         </div>
                         <div className="user__edit">
-                          <button className="link dotted">Редактировать</button>
+                          <button
+                            className="link dotted"
+                            onClick={() => {
+                              document
+                                .querySelector(".sidebar-overlay")
+                                .classList.add("active");
+
+                              document
+                                .querySelector("body")
+                                .classList.add("no-scroll");
+
+                              this.props.store.changeSide = true;
+                            }}
+                          >
+                            Редактировать
+                          </button>
                         </div>
                       </div>
                       {Object.keys(this.props.store.likeData).length > 0 && (
@@ -204,7 +227,7 @@ const Profile = observer(
                               <div className="product__image-wrp">
                                 <img
                                   src={
-                                    "/image/products/" +
+                                    "/image/items/" +
                                     this.props.store.likeData[
                                       Object.keys(this.props.store.likeData)[0]
                                     ].path_to_photo[0]

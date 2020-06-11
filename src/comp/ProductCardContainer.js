@@ -103,7 +103,9 @@ const ProductCardContainer = observer(
               )}
             </div>
             {this.props.store.productsToRender}
-            {this.props.store.paginatCont}
+            {window.location.pathname.includes("profile")
+              ? null
+              : this.props.store.paginatCont}
           </div>
         </div>
       );

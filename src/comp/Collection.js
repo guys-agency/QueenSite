@@ -83,6 +83,7 @@ const Collection = observer(
         (window.location.pathname.includes("ideas") ? (
           <div className="main-screen">
             <div className="container">
+              <Breadcrumbs name={this.props.slug} store={this.props.store} />
               <div className="row catalog">
                 <div className="col col-3">
                   <Filters store={this.props.store} />

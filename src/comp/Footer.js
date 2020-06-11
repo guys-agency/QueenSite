@@ -22,7 +22,10 @@ const Footer = observer(
               <div className="footer__column">
                 <h4 className="white">Наши новости</h4>
                 <div className="social">
-                  <a className="ic i_fb" href="https://www.instagram.com/queenbohemia.ru/"></a>
+                  <a
+                    className="ic i_fb"
+                    href="https://www.instagram.com/queenbohemia.ru/"
+                  ></a>
                   {/* <a className="ic i_inst" href=""></a> */}
                 </div>
                 <Link to="/" className="logo logo_sq">
@@ -47,18 +50,18 @@ const Footer = observer(
                       <Link to="/catalog/interer/">Интерьр</Link>
                     </li>
                     <li>
-                      <Link to="/gifts/">Подарки</Link>
+                      <Link to="/catalog/podarki/">Подарки</Link>
                     </li>
                   </ul>
                   <ul className="footer__links">
                     <li>
-                      <Link to="/premium/">Premium</Link>
+                      <Link to="/catalog/premium/">Premium</Link>
                     </li>
                     {/* <li>
                                             <Link to="">Милениум</Link>
                                         </li> */}
                     <li>
-                      <Link to="actions">Акции</Link>
+                      <Link to="/actions">Акции</Link>
                     </li>
                   </ul>
                 </div>

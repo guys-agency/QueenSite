@@ -65,15 +65,33 @@ const AuthSidebar = observer(
                   })
                   .then((data) => {
                     console.log("data :>> ", data);
-                    this.props.store.auth = true;
-                    const lc = this.props.store.likeContainer;
-                    data.likeProducts.forEach((prod) => {
-                      if (!this.props.store.likeContainer.includes(prod)) {
-                        lc.push(prod);
-                      }
-                    });
-                    this.props.store.likeContainer = lc;
-                    this.props.store.addToLike();
+                    if (data.status === 400) {
+                      $("#loginBtn").text(data.message);
+
+                      $("#loginBtn").addClass("error");
+
+                      setTimeout(() => {
+                        $("#loginBtn").removeClass("error");
+                        $("#loginBtn").text("Войти");
+                      }, 3000);
+                    } else {
+                      this.props.store.auth = true;
+                      const lc = this.props.store.likeContainer;
+                      data.likeProducts.forEach((prod) => {
+                        if (!this.props.store.likeContainer.includes(prod)) {
+                          lc.push(prod);
+                        }
+                      });
+                      this.props.store.likeContainer = lc;
+                      this.props.store.addToLike();
+                      this.props.store.sideAsk = false;
+                      this.props.store.sideLogin = false;
+                      document
+                        .querySelector(".sidebar-overlay")
+                        .classList.remove("active");
+                      $("body").removeClass("no-scroll");
+                      $(".navigation").removeClass("visible");
+                    }
                   });
               }}
               //свойство, где описывыем нашу форму
@@ -125,7 +143,11 @@ const AuthSidebar = observer(
                         <div className="field-error">{errors.password}</div>
                       )}
                     </div>
-                    <button type="submit" className="btn btn_primary">
+                    <button
+                      type="submit"
+                      className="btn btn_primary"
+                      id="loginBtn"
+                    >
                       Войти
                     </button>
                   </form>
@@ -158,7 +180,6 @@ const AuthSidebar = observer(
                     email: values.email.toLowerCase(),
                   })
                   .then((data) => {
-                    console.log("data :>> ", data);
                     $("#restorePass").text(data.message);
                     if (data.status === 201) {
                       $("#restorePass").addClass("success");
@@ -306,11 +327,29 @@ const AuthSidebar = observer(
               //определяем, что будет происходить при вызове onsubmit
               onSubmit={(values, { setSubmitting }) => {
                 console.log("values :>> ", values);
-                api.regist({
-                  name: values.username,
-                  email: values.email.toLowerCase(),
-                  password: values.password,
-                });
+                api
+                  .regist({
+                    name: values.username,
+                    email: values.email.toLowerCase(),
+                    password: values.password,
+                  })
+                  .then((ok) => {
+                    console.log("ok :>> ", ok);
+                    $("#registrBtn").text(ok.message);
+                    if (ok.status === 201) {
+                      $("#registrBtn").addClass("success");
+                    } else {
+                      $("#registrBtn").addClass("error");
+                    }
+                    setTimeout(() => {
+                      $("#registrBtn").removeClass("success");
+                      $("#registrBtn").removeClass("error");
+                      $("#registrBtn").text("Регистрация");
+                    }, 3000);
+                  })
+                  .catch((err) => {
+                    console.log("err :>> ", err);
+                  });
               }}
               //свойство, где описывыем нашу форму
               //errors-ошибки валидации формы
@@ -389,7 +428,11 @@ const AuthSidebar = observer(
                     />
                     <div className="field-error">{errors.repassword}</div>
                   </div>
-                  <button className="btn btn_primary" type="submit">
+                  <button
+                    className="btn btn_primary"
+                    type="submit"
+                    id="registrBtn"
+                  >
                     Регистрация
                   </button>
                   <label className="checkbox checkbox_margin">

@@ -1,5 +1,5 @@
-import React from 'react';
-import { observer } from 'mobx-react';
+import React from "react";
+import { observer } from "mobx-react";
 import { Link, NavLink } from "react-router-dom";
 const { Component } = React;
 
@@ -48,12 +48,27 @@ const About = observer(
                   посмотрите специально подготовленные для вас коллекции, акции
                   и идеи. Если у вас остались вопросы,{" "}
                   <span className="dib">
-                    <a href="" className="link dotted">
+                    <a
+                      href=""
+                      className="link dotted"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        document
+                          .querySelector(".sidebar-overlay")
+                          .classList.add("active");
+
+                        document
+                          .querySelector("body")
+                          .classList.add("no-scroll");
+
+                        this.props.store.sideAsk = true;
+                      }}
+                    >
                       задайте его на сайте
                     </a>
                   </span>{" "}
                   или по телефону{" "}
-                  <a className="underline" href="+78008085878">
+                  <a className="underline" href="tel:+78008085878">
                     +7 800 808-58-78
                   </a>
                   .
@@ -124,6 +139,4 @@ const About = observer(
   }
 );
 
-
- 
 export default About;
