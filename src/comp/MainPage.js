@@ -8,6 +8,10 @@ import { Link } from "react-router-dom";
 import Swiper from "react-id-swiper";
 import ProductCard from "./ProductCard";
 import { SERVER_URL } from "../constants";
+import { Formik } from "formik";
+import api from "./api";
+import RestoreSchema from "../schemas/restoreSchema";
+import { withRouter } from "react-router";
 
 const { Component } = React;
 
@@ -84,6 +88,15 @@ const MainPage = observer(
         .catch((err) => {
           console.log("err", err);
         });
+    };
+
+    openLogSide = () => {
+      this.props.history.replace({ hash: "" });
+      document.querySelector(".sidebar-overlay").classList.add("active");
+      document.querySelector("body").classList.add("no-scroll");
+      if (!this.props.store.sideLogin) {
+        this.props.store.sideLogin = true;
+      }
     };
 
     render() {
@@ -215,7 +228,7 @@ const MainPage = observer(
           <div className="row ideas-block">
             <div className="col col-5 col-t-12">
               <Link
-                to={"/ideas/" + bannersData.ideas[0].slug}                
+                to={"/ideas/" + bannersData.ideas[0].slug}
                 className="banner banner_overlay main-idea"
                 style={{
                   backgroundImage: `url(/image/banners/${
@@ -715,39 +728,91 @@ const MainPage = observer(
                 <div className="col col-6 col-s-12 col-middle subscribe__form">
                   <h3>Подпишитесь на новости</h3>
                   <p>{/* <b>Скидка 5%</b> на первую покупку */}</p>
-                  <form className="row row_inner col-bottom">
-                    <div className="col col-7 col-s-12">
-                      <div className="input-field">
-                        <label className="required" htmlFor="emailSubs">
-                          E-mail
-                        </label>
-                        <input
-                          id="emailSubs"
-                          name="email"
-                          type="text"
-                          onFocus={(e) => {
-                            $(e.target)
-                              .parent()
-                              .find("label")
-                              .addClass("active");
-                          }}
-                          onBlur={(e) => {
-                            if (e.target.value === "") {
-                              $(e.target)
-                                .parent()
-                                .find("label")
-                                .removeClass("active");
-                            }
-                          }}
-                        />
-                      </div>
-                    </div>
-                    <div className="col col-4 col-s-12">
-                      <button className="btn btn_primary btn_wide">
-                        Подписаться
-                      </button>
-                    </div>
-                  </form>
+                  <Formik
+                    //инициализируем значения input-ов
+                    initialValues={{
+                      email: "",
+                    }}
+                    //подключаем схему валидации, которую описали выше
+                    validationSchema={RestoreSchema}
+                    //определяем, что будет происходить при вызове onsubmit
+                    onSubmit={(values, { setSubmitting }) => {
+                      api
+                        .addToSubscription({
+                          email: values.email.toLowerCase(),
+                        })
+                        .then((data) => {
+                          $("#subscription").text(data.message);
+                          if (data.status === 200) {
+                            $("#subscription").addClass("success");
+                          } else {
+                            $("#subscription").addClass("error");
+                          }
+                          setTimeout(() => {
+                            $("#subscription").removeClass("success");
+                            $("#subscription").removeClass("error");
+                            $("#subscription").text("Подписаться");
+                          }, 3000);
+                        });
+                    }}
+                    //свойство, где описывыем нашу форму
+                    //errors-ошибки валидации формы
+                    //touched-поля формы, которые мы "затронули",
+                    //то есть, в которых что-то ввели
+                  >
+                    {({
+                      errors,
+                      touched,
+                      handleSubmit,
+                      isSubmitting,
+                      values,
+                      handleChange,
+                    }) => (
+                      <form
+                        className="row row_inner col-bottom"
+                        onSubmit={handleSubmit}
+                      >
+                        <div className="col col-7 col-s-12">
+                          <div className="input-field">
+                            <label className="required" htmlFor="emailSubs">
+                              E-mail
+                            </label>
+                            <input
+                              id="emailSubs"
+                              name="email"
+                              type="text"
+                              value={values.email}
+                              onFocus={(e) => {
+                                $(e.target)
+                                  .parent()
+                                  .find("label")
+                                  .addClass("active");
+                              }}
+                              onBlur={(e) => {
+                                if (e.target.value === "") {
+                                  $(e.target)
+                                    .parent()
+                                    .find("label")
+                                    .removeClass("active");
+                                }
+                              }}
+                              onChange={handleChange}
+                            />
+                          </div>
+                          <div className="field-error">{errors.email}</div>
+                        </div>
+                        <div className="col col-4 col-s-12">
+                          <button
+                            className="btn btn_primary btn_wide"
+                            type="submit"
+                            id="subscription"
+                          >
+                            Подписаться
+                          </button>
+                        </div>
+                      </form>
+                    )}
+                  </Formik>
                 </div>
               </div>
             </div>
@@ -763,8 +828,11 @@ const MainPage = observer(
     }
     componentDidMount() {
       this.getData();
+      if (this.props.location.hash.includes("profile")) {
+        this.openLogSide();
+      }
     }
   }
 );
 
-export default MainPage;
+export default withRouter(MainPage);

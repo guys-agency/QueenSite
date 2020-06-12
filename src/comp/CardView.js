@@ -11,6 +11,7 @@ import api from "./api";
 import moment from "moment";
 import num2str from "../ulits/nm2wrd";
 import { Link } from "react-router-dom";
+import Breadcrumbs from "./breadcrumbs";
 import $ from "jquery";
 
 const { Component } = React;
@@ -370,13 +371,30 @@ const CardView = observer(
                 <button className="btn" onClick={this.close}>
                   Вернуться назад
                 </button>
+                <Breadcrumbs
+                  name={
+                    this.props.store.firstBread === ""
+                      ? data.categories[0].slugName
+                      : this.props.store.firstBread
+                  }
+                  child={
+                    this.props.store.firstBread === "ideas"
+                      ? ""
+                      : this.props.store.secondBread === ""
+                      ? data.categories[0].childsSlug[0]
+                      : this.props.store.secondBread
+                  }
+                  prod={data.name}
+                  prodSlug={data.slug}
+                  store={this.props.store}
+                />
                 <div
                   className={
                     "row product-p " + (data.description ? "" : "no-desc")
                   }
                 >
                   <div className="col col-6 col-t-5 col-s-12">
-                    <Gallery path={data.path_to_photo} />
+                    <Gallery path={data.path_to_photo} key={data.slug} />
                   </div>
                   <div className="col col-6 col-t-7 col-s-12">
                     <div className="product-p__description">
@@ -652,11 +670,9 @@ const CardView = observer(
         )
       );
     }
-    driftInit = false;
 
     componentDidUpdate() {
-      console.log(document.querySelector(".drift"));
-      if (document.querySelector(".drift") !== null && !this.driftInit) {
+      if (document.querySelector(".drift") !== null) {
         var driftImgs = document.querySelectorAll(".drift");
         var pane = document.querySelector(".product-p__description");
         driftImgs.forEach((img) => {
@@ -666,7 +682,6 @@ const CardView = observer(
             hoverDelay: 200,
           });
         });
-        this.driftInit = true;
       }
     }
   }

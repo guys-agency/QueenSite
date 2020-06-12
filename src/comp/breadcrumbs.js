@@ -55,19 +55,32 @@ const Breadcrumbs = observer(
 
       brRend.push(<Link to="/">Главная</Link>);
 
-      if (window.location.pathname.includes("collections")) {
+      if (
+        window.location.pathname.includes("collections") ||
+        this.props.name === "collections"
+      ) {
+        this.props.store.firstBread = "collections";
+
         if (this.props.name) {
           brRend.push(<Link to={"/collections"}>Коллекции</Link>);
         } else {
           brRend.push(<NavLink to={"/collections"}>Коллекции</NavLink>);
         }
-      } else if (window.location.pathname.includes("closeout")) {
+      } else if (
+        window.location.pathname.includes("closeout") ||
+        this.props.name === "closeout"
+      ) {
+        this.props.store.firstBread = "actions";
         if (this.props.name) {
           brRend.push(<Link to={"/closeout"}>Распродажа</Link>);
         } else {
           brRend.push(<NavLink to={"/closeout"}>Распродажа</NavLink>);
         }
-      } else if (window.location.pathname.includes("actions")) {
+      } else if (
+        window.location.pathname.includes("actions") ||
+        this.props.name === "actions"
+      ) {
+        this.props.store.firstBread = "actions";
         if (this.props.name) {
           brRend.push(<Link to={"/actions"}>Акции</Link>);
         } else {
@@ -77,7 +90,11 @@ const Breadcrumbs = observer(
         !window.location.pathname.includes("premium") &&
         !window.location.pathname.includes("interer") &&
         !window.location.pathname.includes("podarki") &&
-        window.location.pathname.includes("catalog")
+        window.location.pathname.includes("catalog") &&
+        this.props.name !== "actions" &&
+        this.props.name !== "closeout" &&
+        this.props.name !== "collections" &&
+        this.props.name !== "ideas"
       ) {
         if (this.props.name) {
           brRend.push(<Link to={"/catalog"}>Каталог</Link>);
@@ -88,17 +105,49 @@ const Breadcrumbs = observer(
 
       let inPath = "";
 
-      if (window.location.pathname.includes("collections")) {
+      if (
+        window.location.pathname.includes("collections") ||
+        this.props.name === "collections"
+      ) {
         inPath = "/collections/";
-      } else if (window.location.pathname.includes("closeout")) {
+      } else if (
+        window.location.pathname.includes("closeout") ||
+        this.props.name === "closeout"
+      ) {
         inPath = "/closeout/";
-      } else if (window.location.pathname.includes("actions")) {
+      } else if (
+        window.location.pathname.includes("actions") ||
+        this.props.name === "actions"
+      ) {
         inPath = "/actions/";
+      } else if (
+        window.location.pathname.includes("ideas") ||
+        this.props.name === "ideas"
+      ) {
+        this.props.store.firstBread = "ideas";
+        inPath = "/ideas/";
       } else {
         inPath = "/catalog/";
       }
-
-      if (this.props.name) {
+      if (
+        this.props.store.firstBread !== "actions" &&
+        this.props.store.firstBread !== "closeout" &&
+        this.props.store.firstBread !== "collections" &&
+        this.props.store.firstBread !== "ideas"
+      ) {
+        this.props.store.firstBread = this.props.name;
+      } else {
+        if (this.props.store.secondBread === "") {
+          this.props.store.secondBread = this.props.name;
+        }
+      }
+      if (
+        this.props.name &&
+        this.props.name !== "actions" &&
+        this.props.name !== "closeout" &&
+        this.props.name !== "collections" &&
+        this.props.name !== "ideas"
+      ) {
         if (this.props.child) {
           console.log("5 :>> ", 5);
           brRend.push(
@@ -117,21 +166,53 @@ const Breadcrumbs = observer(
       }
 
       if (this.props.child) {
-        if (!this.props.prod) {
-          brRend.push(
-            <NavLink
-              to={"/catalog/" + this.props.name + "/" + this.props.child}
-            >
-              {this.props.store.menuAccor[this.props.child]}
-            </NavLink>
-          );
+        if (
+          this.props.store.firstBread !== "actions" &&
+          this.props.store.firstBread !== "closeout" &&
+          this.props.store.firstBread !== "collections" &&
+          this.props.store.firstBread !== "ideas"
+        ) {
+          this.props.store.secondBread = this.props.child;
+          if (!this.props.prod) {
+            brRend.push(
+              <NavLink
+                to={"/catalog/" + this.props.name + "/" + this.props.child}
+              >
+                {this.props.store.menuAccor[this.props.child]}
+              </NavLink>
+            );
+          } else {
+            brRend.push(
+              <Link to={"/catalog/" + this.props.name + "/" + this.props.child}>
+                {this.props.store.menuAccor[this.props.child]}
+              </Link>
+            );
+          }
         } else {
-          brRend.push(
-            <Link to={"/catalog/" + this.props.name + "/" + this.props.child}>
-              {this.props.store.menuAccor[this.props.child]}
-            </Link>
-          );
+          if (this.props.store.secondBread === "") {
+            this.props.store.secondBread = this.props.name;
+          }
+          if (!this.props.prod) {
+            brRend.push(
+              <NavLink to={this.props.name + "/" + this.props.child}>
+                {this.props.store.menuAccor[this.props.child]}
+              </NavLink>
+            );
+          } else {
+            brRend.push(
+              <Link to={"/" + this.props.name + "/" + this.props.child}>
+                {this.props.store.menuAccor[this.props.child]}
+              </Link>
+            );
+          }
         }
+      }
+      if (this.props.prod) {
+        brRend.push(
+          <NavLink to={"/product/" + this.props.prodSlug}>
+            {this.props.prod}
+          </NavLink>
+        );
       }
       return <div className="breadcrumbs">{brRend}</div>;
     }

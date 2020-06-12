@@ -2,6 +2,7 @@
 
 /public/image/items
 /public/image/banners
+/image
 
 # dependencies
 /node_modules

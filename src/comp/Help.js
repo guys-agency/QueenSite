@@ -622,6 +622,8 @@ const Help = observer(
       </div>
     );
 
+    offer = (<div className="col col-8 col-t-7 col-s-12 help__desc"></div>);
+
     delivery = (
       <div className="col col-8 col-t-7 col-s-12 help__desc">
         <h3>Москва и Москвоская область</h3>

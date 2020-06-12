@@ -10,13 +10,9 @@ class Api {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
-    })
-      .then((res) => {
-        return res.json();
-      })
-      .catch((err) => {
-        console.log("err", err);
-      });
+    }).then((res) => {
+      return res.json();
+    });
   }
 
   login(data) {
@@ -28,10 +24,33 @@ class Api {
       },
       body: JSON.stringify(data),
     }).then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-      Promise.reject(res.json());
+      return res.json();
+    });
+  }
+
+  changeData(data) {
+    return fetch(SERVER_URL + "/change-data", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }).then((res) => {
+      return res.json();
+    });
+  }
+
+  changePassword(data) {
+    return fetch(SERVER_URL + "/change-password", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }).then((res) => {
+      return res.json();
     });
   }
 
@@ -232,6 +251,19 @@ class Api {
 
   sendQestion(data) {
     return fetch(SERVER_URL + "/question", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }).then((res) => {
+      return res.json();
+    });
+  }
+
+  addToSubscription(data) {
+    return fetch(SERVER_URL + "/add-subscription", {
       method: "POST",
       credentials: "include",
       headers: {

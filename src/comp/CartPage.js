@@ -521,7 +521,7 @@ const CartPage = observer(
 
                 <div className="cart-page__data">
                   <h3 className="tilda">Данные</h3>
-                  <p>Для получения потребуется паспорт с указанными данными</p>
+                  {/* <p>Для получения потребуется паспорт с указанными данными</p> */}
                   <p>
                     <a
                       className="link dotted"
@@ -693,7 +693,10 @@ const CartPage = observer(
                         <div>
                           <span>Скидка</span>{" "}
                           <span className="red">
-                            {totalSale.toLocaleString()} ₽
+                            {totalSale === 0
+                              ? totalSale.toLocaleString()
+                              : "- " + totalSale.toLocaleString()}{" "}
+                            ₽
                           </span>
                         </div>
                         {Object.keys(deliveryData).length !== 0 && (
@@ -797,17 +800,17 @@ const CartPage = observer(
                           // middleName: "{string}",
                           lastName: secondName,
                           email: email.toLowerCase(),
-                          // address: {
-                          //   // "geoId": {int},
-                          //   country: "Россия",
-                          //   region: cityLoc.region,
-                          //   locality: cityLoc.name,
-                          //   street: adress,
-                          //   house: house,
-                          //   // "housing": "{string}",
-                          //   // "building": "{string}",
-                          //   apartment: flat,
-                          // },
+                          address: {
+                            // "geoId": {int},
+                            country: "Россия",
+                            region: cityLoc.region,
+                            locality: cityLoc.name,
+                            street: adress,
+                            house: house,
+                            // "housing": "{string}",
+                            // "building": "{string}",
+                            apartment: flat,
+                          },
                           // "pickupPointId": {int}
                         };
 
@@ -850,8 +853,8 @@ const CartPage = observer(
                         };
 
                         console.log("this.order :>> ", this.order);
-                        window.widget.setOrderInfo(this.order);
-                        window.widget.createOrder();
+                        // window.widget.setOrderInfo(this.order);
+                        // window.widget.createOrder();
                         const deliveryOrderData = Object.assign(
                           { ...this.deliveryOrderData.deliveryOption.cost },
                           this.deliveryOrderData
@@ -898,6 +901,12 @@ const CartPage = observer(
                             dataToSend,
                           })
                           .then((data) => {
+                            console.log("data123 :>> ", data);
+                            window.widget.setOrderInfo({
+                              ...this.order,
+                              externalId: String(data.orderId),
+                            });
+                            window.widget.createOrder();
                             window.location.href = data.link;
                           })
                           .catch((err) => {
@@ -905,17 +914,27 @@ const CartPage = observer(
                           });
                       }}
                     >
-                      Зaказать
+                      {Object.keys(deliveryData).length === 0 ||
+                      adress.length === 0 ||
+                      flat.length === 0 ||
+                      house.length === 0
+                        ? "Выбрать доставку"
+                        : name.length === 0 ||
+                          secondName.length === 0 ||
+                          email.length === 0 ||
+                          tel.length === 0
+                        ? "Указать контактные данные"
+                        : "Заказать"}
                     </button>
                   </div>
-                  <div className="cart-page__promo">
+                  {/* <div className="cart-page__promo">
                     <input
                       className="def"
                       placeholder="Сертификат"
                       type="text"
                     />{" "}
                     <button>Активировать</button>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>

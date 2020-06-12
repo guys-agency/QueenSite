@@ -44,12 +44,16 @@ class Store {
   pathS = "";
 
   categoryFilter = {};
+  dirtyFilter = {};
   nameMainCat = "";
 
   nameSecondCat = "";
+  firstBread = "";
+  secondBread = "";
 
   sideAsk = false;
   sideLogin = false;
+  changeSide = false;
 
   menuAccor = {};
 
@@ -77,6 +81,8 @@ class Store {
       : localStorage.get("productInCart");
 
   cardContainer = {};
+
+  userData = {};
 
   productPage = false;
   cartPage = false;
@@ -126,7 +132,7 @@ class Store {
         let timeCont = [];
 
         this.bannersData.collections.forEach((elem) => {
-          if (ind < 4 && sum < this.bannersData.collections.length - 1) {
+          if (ind < 5 && sum < this.bannersData.collections.length - 1) {
             timeCont.push(
               <li key={elem.slug}>
                 <NavLink to={"/collections/" + elem.slug}>{elem.name}</NavLink>
@@ -929,11 +935,14 @@ class Store {
     this.activeFilters = Object.assign({}, clearFilters);
     this.categoryFilter = {};
     this.bannerFilter = {};
+    this.dirtyFilter = {};
     this.prodCats = [];
     this.dataColl = [];
     this.pathS = "";
     this.startPag = 0;
     this.stopPag = 42;
+    this.firstBread = "";
+    this.secondBread = "";
   };
 
   filtration = () => {
@@ -1156,16 +1165,22 @@ class Store {
   createFilterPointsContainers = (availableFilters) => {
     this.minPrice = this.categoryFilter.minPrice;
     this.maxPrice = this.categoryFilter.maxPrice;
+    if (
+      Object.keys(this.dirtyFilter).length === 0 ||
+      this.activeFilters.choosePoint.length === 0
+    ) {
+      this.dirtyFilter = Object.assign({}, this.categoryFilter);
+    }
 
     const filterPoints = [];
     const measurePoints = [];
     const optPoints = [];
     Object.keys(availableFilters).forEach((filterType) => {
-      if (filterType == "brand") {
+      if (filterType === "brand") {
         if (this.activeFilters.choosePoint.indexOf(filterType) === 0) {
           Object.keys(this.categoryFilter).forEach((name) => {
-            if (name !== filterType) {
-              this.categoryFilter[name] = availableFilters[name];
+            if (!this.activeFilters.choosePoint.includes(name)) {
+              this.dirtyFilter[name] = availableFilters[name];
             }
           });
         }
@@ -1175,7 +1190,7 @@ class Store {
               name="Бренды"
               objectName={filterType}
               key={filterType}
-              data={this.categoryFilter[filterType]}
+              data={this.dirtyFilter[filterType]}
               store={this}
             />
           );
@@ -1193,8 +1208,8 @@ class Store {
       } else if (filterType == "material") {
         if (this.activeFilters.choosePoint.indexOf(filterType) === 0) {
           Object.keys(this.categoryFilter).forEach((name) => {
-            if (name !== filterType) {
-              this.categoryFilter[name] = availableFilters[name];
+            if (!this.activeFilters.choosePoint.includes(name)) {
+              this.dirtyFilter[name] = availableFilters[name];
             }
           });
         }
@@ -1204,7 +1219,7 @@ class Store {
               name="Материалы"
               objectName={filterType}
               key={filterType}
-              data={this.categoryFilter[filterType]}
+              data={this.dirtyFilter[filterType]}
               store={this}
             />
           );
@@ -1222,8 +1237,8 @@ class Store {
       } else if (filterType == "country") {
         if (this.activeFilters.choosePoint.indexOf(filterType) === 0) {
           Object.keys(this.categoryFilter).forEach((name) => {
-            if (name !== filterType) {
-              this.categoryFilter[name] = availableFilters[name];
+            if (!this.activeFilters.choosePoint.includes(name)) {
+              this.dirtyFilter[name] = availableFilters[name];
             }
           });
         }
@@ -1233,7 +1248,7 @@ class Store {
               name="Страны"
               objectName={filterType}
               key={filterType}
-              data={this.categoryFilter[filterType]}
+              data={this.dirtyFilter[filterType]}
               store={this}
             />
           );
@@ -1251,8 +1266,8 @@ class Store {
       } else if (filterType === "color") {
         if (this.activeFilters.choosePoint.indexOf(filterType) === 0) {
           Object.keys(this.categoryFilter).forEach((name) => {
-            if (name !== filterType) {
-              this.categoryFilter[name] = availableFilters[name];
+            if (!this.activeFilters.choosePoint.includes(name)) {
+              this.dirtyFilter[name] = availableFilters[name];
             }
           });
         }
@@ -1262,7 +1277,7 @@ class Store {
               name="Цвета"
               objectName={filterType}
               key={filterType}
-              data={this.categoryFilter[filterType]}
+              data={this.dirtyFilter[filterType]}
               store={this}
             />
           );
@@ -1280,13 +1295,13 @@ class Store {
       } else if (filterType === "measure") {
         if (this.activeFilters.choosePoint.indexOf(filterType) === 0) {
           Object.keys(this.categoryFilter).forEach((name) => {
-            if (name !== filterType) {
-              this.categoryFilter[name] = availableFilters[name];
+            if (!this.activeFilters.choosePoint.includes(name)) {
+              this.dirtyFilter[name] = availableFilters[name];
             }
           });
         }
         if (this.activeFilters.choosePoint.includes(filterType)) {
-          this.categoryFilter[filterType].forEach((meas) => {
+          this.dirtyFilter[filterType].forEach((meas) => {
             if (
               meas.name === "Кол-во персон" ||
               meas.name === "Комплектность"
@@ -1383,6 +1398,8 @@ decorate(Store, {
   canPremium: observable,
   canSale: observable,
   sideLogin: observable,
+  changeSide: observable,
+  userData: observable,
 });
 
 const store = new Store();

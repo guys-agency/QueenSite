@@ -124,7 +124,7 @@ const FilterPoint = observer(
       let act = false;
       const filterPoints = [];
       data.forEach((filterPoint) => {
-        if (filterPoint != "") {
+        if (filterPoint !== "") {
           let number;
           if (objectName === "measure") {
             if (Object.keys(activeFilters[objectName]).includes(name)) {

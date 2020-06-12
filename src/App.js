@@ -129,6 +129,7 @@ const MainScreen = observer(
               path="/"
               exact
               render={(routProps) => (
+                this.props.store.cleaningActiveFilters(),
                 $("html, body").animate({ scrollTop: 0 }, 500),
                 (<MainPage store={this.props.store} />)
               )}
@@ -563,7 +564,7 @@ const MainScreen = observer(
                 $("html, body").animate({ scrollTop: 0 }, 500),
                 (
                   <div className="main-screen">
-                    <Shops />
+                    <Shops store={this.props.store} />
                   </div>
                 )
               )}
@@ -575,7 +576,7 @@ const MainScreen = observer(
                 $("html, body").animate({ scrollTop: 0 }, 500),
                 (
                   <div className="main-screen">
-                    <ShopsMap />
+                    <ShopsMap store={this.props.store} />
                   </div>
                 )
               )}
@@ -599,7 +600,7 @@ const MainScreen = observer(
                 $("html, body").animate({ scrollTop: 0 }, 500),
                 (
                   <div className="main-screen">
-                    <About />
+                    <About store={this.props.store} />
                   </div>
                 )
               )}
@@ -619,6 +620,7 @@ const MainScreen = observer(
                 )
               )}
             />
+            <Route onEnter={() => window.location.reload()} />
           </Switch>
           {/* {(this.props.store.productPage && this.props.store.cardContainer) ||
               (!this.props.store.productPage && !this.props.store.cartPage && (
