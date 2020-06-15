@@ -368,10 +368,6 @@ const CardView = observer(
           >
             <div className="container">
               <div>
-                <button className="btn" onClick={this.close}>
-                  Вернуться назад
-                </button>
-
                 <Breadcrumbs
                   name={
                     this.props.store.firstBread === ""
@@ -389,6 +385,10 @@ const CardView = observer(
                   prodSlug={data.slug}
                   store={this.props.store}
                 />
+
+                <button className="link dotted" onClick={this.close}>
+                  <span className="ic i_left"></span> Вернуться назад
+                </button>
                 <div
                   className={
                     "row product-p " + (data.description ? "" : "no-desc")

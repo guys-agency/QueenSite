@@ -150,6 +150,9 @@ p{
   @include max($s){
     font-size: 14px;
   }
+  &.red, .red{
+    color: $red;
+  }
 }
 
 .title{
