@@ -935,6 +935,7 @@ const CartPage = observer(
                     />{" "}
                     <button>Активировать</button>
                   </div> */}
+                  <div className="cart-page__result-message">Сейчас оплатить заказ можно только онлайн. <br/> Мы работаем над оплатой курьеру при получении.</div>
                 </div>
               </div>
             </div>
