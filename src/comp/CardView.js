@@ -226,7 +226,7 @@ const CardView = observer(
               const time = moment(
                 ok[0].delivery.calculatedDeliveryDateMin
               ).diff(moment(), "days");
-              this.setState({ timeDelivery: time });
+              this.setState({ timeDelivery: time + 2 });
             })
             .catch((err) => {
               console.log("err :>> ", err);
@@ -371,6 +371,7 @@ const CardView = observer(
                 <button className="btn" onClick={this.close}>
                   Вернуться назад
                 </button>
+
                 <Breadcrumbs
                   name={
                     this.props.store.firstBread === ""

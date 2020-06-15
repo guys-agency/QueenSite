@@ -382,8 +382,8 @@ const CartPage = observer(
                               <span className="b_gray">
                                 {deliveryData.time}{" "}
                                 {num2str(deliveryData.time, [
+                                  "день",
                                   "дня",
-                                  "дней",
                                   "дней",
                                 ])}
                               </span>
@@ -679,6 +679,9 @@ const CartPage = observer(
                           <span>
                             {Object.keys(deliveryData).length === 0
                               ? totalPrice.toLocaleString()
+                              : localStorage.get("city").geoId === 213 &&
+                                totalPrice >= 1000
+                              ? totalPrice.toLocaleString()
                               : (
                                   deliveryData.deliveryOption.cost
                                     .deliveryForCustomer + totalPrice
@@ -703,17 +706,18 @@ const CartPage = observer(
                           <div>
                             <span>Доставка</span>{" "}
                             <span>
-                              {
-                                deliveryData.deliveryOption.cost
-                                  .deliveryForCustomer
-                              }{" "}
-                              ₽ /{" "}
+                              {localStorage.get("city").geoId === 213 &&
+                              totalPrice >= 1000
+                                ? "Бесплатно"
+                                : deliveryData.deliveryOption.cost
+                                    .deliveryForCustomer + " ₽ "}{" "}
+                              /{" "}
                               <span className="b_gray">
                                 {" "}
                                 {deliveryData.time}{" "}
                                 {num2str(deliveryData.time, [
+                                  "день",
                                   "дня",
-                                  "дней",
                                   "дней",
                                 ])}
                               </span>
@@ -801,7 +805,7 @@ const CartPage = observer(
                           lastName: secondName,
                           email: email.toLowerCase(),
                           address: {
-                            // "geoId": {int},
+                            geoId: cityLoc.geoId,
                             country: "Россия",
                             region: cityLoc.region,
                             locality: cityLoc.name,
@@ -819,8 +823,11 @@ const CartPage = observer(
                           assessedValue: totalPrice,
                           fullyPrepaid: true,
                           manualDeliveryForCustomer:
-                            deliveryData.deliveryOption.cost
-                              .deliveryForCustomer,
+                            localStorage.get("city").geoId === 213 &&
+                            totalPrice >= 1000
+                              ? 0
+                              : deliveryData.deliveryOption.cost
+                                  .deliveryForCustomer,
                         };
 
                         const addressData = {
@@ -861,7 +868,8 @@ const CartPage = observer(
                         );
                         deliveryOrderData.deliveryOption.partnerId = this.deliveryOrderData.deliveryOption.partner;
                         deliveryOrderData.deliveryOption.delivery = this.deliveryOrderData.deliveryOption.cost.delivery;
-                        deliveryOrderData.deliveryOption.deliveryForCustomer = this.deliveryOrderData.deliveryOption.cost.deliveryForCustomer;
+                        deliveryOrderData.deliveryOption.deliveryForCustomer =
+                          cost.manualDeliveryForCustomer;
                         this.deliverySend.cost.fullyPrepaid = true;
                         const delivery = {
                           ...this.deliverySend,
@@ -1040,14 +1048,16 @@ const CartPage = observer(
               deliveryOption.deliveryOption.calculatedDeliveryDateMin
                 ? moment(
                     deliveryOption.deliveryOption.calculatedDeliveryDateMax
-                  ).diff(moment(), "days")
+                  ).diff(moment(), "days") + 2
                 : moment(
                     deliveryOption.deliveryOption.calculatedDeliveryDateMin
                   ).diff(moment(), "days") +
+                  2 +
                   "-" +
-                  moment(
+                  (moment(
                     deliveryOption.deliveryOption.calculatedDeliveryDateMax
-                  ).diff(moment(), "days");
+                  ).diff(moment(), "days") +
+                    2);
 
             this.deliveryOrderData = deliveryOption;
             this.setState({ deliveryData: { ...deliveryOption, time } });
