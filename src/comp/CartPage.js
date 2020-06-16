@@ -9,6 +9,7 @@ import moment from "moment";
 import ProductList from "./ProductList";
 import api from "./api";
 import num2str from "../ulits/nm2wrd";
+import Inputmask from "inputmask";
 
 const { Component } = React;
 
@@ -70,6 +71,7 @@ const CartPage = observer(
     render() {
       const { productInCart, productInCartList, addtoCart } = this.props.store;
       const { deliveryData } = this.state;
+      const regexEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
       const productList = [];
       let totalPrice = 0;
@@ -276,6 +278,9 @@ const CartPage = observer(
                                                       ".sidebar-overlay"
                                                     ).removeClass("active");
                                                   }
+                                                  this.setState({
+                                                    deliveryData: {},
+                                                  });
                                                 }}
                                               >
                                                 {one.addressComponents[
@@ -374,11 +379,12 @@ const CartPage = observer(
                           <div className="item">
                             <h5>Стоимость и сроки:</h5>
                             <span>
-                              {
-                                deliveryData.deliveryOption.cost
-                                  .deliveryForCustomer
-                              }{" "}
-                              ₽/{" "}
+                              {localStorage.get("city").geoId === 213 &&
+                              totalPrice >= 1000
+                                ? "Бесплатно"
+                                : deliveryData.deliveryOption.cost
+                                    .deliveryForCustomer + " ₽ "}
+                              /{" "}
                               <span className="b_gray">
                                 {deliveryData.time}{" "}
                                 {num2str(deliveryData.time, [
@@ -522,29 +528,31 @@ const CartPage = observer(
                 <div className="cart-page__data">
                   <h3 className="tilda">Данные</h3>
                   {/* <p>Для получения потребуется паспорт с указанными данными</p> */}
-                  <p>
-                    <a
-                      className="link dotted"
-                      onClick={(e) => {
-                        document
-                          .querySelector(".sidebar-overlay")
-                          .classList.add("active");
+                  {!this.props.store.auth && (
+                    <p>
+                      <a
+                        className="link dotted"
+                        onClick={(e) => {
+                          document
+                            .querySelector(".sidebar-overlay")
+                            .classList.add("active");
 
-                        document
-                          .querySelector("body")
-                          .classList.add("no-scroll");
+                          document
+                            .querySelector("body")
+                            .classList.add("no-scroll");
 
-                        this.props.store.sideLogin = true;
-                        e.preventDefault();
-                      }}
-                    >
-                      <span className="ic i_user"></span>{" "}
-                      <span className="fw_m b_dark">Войдите</span>
-                    </a>{" "}
-                    <span className="b_gray">
-                      (данные подгрузятся автоматически)
-                    </span>
-                  </p>
+                          this.props.store.sideLogin = true;
+                          e.preventDefault();
+                        }}
+                      >
+                        <span className="ic i_user"></span>{" "}
+                        <span className="fw_m b_dark">Войдите</span>
+                      </a>{" "}
+                      <span className="b_gray">
+                        (данные подгрузятся автоматически)
+                      </span>
+                    </p>
+                  )}
 
                   <form className="cart-page__data-form row" action="">
                     <div className="col col-6">
@@ -572,6 +580,17 @@ const CartPage = observer(
                             }
                           }}
                           onInput={(e) => {
+                            if (e.target.value === "") {
+                              $(e.target).css(
+                                "border-bottom",
+                                "1px solid #EB5757"
+                              );
+                            } else {
+                              $(e.target).css(
+                                "border-bottom",
+                                "1px solid lightgreen"
+                              );
+                            }
                             this.setState({ name: e.target.value });
                           }}
                         />
@@ -602,6 +621,17 @@ const CartPage = observer(
                             }
                           }}
                           onInput={(e) => {
+                            if (e.target.value === "") {
+                              $(e.target).css(
+                                "border-bottom",
+                                "1px solid #EB5757"
+                              );
+                            } else {
+                              $(e.target).css(
+                                "border-bottom",
+                                "1px solid lightgreen"
+                              );
+                            }
                             this.setState({ secondName: e.target.value });
                           }}
                         />
@@ -631,6 +661,17 @@ const CartPage = observer(
                             }
                           }}
                           onInput={(e) => {
+                            if (!regexEmail.test(e.target.value)) {
+                              $(e.target).css(
+                                "border-bottom",
+                                "1px solid #EB5757"
+                              );
+                            } else {
+                              $(e.target).css(
+                                "border-bottom",
+                                "1px solid lightgreen"
+                              );
+                            }
                             this.setState({ email: e.target.value });
                           }}
                         />
@@ -660,6 +701,17 @@ const CartPage = observer(
                             }
                           }}
                           onInput={(e) => {
+                            if (e.target.value.includes("_")) {
+                              $(e.target).css(
+                                "border-bottom",
+                                "1px solid #EB5757"
+                              );
+                            } else {
+                              $(e.target).css(
+                                "border-bottom",
+                                "1px solid lightgreen"
+                              );
+                            }
                             this.setState({ tel: e.target.value });
                           }}
                         />
@@ -780,7 +832,9 @@ const CartPage = observer(
                             name === "" ||
                             secondName === "" ||
                             email === "" ||
-                            tel === ""
+                            tel === "" ||
+                            !regexEmail.test(email) ||
+                            tel.includes("_")
                           ) {
                             $("html, body").animate(
                               {
@@ -914,8 +968,20 @@ const CartPage = observer(
                               ...this.order,
                               externalId: String(data.orderId),
                             });
-                            window.widget.createOrder();
-                            window.location.href = data.link;
+                            window.widget
+                              .createOrder()
+                              .then((ok) => {
+                                console.log("ok :>> ", ok);
+                                window.location.href = data.link;
+                              })
+                              .catch((err) => {
+                                console.log("err :>> ", err);
+                                $("#createOrder").text("Произошла ошибка");
+                                setTimeout(() => {
+                                  $("#createOrder").text("Заказать");
+                                }, 3000);
+                              });
+                            // window.location.href = data.link;
                           })
                           .catch((err) => {
                             console.log("err :>> ", err);
@@ -930,7 +996,9 @@ const CartPage = observer(
                         : name.length === 0 ||
                           secondName.length === 0 ||
                           email.length === 0 ||
-                          tel.length === 0
+                          tel.length === 0 ||
+                          !regexEmail.test(email) ||
+                          tel.includes("_")
                         ? "Указать контактные данные"
                         : "Заказать"}
                     </button>
@@ -943,8 +1011,13 @@ const CartPage = observer(
                     />{" "}
                     <button>Активировать</button>
                   </div> */}
-                  <div className="cart-page__result-message">Сейчас оплатить заказ можно только онлайн. <br/> Мы работаем над оплатой курьеру при получении. <br/><br/>
-                    При оплате заказа деньги  <b>не списываются</b>, а <b>блокируются </b>банком у вас на счете <b>на  7 дней</b> до момента доставки.
+                  <div className="cart-page__result-message">
+                    Сейчас оплатить заказ можно только онлайн. <br /> Мы
+                    работаем над оплатой курьеру при получении. <br />
+                    <br />
+                    При оплате заказа деньги <b>не списываются</b>, а{" "}
+                    <b>блокируются </b>банком у вас на счете <b>на 7 дней</b> до
+                    момента доставки.
                   </div>
                 </div>
               </div>
@@ -954,7 +1027,15 @@ const CartPage = observer(
       );
     }
 
-    componentDidMount() {}
+    componentDidMount() {
+      const tel = new Inputmask({
+        mask: "+7 (999) 999 99 99",
+        showMaskOnHover: false,
+        // isComplete: function()
+      });
+
+      tel.mask($("#phone"));
+    }
 
     startYaDeliv = (fullPrice, array) => {
       const { productInCart, city } = this.props.store;
@@ -1047,7 +1128,7 @@ const CartPage = observer(
             // содержится информация о способе доставки, сроках, стоимости и т. д.
             console.log("deliveryOption", deliveryOption);
             const time =
-              deliveryOption.deliveryOption.calculatedDeliveryDateMax ==
+              deliveryOption.deliveryOption.calculatedDeliveryDateMax ===
               deliveryOption.deliveryOption.calculatedDeliveryDateMin
                 ? moment(
                     deliveryOption.deliveryOption.calculatedDeliveryDateMax

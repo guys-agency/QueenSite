@@ -268,7 +268,7 @@ class Store {
                       data[0].addressComponents.length - 1
                     ].name,
                   geoId: data[0].geoId,
-                  region: geolocation.region,
+                  region: data[0].addressComponents[2].name,
                   sourse: "Y",
                 });
               }
