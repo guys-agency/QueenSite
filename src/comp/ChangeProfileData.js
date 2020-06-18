@@ -64,8 +64,6 @@ const ChangeSidebar = observer(
                     tel: values.tel,
                   })
                   .then((ok) => {
-                    console.log("data :>> ", ok);
-
                     $("#loginBtn").text(ok.message);
                     if (ok.status === 201) {
                       this.props.store.userData.user = ok.user;
@@ -162,7 +160,6 @@ const ChangeSidebar = observer(
               validationSchema={ChangePasswordSchema}
               //определяем, что будет происходить при вызове onsubmit
               onSubmit={(values, { setSubmitting }) => {
-                console.log("values :>> ", values);
                 api
                   .changePassword({
                     oldPassword: values.oldPassword,
@@ -170,7 +167,6 @@ const ChangeSidebar = observer(
                     password: values.password,
                   })
                   .then((ok) => {
-                    console.log("ok :>> ", ok);
                     $("#changePass").text(ok.message);
                     if (ok.status === 201) {
                       $("#changePass").addClass("success");

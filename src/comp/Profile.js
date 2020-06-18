@@ -24,7 +24,6 @@ const Profile = observer(
           api
             .getUserData()
             .then((data) => {
-              console.log("data :>> ", data);
               // this.props.store.addToLike(true);
               this.data = data;
               this.props.store.userData = data;
@@ -38,7 +37,6 @@ const Profile = observer(
             data.orders.forEach((order) => {
               const prodCon = [];
               Object.keys(order.products).map((prod) => {
-                console.log("moment(order.date) :>> ", moment(order.date));
                 prodCon.push(
                   <div className="item">
                     <span className="name">{order.products[prod].name}</span>
@@ -83,9 +81,6 @@ const Profile = observer(
             });
           }
         }
-
-        console.log('getCookie("auth") :>> ', getCookie("auth"));
-        console.log("orders :>> ", this.orders);
       } else {
         if (Object.keys(this.props.store.fullCats).length !== 0) {
           this.props.history.push("/#profile");
@@ -145,7 +140,6 @@ const Profile = observer(
                       api
                         .logout()
                         .then((ok) => {
-                          console.log("ok", ok);
                           if (ok.ok) {
                             return ok.json();
                           }
@@ -154,7 +148,6 @@ const Profile = observer(
                         .then((data) => {
                           this.props.store.auth = false;
                           this.props.history.push("/");
-                          console.log('getCookie("auth")', getCookie("auth"));
                         })
                         .catch((err) => {
                           console.log("err", err);

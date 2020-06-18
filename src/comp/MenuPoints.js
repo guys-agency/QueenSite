@@ -11,6 +11,7 @@ import { withRouter } from "react-router";
 import { cities, SERVER_URL } from "../constants";
 import ChangeSidebar from "./ChangeProfileData";
 import CityCh from "./CityCh";
+import api from "./api";
 
 const { Component } = React;
 
@@ -52,8 +53,8 @@ const MenuPoints = observer(
         >
           Задать вопрос
         </button>
-        <a href="tel:+78008085878" className="phone">
-          +7 800 808-58-78
+        <a href="tel:+74958990045" className="phone">
+          +7 495 899-00-45
         </a>
       </div>
     );
@@ -203,6 +204,19 @@ const MenuPoints = observer(
 
     componentDidMount() {
       this.createMenu();
+      api
+        .getUserData()
+        .then((data) => {
+          // this.props.store.addToLike(true);
+          this.props.store.userData = data;
+          // console.log(
+          //   "this.props.store.userData :>> ",
+          //   this.props.store.userData
+          // );
+        })
+        .catch((err) => {
+          console.log("err :>> ", err);
+        });
     }
 
     componentDidUpdate() {
@@ -263,8 +277,6 @@ const MenuPoints = observer(
           return res.json();
         })
         .then((data) => {
-          console.log("data :>> ", data);
-
           const menu = {};
 
           data.forEach((elem, i) => {
@@ -505,7 +517,6 @@ const MenuPoints = observer(
       return (
         this.state.ready && (
           <>
-            {console.log(window.location.pathname)}
             {/* <Menu>{this.menuContainer}</Menu> */}
             <div
               className={
@@ -522,7 +533,7 @@ const MenuPoints = observer(
                   ? "header_w "
                   : " ") +
                 (window.location.pathname.includes("finish") ||
-                window.location.pathname.includes("cart")
+                window.location.pathname.includes("/cart")
                   ? "header_dn "
                   : " ")
               }
@@ -537,14 +548,30 @@ const MenuPoints = observer(
                   }}
                 ></button>
                 <div className="header__left">
-                  <Link to="/about">О нас</Link>
-                  <Link to="/shops">Магазины</Link>
-                  <span>
+                  <Link to="/about" onClick={this.closeNav}>
+                    О нас
+                  </Link>
+                  <Link to="/shops" onClick={this.closeNav}>
+                    Магазины
+                  </Link>
+                  {$(window).width() > 760 ? (
+                    <span>
+                      <span className="link header__btn">
+                        Помощь <span className="ic i_drop"></span>
+                      </span>
+                      {this.service}
+                    </span>
+                  ) : (
+                    <Link to="/help" onClick={this.closeNav}>
+                      Помощь
+                    </Link>
+                  )}
+                  {/* <span>
                     <span className="link header__btn">
                       Помощь <span className="ic i_drop"></span>
                     </span>
                     {this.service}
-                  </span>
+                  </span> */}
                   {/* <Link className="header__left-bonus" to="/help/bonus">
                     Бонусы
                   </Link> */}
@@ -570,9 +597,9 @@ const MenuPoints = observer(
                     window.location.pathname.includes("collections/") ||
                     window.location.pathname.includes("actions/") ||
                     window.location.pathname.includes("main/") ||
-                    window.location.pathname.includes("closeout") ||
-                    window.location.pathname.includes("ideas") ||
-                    window.location.pathname.includes("hits")
+                    window.location.pathname.includes("/closeout") ||
+                    window.location.pathname.includes("/ideas") ||
+                    window.location.pathname.includes("/hits")
                       ? "visible "
                       : " ")
                   }
@@ -633,7 +660,7 @@ const MenuPoints = observer(
                   ? "navigation_w "
                   : " ") +
                 (window.location.pathname.includes("finish") ||
-                window.location.pathname.includes("cart")
+                window.location.pathname.includes("/cart")
                   ? "navigation_dn "
                   : " ")
               }
@@ -869,8 +896,12 @@ const MenuPoints = observer(
                   </button>
                 </div>
                 <div className="navigation__service">
-                  <Link to="/about">О нас</Link>
-                  <Link to="/shops">Магазины</Link>
+                  <Link to="/about" onClick={this.closeNav}>
+                    О нас
+                  </Link>
+                  <Link to="/shops" onClick={this.closeNav}>
+                    Магазины
+                  </Link>
                   <span>
                     <span className="link header__btn">
                       Помощь <span className="ic i_drop"></span>

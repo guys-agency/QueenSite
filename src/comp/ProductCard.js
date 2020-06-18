@@ -21,10 +21,7 @@ const ProductCard = observer(function ProductCard(props) {
   const clickHandler = (e) => {
     if (e.target.classList.contains("i_bag")) {
       const { productInCartList, addtoCart } = store;
-      console.log("inCart :>> ", inCart);
       if (inCart !== -1) {
-        console.log("test123 :>> ");
-
         $(".tooltip_cart").addClass("visible");
         $(".tooltip_cart").find(".text").text(data.name);
 

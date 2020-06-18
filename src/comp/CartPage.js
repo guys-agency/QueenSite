@@ -22,10 +22,19 @@ const CartPage = observer(
       adress: "",
       flat: "",
       house: "",
-      name: "",
+      name:
+        this.props.store.userData.user !== undefined
+          ? this.props.store.userData.user.name
+          : "",
       secondName: "",
-      email: "",
-      tel: "",
+      email:
+        this.props.store.userData.user !== undefined
+          ? this.props.store.userData.user.email
+          : "",
+      tel:
+        this.props.store.userData.user !== undefined
+          ? this.props.store.userData.user.tel
+          : "",
     };
 
     deliveryOrderData = {};
@@ -105,7 +114,6 @@ const CartPage = observer(
         this.props.history.push("/");
       }
 
-      console.log("auth :>> ", this.props.store.auth);
       const { adress, flat, house, name, secondName, email, tel } = this.state;
 
       return (
@@ -230,15 +238,10 @@ const CartPage = observer(
                               type="text"
                               onInput={(e) => {
                                 if (e.target.value.length >= 3) {
-                                  console.log(
-                                    "e.target.value.length :>> ",
-                                    e.target.value.length
-                                  );
                                   const renderCities = [];
                                   api
                                     .getCity(e.target.value)
                                     .then((c) => {
-                                      console.log("c :>> ", c);
                                       c.forEach((one) => {
                                         if (one.addressComponents.length < 6) {
                                           renderCities.push(
@@ -557,7 +560,12 @@ const CartPage = observer(
                   <form className="cart-page__data-form row" action="">
                     <div className="col col-6">
                       <div className="input-field">
-                        <label className="required" htmlFor="firstname">
+                        <label
+                          className={
+                            name === "" ? "required" : "required active"
+                          }
+                          htmlFor="firstname"
+                        >
                           Имя
                         </label>
                         <input
@@ -598,7 +606,12 @@ const CartPage = observer(
                     </div>
                     <div className="col col-6">
                       <div className="input-field">
-                        <label className="required" htmlFor="lastname">
+                        <label
+                          className={
+                            secondName === "" ? "required" : "required active"
+                          }
+                          htmlFor="lastname"
+                        >
                           Фамилия
                         </label>
                         <input
@@ -639,7 +652,12 @@ const CartPage = observer(
                     </div>
                     <div className="col col-6">
                       <div className="input-field">
-                        <label className="required" htmlFor="email">
+                        <label
+                          className={
+                            email === "" ? "required" : "required active"
+                          }
+                          htmlFor="email"
+                        >
                           E-mail
                         </label>
                         <input
@@ -679,7 +697,12 @@ const CartPage = observer(
                     </div>
                     <div className="col col-6">
                       <div className="input-field">
-                        <label className="required" htmlFor="phone">
+                        <label
+                          className={
+                            tel === "" ? "required" : "required active"
+                          }
+                          htmlFor="phone"
+                        >
                           Телефон
                         </label>
                         <input
@@ -792,12 +815,9 @@ const CartPage = observer(
                     <button
                       className="btn btn_yellow"
                       id="createOrder"
-                      onClick={() => {
+                      onClick={(e) => {
                         //NEN
-                        console.log(
-                          "this.deliveryOrderData",
-                          this.deliveryOrderData
-                        );
+
                         const { flat, house, adress } = this.state;
                         if (
                           this.deliveryOrderData.deliveryOption === undefined
@@ -848,10 +868,12 @@ const CartPage = observer(
                           }
                         }
 
-                        console.log("productInCart", productInCart);
+                        $(e.target).addClass("deactive");
+                        $(e.target).text("Создаем заказ");
+                        // console.log("productInCart", productInCart);
                         const senderId = "500001936";
                         const cityLoc = localStorage.get("city");
-                        console.log("cityLoc", cityLoc);
+                        // console.log("cityLoc", cityLoc);
 
                         const recipient = {
                           firstName: name,
@@ -913,7 +935,6 @@ const CartPage = observer(
                           contacts: contacts,
                         };
 
-                        console.log("this.order :>> ", this.order);
                         // window.widget.setOrderInfo(this.order);
                         // window.widget.createOrder();
                         const deliveryOrderData = Object.assign(
@@ -955,15 +976,12 @@ const CartPage = observer(
                         dataToSend.sum = totalPrice;
                         dataToSend.email = this.state.email.toLowerCase();
 
-                        console.log("delivery :>> ", delivery, dataToSend);
-
                         api
                           .setOrderData({
                             delivery,
                             dataToSend,
                           })
                           .then((data) => {
-                            console.log("data123 :>> ", data);
                             window.widget.setOrderInfo({
                               ...this.order,
                               externalId: String(data.orderId),
@@ -971,7 +989,9 @@ const CartPage = observer(
                             window.widget
                               .createOrder()
                               .then((ok) => {
-                                console.log("ok :>> ", ok);
+                                // console.log("ok :>> ", ok);
+                                this.props.store.productInCartList = {};
+                                this.props.store.addtoCart(false);
                                 window.location.href = data.link;
                               })
                               .catch((err) => {
@@ -985,6 +1005,10 @@ const CartPage = observer(
                           })
                           .catch((err) => {
                             console.log("err :>> ", err);
+                          })
+                          .finally(() => {
+                            $(e.target).removeClass("deactive");
+                            $(e.target).text("Заказать");
                           });
                       }}
                     >
@@ -1038,14 +1062,6 @@ const CartPage = observer(
 
     startYaDeliv = (fullPrice, array) => {
       const { productInCart, city } = this.props.store;
-      console.log(
-        "productInCart :>> ",
-        productInCart[Object.keys(productInCart)[2]]
-      );
-      console.log(
-        "Object.keys(productInCart) :>> ",
-        Object.keys(productInCart)
-      );
       const items = [];
       let sum = fullPrice;
       Object.keys(productInCart).forEach((el, i) => {
@@ -1075,7 +1091,7 @@ const CartPage = observer(
           },
         ],
         shipment: {
-          fromWarehouseId: 10001563755,
+          fromWarehouseId: 10001568252,
         },
       };
       const order = {
@@ -1093,7 +1109,6 @@ const CartPage = observer(
       };
 
       this.deliverySend = { ...cart, ...order };
-      console.log("cart :>> ", cart);
       this.YaDeliveryFunc(window, cart, order, city);
     };
 
@@ -1125,7 +1140,6 @@ const CartPage = observer(
           widget.on("submitDeliveryOption", (deliveryOption) => {
             // Обработка выбранного пользователем варианта доставки. В параметре deliveryOption
             // содержится информация о способе доставки, сроках, стоимости и т. д.
-            console.log("deliveryOption", deliveryOption);
             const time =
               deliveryOption.deliveryOption.calculatedDeliveryDateMax ===
               deliveryOption.deliveryOption.calculatedDeliveryDateMin

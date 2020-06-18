@@ -149,14 +149,12 @@ const Breadcrumbs = observer(
         this.props.name !== "ideas"
       ) {
         if (this.props.child) {
-          console.log("5 :>> ", 5);
           brRend.push(
             <Link to={inPath + this.props.name}>
               {this.props.store.menuAccor[this.props.name]}
             </Link>
           );
         } else {
-          console.log("this.props.child :>> ", this.props.child);
           brRend.push(
             <NavLink to={inPath + this.props.name}>
               {this.props.store.menuAccor[this.props.name]}

@@ -33,11 +33,9 @@ const Paginat = observer(
             key={i}
             onClick={() => {
               if (i === countPage - 1) {
-                console.log("42 * i;", 42 * i);
                 this.props.store.startPag = 42 * i;
                 this.props.store.stopPag = productValue;
               } else {
-                console.log("42 * i;", 42 * i);
                 this.props.store.startPag = 42 * i;
                 this.props.store.stopPag = 42 * (i + 1);
               }

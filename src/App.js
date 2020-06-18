@@ -141,10 +141,6 @@ const MainScreen = observer(
                 "/catalog",
               ]}
               render={(routProps) => (
-                console.log(
-                  "querySearch(routProps.location.search)",
-                  querySearch(routProps.location.search)
-                ),
                 this.props.store.nameMainCat !==
                   routProps.match.params.parentName ||
                 this.props.store.nameSecondCat !==

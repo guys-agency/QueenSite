@@ -38,7 +38,6 @@ const MainPage = observer(
           return res.json();
         })
         .then((data) => {
-          console.log("data :>> ", data);
           Object.keys(data[0].hit).forEach((element, i) => {
             hitContTime.push(
               <div

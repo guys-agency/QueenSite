@@ -171,17 +171,13 @@ const CardView = observer(
     };
 
     clickPlus = () => {
-      console.log("plus :>> ");
-      let { countInProdPage } = this.props.store;
       const data = this.props.store.cardContainer;
       if (this.props.store.countInProdPage < data.stock_quantity) {
-        console.log("plus2 :>> ");
         this.props.store.countInProdPage += 1;
       }
     };
 
     clickMinus = () => {
-      let { countInProdPage } = this.props.store;
       if (this.props.store.countInProdPage > 1) {
         this.props.store.countInProdPage -= 1;
       }
@@ -189,19 +185,17 @@ const CardView = observer(
 
     render() {
       const data = this.props.store.cardContainer;
-      console.log("data120 :>> ", data);
 
       const { timeDelivery } = this.state;
 
       if (data.slug === +this.props.sku && this.count) {
-        console.log("12 :>> ");
         if (
           timeDelivery === "" &&
           localStorage.get("city") !== null &&
           localStorage.get("city") !== undefined
         ) {
           this.count = false;
-          console.log("123 :>> ");
+
           const dataDeliv = {
             senderId: 500001936,
             from: {
@@ -222,7 +216,7 @@ const CardView = observer(
           api
             .timeDelivery({ data: dataDeliv })
             .then((ok) => {
-              console.log("ok :>> ", ok);
+              // console.log("ok :>> ", ok);
               const time = moment(
                 ok[0].delivery.calculatedDeliveryDateMin
               ).diff(moment(), "days");
@@ -243,15 +237,15 @@ const CardView = observer(
           },
         })
           .then((res) => {
-            console.log("res", res);
+            // console.log("res", res);
             return res.json();
           })
           .then((data) => {
-            console.log("datasto :>> ", data);
+            // console.log("datasto :>> ", data);
 
             this.with = data.addProd[0].with;
             this.like = data.addProd[0].like;
-            console.log("this.like :>> ", this.like);
+            // console.log("this.like :>> ", this.like);
             this.props.store.cardContainer = data.product[0];
             this.fetchReady = true;
           })
@@ -568,26 +562,48 @@ const CardView = observer(
                               <li>{data.weight + "кг."}</li>
                               <li>{data.color}</li>
                               {data.material && <li>{data.material}</li>}
-                            </ul>
-                            <ul>
-                              <li>
-                                {data.dimensions.length.toLocaleString() +
-                                  " x " +
-                                  data.dimensions.width.toLocaleString() +
-                                  " x " +
-                                  data.dimensions.height.toLocaleString() +
-                                  "см"}
-                              </li>
-                              <li>{data.country}</li>
-                              {data.attributes.length !== 0 && (
-                                <li>
-                                  {data.attributes[0].name}:{" "}
-                                  {data.attributes[0].value +
-                                    data.attributes[0].unit}
-                                </li>
+                              {$(window).width() <= 760 && (
+                                <>
+                                  <li>
+                                    {data.dimensions.length.toLocaleString() +
+                                      " x " +
+                                      data.dimensions.width.toLocaleString() +
+                                      " x " +
+                                      data.dimensions.height.toLocaleString() +
+                                      "см"}
+                                  </li>
+                                  <li>{data.country}</li>
+                                  {data.attributes.length !== 0 && (
+                                    <li>
+                                      {data.attributes[0].name}:{" "}
+                                      {data.attributes[0].value +
+                                        data.attributes[0].unit}
+                                    </li>
+                                  )}
+                                </>
                               )}
-                              {/* <li>{data.brand}</li> */}
                             </ul>
+                            {$(window).width() >= 760 && (
+                              <ul>
+                                <li>
+                                  {data.dimensions.length.toLocaleString() +
+                                    " x " +
+                                    data.dimensions.width.toLocaleString() +
+                                    " x " +
+                                    data.dimensions.height.toLocaleString() +
+                                    "см"}
+                                </li>
+                                <li>{data.country}</li>
+                                {data.attributes.length !== 0 && (
+                                  <li>
+                                    {data.attributes[0].name}:{" "}
+                                    {data.attributes[0].value +
+                                      data.attributes[0].unit}
+                                  </li>
+                                )}
+                                {/* <li>{data.brand}</li> */}
+                              </ul>
+                            )}
                           </div>
                         </div>
                         <div>
