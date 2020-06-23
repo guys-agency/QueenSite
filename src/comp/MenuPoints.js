@@ -53,8 +53,8 @@ const MenuPoints = observer(
         >
           Задать вопрос
         </button>
-        <a href="tel:+74958990045" className="phone">
-          +7 495 899-00-45
+        <a href="tel:+79166747943" className="phone">
+          +7 916 674-79-43
         </a>
       </div>
     );
@@ -71,19 +71,29 @@ const MenuPoints = observer(
         </button>
         <ul>
           <li>
-            <Link to="/help/delivery">Доставка</Link>
+            <Link to="/help/delivery" onClick={this.closeNav}>
+              Доставка
+            </Link>
           </li>
           <li>
-            <Link to="/help/payment">Оплата</Link>
+            <Link to="/help/payment" onClick={this.closeNav}>
+              Оплата
+            </Link>
           </li>
           <li>
-            <Link to="/help/garantie">Гарантия</Link>
+            <Link to="/help/garantie" onClick={this.closeNav}>
+              Гарантия
+            </Link>
           </li>
           <li>
-            <Link to="/help/return">Возврат</Link>
+            <Link to="/help/return" onClick={this.closeNav}>
+              Возврат
+            </Link>
           </li>
           <li>
-            <Link to="/help/offer">Публичная оферта</Link>
+            <Link to="/help/offer" onClick={this.closeNav}>
+              Публичная оферта
+            </Link>
           </li>
           {/* <li>
             <Link to="/help/bonus">Бонусы</Link>
@@ -360,7 +370,7 @@ const MenuPoints = observer(
                   <ul>{childsPoints}</ul>
                 </div>
               );
-              this.interier.push(<ul>{childsPoints}</ul>);
+              this.interier.push(<ul key={elem.name}>{childsPoints}</ul>);
             } else if (elem.name === "Наборы") {
               menu[6] = (
                 <div key={elem.name}>
@@ -521,18 +531,18 @@ const MenuPoints = observer(
             <div
               className={
                 "header " +
-                (window.location.pathname.includes("catalog") ||
-                window.location.pathname.includes("profile") ||
-                window.location.pathname.includes("about") ||
-                window.location.pathname.includes("product") ||
-                window.location.pathname.includes("closeout") ||
-                window.location.pathname.includes("ideas") ||
-                window.location.pathname.includes("hits") ||
-                window.location.pathname.includes("new") ||
-                window.location.pathname.includes("help")
+                (window.location.pathname.includes("/catalog") ||
+                window.location.pathname.includes("/profile") ||
+                window.location.pathname.includes("/about") ||
+                window.location.pathname.includes("/product") ||
+                window.location.pathname.includes("/closeout") ||
+                window.location.pathname.includes("/ideas") ||
+                window.location.pathname.includes("/hits") ||
+                window.location.pathname.includes("/new") ||
+                window.location.pathname.includes("/help")
                   ? "header_w "
                   : " ") +
-                (window.location.pathname.includes("finish") ||
+                (window.location.pathname.includes("/finish") ||
                 window.location.pathname.includes("/cart")
                   ? "header_dn "
                   : " ")
@@ -562,7 +572,7 @@ const MenuPoints = observer(
                       {this.service}
                     </span>
                   ) : (
-                    <Link to="/help" onClick={this.closeNav}>
+                    <Link to="/help/payment" onClick={this.closeNav}>
                       Помощь
                     </Link>
                   )}
@@ -648,18 +658,18 @@ const MenuPoints = observer(
             <div
               className={
                 "navigation " +
-                (window.location.pathname.includes("catalog") ||
-                window.location.pathname.includes("profile") ||
-                window.location.pathname.includes("about") ||
-                window.location.pathname.includes("product") ||
-                window.location.pathname.includes("closeout") ||
-                window.location.pathname.includes("ideas") ||
-                window.location.pathname.includes("hits") ||
-                window.location.pathname.includes("new") ||
-                window.location.pathname.includes("help")
+                (window.location.pathname.includes("/catalog") ||
+                window.location.pathname.includes("/profile") ||
+                window.location.pathname.includes("/about") ||
+                window.location.pathname.includes("/product") ||
+                window.location.pathname.includes("/closeout") ||
+                window.location.pathname.includes("/ideas") ||
+                window.location.pathname.includes("/hits") ||
+                window.location.pathname.includes("/new") ||
+                window.location.pathname.includes("/help")
                   ? "navigation_w "
                   : " ") +
-                (window.location.pathname.includes("finish") ||
+                (window.location.pathname.includes("/finish") ||
                 window.location.pathname.includes("/cart")
                   ? "navigation_dn "
                   : " ")
@@ -902,12 +912,24 @@ const MenuPoints = observer(
                   <Link to="/shops" onClick={this.closeNav}>
                     Магазины
                   </Link>
-                  <span>
+                  {$(window).width() > 760 ? (
+                    <span>
+                      <span className="link header__btn">
+                        Помощь <span className="ic i_drop"></span>
+                      </span>
+                      {this.service}
+                    </span>
+                  ) : (
+                    <Link to="/help/payment" onClick={this.closeNav}>
+                      Помощь
+                    </Link>
+                  )}
+                  {/* <span>
                     <span className="link header__btn">
                       Помощь <span className="ic i_drop"></span>
                     </span>
                     {this.service}
-                  </span>
+                  </span> */}
                   {/* <Link className="header__left-bonus" to="/help/bonus">
                     Бонусы
                   </Link> */}

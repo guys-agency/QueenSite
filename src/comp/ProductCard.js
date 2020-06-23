@@ -4,6 +4,7 @@ import { withRouter } from "react-router";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import localStorage from "mobx-localstorage";
+import { Link } from "react-router-dom";
 import $ from "jquery";
 
 const ProductCard = observer(function ProductCard(props) {
@@ -20,6 +21,7 @@ const ProductCard = observer(function ProductCard(props) {
   //придумать, как не вызывать все это заного у всех при изменении у одного
   const clickHandler = (e) => {
     if (e.target.classList.contains("i_bag")) {
+      e.preventDefault();
       const { productInCartList, addtoCart } = store;
       if (inCart !== -1) {
         $(".tooltip_cart").addClass("visible");
@@ -50,6 +52,7 @@ const ProductCard = observer(function ProductCard(props) {
 
       addtoCart(true);
     } else if (e.target.classList.contains("i_fav")) {
+      e.preventDefault();
       const { likeContainer, addToLike } = store;
 
       if (inLike !== -1) {
@@ -80,7 +83,7 @@ const ProductCard = observer(function ProductCard(props) {
       addToLike();
     } else {
       store.cardContainer = data;
-      props.history.push(`/product/${data.slug}`);
+      // props.history.push(`/product/${data.slug}`);
 
       store.productPage = true;
       store.cartPage = false;
@@ -90,42 +93,44 @@ const ProductCard = observer(function ProductCard(props) {
   let imagePath = "/image/items/" + data.path_to_photo[0];
 
   return (
-    <div className="product" onClick={clickHandler}>
-      <div className="product__image">
-        <div className="product__image-wrp">
-          <LazyLoadImage effect="blur" src={imagePath} />
-          <div className="product__attr-cont">
-            {data.hit && <div className="product__hit">Хит</div>}
-            {data.sale && <div className="product__sale">Акция</div>}
-            {/* {data.new && <div className="product__new">Новинка</div>} */}
+    <Link to={`/product/${data.slug}`} onClick={clickHandler}>
+      <div className="product">
+        <div className="product__image">
+          <div className="product__image-wrp">
+            <LazyLoadImage effect="blur" src={imagePath} />
+            <div className="product__attr-cont">
+              {data.hit && <div className="product__hit">Хит</div>}
+              {data.sale && <div className="product__sale">Акция</div>}
+              {/* {data.new && <div className="product__new">Новинка</div>} */}
+            </div>
+          </div>
+          <div className="product__action">
+            <button
+              className={"ic i_fav" + (inLike === -1 ? "" : " active")}
+            ></button>
+            <button
+              className={"ic i_bag" + (inCart === -1 ? "" : " active")}
+            ></button>
           </div>
         </div>
-        <div className="product__action">
-          <button
-            className={"ic i_fav" + (inLike === -1 ? "" : " active")}
-          ></button>
-          <button
-            className={"ic i_bag" + (inCart === -1 ? "" : " active")}
-          ></button>
-        </div>
+        <h3 className="product__name">{data.name}</h3>
+        {data.sale ? (
+          <div className={"product__price product__price_disc"}>
+            <span className="old">{data.regular_price.toLocaleString()} ₽</span>{" "}
+            {data.sale_price.toLocaleString()} ₽{" "}
+            <span className="disc_perc">
+              {((data.sale_price / data.regular_price - 1) * 100).toFixed(0)}%
+            </span>
+          </div>
+        ) : (
+          <div className={"product__price"}>
+            {data.regular_price.toLocaleString()} ₽{" "}
+          </div>
+        )}
+        {/* <p className="product__brand">{data.brand}</p> */}
+        {/* <p className="product__price">{data.regular_price.toLocaleString()} ₽</p> */}
       </div>
-      <h3 className="product__name">{data.name}</h3>
-      {data.sale ? (
-        <div className={"product__price product__price_disc"}>
-          <span className="old">{data.regular_price.toLocaleString()} ₽</span>{" "}
-          {data.sale_price.toLocaleString()} ₽{" "}
-          <span className="disc_perc">
-            {((data.sale_price / data.regular_price - 1) * 100).toFixed(0)}%
-          </span>
-        </div>
-      ) : (
-        <div className={"product__price"}>
-          {data.regular_price.toLocaleString()} ₽{" "}
-        </div>
-      )}
-      {/* <p className="product__brand">{data.brand}</p> */}
-      {/* <p className="product__price">{data.regular_price.toLocaleString()} ₽</p> */}
-    </div>
+    </Link>
   );
 });
 

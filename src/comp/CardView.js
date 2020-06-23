@@ -560,7 +560,7 @@ const CardView = observer(
                           <div className="product-p__spec-detail">
                             <ul>
                               <li>{data.weight + "кг."}</li>
-                              <li>{data.color}</li>
+                              {data.color !== "" && <li>{data.color}</li>}
                               {data.material && <li>{data.material}</li>}
                               {$(window).width() <= 760 && (
                                 <>

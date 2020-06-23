@@ -21,7 +21,7 @@ const Collection = observer(
       if (dataColl.length) {
         if (dataColl[0].type !== "sale") {
           collRender.push(
-            <>
+            <React.Fragment key={dataColl[0].slug}>
               <div className="head head_big">
                 <div className="head-cont">
                   <div
@@ -48,11 +48,11 @@ const Collection = observer(
                   </div>
                 </div>
               )}
-            </>
+            </React.Fragment>
           );
         } else {
           collRender.push(
-            <div className="head head_big head_no-link">
+            <div className="head head_big head_no-link" key={dataColl[0].slug}>
               <div
                 className="head-banner head-banner_action"
                 style={{

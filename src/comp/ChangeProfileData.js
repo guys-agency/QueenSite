@@ -5,6 +5,7 @@ import { Formik } from "formik";
 import $ from "jquery";
 import ChangePasswordSchema from "../schemas/changePasswordSchema";
 import ProfileDataSchema from "../schemas/profileDataSchema";
+import Inputmask from "inputmask";
 
 const { Component } = React;
 
@@ -257,6 +258,14 @@ const ChangeSidebar = observer(
           )}
         </>
       );
+    }
+    componentDidMount() {
+      const tel = new Inputmask({
+        mask: "+7 (999) 999 99 99",
+        showMaskOnHover: false,
+      });
+
+      tel.mask($("#tel"));
     }
   }
 );

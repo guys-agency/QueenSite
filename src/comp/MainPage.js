@@ -112,6 +112,7 @@ const MainPage = observer(
         bannersData.main.forEach((elem) => {
           mainBanners.push(
             <Link
+              key={elem.slug}
               className="head-banner"
               to={"/main/" + elem.slug}
               style={{
@@ -126,7 +127,7 @@ const MainPage = observer(
         });
 
         collLast.push(
-          <div className="row">
+          <div className="row" key={bannersData.collections[0].slug}>
             <div className="col col-7 col-s-12">
               <Link
                 to={"collections/" + bannersData.collections[0].slug}
@@ -186,7 +187,7 @@ const MainPage = observer(
         );
 
         saleCont.push(
-          <div className="actions">
+          <div className="actions" key={bannersData.sale[0].slug}>
             <div className="action">
               <div className="head head_sm head_list">
                 <Link
@@ -224,7 +225,7 @@ const MainPage = observer(
         );
 
         ideasCon.push(
-          <div className="row ideas-block">
+          <div className="row ideas-block" key={bannersData.ideas[0].slug}>
             <div className="col col-5 col-t-12">
               <Link
                 to={"/ideas/" + bannersData.ideas[0].slug}

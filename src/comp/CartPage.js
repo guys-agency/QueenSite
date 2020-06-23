@@ -976,6 +976,8 @@ const CartPage = observer(
                         dataToSend.sum = totalPrice;
                         dataToSend.email = this.state.email.toLowerCase();
 
+                        console.log("object :>> ", delivery, dataToSend);
+
                         api
                           .setOrderData({
                             delivery,
@@ -1038,10 +1040,10 @@ const CartPage = observer(
                   <div className="cart-page__result-message">
                     Сейчас оплатить заказ можно только онлайн. <br /> Мы
                     работаем над оплатой курьеру при получении. <br />
-                    <br />
+                    {/* <br />
                     При оплате заказа деньги <b>не списываются</b>, а{" "}
                     <b>блокируются </b>банком у вас на счете <b>на 7 дней</b> до
-                    момента доставки.
+                    момента доставки. */}
                   </div>
                 </div>
               </div>

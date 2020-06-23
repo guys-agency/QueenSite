@@ -104,6 +104,7 @@ const ProductList = observer(
                   max="100"
                   type="number"
                   value={productInCartList[el]}
+                  readOnly
                 />
                 <button
                   className="ic i_plus"
