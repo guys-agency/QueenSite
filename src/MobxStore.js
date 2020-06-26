@@ -1182,6 +1182,8 @@ class Store {
       bodyJSON.sort = -1;
     } else if (this.sortInProd === "Сначала дешевле") {
       bodyJSON.sort = 1;
+    } else if (this.sortInProd === "Сначала акционные") {
+      bodyJSON.sort = 0;
     }
     this.getData(bodyJSON, { ...clearJSON }, TStart);
   };

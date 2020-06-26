@@ -316,13 +316,13 @@ const CardView = observer(
         data.stores.forEach((el) => {
           if (+el.count > 0) {
             storesAvali.push(
-              <div className="drop_shop-list">
+              <div className="drop_shop-list" key={el.name}>
                 <div>
                   <b>{el.name}:</b> {el.address}
                 </div>
                 <a href={"tel:" + el.tel}>{el.tel}</a>{" "}
-                <a className="underline" href="">
-                  belayadacha@queenbohemia.ru
+                <a className="underline" href={"mailto:" + el.email}>
+                  {el.email}
                 </a>
               </div>
             );
@@ -640,7 +640,10 @@ const CardView = observer(
                     <Swiper {...relativeCar}>
                       {this.with.map((el) => {
                         return (
-                          <div className="col col-3 col-t-4 col-s-6">
+                          <div
+                            className="col col-3 col-t-4 col-s-6"
+                            key={el.slug}
+                          >
                             <ProductCard
                               key={el.slug}
                               data={el}
@@ -668,7 +671,10 @@ const CardView = observer(
                       <Swiper {...sameCar}>
                         {this.like.map((el) => {
                           return (
-                            <div className="col col-3 col-t-4 col-s-6">
+                            <div
+                              className="col col-3 col-t-4 col-s-6"
+                              key={el.slug}
+                            >
                               <ProductCard
                                 key={el.slug}
                                 data={el}

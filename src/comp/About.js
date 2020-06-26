@@ -77,8 +77,8 @@ const About = observer(
                     </a>
                   </span>{" "}
                   или по телефону
-                  <a className="underline" href="+79166747943">
-                    +7 916 674-79-43
+                  <a className="underline" href="88002508021">
+                    8-800-250-80-21
                   </a>
                   .
                 </p>

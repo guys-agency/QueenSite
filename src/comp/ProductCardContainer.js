@@ -88,6 +88,12 @@ const ProductCardContainer = observer(
                       >
                         Сначала дешевле
                       </button>
+                      <button
+                        className="dropdown__list-item item"
+                        onClick={this.sortClick}
+                      >
+                        Сначала акционные
+                      </button>
                     </div>
                   </div>
                   <button
