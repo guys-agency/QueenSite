@@ -420,7 +420,7 @@ const Shops = observer(
              *
              */}
             <div className="shop">
-              <div className="head head_big head_list map">
+              <div className="head head_big head_list">
                 <div className="head_shop">
                   <div className="head-car">
                     <Swiper {...shopCar}>
@@ -428,21 +428,21 @@ const Shops = observer(
                         className="head-banner"
                         style={{
                           backgroundImage:
-                            "url(" + "/image/shops/aph/01.jpg" + ")",
+                            "url(" + "/image/shops/afimol/01.jpg" + ")",
                         }}
                       ></div>
                       <div
                         className="head-banner"
                         style={{
                           backgroundImage:
-                            "url(" + "/image/shops/aph/02.jpg" + ")",
+                            "url(" + "/image/shops/afimol/02.jpg" + ")",
                         }}
                       ></div>
                       <div
                         className="head-banner"
                         style={{
                           backgroundImage:
-                            "url(" + "/image/shops/aph/03.jpg" + ")",
+                            "url(" + "/image/shops/afimol/03.jpg" + ")",
                         }}
                       ></div>
                     </Swiper>
@@ -457,7 +457,7 @@ const Shops = observer(
                       ></iframe>
                     </div>
                   </div>
-                  {/* <button
+                  <button
                     className="btn btn_primary"
                     onClick={(e) => {
                       if (e.target.textContent == "Открыть фотографии") {
@@ -469,7 +469,7 @@ const Shops = observer(
                     }}
                   >
                     Открыть карту
-                  </button> */}
+                  </button>
                 </div>
               </div>
               <div className="container">
