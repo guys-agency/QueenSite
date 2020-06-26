@@ -64,7 +64,6 @@ const AuthSidebar = observer(
                     password: values.password,
                   })
                   .then((data) => {
-                    console.log("data :>> ", data);
                     if (data.status === 400) {
                       $("#loginBtn").text(data.message);
 
@@ -82,8 +81,11 @@ const AuthSidebar = observer(
                           lc.push(prod);
                         }
                       });
+
                       this.props.store.likeContainer = lc;
+                      this.props.store.productInCartList = data.inCart;
                       this.props.store.addToLike();
+                      this.props.store.addtoCart(true);
                       this.props.store.sideAsk = false;
                       this.props.store.sideLogin = false;
                       document
@@ -326,7 +328,6 @@ const AuthSidebar = observer(
               validationSchema={RegistrationSchema}
               //определяем, что будет происходить при вызове onsubmit
               onSubmit={(values, { setSubmitting }) => {
-                console.log("values :>> ", values);
                 api
                   .regist({
                     name: values.username,
@@ -334,7 +335,6 @@ const AuthSidebar = observer(
                     password: values.password,
                   })
                   .then((ok) => {
-                    console.log("ok :>> ", ok);
                     $("#registrBtn").text(ok.message);
                     if (ok.status === 201) {
                       $("#registrBtn").addClass("success");

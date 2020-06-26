@@ -29,9 +29,7 @@ const Actions = observer(
         .getActions()
         .then((data) => {
           const renConTime = [];
-          console.log("ok :>> ", data);
           Object.keys(data).forEach((nEl) => {
-            console.log("nEl :>> ", nEl);
             const prod = data[nEl].products.map((elProd) => {
               return (
                 <div className="col col-3 col-t-4 col-s-6" key={elProd.slug}>

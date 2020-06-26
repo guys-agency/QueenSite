@@ -121,10 +121,23 @@ class Store {
   });
 
   getCollections = () => {
+    const closeNav = (e) => {
+      $("body").removeClass("no-scroll");
+      $(".navigation").removeClass("visible");
+      $(".sidebar-overlay").removeClass("active");
+      $(".menu-point").removeClass("active");
+      $(".menu_sub").removeClass("visible");
+      $(".header__btn").removeClass("active");
+      var mega = $(".menu");
+      var trgClass = $(e.target).hasClass("menu");
+      if (!trgClass) {
+        mega.removeClass("visible");
+      }
+    };
     api
       .getAllCollections()
       .then((data) => {
-        console.log("dataBanners :>> ", data);
+        // console.log("dataBanners :>> ", data);
         this.bannersData = data[0];
         const timeCollInMenu = [];
         let ind = 0;
@@ -135,7 +148,9 @@ class Store {
           if (ind < 5 && sum < this.bannersData.collections.length - 1) {
             timeCont.push(
               <li key={elem.slug}>
-                <NavLink to={"/collections/" + elem.slug}>{elem.name}</NavLink>
+                <NavLink to={"/collections/" + elem.slug} onClick={closeNav}>
+                  {elem.name}
+                </NavLink>
               </li>
             );
             ind += 1;
@@ -169,24 +184,24 @@ class Store {
       });
   };
   addToLike = (toUser) => {
-    console.log("likeContainer :>> ", this.likeContainer);
+    // console.log("likeContainer :>> ", this.likeContainer);
     localStorage.set("like", this.likeContainer);
     if (this.auth && !toUser) {
       const like = this.likeContainer;
       api
         .updateLike(like)
         .then((ok) => {
-          console.log("ok", ok);
+          // console.log("ok", ok);
         })
         .catch((err) => {
-          console.log("err", err);
+          // console.log("err", err);
         });
     }
     if (this.likeContainer.length) {
       api
         .getAnyProd({ slugs: this.likeContainer })
         .then((data) => {
-          console.log("dataSLUGS :>> ", data);
+          // console.log("dataSLUGS :>> ", data);
           const timeCont = [];
           Object.keys(data).forEach((prod) => {
             timeCont.push(data[prod]);
@@ -202,18 +217,26 @@ class Store {
   };
 
   addtoCart = (give) => {
-    console.log(
-      'localStorage.get("productInCart") :>> ',
-      this.productInCartList
-    );
-    console.log(
-      'localStorage.get("productInCart") :>> ',
-      localStorage.get("productInCart")
-    );
+    // console.log(
+    //   'localStorage.get("productInCart") :>> ',
+    //   this.productInCartList
+    // );
+    // console.log(
+    //   'localStorage.get("productInCart") :>> ',
+    //   localStorage.get("productInCart")
+    // );
     localStorage.set("productInCart", this.productInCartList);
     this.cartCount = Object.keys(this.productInCartList).length;
 
     if (this.auth) {
+      api
+        .updateCart(this.productInCartList)
+        .then((ok) => {
+          // console.log("ok", ok);
+        })
+        .catch((err) => {
+          console.log("err", err);
+        });
     }
     if (this.cartCount) {
       if (give) {
@@ -221,7 +244,7 @@ class Store {
           .getAnyProd({ slugs: Object.keys(this.productInCartList) })
           .then((data) => {
             const timeCont = {};
-            console.log("prodCart :>> ", data);
+            // console.log("prodCart :>> ", data);
             Object.keys(data).forEach((prod) => {
               timeCont[data[prod].slug] = {
                 ...data[prod],
@@ -229,7 +252,7 @@ class Store {
               };
             });
             this.productInCart = timeCont;
-            console.log("object :>> ", this.productInCart);
+            // console.log("object :>> ", this.productInCart);
           })
           .catch((err) => {
             console.log("err :>> ", err);
@@ -246,7 +269,7 @@ class Store {
   };
 
   cityCheck = autorun(() => {
-    console.log('localStorage.get("city") :>> ', localStorage.get("city"));
+    // console.log('localStorage.get("city") :>> ', localStorage.get("city"));
     if (
       localStorage.get("city") !== undefined &&
       localStorage.get("city") !== null
@@ -254,9 +277,9 @@ class Store {
       this.city = localStorage.get("city").name;
     } else {
       const init = () => {
-        console.log("window.ymaps :>> ", window.ymaps);
+        // console.log("window.ymaps :>> ", window.ymaps);
         const geolocation = window.ymaps.geolocation;
-        console.log("geolocation :>> ", geolocation);
+        // console.log("geolocation :>> ", geolocation);
         if (geolocation) {
           api
             .getCity(geolocation.region + " " + geolocation.city)
@@ -289,9 +312,9 @@ class Store {
   });
 
   getData = (bodyJSON, clearJSON, t) => {
-    console.log("clearJSON :>> ", clearJSON);
+    // console.log("clearJSON :>> ", clearJSON);
     const testContainer = [];
-    console.log("this.categoryFilter :>> ", this.categoryFilter);
+    // console.log("this.categoryFilter :>> ", this.categoryFilter);
     // if (!Object.keys(this.categoryFilter).length) {
     //   fetch(SERVER_URL, {
     //     method: "POST",
@@ -546,10 +569,10 @@ class Store {
       })
       .then((data) => {
         const TEnd = new Date();
-        console.log("TTTTTT", TEnd - t);
+        // console.log("TTTTTT", TEnd - t);
         //продукты
-        console.log("dataData2 :>> ", data);
-        console.log("Object.keys(data).length :>> ", data[0].product.length);
+        // console.log("dataData2 :>> ", data);
+        // console.log("Object.keys(data).length :>> ", data[0].product.length);
         if (!data[0].product.length) {
           if (this.activeFilters.choosePoint.length) {
             this.activeFilters[
@@ -597,10 +620,10 @@ class Store {
                     if (Object.keys(this.activeFilters[filterName]).length) {
                       Object.keys(this.activeFilters[filterName]).forEach(
                         (ind) => {
-                          console.log(
-                            "ind :>> ",
-                            this.activeFilters[filterName][ind]
-                          );
+                          // console.log(
+                          //   "ind :>> ",
+                          //   this.activeFilters[filterName][ind]
+                          // );
                           if (!searchQt.length) {
                             searchQt =
                               filterName +
@@ -829,14 +852,14 @@ class Store {
               this.dataColl = data.collData;
             }
 
-            console.log("data :>> ", data);
-            console.log("cats :>> ", catsArr);
+            // console.log("data :>> ", data);
+            // console.log("cats :>> ", catsArr);
             this.prodCats = catsArr;
             this.activeCats = this.prodCats;
           }
         }
         const TEndQ = new Date();
-        console.log("TTTTTT", TEndQ - t);
+        // console.log("TTTTTT", TEndQ - t);
       })
       .catch((err) => {
         console.log("err", err);
@@ -943,6 +966,7 @@ class Store {
     this.stopPag = 42;
     this.firstBread = "";
     this.secondBread = "";
+    // console.log("clean :>> 11111111111222222222222");
   };
 
   filtration = () => {
@@ -963,10 +987,10 @@ class Store {
       premium: false,
     };
 
-    console.log("search :>> ", window.location.href.split("?")[1]);
+    // console.log("search :>> ", window.location.href.split("?")[1]);
 
     const decodSearch = decodeURIComponent(window.location.href.split("?")[1]);
-    console.log("ddecodSearche :>> ", decodSearch);
+    // console.log("ddecodSearche :>> ", decodSearch);
     if (decodSearch !== "undefined" && decodSearch !== "") {
       decodSearch.split("&&").forEach((elem) => {
         const elemSp = elem.split("=");
@@ -991,11 +1015,11 @@ class Store {
           this.activeFilters.choosePoint.push("measure");
         }
       });
-      console.log(" this.activeFilters:>> ", this.activeFilters);
+      // console.log(" this.activeFilters:>> ", this.activeFilters);
     }
-    console.log("this.activeFilters :>> ", this.activeFilters);
+    // console.log("this.activeFilters :>> ", this.activeFilters);
     const pathname = window.location.pathname;
-    console.log("pathname", pathname);
+    // console.log("pathname", pathname);
     if (pathname.includes("hits") || pathname.includes("hit=")) {
       this.activeFilters.attr.push("hit");
       this.activeFilters.count += 1;
@@ -1116,9 +1140,9 @@ class Store {
     }
 
     //переделать, что бы не было лишних запросов
-    console.log("activeFilters :>> ", this.activeFilters);
+    // console.log("activeFilters :>> ", this.activeFilters);
 
-    console.log("filterArray :>> ", filterArray, "bodyJSON :>> ", prodJSON);
+    // console.log("filterArray :>> ", filterArray, "bodyJSON :>> ", prodJSON);
     const bodyJSON = {};
 
     const clearJSON = {};
@@ -1135,8 +1159,8 @@ class Store {
     }
     delete clearJSON.prod.start;
     delete clearJSON.prod.stop;
-    console.log("filterArray :>> ", filterArray);
-    console.log("bodyJSON :>> ", bodyJSON);
+    // console.log("filterArray :>> ", filterArray);
+    // console.log("bodyJSON :>> ", bodyJSON);
 
     if (pathname.includes("hits")) {
       bodyJSON.withCat = true;

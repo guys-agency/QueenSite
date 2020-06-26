@@ -24,12 +24,12 @@ const FilterPoint = observer(
 
           activeFilters.count += 1;
           activeFilters.choosePoint.push(objectName);
-          console.log("number :>> ", number);
+          // console.log("number :>> ", number);
         } else {
           const valueNumber = activeFilters[objectName][name].indexOf(
             String(filterPoint)
           );
-          console.log("valueNumber :>> ", valueNumber);
+          // console.log("valueNumber :>> ", valueNumber);
           if (valueNumber === -1) {
             activeFilters[objectName][name].push(String(filterPoint));
             activeFilters.count += 1;
@@ -62,7 +62,7 @@ const FilterPoint = observer(
           }
         }
       }
-      console.log("activeFilters.count :>> ", activeFilters.count);
+      // console.log("activeFilters.count :>> ", activeFilters.count);
       if (activeFilters.count) {
         activeFilters.choosePoint.forEach((filterName) => {
           if (filterName !== "choosePoint") {
@@ -77,10 +77,10 @@ const FilterPoint = observer(
                 }
               }
             } else {
-              console.log("filterPoint", filterPoint);
+              // console.log("filterPoint", filterPoint);
               if (Object.keys(activeFilters[filterName]).length) {
                 Object.keys(activeFilters[filterName]).forEach((ind) => {
-                  console.log("ind :>> ", activeFilters[filterName][ind]);
+                  // console.log("ind :>> ", activeFilters[filterName][ind]);
                   if (!searchQt.length) {
                     searchQt =
                       filterName +
@@ -106,12 +106,12 @@ const FilterPoint = observer(
       }
       this.props.store.startPag = 0;
       this.props.store.stopPag = 42;
-      console.log("TESTTESTTEST :>> ");
-      console.log("activeFilters!!!!!! :>> ", activeFilters.brand);
-      console.log("activeFiltersMEAS :>> ", activeFilters.measure);
-      console.log("searchQt :>> ", searchQt);
+      // console.log("TESTTESTTEST :>> ");
+      // console.log("activeFilters!!!!!! :>> ", activeFilters.brand);
+      // console.log("activeFiltersMEAS :>> ", activeFilters.measure);
+      // console.log("searchQt :>> ", searchQt);
       const stop = new Date();
-      console.log("time :>> ", stop - start);
+      // console.log("time :>> ", stop - start);
       this.props.history.replace({ search: searchQt });
       // filtration();
     };

@@ -5,6 +5,7 @@ import { Formik } from "formik";
 import $ from "jquery";
 import ChangePasswordSchema from "../schemas/changePasswordSchema";
 import ProfileDataSchema from "../schemas/profileDataSchema";
+import Inputmask from "inputmask";
 
 const { Component } = React;
 
@@ -64,8 +65,6 @@ const ChangeSidebar = observer(
                     tel: values.tel,
                   })
                   .then((ok) => {
-                    console.log("data :>> ", ok);
-
                     $("#loginBtn").text(ok.message);
                     if (ok.status === 201) {
                       this.props.store.userData.user = ok.user;
@@ -162,7 +161,6 @@ const ChangeSidebar = observer(
               validationSchema={ChangePasswordSchema}
               //определяем, что будет происходить при вызове onsubmit
               onSubmit={(values, { setSubmitting }) => {
-                console.log("values :>> ", values);
                 api
                   .changePassword({
                     oldPassword: values.oldPassword,
@@ -170,7 +168,6 @@ const ChangeSidebar = observer(
                     password: values.password,
                   })
                   .then((ok) => {
-                    console.log("ok :>> ", ok);
                     $("#changePass").text(ok.message);
                     if (ok.status === 201) {
                       $("#changePass").addClass("success");
@@ -261,6 +258,14 @@ const ChangeSidebar = observer(
           )}
         </>
       );
+    }
+    componentDidMount() {
+      const tel = new Inputmask({
+        mask: "+7 (999) 999 99 99",
+        showMaskOnHover: false,
+      });
+
+      tel.mask($("#tel"));
     }
   }
 );

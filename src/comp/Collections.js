@@ -21,6 +21,7 @@ const Collections = observer(
           if (i === 0) {
             mainBan.push(
               <Link
+                key={el.slug}
                 className="head-banner"
                 style={{
                   backgroundImage: `url(/image/banners/${

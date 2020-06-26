@@ -8,12 +8,11 @@ const Paginat = observer(
       midlPage: 3,
     };
     render() {
-      console.log("object :>> 1231231");
       if (this.props.store.startPag === 0 && this.state.midlPage !== 3) {
         this.setState({ midlPage: 3 });
       }
-      const { productValue, filtration } = this.props.store;
-      console.log("productValue :>> ", productValue);
+      const { productValue, filtration, productsToRender } = this.props.store;
+
       const { midlPage } = this.state;
       const page = midlPage - 3;
       const countPage = Math.ceil(productValue / 42);
@@ -33,11 +32,9 @@ const Paginat = observer(
             key={i}
             onClick={() => {
               if (i === countPage - 1) {
-                console.log("42 * i;", 42 * i);
                 this.props.store.startPag = 42 * i;
                 this.props.store.stopPag = productValue;
               } else {
-                console.log("42 * i;", 42 * i);
                 this.props.store.startPag = 42 * i;
                 this.props.store.stopPag = 42 * (i + 1);
               }
@@ -72,7 +69,11 @@ const Paginat = observer(
           </>
         );
       }
-      return <div className="pagination">{pointCont}</div>;
+      return (
+        productsToRender.length !== 0 && (
+          <div className="pagination">{pointCont}</div>
+        )
+      );
     }
   }
 );

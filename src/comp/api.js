@@ -85,10 +85,7 @@ class Api {
         "Content-Type": "application/json",
       },
     }).then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-      Promise.reject(res.json());
+      return res.json();
     });
   }
 
@@ -101,10 +98,20 @@ class Api {
       },
       body: JSON.stringify({ like: like }),
     }).then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-      Promise.reject(res.json());
+      return res.json();
+    });
+  }
+
+  updateCart(cart) {
+    return fetch(SERVER_URL + "/user-cart", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ cart: cart }),
+    }).then((res) => {
+      return res.json();
     });
   }
 

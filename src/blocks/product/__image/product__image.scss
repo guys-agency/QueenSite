@@ -2,20 +2,18 @@
   position: relative;
   margin-bottom: 13px;
   width: 100%;
-    border: 1px solid #f2f2f2;
-    border-radius: 3px;
-
+  border: 1px solid #f2f2f2;
+  border-radius: 3px;
 
   padding: 50% 10px;
   overflow: hidden;
-  &-wrp{
-
+  &-wrp {
     position: absolute;
     top: 0;
-    left: -1px;
+    left: 0px;
     width: calc(100% + 3px);
     height: 100%;
-    .lazy-load-image-background{
+    .lazy-load-image-background {
       width: 100%;
     }
   }

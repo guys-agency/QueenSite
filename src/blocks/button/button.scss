@@ -55,6 +55,21 @@ button {
       transform: translateY(0px);
       opacity: 0.7;
     }
+
+    &.deactive {
+      pointer-events: none;
+
+      &::after {
+        content: ".";
+        animation: loading 1s ease alternate infinite;
+      }
+
+      &:hover {
+        box-shadow: none;
+        transform: none;
+        opacity: 1;
+      }
+    }
   }
   &_wide {
     width: 100%;
@@ -67,15 +82,23 @@ button {
     top: 1px;
   }
 
-  &.error{
+  &.error {
     color: white;
     background-color: $red;
     border-color: $red;
   }
-  &.success{
+  &.success {
     color: white;
     background-color: $green;
     border-color: $green;
+  }
+}
+@keyframes loading {
+  60% {
+    text-shadow: 0.35em 0 0 currentColor;
+  }
+  100% {
+    text-shadow: 0.35em 0 0 currentColor, 0.75em 0 0 currentColor;
   }
 }
 

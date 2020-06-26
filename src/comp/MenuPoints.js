@@ -11,6 +11,7 @@ import { withRouter } from "react-router";
 import { cities, SERVER_URL } from "../constants";
 import ChangeSidebar from "./ChangeProfileData";
 import CityCh from "./CityCh";
+import api from "./api";
 
 const { Component } = React;
 
@@ -52,8 +53,8 @@ const MenuPoints = observer(
         >
           Задать вопрос
         </button>
-        <a href="tel:+78008085878" className="phone">
-          +7 800 808-58-78
+        <a href="tel:+79166747943" className="phone">
+          +7 916 674-79-43
         </a>
       </div>
     );
@@ -70,19 +71,29 @@ const MenuPoints = observer(
         </button>
         <ul>
           <li>
-            <Link to="/help/delivery">Доставка</Link>
+            <Link to="/help/delivery" onClick={this.closeNav}>
+              Доставка
+            </Link>
           </li>
           <li>
-            <Link to="/help/payment">Оплата</Link>
+            <Link to="/help/payment" onClick={this.closeNav}>
+              Оплата
+            </Link>
           </li>
           <li>
-            <Link to="/help/garantie">Гарантия</Link>
+            <Link to="/help/garantie" onClick={this.closeNav}>
+              Гарантия
+            </Link>
           </li>
           <li>
-            <Link to="/help/return">Возврат</Link>
+            <Link to="/help/return" onClick={this.closeNav}>
+              Возврат
+            </Link>
           </li>
           <li>
-            <Link to="/help/offer">Публичная оферта</Link>
+            <Link to="/help/offer" onClick={this.closeNav}>
+              Публичная оферта
+            </Link>
           </li>
           {/* <li>
             <Link to="/help/bonus">Бонусы</Link>
@@ -203,6 +214,19 @@ const MenuPoints = observer(
 
     componentDidMount() {
       this.createMenu();
+      api
+        .getUserData()
+        .then((data) => {
+          // this.props.store.addToLike(true);
+          this.props.store.userData = data;
+          // console.log(
+          //   "this.props.store.userData :>> ",
+          //   this.props.store.userData
+          // );
+        })
+        .catch((err) => {
+          console.log("err :>> ", err);
+        });
     }
 
     componentDidUpdate() {
@@ -263,8 +287,6 @@ const MenuPoints = observer(
           return res.json();
         })
         .then((data) => {
-          console.log("data :>> ", data);
-
           const menu = {};
 
           data.forEach((elem, i) => {
@@ -348,7 +370,7 @@ const MenuPoints = observer(
                   <ul>{childsPoints}</ul>
                 </div>
               );
-              this.interier.push(<ul>{childsPoints}</ul>);
+              this.interier.push(<ul key={elem.name}>{childsPoints}</ul>);
             } else if (elem.name === "Наборы") {
               menu[6] = (
                 <div key={elem.name}>
@@ -505,24 +527,23 @@ const MenuPoints = observer(
       return (
         this.state.ready && (
           <>
-            {console.log(window.location.pathname)}
             {/* <Menu>{this.menuContainer}</Menu> */}
             <div
               className={
                 "header " +
-                (window.location.pathname.includes("catalog") ||
-                window.location.pathname.includes("profile") ||
-                window.location.pathname.includes("about") ||
-                window.location.pathname.includes("product") ||
-                window.location.pathname.includes("closeout") ||
-                window.location.pathname.includes("ideas") ||
-                window.location.pathname.includes("hits") ||
-                window.location.pathname.includes("new") ||
-                window.location.pathname.includes("help")
+                (window.location.pathname.includes("/catalog") ||
+                window.location.pathname.includes("/profile") ||
+                window.location.pathname.includes("/about") ||
+                window.location.pathname.includes("/product") ||
+                window.location.pathname.includes("/closeout") ||
+                window.location.pathname.includes("/ideas") ||
+                window.location.pathname.includes("/hits") ||
+                window.location.pathname.includes("/new") ||
+                window.location.pathname.includes("/help")
                   ? "header_w "
                   : " ") +
-                (window.location.pathname.includes("finish") ||
-                window.location.pathname.includes("cart")
+                (window.location.pathname.includes("/finish") ||
+                window.location.pathname.includes("/cart")
                   ? "header_dn "
                   : " ")
               }
@@ -537,14 +558,30 @@ const MenuPoints = observer(
                   }}
                 ></button>
                 <div className="header__left">
-                  <Link to="/about">О нас</Link>
-                  <Link to="/shops">Магазины</Link>
-                  <span>
+                  <Link to="/about" onClick={this.closeNav}>
+                    О нас
+                  </Link>
+                  <Link to="/shops" onClick={this.closeNav}>
+                    Магазины
+                  </Link>
+                  {$(window).width() > 760 ? (
+                    <span>
+                      <span className="link header__btn">
+                        Помощь <span className="ic i_drop"></span>
+                      </span>
+                      {this.service}
+                    </span>
+                  ) : (
+                    <Link to="/help/payment" onClick={this.closeNav}>
+                      Помощь
+                    </Link>
+                  )}
+                  {/* <span>
                     <span className="link header__btn">
                       Помощь <span className="ic i_drop"></span>
                     </span>
                     {this.service}
-                  </span>
+                  </span> */}
                   {/* <Link className="header__left-bonus" to="/help/bonus">
                     Бонусы
                   </Link> */}
@@ -570,9 +607,9 @@ const MenuPoints = observer(
                     window.location.pathname.includes("collections/") ||
                     window.location.pathname.includes("actions/") ||
                     window.location.pathname.includes("main/") ||
-                    window.location.pathname.includes("closeout") ||
-                    window.location.pathname.includes("ideas") ||
-                    window.location.pathname.includes("hits")
+                    window.location.pathname.includes("/closeout") ||
+                    window.location.pathname.includes("/ideas") ||
+                    window.location.pathname.includes("/hits")
                       ? "visible "
                       : " ")
                   }
@@ -621,19 +658,19 @@ const MenuPoints = observer(
             <div
               className={
                 "navigation " +
-                (window.location.pathname.includes("catalog") ||
-                window.location.pathname.includes("profile") ||
-                window.location.pathname.includes("about") ||
-                window.location.pathname.includes("product") ||
-                window.location.pathname.includes("closeout") ||
-                window.location.pathname.includes("ideas") ||
-                window.location.pathname.includes("hits") ||
-                window.location.pathname.includes("new") ||
-                window.location.pathname.includes("help")
+                (window.location.pathname.includes("/catalog") ||
+                window.location.pathname.includes("/profile") ||
+                window.location.pathname.includes("/about") ||
+                window.location.pathname.includes("/product") ||
+                window.location.pathname.includes("/closeout") ||
+                window.location.pathname.includes("/ideas") ||
+                window.location.pathname.includes("/hits") ||
+                window.location.pathname.includes("/new") ||
+                window.location.pathname.includes("/help")
                   ? "navigation_w "
                   : " ") +
-                (window.location.pathname.includes("finish") ||
-                window.location.pathname.includes("cart")
+                (window.location.pathname.includes("/finish") ||
+                window.location.pathname.includes("/cart")
                   ? "navigation_dn "
                   : " ")
               }
@@ -869,14 +906,30 @@ const MenuPoints = observer(
                   </button>
                 </div>
                 <div className="navigation__service">
-                  <Link to="/about">О нас</Link>
-                  <Link to="/shops">Магазины</Link>
-                  <span>
+                  <Link to="/about" onClick={this.closeNav}>
+                    О нас
+                  </Link>
+                  <Link to="/shops" onClick={this.closeNav}>
+                    Магазины
+                  </Link>
+                  {$(window).width() > 760 ? (
+                    <span>
+                      <span className="link header__btn">
+                        Помощь <span className="ic i_drop"></span>
+                      </span>
+                      {this.service}
+                    </span>
+                  ) : (
+                    <Link to="/help/payment" onClick={this.closeNav}>
+                      Помощь
+                    </Link>
+                  )}
+                  {/* <span>
                     <span className="link header__btn">
                       Помощь <span className="ic i_drop"></span>
                     </span>
                     {this.service}
-                  </span>
+                  </span> */}
                   {/* <Link className="header__left-bonus" to="/help/bonus">
                     Бонусы
                   </Link> */}

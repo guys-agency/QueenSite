@@ -31,7 +31,7 @@ const AskSidebar = observer(
           //подключаем схему валидации, которую описали выше
           validationSchema={AskSchema}
           //определяем, что будет происходить при вызове onsubmit
-          onSubmit={(values, { setSubmitting }) => {
+          onSubmit={(values, { setSubmitting, resetForm }) => {
             api
               .sendQestion({
                 name: values.name,
@@ -43,6 +43,7 @@ const AskSidebar = observer(
                 if (data.status === 200) {
                   $("#askBtn").text(data.message);
                   $("#askBtn").addClass("success");
+                  resetForm();
                 } else {
                   $("#askBtn").addClass("error");
                 }

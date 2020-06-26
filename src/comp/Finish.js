@@ -32,7 +32,6 @@ const Finish = observer(
         api
           .getFinishData(this.props.id)
           .then((data) => {
-            console.log("data :>> ", data);
             this.setState({ data: data._doc, ready: true });
           })
           .catch((err) => {
@@ -148,7 +147,6 @@ const Finish = observer(
                           validationSchema={RegistrationSchema}
                           //определяем, что будет происходить при вызове onsubmit
                           onSubmit={(values, { setSubmitting }) => {
-                            console.log("values :>> ", values);
                             api
                               .regist({
                                 name: data.delivery.recipient.firstName,
@@ -156,7 +154,6 @@ const Finish = observer(
                                 password: values.password,
                               })
                               .then((ok) => {
-                                console.log("ok", ok);
                                 if (ok.status === 201) {
                                   this.props.history.push("/profile");
                                 } else if (ok.status === 400) {

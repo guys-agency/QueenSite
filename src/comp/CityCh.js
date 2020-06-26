@@ -12,8 +12,6 @@ const CityCh = observer(
       cities: [],
     };
     render() {
-      console.log(this.props.store.city);
-
       return (
         <span>
           <button className="link dotted header__btn header__btn-city">
@@ -24,6 +22,7 @@ const CityCh = observer(
               className="btn btn_wide vis-s"
               onClick={(e) => {
                 $(".header__drop").removeClass("visible");
+                e.preventDefault();
               }}
             >
               <span className="ic i_left"></span> Назад
@@ -38,15 +37,10 @@ const CityCh = observer(
                 type="text"
                 onInput={(e) => {
                   if (e.target.value.length >= 3) {
-                    console.log(
-                      "e.target.value.length :>> ",
-                      e.target.value.length
-                    );
                     const renderCities = [];
                     api
                       .getCity(e.target.value)
                       .then((c) => {
-                        console.log("c :>> ", c);
                         c.forEach((one) => {
                           if (one.addressComponents.length < 6) {
                             renderCities.push(
@@ -56,7 +50,6 @@ const CityCh = observer(
                                   onClick={(e) => {
                                     e.preventDefault();
                                     $(".header__drop").removeClass("visible");
-                                    console.log("one", one);
                                     localStorage.set("city", {
                                       name:
                                         one.addressComponents[

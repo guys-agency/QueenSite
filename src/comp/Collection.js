@@ -21,7 +21,7 @@ const Collection = observer(
       if (dataColl.length) {
         if (dataColl[0].type !== "sale") {
           collRender.push(
-            <>
+            <React.Fragment key={dataColl[0].slug}>
               <div className="head head_big">
                 <div className="head-cont">
                   <div
@@ -48,11 +48,11 @@ const Collection = observer(
                   </div>
                 </div>
               )}
-            </>
+            </React.Fragment>
           );
         } else {
           collRender.push(
-            <div className="head head_big head_no-link">
+            <div className="head head_big head_no-link" key={dataColl[0].slug}>
               <div
                 className="head-banner head-banner_action"
                 style={{
@@ -115,75 +115,6 @@ const Collection = observer(
         ))
       );
     }
-    // componentDidMount() {
-    //   const banner = { type: "collections", slug: this.props.slug };
-    //   this.props.store.filtration(banner);
-    //   api
-    //     .getCollection({ banner })
-    //     .then((data) => {
-    //       this.props.store.nameMainCat = "";
-    //       this.props.store.nameSecondCat = "";
-    //       this.props.store.cleaningActiveFilters();
-
-    //   const cats = {};
-
-    //   data.products[0].cats[0].cats.forEach((elemMain) => {
-    //     elemMain.forEach((elem) => {
-    //       if (cats[elem.slugName] !== undefined) {
-    //         elem.childs.forEach((child, i) => {
-    //           if (
-    //             !cats[elem.slugName].childsNameArr.includes(
-    //               elem.childsSlug[i]
-    //             )
-    //           ) {
-    //             cats[elem.slugName].childs.push({
-    //               name: child,
-    //               slug: elem.childsSlug[i],
-    //             });
-    //             cats[elem.slugName].childsNameArr.push(elem.childsSlug[i]);
-    //           }
-    //         });
-    //       } else {
-    //         cats[elem.slugName] = {
-    //           name: elem.name,
-    //           slug: elem.slugName,
-    //         };
-    //         if (cats[elem.slugName].childs === undefined) {
-    //           cats[elem.slugName].childs = [];
-    //           cats[elem.slugName].childsNameArr = [];
-    //         }
-    //         elem.childs.forEach((child, i) => {
-    //           if (
-    //             !cats[elem.slugName].childsNameArr.includes(
-    //               elem.childsSlug[i]
-    //             )
-    //           ) {
-    //             cats[elem.slugName].childs.push({
-    //               name: child,
-    //               slug: elem.childsSlug[i],
-    //             });
-    //             cats[elem.slugName].childsNameArr.push(elem.childsSlug[i]);
-    //           }
-    //         });
-    //       }
-    //     });
-    //   });
-    //   const catsArr = [];
-    //   Object.keys(cats).forEach((name) => {
-    //     catsArr.push(cats[name]);
-    //   });
-
-    //   console.log("data :>> ", data);
-    //   console.log("cats :>> ", catsArr);
-    //   this.props.store.prodCats = catsArr;
-    //       this.props.store.prodSlugs = data.collData[0].products;
-    //       this.props.store.filtration();
-    //       this.setState({ dataColl: data.collData });
-    //     })
-    //     .catch((err) => {
-    //       console.log("err :>> ", err);
-    //     });
-    // }
   }
 );
 

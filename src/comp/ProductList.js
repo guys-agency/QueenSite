@@ -104,6 +104,7 @@ const ProductList = observer(
                   max="100"
                   type="number"
                   value={productInCartList[el]}
+                  readOnly
                 />
                 <button
                   className="ic i_plus"
@@ -119,8 +120,6 @@ const ProductList = observer(
                 className={"ic i_bag" + (inCart === -1 ? "" : " active")}
                 onClick={() => {
                   if (inCart !== -1) {
-                    console.log("test123 :>> ");
-
                     delete productInCartList[data.slug];
                   } else {
                     productInCartList[data.slug] = 1;
