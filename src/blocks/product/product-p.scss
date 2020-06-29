@@ -87,6 +87,7 @@
     }
     &__buttons{
         display: flex;
+        align-items: center;
         .product__counter{
             margin-left: 20px;
             margin-right: 20px;
@@ -136,6 +137,15 @@
         border-top: 2px solid $gr_light;
         display: flex;
         justify-content: space-between;
+        @include max($s){
+         flex-direction: column;   
+         
+        }
+        &>div:last-child{
+            @include max($s){
+                margin-top: 15px;
+            }
+        }
         h5{
             margin-bottom: 4px;
             @include max($t){
@@ -149,9 +159,16 @@
             flex: 0 0 auto;
             li{
                 margin-bottom: 7px;
+                max-width: 160px;
+                display: flex;
                 @include max($t){
                     font-size: 12px;
                     margin-bottom: 3px;
+                }
+                @include max($s){
+                    font-size: 14px;
+                    margin-bottom: 6px;
+                    max-width: initial;
                 }
                 &::before {
                     content: "\2022";
@@ -168,6 +185,9 @@
         }
         &-detail{
             display: flex;
+            @include max($s){
+                flex-direction: column;
+            }
             ul{
                 &:first-child{
                     margin-right: 10px;

@@ -383,8 +383,12 @@
     &.visible{
       transform: translate(0);
     }
+    &::after{
+      bottom: 0px;
+    }
     .sidebar__inner{
       max-height: 100vh;
+      padding-bottom: 100px;
     }
   }
 }
