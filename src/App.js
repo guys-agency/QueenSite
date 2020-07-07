@@ -37,6 +37,16 @@ import $ from "jquery";
 
 import Swiper from "react-id-swiper";
 
+// const CartPage = lazy(() => import("./comp/CartPage"));
+// const CardView = lazy(() => import("./comp/CardView"));
+// const Profile = lazy(() => import("./comp/Profile"));
+// const Collections = lazy(() => import("./comp/Collections"));
+// const Actions = lazy(() => import("./comp/Actions"));
+// const Shops = lazy(() => import("./comp/Shops"));
+// const ShopsMap = lazy(() => import("./comp/ShopsMap"));
+// const Help = lazy(() => import("./comp/Help"));
+// const About = lazy(() => import("./comp/About"));
+
 const { Component } = React;
 
 const MainScreen = observer(

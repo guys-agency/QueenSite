@@ -2509,6 +2509,9 @@ const cities = [
 //https://api.queenbohemia.ru
 //http://127.0.0.1:3010
 
-const SERVER_URL = "https://api.queenbohemia.ru";
+const SERVER_URL =
+  process.env.REACT_APP_TYPE === "prod"
+    ? "https://api.queenbohemia.ru"
+    : "http://127.0.0.1:3010";
 
 export { cities, SERVER_URL };

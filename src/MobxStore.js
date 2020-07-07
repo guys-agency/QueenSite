@@ -80,6 +80,9 @@ class Store {
       ? {}
       : localStorage.get("productInCart");
 
+  // seenProd =
+  //   localStorage.get("seenProd") === null ? [] : localStorage.get("seenProd");
+
   cardContainer = {};
 
   userData = {};
@@ -111,12 +114,37 @@ class Store {
     getCookie("auth") === undefined || getCookie("auth") === null
       ? false
       : true;
+
+  // seenProdAdd = autorun(() => {
+  //   localStorage.set("seenProd", this.seenProd);
+  // });
+
   //подумать НАД РЕШЕНИЕМ
   menuInFilt = autorun(() => {
     if (this.prodCats.length) {
       this.activeCats = this.prodCats;
     } else {
       this.activeCats = this.fullCats;
+    }
+  });
+  // e-com метрика
+  eComMetric = autorun(() => {
+    this.countInProdPage = 1;
+    if (process.env.REACT_APP_TYPE === "prod") {
+      window.dataLayer.push({
+        ecommerce: {
+          detail: {
+            products: [
+              {
+                id: this.cardContainer.slug,
+                name: this.cardContainer.name,
+                price: this.cardContainer.price,
+                brand: this.cardContainer.brand,
+              },
+            ],
+          },
+        },
+      });
     }
   });
 
@@ -277,9 +305,9 @@ class Store {
       this.city = localStorage.get("city").name;
     } else {
       const init = () => {
-        // console.log("window.ymaps :>> ", window.ymaps);
+        console.log("window.ymaps :>> ", window.ymaps);
         const geolocation = window.ymaps.geolocation;
-        // console.log("geolocation :>> ", geolocation);
+        console.log("geolocation :>> ", geolocation);
         if (geolocation) {
           api
             .getCity(geolocation.region + " " + geolocation.city)
@@ -966,6 +994,7 @@ class Store {
     this.stopPag = 42;
     this.firstBread = "";
     this.secondBread = "";
+
     // console.log("clean :>> 11111111111222222222222");
   };
 

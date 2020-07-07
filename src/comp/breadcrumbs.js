@@ -1,9 +1,9 @@
 import { observer } from "mobx-react";
 import React from "react";
-import $ from "jquery";
+// import $ from "jquery";
 import { Link, NavLink } from "react-router-dom";
-import withBreadcrumbs from "react-router-breadcrumbs-hoc";
-import store from "../MobxStore";
+// import withBreadcrumbs from "react-router-breadcrumbs-hoc";
+// import store from "../MobxStore";
 const { Component } = React;
 
 // const DynamicBreadcrumb = ({ match }) => {

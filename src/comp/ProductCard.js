@@ -36,6 +36,22 @@ const ProductCard = observer(function ProductCard(props) {
         }, 2000);
 
         delete productInCartList[data.slug];
+        if (process.env.REACT_APP_TYPE === "prod") {
+          window.dataLayer.push({
+            ecommerce: {
+              remove: {
+                products: [
+                  {
+                    id: data.slug,
+                    name: data.name,
+                    price: data.price,
+                    brand: data.brand,
+                  },
+                ],
+              },
+            },
+          });
+        }
       } else {
         productInCartList[data.slug] = 1;
 
@@ -48,6 +64,23 @@ const ProductCard = observer(function ProductCard(props) {
         setTimeout(() => {
           $(".tooltip_cart").removeClass("visible");
         }, 2000);
+        if (process.env.REACT_APP_TYPE === "prod") {
+          window.dataLayer.push({
+            ecommerce: {
+              add: {
+                products: [
+                  {
+                    id: data.slug,
+                    name: data.name,
+                    price: data.price,
+                    brand: data.brand,
+                    quantity: 1,
+                  },
+                ],
+              },
+            },
+          });
+        }
       }
 
       addtoCart(true);

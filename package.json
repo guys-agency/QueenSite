@@ -6,7 +6,6 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
-    "@woocommerce/woocommerce-rest-api": "^1.0.1",
     "dotenv": "^8.2.0",
     "drift-zoom": "^1.4.0",
     "formik": "^2.1.4",
@@ -22,23 +21,18 @@
     "react-id-swiper": "^3.0.0",
     "react-lazy-load-image-component": "^1.5.0-beta.0",
     "react-router": "^5.2.0",
-    "react-router-breadcrumbs-hoc": "^3.3.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
-    "react-slick": "^0.26.1",
     "semantic-ui-css": "^2.4.1",
-    "semantic-ui-react": "^0.88.2",
-    "slick-carousel": "^1.8.1",
-    "slugify": "^1.4.0",
-    "sticky-sidebar": "^3.3.1",
     "stringquery": "^1.0.8",
+    "suggestions-jquery": "^20.3.0",
     "swiper": "^5.4.1",
     "transliteration": "^2.1.11",
     "yup": "^0.29.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "REACT_APP_TYPE=dev react-scripts start",
+    "build": "REACT_APP_TYPE=prod react-scripts build && gzipper --verbose ./build --exclude jpg,JPG",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -54,5 +48,11 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "compress-images": "^1.7.8",
+    "gifsicle": "^5.1.0",
+    "gzipper": "^3.7.0",
+    "pngquant-bin": "^6.0.0"
   }
 }

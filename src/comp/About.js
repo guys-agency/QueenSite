@@ -61,7 +61,8 @@ const About = observer(
                     <a
                       href=""
                       className="link dotted"
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.preventDefault();
                         document
                           .querySelector(".sidebar-overlay")
                           .classList.add("active");
@@ -78,7 +79,7 @@ const About = observer(
                   </span>{" "}
                   или по телефону
                   <a className="underline" href="88002508021">
-                    8-800-250-80-21
+                    8 800 250-80-21
                   </a>
                   .
                 </p>
@@ -111,8 +112,8 @@ const About = observer(
                     — центральный офис
                   </div>
                   <div>
-                    <a href="tel:+79166747943">
-                      <b>+7 916 674-79-43</b>
+                    <a href="tel:88002508021">
+                      <b>8 800 250-80-21</b>
                     </a>{" "}
                     — центральный офис
                   </div>

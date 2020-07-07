@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 import React from "react";
-import StickySidebar from "sticky-sidebar";
+// import StickySidebar from "sticky-sidebar";
 import { Link, NavLink } from "react-router-dom";
 import { withRouter } from "react-router";
 import $ from "jquery";

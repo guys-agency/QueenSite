@@ -1,155 +1,215 @@
-.cart-page{
-    margin-top: 50px;
-    &__wrp{
-        margin-top: 60px;
-        padding-bottom: 100px;
-    }
-    &__cart{
-        padding-bottom: 100px;
-        @include max($s){
-            padding-bottom: 50px;
-        }
-    }
-    &__delivery{
-        h5{
-            margin-left: 10px;
-            &>span{
-               margin-left: 5px;
-               position: relative;
-            }
-            .city__btn.active{
-                .ic{
-                    transform: scale(-1);
-                }
-            }
-        }
-        padding-bottom: 100px;
-        .btn_primary{
-            width: 100%;
-        }
-        &-details{
-            .items{
-                margin-bottom: 20px;
-            }
-            .item{
-                display: inline-block;
-                margin-right: 20px;
-                h5{
-                    display: inline-block;
-                    margin-left: 0;
-                    margin-right: 4px;
-                }
-                span{
-                    font-size: 14px;
-                }
-            }
-            padding-bottom: 20px;
-            .input-field{
-                @include max($s){
-                    margin-bottom: 40px;
-                }
-            }
-        }
-        .header__drop_city{
-            @include max($s){
-                width: 280px;
-                left: auto;
-                right: 0;
-                position: fixed;
-            }
-        }
+.cart-page {
+  margin-top: 50px;
+
+  .cart-overlay {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    z-index: 3;
+    background-color: $b_dark;
+    cursor: pointer;
+    visibility: hidden;
+    &.active {
+      visibility: visible;
+
+      //   @include max($s) {
+      //     opacity: 0.83;
+      //     transition: all 0.2s 0.23s;
+      //     // transform: translateX(0px);
+      //   }
     }
 
-    &__data{
-        &-form{
-            margin-top: 40px;
-            .col{
-                margin-bottom: 40px;
-            }
-        }
+    &::after {
+      @include icon;
+
+      color: white;
+      font-size: 3vw;
+      @include c();
+      position: absolute;
+
+      content: $i_close;
+
+      top: 50%;
+      left: 5%;
     }
-    &__promo{
-        width: 100%;
-        margin-top: 20px;
+    &::before {
+      @include icon;
+
+      color: white;
+      font-size: 3vw;
+      @include cr();
+      position: absolute;
+
+      content: $i_close;
+
+      top: 50%;
+      right: 4%;
+    }
+
+    .cart-popup {
+      width: 80vw;
+      height: 100vh;
+      margin: 0px auto;
+      background-color: white;
+      opacity: 1;
+      z-index: 5;
+      cursor: auto;
+    }
+  }
+
+  &__wrp {
+    margin-top: 60px;
+    padding-bottom: 100px;
+  }
+  &__cart {
+    padding-bottom: 100px;
+    @include max($s) {
+      padding-bottom: 50px;
+    }
+  }
+  &__delivery {
+    h5 {
+      margin-left: 10px;
+      & > span {
+        margin-left: 5px;
         position: relative;
-        .def{
-            padding-right: 140px;
+      }
+      .city__btn.active {
+        .ic {
+          transform: scale(-1);
         }
-        button{
-            position: absolute;
-            right: 20px;
-            top: 15px;
-        }
+      }
     }
-    &__result{
-       box-shadow: $sh_bottom;
-       padding: 20px;
-       border-radius: 30px;
-       display: flex;
-       flex-direction: column;
-       &-stick{
-            position: sticky;
-            position: -webkit-sticky;
-            top: 90px;
-            @include max($s){
-                top: 0;
-                position: relative;
+    padding-bottom: 100px;
+    .btn_primary {
+      width: 100%;
+    }
+    &-details {
+      .items {
+        margin-bottom: 20px;
+      }
+      .item {
+        display: inline-block;
+        margin-right: 20px;
+        h5 {
+          display: inline-block;
+          margin-left: 0;
+          margin-right: 4px;
+        }
+        span {
+          font-size: 14px;
+        }
+      }
+      padding-bottom: 20px;
+      .input-field {
+        @include max($s) {
+          margin-bottom: 40px;
+        }
+      }
+    }
+    .header__drop_city {
+      @include max($s) {
+        width: 280px;
+        left: auto;
+        right: 0;
+        position: fixed;
+      }
+    }
+  }
+
+  &__data {
+    &-form {
+      margin-top: 40px;
+      .col {
+        margin-bottom: 40px;
+      }
+    }
+  }
+  &__promo {
+    width: 100%;
+    margin-top: 20px;
+    position: relative;
+    .def {
+      padding-right: 140px;
+    }
+    button {
+      position: absolute;
+      right: 20px;
+      top: 15px;
+    }
+  }
+  &__result {
+    box-shadow: $sh_bottom;
+    padding: 20px;
+    border-radius: 30px;
+    display: flex;
+    flex-direction: column;
+    &-stick {
+      position: sticky;
+      position: -webkit-sticky;
+      top: 90px;
+      @include max($s) {
+        top: 0;
+        position: relative;
+      }
+    }
+    &-message {
+      padding: 10px;
+      margin-top: 20px;
+    }
+    ul {
+      padding: 0;
+      margin: 0;
+      list-style: none;
+      font-size: 16px;
+      li {
+        div {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 10px;
+          &:first-child {
+            margin-bottom: 20px;
+            span {
+              &:last-child {
+                font-size: 18px;
+                font-weight: 600;
+              }
             }
-       }
-       &-message{
-           padding: 10px;
-           margin-top: 20px;
-       }
-       ul{
-           padding: 0;
-           margin: 0;
-           list-style: none;
-            font-size: 16px;
-           li{
-               div{
-                   display: flex;
-                   justify-content: space-between;
-                   margin-bottom: 10px;
-                   &:first-child{
-                       margin-bottom: 20px;
-                       span{
-                           &:last-child{
-                               font-size: 18px;
-                               font-weight: 600;
-                           }
-                       }
-                   }
-               }
-           }
-       }
-
-       &-address{
-           border-top: 1px solid $gr_middle;
-           padding-top: 10px;
-           font-size: 14px;
-       }
-
-       .btn{
-           margin-top: 10px;
-       }
-    }
-
-    .order{
-        .orders{
-            &-item__products{
-                visibility: visible;
-                max-height: initial;
-                opacity: 1;
-                .item{
-                    padding-left: 0;
-                    padding-right: 0;
-                    &:last-child{
-                        b{
-                            font-size: 18px;
-                        }
-                    }
-                }
-            }
+          }
         }
+      }
     }
+
+    &-address {
+      border-top: 1px solid $gr_middle;
+      padding-top: 10px;
+      font-size: 14px;
+    }
+
+    .btn {
+      margin-top: 10px;
+    }
+  }
+
+  .order {
+    .orders {
+      &-item__products {
+        visibility: visible;
+        max-height: initial;
+        opacity: 1;
+        .item {
+          padding-left: 0;
+          padding-right: 0;
+          &:last-child {
+            b {
+              font-size: 18px;
+            }
+          }
+        }
+      }
+    }
+  }
 }

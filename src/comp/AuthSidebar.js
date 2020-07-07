@@ -83,9 +83,20 @@ const AuthSidebar = observer(
                       });
 
                       this.props.store.likeContainer = lc;
-                      this.props.store.productInCartList = data.inCart;
+                      // const localCartCont = Object.keys(this.props.store.productInCartList);
+                      // const serverCartCont = Object.keys(data.inCart);
+
+                      // const newCartCont = this.props.store.productInCartList
+
+                      // newCartCont.forEach(prod=>{
+                      //   if (!localCartCont.includes(prod)) {
+                      //     newCartCont[prod]=data.inCart[prod]
+                      //   }
+                      // })
+
+                      // this.props.store.productInCartList = newCartCont;
                       this.props.store.addToLike();
-                      this.props.store.addtoCart(true);
+                      // this.props.store.addtoCart(true);
                       this.props.store.sideAsk = false;
                       this.props.store.sideLogin = false;
                       document

@@ -75,8 +75,21 @@ const CardView = observer(
         }, 2000);
 
         delete productInCartList[data.slug];
+        window.dataLayer.push({
+          ecommerce: {
+            remove: {
+              products: [
+                {
+                  id: data.slug,
+                  name: data.name,
+                  price: data.price,
+                  brand: data.brand,
+                },
+              ],
+            },
+          },
+        });
       } else {
-        console.log("data :>> ", data);
         $(".tooltip_cart").find(".ic").removeClass("i_fav-f");
         $(".tooltip_cart").find(".ic").removeClass("i_minus");
         $(".tooltip_cart").find(".ic").addClass("i_plus");
@@ -88,6 +101,21 @@ const CardView = observer(
         }, 2000);
 
         productInCartList[data.slug] = store.countInProdPage;
+        window.dataLayer.push({
+          ecommerce: {
+            add: {
+              products: [
+                {
+                  id: data.slug,
+                  name: data.name,
+                  price: data.price,
+                  brand: data.brand,
+                  quantity: store.countInProdPage,
+                },
+              ],
+            },
+          },
+        });
       }
       addtoCart(true);
 
@@ -341,6 +369,12 @@ const CardView = observer(
             String(this.props.store.cardContainer.slug)
           )
         : -1;
+
+      // if (data.slug === +this.props.sku) {
+      //   if (!this.props.store.seenProd.includes(data.slug)) {
+      //     this.props.store.seenProd.unshift(data);
+      //   }
+      // }
 
       return (
         data.slug === +this.props.sku && (

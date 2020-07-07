@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
 import React from "react";
 import $ from "jquery";
+import "suggestions-jquery";
 import { withRouter } from "react-router";
 import { cities } from "../constants";
 import localStorage from "mobx-localstorage";
@@ -10,6 +11,7 @@ import ProductList from "./ProductList";
 import api from "./api";
 import num2str from "../ulits/nm2wrd";
 import Inputmask from "inputmask";
+import "../blocks/dadata.scss";
 
 const { Component } = React;
 
@@ -33,12 +35,13 @@ const CartPage = observer(
           : "",
       tel:
         this.props.store.userData.user !== undefined
-          ? this.props.store.userData.user.tel
+          ? this.props.store.userData.user.tel.substr(1)
           : "",
     };
 
     deliveryOrderData = {};
     deliverySend = {};
+    dimensionsApi = {};
 
     order = {};
 
@@ -72,10 +75,66 @@ const CartPage = observer(
       addtoCart(false);
     };
 
+    clearDeliveryData = () => {
+      this.setState({ deliveryData: {} });
+    };
+
+    dadataInit = false;
+    tokenDa = "bb2ff0528fa21286110aa5d28409ab10c5a2f287";
+    typeDa = "ADDRESS";
     // componentDidUpdate() {
     //   $(".city__btn").off("click", this.toggleCity);
     //   $(".city__btn").on("click", this.toggleCity);
     // };
+
+    componentDidUpdate(prevProps, prevState) {
+      if (this.state.deliveryData.deliveryType === "COURIER") {
+        const $street = $("#address");
+        const $house = $("#flat");
+        if (!this.dadataInit) {
+          this.dadataInit = true;
+          const that = this;
+
+          $street.suggestions({
+            token: this.tokenDa,
+            type: this.typeDa,
+
+            bounds: "street",
+            constraints: {
+              // ограничиваем поиск
+              locations: {
+                city: this.props.store.city,
+              },
+            },
+            restrict_value: true,
+            count: 10,
+            onSelect: function (suggestion, changed) {
+              that.setState({ adress: suggestion.value });
+            },
+          });
+
+          $house.suggestions({
+            token: this.tokenDa,
+            type: this.typeDa,
+            hint: false,
+            noSuggestionsHint: false,
+            bounds: "house",
+            constraints: $street,
+            onSelect: function (suggestion, changed) {
+              that.setState({ house: suggestion.value });
+            },
+          });
+        }
+        // !ПЕРЕПИСАТЬ ЭТУ ЕРУНДУ
+        // if (
+        //   $street.val().length > this.state.adress.length ||
+        //   $house.val().length > this.state.house.length
+        // ) {
+        //   console.log("this.props.store.city :>> ", localStorage.get("city"));
+        //   this.setState({ adress: $street.val(), house: $house.val() });
+        // }
+      }
+    }
 
     render() {
       const { productInCart, productInCartList, addtoCart } = this.props.store;
@@ -96,6 +155,7 @@ const CartPage = observer(
               el={el}
               store={this.props.store}
               cart={true}
+              clearDeliveryData={this.clearDeliveryData}
             />
           );
 
@@ -118,6 +178,14 @@ const CartPage = observer(
 
       return (
         <div className="cart-page">
+          <div
+            className="cart-overlay active"
+            onClick={() => {
+              $(".cart-overlay").removeClass("active");
+            }}
+          >
+            <div id="payment-form" className="cart-popup"></div>
+          </div>
           <div className="container">
             <p>
               <a className="btn" onClick={this.props.history.goBack}>
@@ -281,6 +349,7 @@ const CartPage = observer(
                                                       ".sidebar-overlay"
                                                     ).removeClass("active");
                                                   }
+                                                  this.dadataInit = false;
                                                   this.setState({
                                                     deliveryData: {},
                                                   });
@@ -437,6 +506,9 @@ const CartPage = observer(
                                 onInput={(e) => {
                                   this.setState({ adress: e.target.value });
                                 }}
+                                // onChange={(e) => {
+                                //   this.setState({ adress: e.target.value });
+                                // }}
                               />
                             </div>
                           </div>
@@ -473,9 +545,7 @@ const CartPage = observer(
 
                           <div className="col col-3 col-s-6">
                             <div className="input-field">
-                              <label className="required" htmlFor="porch">
-                                Кв/Офис
-                              </label>
+                              <label htmlFor="porch">Кв/Офис</label>
                               <input
                                 id="porch"
                                 type="text"
@@ -833,9 +903,9 @@ const CartPage = observer(
                           return;
                         } else {
                           if (
-                            this.deliveryOrderData.deliveryType === "COURIER"
+                            this.state.deliveryData.deliveryType === "COURIER"
                           ) {
-                            if (flat === "" || house === "" || adress === "") {
+                            if (house === "" || adress === "") {
                               $("html, body").animate(
                                 {
                                   scrollTop:
@@ -871,7 +941,7 @@ const CartPage = observer(
                         $(e.target).addClass("deactive");
                         $(e.target).text("Создаем заказ");
                         // console.log("productInCart", productInCart);
-                        const senderId = "500001936";
+                        const senderId = 500001936;
                         const cityLoc = localStorage.get("city");
                         // console.log("cityLoc", cityLoc);
 
@@ -880,23 +950,23 @@ const CartPage = observer(
                           // middleName: "{string}",
                           lastName: secondName,
                           email: email.toLowerCase(),
-                          address: {
-                            geoId: cityLoc.geoId,
-                            country: "Россия",
-                            region: cityLoc.region,
-                            locality: cityLoc.name,
-                            street: adress,
-                            house: house,
-                            // "housing": "{string}",
-                            // "building": "{string}",
-                            apartment: flat,
-                          },
+                          // address: {
+                          //   geoId: cityLoc.geoId,
+                          //   country: "Россия",
+                          //   region: cityLoc.region,
+                          //   locality: cityLoc.name,
+                          //   street: adress,
+                          //   house: house,
+                          //   // "housing": "{string}",
+                          //   // "building": "{string}",
+                          //   apartment: flat,
+                          // },
                           // "pickupPointId": {int}
                         };
 
                         const cost = {
-                          paymentMethod: "CARD",
-                          assessedValue: totalPrice,
+                          paymentMethod: "PREPAID",
+                          assessedValue: +totalPrice,
                           fullyPrepaid: true,
                           manualDeliveryForCustomer:
                             localStorage.get("city").geoId === 213 &&
@@ -945,9 +1015,21 @@ const CartPage = observer(
                         deliveryOrderData.deliveryOption.delivery = this.deliveryOrderData.deliveryOption.cost.delivery;
                         deliveryOrderData.deliveryOption.deliveryForCustomer =
                           cost.manualDeliveryForCustomer;
+                        deliveryOrderData.deliveryOption.deliveryForSender =
+                          deliveryOrderData.deliveryOption.cost.deliveryForSender;
+                        deliveryOrderData.shipment = {
+                          date:
+                            deliveryOrderData.deliveryOption.shipments[0].date,
+                          type: "WITHDRAW",
+                          fromWarehouseId: 10001568252,
+                          toPartnerId:
+                            deliveryOrderData.deliveryOption.shipments[0]
+                              .partner.id,
+                        };
                         this.deliverySend.cost.fullyPrepaid = true;
                         const delivery = {
                           ...this.deliverySend,
+                          address: addressData,
                           recipient,
                           contacts,
                           senderId,
@@ -957,8 +1039,17 @@ const CartPage = observer(
                         const dataToSend = {
                           prod: {},
                         };
+                        const ecomProd = [];
 
                         Object.keys(productInCart).forEach((el) => {
+                          ecomProd.push({
+                            id: productInCart[el].sale,
+                            name: productInCart[el].name,
+                            price: productInCart[el].price,
+                            brand: productInCart[el].brand,
+
+                            quantity: productInCartList[el],
+                          });
                           dataToSend.prod[el] = {
                             countIn: productInCartList[el],
                             sale: productInCart[el].sale,
@@ -977,6 +1068,9 @@ const CartPage = observer(
                         dataToSend.email = this.state.email.toLowerCase();
 
                         console.log("object :>> ", delivery, dataToSend);
+                        if (process.env.REACT_APP_TYPE === "prod") {
+                          window.ym(65097901, "reachGoal", "Checkout");
+                        }
 
                         api
                           .setOrderData({
@@ -984,6 +1078,18 @@ const CartPage = observer(
                             dataToSend,
                           })
                           .then((data) => {
+                            if (process.env.REACT_APP_TYPE === "prod") {
+                              window.dataLayer.push({
+                                ecommerce: {
+                                  purchase: {
+                                    actionField: {
+                                      id: String(data.orderId),
+                                    },
+                                    products: ecomProd,
+                                  },
+                                },
+                              });
+                            }
                             window.widget.setOrderInfo({
                               ...this.order,
                               externalId: String(data.orderId),
@@ -991,10 +1097,23 @@ const CartPage = observer(
                             window.widget
                               .createOrder()
                               .then((ok) => {
-                                // console.log("ok :>> ", ok);
+                                console.log("ok :>> ", ok);
                                 this.props.store.productInCartList = {};
                                 this.props.store.addtoCart(false);
                                 window.location.href = data.link;
+                                // $(".cart-overlay").addClass("active");
+                                // const checkout = new window.YandexCheckout({
+                                //   confirmation_token: data.confirmationToken, //Токен, который перед проведением оплаты нужно получить от Яндекс.Кассы
+                                //   return_url: data.return, //Ссылка на страницу завершения оплаты
+                                //   embedded_3ds: true, // Способ прохождения аутентификации 3-D Secure — во всплывающем окне
+                                //   error_callback(error) {
+                                //     console.log("error :>> ", error);
+                                //   },
+                                // });
+                                // console.log("checkout :>> ", checkout);
+                                // checkout.render("payment-form");
+
+                                // console.log("checkout :>> ", checkout);
                               })
                               .catch((err) => {
                                 console.log("err :>> ", err);
@@ -1003,6 +1122,8 @@ const CartPage = observer(
                                   $("#createOrder").text("Заказать");
                                 }, 3000);
                               });
+                            // this.props.store.productInCartList = {};
+                            // this.props.store.addtoCart(false);
                             // window.location.href = data.link;
                           })
                           .catch((err) => {
@@ -1011,13 +1132,123 @@ const CartPage = observer(
                           .finally(() => {
                             $(e.target).removeClass("deactive");
                             $(e.target).text("Заказать");
+                            const tett = {
+                              recipient: {
+                                firstName: "Тест",
+                                lastName: "Граев",
+                                email: "graev.k@gmail.com",
+                                address: {
+                                  geoId: 43,
+                                  country: "Россия",
+                                  region: "Республика Татарстан",
+                                  locality: "Казань",
+                                  street: "ул Волкова",
+                                  house: "д 2 ",
+                                  apartment: "5",
+                                },
+                              },
+                              $address: {
+                                geoId: 43,
+                                country: "Россия",
+                                region: "Республика Татарстан",
+                                locality: "Казань",
+                                street: "ул Волкова",
+                                house: "д 2 ",
+                                apartment: "5",
+                              },
+                              cost: {
+                                paymentMethod: "CARD",
+                                assessedValue: 1812,
+                                fullyPrepaid: true,
+                                manualDeliveryForCustomer: 307,
+                              },
+                              contacts: [
+                                {
+                                  type: "RECIPIENT",
+                                  phone: "+7 (999) 155 91 93",
+                                  firstName: "Тест",
+                                  lastName: "Граев",
+                                },
+                              ],
+                              externalId: 4646,
+                              $shipment: {
+                                date: "2020-07-02",
+                                type: "WITHDRAW",
+                                fromWarehouseId: 10001568252,
+                                toPartnerId: 51,
+                              },
+                              deliveryType: "COURIER",
+                              deliveryOption: {
+                                tariffId: 100004,
+                                partnerId: 51,
+                                services: [
+                                  {
+                                    name: "Доставка",
+                                    code: "DELIVERY",
+                                    cost: 307,
+                                    customerPay: true,
+                                    enabledByDefault: true,
+                                  },
+                                  {
+                                    name: "Возврат",
+                                    code: "RETURN",
+                                    cost: 230.25,
+                                    customerPay: false,
+                                    enabledByDefault: false,
+                                  },
+                                  {
+                                    name: "Сортировка возврата",
+                                    code: "RETURN_SORT",
+                                    cost: 20,
+                                    customerPay: false,
+                                    enabledByDefault: false,
+                                  },
+                                  {
+                                    name:
+                                      "Вознаграждение за перечисление денежных средств",
+                                    code: "CASH_SERVICE",
+                                    cost: 46.618,
+                                    customerPay: false,
+                                    enabledByDefault: true,
+                                  },
+                                ],
+                                delivery: 307,
+                                deliveryForCustomer: 307,
+                                deliveryForSender: 353.618,
+                                deliveryIntervalId: 17549384,
+                                calculatedDeliveryDateMin: "2020-07-06",
+                                calculatedDeliveryDateMax: "2020-07-06",
+                              },
+                              places: [
+                                {
+                                  items: [
+                                    {
+                                      externalId: "5637287002",
+                                      name:
+                                        "Набор бокалов для красного вина 6 шт 640 мл, Колумба",
+                                      count: 1,
+                                      price: 1812,
+                                      assessedValue: 1812,
+                                      tax: "NO_VAT",
+                                      dimensions: {
+                                        weight: 1.48,
+                                        length: 23,
+                                        width: 34,
+                                        height: 24,
+                                      },
+                                    },
+                                  ],
+                                },
+                              ],
+                              apiKey: "f16336a6-8d98-4f0e-b07f-3969b2384006",
+                              senderId: 500001936,
+                            };
                           });
                       }}
                     >
-                      {Object.keys(deliveryData).length === 0 ||
-                      adress.length === 0 ||
-                      flat.length === 0 ||
-                      house.length === 0
+                      {(this.state.deliveryData.deliveryType === "COURIER" &&
+                        (adress.length === 0 || house.length === 0)) ||
+                      Object.keys(deliveryData).length === 0
                         ? "Выбрать доставку"
                         : name.length === 0 ||
                           secondName.length === 0 ||
@@ -1064,10 +1295,40 @@ const CartPage = observer(
     }
 
     startYaDeliv = (fullPrice, array) => {
+      // получение максимального элемента массива
+      function getMaxValue(array) {
+        var max = array[0]; // берем первый элемент массива
+        for (var i = 0; i < array.length; i++) {
+          // переберем весь массив
+          // если элемент больше, чем в переменной, то присваиваем его значение переменной
+          if (max < array[i]) max = array[i];
+        }
+        // возвращаем максимальное значение
+        return max;
+      }
+
+      // получение минимального элемента массива
+      function getMinValue(array) {
+        var min = array[0];
+        for (var i = 0; i < array.length; i++) {
+          if (min > array[i]) min = array[i];
+        }
+        return min;
+      }
       const { productInCart, city } = this.props.store;
       const items = [];
       let sum = fullPrice;
+      const lengths = [];
+      const widths = [];
+
+      let heightSumm = 0;
+      let weightSumm = 0;
+
       Object.keys(productInCart).forEach((el, i) => {
+        lengths.push(parseInt(productInCart[el].dimensions.length, 10));
+        widths.push(parseInt(productInCart[el].dimensions.width, 10));
+        heightSumm += parseInt(productInCart[el].dimensions.height, 10);
+        weightSumm += +productInCart[el].weight;
         items.push({
           externalId: `${productInCart[el].slug}`,
           name: productInCart[el].name,
@@ -1087,19 +1348,32 @@ const CartPage = observer(
           },
         });
       });
+      const lengthMax = getMaxValue(lengths);
+      const widthMax = getMaxValue(widths);
       const cart = {
         places: [
           {
+            dimensions: {
+              length: lengthMax,
+              width: widthMax,
+              height: heightSumm,
+              weight: weightSumm,
+            },
             items: items,
           },
         ],
         shipment: {
           fromWarehouseId: 10001568252,
         },
+        cost: {
+          itemsSum: sum, // сумма стоимости товаров в корзине
+          assessedValue: sum, // объявленная ценность
+          fullyPrepaid: true,
+        },
       };
       const order = {
         cost: {
-          paymentMethod: "CARD",
+          paymentMethod: "PREPAID",
           assessedValue: sum,
           fullyPrepaid: false,
           manualDeliveryForCustomer: 0,
@@ -1109,6 +1383,13 @@ const CartPage = observer(
             type: "RECIPIENT",
           },
         ],
+      };
+
+      this.dimensionsApi = {
+        length: lengthMax,
+        width: widthMax,
+        height: heightSumm,
+        weight: weightSumm,
       };
 
       this.deliverySend = { ...cart, ...order };
@@ -1191,7 +1472,7 @@ const CartPage = observer(
 
           params: {
             // Обязательные параметры
-            apiKey: "f16336a6-8d98-4f0e-b07f-3969b2384006", // Авторизационный ключ
+            apiKey: process.env.REACT_APP_SECRET_CODE_YA_WID, // Авторизационный ключ
             senderId: 500001936, // Идентификатор магазина
           },
         })

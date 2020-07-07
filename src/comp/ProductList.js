@@ -11,20 +11,79 @@ const ProductList = observer(
 
     deteleProduct = (el) => {
       const { productInCartList, addtoCart } = this.props.store;
+      const { data } = this.props;
       delete productInCartList[el];
       addtoCart(true);
+      if (process.env.REACT_APP_TYPE === "prod") {
+        window.dataLayer.push({
+          ecommerce: {
+            remove: {
+              products: [
+                {
+                  id: data.slug,
+                  name: data.name,
+                  price: data.price,
+                  brand: data.brand,
+                },
+              ],
+            },
+          },
+        });
+      }
     };
 
     clickPlus = (el) => {
       const { productInCartList, addtoCart } = this.props.store;
+      const { data } = this.props;
       productInCartList[el] += 1;
       addtoCart(false);
+      if (process.env.REACT_APP_TYPE === "prod") {
+        window.dataLayer.push({
+          ecommerce: {
+            add: {
+              products: [
+                {
+                  id: data.slug,
+                  name: data.name,
+                  price: data.price,
+                  brand: data.brand,
+                  quantity: 1,
+                },
+              ],
+            },
+          },
+        });
+      }
+      if (this.props.clearDeliveryData) {
+        this.props.clearDeliveryData();
+      }
     };
 
     clickMinus = (el) => {
       const { productInCartList, addtoCart } = this.props.store;
+      const { data } = this.props;
       productInCartList[el] -= 1;
       addtoCart(false);
+      if (process.env.REACT_APP_TYPE === "prod") {
+        window.dataLayer.push({
+          ecommerce: {
+            remove: {
+              products: [
+                {
+                  id: data.slug,
+                  name: data.name,
+                  price: data.price,
+                  brand: data.brand,
+                  quantity: 1,
+                },
+              ],
+            },
+          },
+        });
+      }
+      if (this.props.clearDeliveryData) {
+        this.props.clearDeliveryData();
+      }
     };
 
     render() {
@@ -121,8 +180,41 @@ const ProductList = observer(
                 onClick={() => {
                   if (inCart !== -1) {
                     delete productInCartList[data.slug];
+                    if (process.env.REACT_APP_TYPE === "prod") {
+                      window.dataLayer.push({
+                        ecommerce: {
+                          remove: {
+                            products: [
+                              {
+                                id: data.slug,
+                                name: data.name,
+                                price: data.price,
+                                brand: data.brand,
+                              },
+                            ],
+                          },
+                        },
+                      });
+                    }
                   } else {
                     productInCartList[data.slug] = 1;
+                    if (process.env.REACT_APP_TYPE === "prod") {
+                      window.dataLayer.push({
+                        ecommerce: {
+                          add: {
+                            products: [
+                              {
+                                id: data.slug,
+                                name: data.name,
+                                price: data.price,
+                                brand: data.brand,
+                                quantity: 1,
+                              },
+                            ],
+                          },
+                        },
+                      });
+                    }
                   }
                   addtoCart(true);
                 }}
