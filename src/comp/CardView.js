@@ -216,6 +216,12 @@ const CardView = observer(
 
       const { timeDelivery } = this.state;
 
+      const {
+        dontSaleProdCount,
+        lastSeenProdsData,
+        lastSeenProds,
+      } = this.props.store;
+
       if (data.slug === +this.props.sku && this.count) {
         if (
           timeDelivery === "" &&
@@ -375,6 +381,8 @@ const CardView = observer(
       //     this.props.store.seenProd.unshift(data);
       //   }
       // }
+      console.log("lastSeenProdsData :>> ", lastSeenProdsData);
+      console.log("lastSeenProds :>> ", lastSeenProds);
 
       return (
         data.slug === +this.props.sku && (
@@ -458,10 +466,25 @@ const CardView = observer(
                           </div>
                         )}
                       </div>
+
                       {data.description && (
                         <p className="product-p__info">{data.description}</p>
                       )}
-
+                      {dontSaleProdCount !== 0 &&
+                      dontSaleProdCount % 3 !== 0 &&
+                      !data.sale ? (
+                        <div className="one-plus-one">
+                          <p className="disc_perc">1 + 1 = 3</p> добавьте еще{" "}
+                          {3 * (Math.floor(dontSaleProdCount / 3) + 1) -
+                            dontSaleProdCount}{" "}
+                          {num2str(
+                            3 * (Math.floor(dontSaleProdCount / 3) + 1) -
+                              dontSaleProdCount,
+                            ["товар", "товара", "товаров"]
+                          )}{" "}
+                          без скидки
+                        </div>
+                      ) : null}
                       <div className="product-p__control">
                         <div className="product-p__buttons">
                           <button
@@ -719,6 +742,38 @@ const CardView = observer(
                         })}
                       </Swiper>
                     )}
+                  </div>
+                </div>
+              </div>
+            )}
+            {Object.keys(lastSeenProdsData).length !== 0 && (
+              <div className="carousel carousel_product">
+                <div className="container">
+                  <div className="title">
+                    <h3>Вы недавно просматривали</h3>
+                  </div>
+                </div>
+                <div className="container container_s">
+                  <div className="slider-cont">
+                    <Swiper {...relativeCar}>
+                      {lastSeenProds.map((el, i) => {
+                        console.log("el :>> ", el);
+                        console.log("this.props.sku :>> ", this.props.sku);
+                        console.log("object :>> ", el !== this.props.sku);
+
+                        if (lastSeenProdsData[el] !== undefined) {
+                          return (
+                            <div className="col col-3 col-t-4 col-s-6" key={el}>
+                              <ProductCard
+                                key={el}
+                                data={lastSeenProdsData[el]}
+                                store={this.props.store}
+                              />
+                            </div>
+                          );
+                        }
+                      })}
+                    </Swiper>
                   </div>
                 </div>
               </div>

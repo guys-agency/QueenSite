@@ -117,9 +117,12 @@ const ProductList = observer(
             {data.sale ? (
               <div className={"product__price product__price_disc"}>
                 <span className="old">
-                  {data.regular_price.toLocaleString()} ₽
+                  {(
+                    productInCartList[el] * data.regular_price
+                  ).toLocaleString()}{" "}
+                  ₽
                 </span>{" "}
-                {data.sale_price.toLocaleString()} ₽{" "}
+                {(productInCartList[el] * data.sale_price).toLocaleString()} ₽{" "}
                 <span className="disc_perc">
                   {((data.sale_price / data.regular_price - 1) * 100).toFixed(
                     0
@@ -127,9 +130,14 @@ const ProductList = observer(
                   %
                 </span>
               </div>
+            ) : data.sale_price === 0 ? (
+              <div className={"product__price product__price_text"}>
+                Бесплатно
+              </div>
             ) : (
               <div className={"product__price"}>
-                {data.regular_price.toLocaleString()} ₽{" "}
+                {(productInCartList[el] * data.regular_price).toLocaleString()}{" "}
+                ₽{" "}
               </div>
             )}
             {cart ? (

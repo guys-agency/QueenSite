@@ -1,231 +1,234 @@
-.product-p{
+.product-p {
+  margin-top: 30px;
+  &__image {
+    &-block {
+      .main {
+        &-img {
+          border-radius: 5px;
+          border: 1px solid $gr_light;
+          padding: 50% 0;
+          overflow: hidden;
+          position: relative;
+        }
+        img {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+        }
+      }
+      .thumb {
+        margin-top: 18px;
+        margin-bottom: 20px;
+        .swiper-container {
+          padding-top: 2px;
+        }
+        .swiper-wrapper {
+          height: initial;
+        }
+        .thumb-img {
+          border-radius: 5px;
+          border: 1px solid $gr_light;
+          width: 60px;
+          height: 60px;
+          overflow: hidden;
+          margin-right: 20px;
+          cursor: pointer;
+          transition: all 0.2s;
+          &.swiper-slide-active {
+            border: 1px solid $g_middle;
+          }
+          &:hover {
+            transform: translatey(-2px);
+          }
+          img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+  &__description {
+    padding-left: 40px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    @include max(1115px) {
+      padding-left: 0;
+    }
+    padding-bottom: 40px;
+    .one-plus-one {
+      order: 2;
+      margin-top: 40px;
+    }
+  }
+  &__article {
+    font-size: 14px;
+    color: $a_dark;
+    .underline {
+      margin-left: 10px;
+    }
+  }
+  &__head {
+    order: 0;
+  }
+  &__info {
+    order: 1;
+    margin-top: 40px;
+    font-size: 16px;
+    line-height: 24px;
+    margin-bottom: 0;
+    @include max($s) {
+      font-size: 14px;
+    }
+  }
+  &__control {
+    order: 2;
+    margin-top: 40px;
+  }
+  &__buttons {
+    display: flex;
+    align-items: center;
+    .product__counter {
+      margin-left: 20px;
+      margin-right: 20px;
+    }
+    .btn {
+      display: flex;
+      align-items: center;
+      .i_bag {
+        font-size: 21px;
+        margin-right: 7px;
+        position: relative;
+        top: -3px;
+        color: $b_light;
+      }
+    }
+    .i_fav {
+      font-size: 24px;
+      &:hover {
+        color: $g_middle;
+      }
+    }
+  }
+  &__available {
+    position: relative;
+    display: flex;
+    @include max($s) {
+      flex-wrap: wrap;
+    }
+    margin-top: 20px;
+    & > span {
+      margin-right: 20px;
+      @include max($s) {
+        margin-bottom: 20px;
+      }
+    }
+    .drop {
+      margin-top: 40px;
+    }
+  }
+  &__stock {
+    color: $green;
+  }
+  &__spec {
+    order: 3;
     margin-top: 30px;
-    &__image{
-        &-block{
-            .main{
-                &-img{
-                    border-radius: 5px;
-                    border: 1px solid $gr_light;
-                    padding: 50% 0;
-                    overflow: hidden;
-                    position: relative;
-                }
-                img{
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                }
-            }
-            .thumb{
-                margin-top: 18px;
-                margin-bottom: 20px;
-                .swiper-container{
-                    padding-top: 2px;
-                }
-                .swiper-wrapper{
-                    height: initial;
-                }
-                .thumb-img{
-                        border-radius: 5px;
-                        border: 1px solid $gr_light;
-                        width: 60px; 
-                        height: 60px;
-                        overflow: hidden;
-                        margin-right: 20px;
-                        cursor: pointer;
-                        transition: all 0.2s;
-                        &.swiper-slide-active{
-                            border: 1px solid $g_middle;
-                        }
-                        &:hover{
-                            transform: translatey(-2px);
-                        }
-                    img{  
-                        position: absolute;
-                        top: 0;
-                        left: 0;
-                        width: 100%;
-                    }
-                }
-            }
-        }
+    padding-top: 30px;
+    border-top: 2px solid $gr_light;
+    display: flex;
+    justify-content: space-between;
+    @include max($s) {
+      flex-direction: column;
     }
-    &__description{
-        padding-left: 40px;
+    & > div:last-child {
+      @include max($s) {
+        margin-top: 15px;
+      }
+    }
+    h5 {
+      margin-bottom: 4px;
+      @include max($t) {
+        font-size: 12px;
+      }
+    }
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      flex: 0 0 auto;
+      li {
+        margin-bottom: 7px;
+        max-width: 160px;
         display: flex;
+        @include max($t) {
+          font-size: 12px;
+          margin-bottom: 3px;
+        }
+        @include max($s) {
+          font-size: 14px;
+          margin-bottom: 6px;
+          max-width: initial;
+        }
+        &::before {
+          content: "\2022";
+          color: $a_dark;
+          font-size: 20px;
+          margin-right: 5px;
+          position: relative;
+          top: 3px;
+        }
+        .lth {
+          text-decoration: line-through;
+        }
+      }
+    }
+    &-detail {
+      display: flex;
+      @include max($s) {
         flex-direction: column;
-        position: relative;
-        @include max(1115px){
-            padding-left: 0;
+      }
+      ul {
+        &:first-child {
+          margin-right: 10px;
         }
-        padding-bottom: 40px;
+      }
     }
-    &__article{
-        font-size: 14px;
-        color: $a_dark;
-        .underline{
-            margin-left: 10px;
-        }
-    }
-    &__head{
-        order: 0;
-    }
-    &__info{
-        order: 1;
-        margin-top: 40px;
-        font-size: 16px;
-        line-height: 24px;
-        margin-bottom: 0;
-        @include max($s){
-            font-size: 14px;
-        }
-    }
-    &__control{
-        order: 2;
-        margin-top: 40px;
-    }
-    &__buttons{
-        display: flex;
-        align-items: center;
-        .product__counter{
-            margin-left: 20px;
-            margin-right: 20px;
-        }
-        .btn{
-            display: flex;
-            align-items: center;
-            .i_bag{
-                font-size: 21px;
-                margin-right: 7px;
-                position: relative;
-                top: -3px;
-                color: $b_light;
-            }
-        }
-        .i_fav{
-            font-size: 24px;
-            &:hover{
-                color: $g_middle;
-            }
-        }
-    }
-    &__available{
-        position: relative;
-        display: flex;
-        @include max($s){
-            flex-wrap: wrap;
-        }
-        margin-top: 20px;
-        &>span{
-            margin-right: 20px;
-            @include max($s){
-                margin-bottom: 20px;
-            }
-        }
-        .drop{
-            margin-top: 40px;
-        }
-    }
-    &__stock{
-        color: $green;
-    }
-    &__spec{
-        order: 3;
-        margin-top: 30px;
-        padding-top: 30px;
-        border-top: 2px solid $gr_light;
-        display: flex;
-        justify-content: space-between;
-        @include max($s){
-         flex-direction: column;   
-         
-        }
-        &>div:last-child{
-            @include max($s){
-                margin-top: 15px;
-            }
-        }
-        h5{
-            margin-bottom: 4px;
-            @include max($t){
-                font-size: 12px;
-            }
-        }
-        ul{
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            flex: 0 0 auto;
-            li{
-                margin-bottom: 7px;
-                max-width: 160px;
-                display: flex;
-                @include max($t){
-                    font-size: 12px;
-                    margin-bottom: 3px;
-                }
-                @include max($s){
-                    font-size: 14px;
-                    margin-bottom: 6px;
-                    max-width: initial;
-                }
-                &::before {
-                    content: "\2022";
-                    color: $a_dark;
-                    font-size: 20px;
-                    margin-right: 5px;
-                    position: relative;
-                    top: 3px;
-                } 
-                .lth{
-                    text-decoration: line-through;
-                }
-            }
-        }
-        &-detail{
-            display: flex;
-            @include max($s){
-                flex-direction: column;
-            }
-            ul{
-                &:first-child{
-                    margin-right: 10px;
-                }
-            }
-        }
-    }
+  }
 
-    &.no-desc{
-        .product-p__control{
-            order: 3;
-        }
-        .product-p__spec{
-            order: 2;
-        }
+  &.no-desc {
+    .product-p__control {
+      order: 3;
     }
+    .product-p__spec {
+      order: 2;
+    }
+  }
 }
 
-.drift-inline{
-    position: absolute;
-    width: 200px;
-    height: 200px;
-    border-radius: 30px;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
-    z-index: 3;
+.drift-inline {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  border-radius: 30px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+  z-index: 3;
 }
 
-.card-view-container{
-    .carousel_product{
-        border-top: 2px solid $gr_light;
-        padding-top: 40px;
-        @include max($s){
-            padding-top: 20px;
-        }
-        .title{
-            @include max($s){
-                padding-bottom: 20px;
-            }
-        }
+.card-view-container {
+  .carousel_product {
+    border-top: 2px solid $gr_light;
+    padding-top: 40px;
+    @include max($s) {
+      padding-top: 20px;
     }
+    .title {
+      @include max($s) {
+        padding-bottom: 20px;
+      }
+    }
+  }
 }

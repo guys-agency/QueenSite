@@ -8,9 +8,8 @@ import * as serviceWorker from "./serviceWorker";
 import store from "./MobxStore";
 import { BrowserRouter } from "react-router-dom";
 // const WooCommerceRestApi = require("@woocommerce/woocommerce-rest-api").default;
-
+window.dataLayer = window.dataLayer || [];
 if (process.env.REACT_APP_TYPE === "prod") {
-  window.dataLayer = window.dataLayer || [];
   (function (m, e, t, r, i, k, a) {
     m[i] =
       m[i] ||

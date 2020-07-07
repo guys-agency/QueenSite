@@ -179,7 +179,7 @@ const CartPage = observer(
       return (
         <div className="cart-page">
           <div
-            className="cart-overlay active"
+            className="cart-overlay "
             onClick={() => {
               $(".cart-overlay").removeClass("active");
             }}

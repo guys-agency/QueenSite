@@ -15,8 +15,15 @@ import { useHistory } from "react-router-dom";
 //127.0.0.1:3010
 const mainAdressServ = "http://134.122.81.119";
 
+window.dataLayer = window.dataLayer || [];
+
 class Store {
   productsToRender = [];
+  lastSeenProds =
+    localStorage.get("lastSeenProds") === null
+      ? []
+      : localStorage.get("lastSeenProds");
+  lastSeenProdsData = {};
   filterPointsContainers = [];
   measurePointsContainers = [];
   optPointsContainers = [];
@@ -79,7 +86,7 @@ class Store {
     localStorage.get("productInCart") === null
       ? {}
       : localStorage.get("productInCart");
-
+  dontSaleProdCount = [];
   // seenProd =
   //   localStorage.get("seenProd") === null ? [] : localStorage.get("seenProd");
 
@@ -131,20 +138,40 @@ class Store {
   eComMetric = autorun(() => {
     this.countInProdPage = 1;
     if (process.env.REACT_APP_TYPE === "prod") {
-      window.dataLayer.push({
-        ecommerce: {
-          detail: {
-            products: [
-              {
-                id: this.cardContainer.slug,
-                name: this.cardContainer.name,
-                price: this.cardContainer.price,
-                brand: this.cardContainer.brand,
-              },
-            ],
+      if (this.cardContainer.slug !== undefined) {
+        window.dataLayer.push({
+          ecommerce: {
+            detail: {
+              products: [
+                {
+                  id: this.cardContainer.slug,
+                  name: this.cardContainer.name,
+                  price: this.cardContainer.price,
+                  brand: this.cardContainer.brand,
+                },
+              ],
+            },
           },
-        },
-      });
+        });
+      }
+    }
+  });
+
+  lastSeenProdsGetData = autorun(() => {
+    localStorage.set("lastSeenProds", this.lastSeenProds);
+    if (this.lastSeenProds.length > 0) {
+      api
+        .getAnyProd({ slugs: this.lastSeenProds })
+        .then((data) => {
+          Object.keys(data).forEach((prod) => {
+            this.lastSeenProdsData[data[prod].slug] = {
+              ...data[prod],
+            };
+          });
+        })
+        .catch((err) => {
+          console.log("err :>> ", err);
+        });
     }
   });
 
@@ -253,6 +280,7 @@ class Store {
     //   'localStorage.get("productInCart") :>> ',
     //   localStorage.get("productInCart")
     // );
+    const productInCartListOld = localStorage.get("productInCart");
     localStorage.set("productInCart", this.productInCartList);
     this.cartCount = Object.keys(this.productInCartList).length;
 
@@ -267,25 +295,143 @@ class Store {
         });
     }
     if (this.cartCount) {
-      if (give) {
-        api
-          .getAnyProd({ slugs: Object.keys(this.productInCartList) })
-          .then((data) => {
-            const timeCont = {};
-            // console.log("prodCart :>> ", data);
-            Object.keys(data).forEach((prod) => {
-              timeCont[data[prod].slug] = {
-                ...data[prod],
-                countInCart: this.productInCartList[data[prod].slug],
-              };
-            });
-            this.productInCart = timeCont;
-            // console.log("object :>> ", this.productInCart);
-          })
-          .catch((err) => {
-            console.log("err :>> ", err);
+      // if (give) {
+      api
+        .getAnyProd({ slugs: Object.keys(this.productInCartList) })
+        .then((data) => {
+          const timeCont = {};
+          // console.log("prodCart :>> ", data);
+          Object.keys(data).forEach((prod) => {
+            timeCont[data[prod].slug] = {
+              ...data[prod],
+              countInCart: this.productInCartList[data[prod].slug],
+            };
           });
-      }
+          // this.productInCart = timeCont;
+          // console.log("object :>> ", this.productInCart);
+
+          const dontSaleProd = [];
+
+          let dontSaleProdCount = 0;
+          if (Object.keys(timeCont).length) {
+            Object.keys(timeCont).forEach((el) => {
+              if (!timeCont[el].sale) {
+                dontSaleProdCount += +this.productInCartList[el];
+                dontSaleProd.push(timeCont[el]);
+              }
+            });
+            this.dontSaleProdCount = dontSaleProdCount;
+            if (
+              dontSaleProdCount > 0 &&
+              Math.floor(dontSaleProdCount / 3) > 0
+            ) {
+              let minProdSlug = 0;
+              const minProdSlugs = [];
+
+              dontSaleProd.sort((a, b) => {
+                if (a.regular_price < b.regular_price) return -1;
+                if (a.regular_price > b.regular_price) return 1;
+                return 0;
+              });
+
+              console.log("dont :>> ", dontSaleProd);
+              minProdSlugs.push(minProdSlug);
+              let dontSaleProdCountIn = Math.floor(dontSaleProdCount / 3);
+              console.log("minProdSlugs :>> ", minProdSlugs);
+              for (let index = 0; index < dontSaleProd.length; index++) {
+                if (
+                  this.productInCartList[dontSaleProd[index].slug] ===
+                  dontSaleProdCountIn
+                ) {
+                  timeCont[dontSaleProd[index].slug].sale_price = 0;
+                  timeCont[dontSaleProd[index].slug].sale = true;
+                  break;
+                } else if (
+                  this.productInCartList[dontSaleProd[index].slug] >
+                  dontSaleProdCountIn
+                ) {
+                  timeCont[dontSaleProd[index].slug].sale_price =
+                    timeCont[dontSaleProd[index].slug].regular_price *
+                    (1 -
+                      dontSaleProdCountIn /
+                        this.productInCartList[dontSaleProd[index].slug]);
+                  timeCont[dontSaleProd[index].slug].sale = true;
+                  break;
+                } else if (
+                  this.productInCartList[dontSaleProd[index].slug] <
+                  dontSaleProdCountIn
+                ) {
+                  timeCont[dontSaleProd[index].slug].regular_price = 0;
+                  dontSaleProdCountIn -= this.productInCartList[
+                    dontSaleProd[index].slug
+                  ];
+                }
+              }
+            }
+          } else {
+            this.dontSaleProd = [];
+          }
+          this.productInCart = timeCont;
+        })
+        .catch((err) => {
+          console.log("err :>> ", err);
+          this.productInCartList = productInCartListOld;
+          localStorage.set("productInCart", this.productInCartList);
+        });
+      // } else {
+      //   const dontSaleProd = [];
+      //   let dontSaleProdCount = 0;
+      //   if (Object.keys(this.productInCart).length) {
+      //     Object.keys(this.productInCart).forEach((el) => {
+      //       if (!this.productInCart[el].sale) {
+      //         dontSaleProdCount += +this.productInCartList[el];
+      //         dontSaleProd.push(this.productInCart[el]);
+      //       }
+      //     });
+
+      //     if (dontSaleProdCount > 0 && dontSaleProdCount % 3 === 0) {
+      //       let minProdSlug = 0;
+      //       const minProdSlugs = [];
+
+      //       dontSaleProd.sort((a, b) => {
+      //         if (a < b) return -1;
+      //         if (a > b) return 1;
+      //         return 0;
+      //       });
+      //       console.log("dont :>> ", dontSaleProd);
+      //       minProdSlugs.push(minProdSlug);
+      //       let dontSaleProdCountIn = dontSaleProdCount / 3;
+      //       console.log("minProdSlugs :>> ", minProdSlugs);
+      //       for (let index = 0; index < dontSaleProd.length; index++) {
+      //         if (
+      //           this.productInCartList[dontSaleProd[index].slug] ===
+      //           dontSaleProdCountIn
+      //         ) {
+      //           this.productInCart[dontSaleProd[index].slug].regular_price = 0;
+      //           break;
+      //         } else if (
+      //           this.productInCartList[dontSaleProd[index].slug] >
+      //           dontSaleProdCountIn
+      //         ) {
+      //           this.productInCart[dontSaleProd[index].slug].sale_price =
+      //             (this.productInCart[dontSaleProd[index].slug].regular_price *
+      //               dontSaleProdCountIn) /
+      //             this.productInCartList[dontSaleProd[index].slug];
+      //           this.productInCart[dontSaleProd[index].slug].sale = true;
+      //           break;
+      //         } else if (
+      //           this.productInCartList[dontSaleProd[index].slug] <
+      //           dontSaleProdCountIn
+      //         ) {
+      //           this.productInCart[dontSaleProd[index].slug].regular_price = 0;
+      //           dontSaleProdCountIn -= this.productInCartList[
+      //             dontSaleProd[index].slug
+      //           ];
+      //         }
+      //       }
+      //     }
+      //   }
+      // }
       // else {
       //   Object.keys(this.productInCartList).forEach((el) => {
       //     this.productInCart[el].countInCart = this.productInCartList[el];
@@ -1455,6 +1601,9 @@ decorate(Store, {
   sideLogin: observable,
   changeSide: observable,
   userData: observable,
+  dontSaleProdCount: observable,
+  lastSeenProds: observable,
+  lastSeenProdsData: observable,
 });
 
 const store = new Store();

@@ -1,35 +1,36 @@
-.product__counter{
-    border: 1px solid $gr_middle;
-    background-color: #fff;
-    border-radius: 30px;
-    height: 42px;
-    display: inline-flex;
-    align-items: center;
-    @include max($s){
-        height: 34px;
+.product__counter {
+  border: 1px solid $gr_middle;
+  background-color: #fff;
+  border-radius: 30px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+
+  @include max($s) {
+    height: 34px;
+  }
+  input {
+    height: 100%;
+    width: 30px;
+    text-align: center;
+    font-size: 16px;
+    color: $b_dark;
+    border: none;
+  }
+  .ic {
+    font-size: 16px;
+    &.i {
+      &_minus {
+        padding-left: 15px;
+        padding-right: 10px;
+      }
+      &_plus {
+        padding-right: 15px;
+        padding-left: 10px;
+      }
     }
-    input{
-        height: 100%;
-        width: 30px;
-        text-align: center;
-        font-size: 16px;
-        color: $b_dark;
-        border: none;
+    &:hover {
+      color: $g_middle;
     }
-    .ic{
-        font-size: 16px;
-        &.i{
-            &_minus{
-                padding-left: 15px;
-                padding-right: 10px;
-            }
-            &_plus{
-                padding-right: 15px;
-                padding-left: 10px;
-            }
-        }
-        &:hover{
-            color: $g_middle;
-        }
-    }
+  }
 }

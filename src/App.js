@@ -126,6 +126,20 @@ const MainScreen = observer(
       //     console.log("err", err);
       //   });
     };
+    addToLastSeenProd = (slug) => {
+      const { lastSeenProds } = this.props.store;
+
+      if (!lastSeenProds.includes(slug)) {
+        lastSeenProds.unshift(slug);
+      } else {
+        const posSlug = lastSeenProds.indexOf(slug);
+        lastSeenProds.splice(posSlug, 1);
+        lastSeenProds.unshift(slug);
+      }
+      if (lastSeenProds.length > 16) {
+        lastSeenProds.pop();
+      }
+    };
 
     render() {
       return (
@@ -240,6 +254,7 @@ const MainScreen = observer(
               render={(propsRout) => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
                 (this.props.store.countInProdPage = 1),
+                this.addToLastSeenProd(propsRout.match.params.id),
                 (
                   <div className="main-screen">
                     <CardView
