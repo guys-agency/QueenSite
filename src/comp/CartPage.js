@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 import React from "react";
-import $ from "jquery";
+import $, { data } from "jquery";
 import "suggestions-jquery";
 import { withRouter } from "react-router";
 import { cities } from "../constants";
@@ -11,9 +11,12 @@ import ProductList from "./ProductList";
 import api from "./api";
 import num2str from "../ulits/nm2wrd";
 import Inputmask from "inputmask";
+import Fade from "react-reveal/Fade";
 import "../blocks/dadata.scss";
 
 const { Component } = React;
+const momLoc = moment();
+momLoc.locale("ru");
 
 //TODO: исправить вывод стоимости во время скидки
 const CartPage = observer(
@@ -37,18 +40,65 @@ const CartPage = observer(
         this.props.store.userData.user !== undefined
           ? this.props.store.userData.user.tel.substr(1)
           : "",
+      delChoose: true,
+      pickUpChoose: false,
+      payment: "PREPAID",
+      pickUpStore: "",
+      coupon: { count: 0, type: "", code: "", id: "" },
     };
 
     deliveryOrderData = {};
     deliverySend = {};
     dimensionsApi = {};
+    // pickUpStore = "";
 
     order = {};
+
+    stores = {
+      "ТРЦ Орджоникидзе 11": {
+        name: "ТЦ ОРДЖОНИКИДЗЕ 11",
+        address: "Москва, ул. Орджоникидзе 11, стр.1А, 4 линия",
+        coor: "55.707791,37.595806",
+        aval: true,
+      },
+      // "OV БЕЛАЯ ДАЧА": {
+      //   name: "OV БЕЛАЯ ДАЧА",
+      //   address: "Московская область, Котельники, Новорязанское шоссе, 8",
+      //   coor: "55.661176,37.880312",
+      //   aval: true,
+      // },
+      "ТРЦ CАЛАРИС": {
+        name: "ТРЦ САЛАРИС",
+        address: "Москва, Киевское шоссе, 23-й километр, 1",
+        coor: "55.623788,37.422027",
+        aval: true,
+      },
+      "ТРЦ Пушкино парк": {
+        name: "ТРЦ ПУШКИНО ПАРК",
+        address: "Московская область, Пушкино, Красноармейское шоссе, 1, 104",
+        coor: "56.013291,37.888010",
+        aval: true,
+      },
+      "ТРЦ Афимолл": {
+        name: "ТРЦ АФИМОЛЛ",
+        address: "Москва, Пресненская наб., д.2, А-65",
+        coor: "55.749299, 37.539644",
+      },
+    };
 
     deteleProduct = (el) => {
       const { productInCartList, addtoCart } = this.props.store;
       delete productInCartList[el];
       addtoCart(true);
+    };
+
+    choosePickUpPoint = (e, name) => {
+      document.querySelectorAll(".cart-page__store").forEach((elem) => {
+        elem.classList.remove("active");
+      });
+      $(e.currentTarget).addClass("active");
+      this.setState({ pickUpStore: name });
+      // this.pickUpStore = name;
     };
 
     // toggleCity = (e) => {
@@ -98,7 +148,7 @@ const CartPage = observer(
           $street.suggestions({
             token: this.tokenDa,
             type: this.typeDa,
-
+            noSuggestionsHint: false,
             bounds: "street",
             constraints: {
               // ограничиваем поиск
@@ -136,9 +186,31 @@ const CartPage = observer(
       }
     }
 
+    cancelPay = (e) => {
+      if (
+        e.target.className.includes("sidebar-overlay") ||
+        e.target.className.includes("btn")
+      ) {
+        $(".sidebar-overlay").removeClass("active");
+        $(".sidebar-cart").removeClass("visible");
+        $("body").removeClass("no-scroll");
+        localStorage.removeItem("deleteCart");
+        $("#payment-form").empty();
+        $(".btn_yellow").text("Оплата отменена");
+        setTimeout(() => {
+          $(".btn_yellow").removeClass("deactive");
+          $(".btn_yellow").text("Заказать");
+        }, 1000);
+      }
+    };
+
     render() {
+      if (!Object.keys(localStorage.get("productInCart")).length) {
+        this.props.history.push("/");
+      }
+
       const { productInCart, productInCartList, addtoCart } = this.props.store;
-      const { deliveryData } = this.state;
+      const { deliveryData, coupon } = this.state;
       const regexEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
       const productList = [];
@@ -146,6 +218,7 @@ const CartPage = observer(
       let totalSale = 0;
       let totalFullprice = 0;
       let address = "";
+      const htmlStore = [];
       if (Object.keys(productInCart).length) {
         Object.keys(productInCart).forEach((el) => {
           productList.push(
@@ -170,21 +243,87 @@ const CartPage = observer(
           totalFullprice +=
             productInCartList[el] * productInCart[el].regular_price;
         });
-      } else {
-        this.props.history.push("/");
       }
 
       const { adress, flat, house, name, secondName, email, tel } = this.state;
 
-      return (
-        <div className="cart-page">
+      Object.keys(productInCart).forEach((slug) => {
+        productInCart[slug].stores.forEach((str) => {
+          // console.log("str.name :>> ", str.name);
+          if (
+            str.name !== "ТРЦ OUTLET Белая дача" &&
+            this.stores[str.name].aval
+          ) {
+            if (+str.count > 0) {
+              this.stores[str.name].aval = true;
+            } else {
+              this.stores[str.name].aval = false;
+            }
+          }
+        });
+      });
+      const dt = new Date();
+      Object.keys(this.stores).forEach((st) => {
+        let dateInStore = "";
+        if (this.stores[st].aval) {
+          dateInStore += moment().add(0, "days").format("DD.MM") + " ";
+          dateInStore += "— " + moment().add(1, "days").format("DD.MM");
+        } else {
+          dateInStore += moment().add(1, "days").format("DD.MM");
+        }
+        htmlStore.push(
           <div
-            className="cart-overlay "
-            onClick={() => {
-              $(".cart-overlay").removeClass("active");
+            className="cart-page__store"
+            onClick={(e) => {
+              this.choosePickUpPoint(e, st);
             }}
           >
-            <div id="payment-form" className="cart-popup"></div>
+            <div className="cart-page__store-info">
+              <p className="cart-page__store-name">{this.stores[st].name}</p>
+              <div className="cart-page__store-adress">
+                {/* <span className="old">152 ₽</span> 152 ₽{" "}
+                              <span className="disc_perc">-20%</span> */}
+                <p>{this.stores[st].address}</p>
+              </div>
+            </div>
+            <div className="cart-page__store-date">
+              <p>{dateInStore}</p> <p className="separator">|</p>
+              <p>10:00 — 22:00</p>
+            </div>
+            <a
+              href={`https://yandex.ru/maps/?rtext=~${this.stores[st].coor}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="cart-page__store-link"
+            >
+              Маршрут на Яндекс.Картах
+            </a>
+          </div>
+        );
+      });
+
+      let coupDisc = 0;
+      if (coupon.count > 0) {
+        if (coupon.type === "percent") {
+          coupDisc = Math.round(totalPrice * (+coupon.count / 100));
+        } else if (coupon.type === "fixed_cart") {
+          coupDisc = +coupon.count;
+        }
+      }
+
+      totalPrice -= coupDisc;
+
+      return (
+        <div className="cart-page">
+          <div className="sidebar-overlay" onClick={this.cancelPay}></div>
+          <div className="sidebar sidebar-cart">
+            <div className="sidebar__head">
+              <div className="btn" onClick={this.cancelPay}>
+                Отменить оплату
+              </div>
+            </div>
+
+            <div id="payment-form"></div>
           </div>
           <div className="container">
             <p>
@@ -198,77 +337,42 @@ const CartPage = observer(
                 <div className="cart-page__cart">
                   <h3>Оформление заказа</h3>
 
-                  <div className="cart__list">
-                    {productList}
+                  <div className="cart__list">{productList}</div>
+                </div>
 
-                    {/* <div className="product product_h">
-                      <div className="product__image">
-                        <div className="product__image-wrp">
-                          <img src="/image/Category/Product-card/Placeholder.png" />
-                        </div>
-                      </div>
-                      <div className="product__info">
-                        <Link className="product__name">
-                          Кружка 370 мл Модерн, черная матовая
-                        </Link>
-                        <div className="product__price product__price_disc">
-                          <span className="old">152 ₽</span> 152 ₽{" "}
-                          <span className="disc_perc">-20%</span>
-                        </div>
-                        <button className="ic i_close"></button>
-                        <div className="product__counter">
-                          <button className="ic i_minus"></button>
-                          <input min="1" max="100" type="number" value="1" />
-                          <button className="ic i_plus"></button>
-                        </div>
-                      </div>
+                <div className="cart-page__delivery">
+                  <h3 className="tilda">Оплата</h3>
+                  <div className="cart__tumbler">
+                    <div className="tumbler">
+                      <button
+                        className={
+                          "tumb " +
+                          (this.state.payment === "PREPAID" ? "active" : "")
+                        }
+                        onClick={() => {
+                          if (this.state.payment !== "PREPAID")
+                            this.setState({
+                              payment: "PREPAID",
+                            });
+                        }}
+                      >
+                        Онлайн оплата
+                      </button>
+                      <button
+                        className={
+                          "tumb " +
+                          (this.state.payment === "CARD" ? "active" : "")
+                        }
+                        onClick={() => {
+                          if (this.state.payment !== "CARD")
+                            this.setState({
+                              payment: "CARD",
+                            });
+                        }}
+                      >
+                        Картой при получении
+                      </button>
                     </div>
-
-                    <div className="product product_h">
-                      <div className="product__image">
-                        <div className="product__image-wrp">
-                          <img src="/image/Category/Product-card/Placeholder.png" />
-                        </div>
-                      </div>
-                      <div className="product__info">
-                        <Link className="product__name">
-                          Кружка 370 мл Модерн, черная матовая
-                        </Link>
-                        <div className="product__price product__price_disc">
-                          <span className="old">152 ₽</span> 152 ₽{" "}
-                          <span className="disc_perc">-20%</span>
-                        </div>
-                        <button className="ic i_close"></button>
-                        <div className="product__counter">
-                          <button className="ic i_minus"></button>
-                          <input min="1" max="100" type="number" value="1" />
-                          <button className="ic i_plus"></button>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="product product_h">
-                      <div className="product__image">
-                        <div className="product__image-wrp">
-                          <img src="/image/Category/Product-card/Placeholder.png" />
-                        </div>
-                      </div>
-                      <div className="product__info">
-                        <Link className="product__name">
-                          Кружка 370 мл Модерн, черная матовая
-                        </Link>
-                        <div className="product__price product__price_disc">
-                          <span className="old">152 ₽</span> 152 ₽{" "}
-                          <span className="disc_perc">-20%</span>
-                        </div>
-                        <button className="ic i_close"></button>
-                        <div className="product__counter">
-                          <button className="ic i_minus"></button>
-                          <input min="1" max="100" type="number" value="1" />
-                          <button className="ic i_plus"></button>
-                        </div>
-                      </div>
-                    </div> */}
                   </div>
                 </div>
 
@@ -374,42 +478,6 @@ const CartPage = observer(
                                     .catch((err) => {
                                       console.log("err :>> ", err);
                                     });
-                                  // const rigthCities = [];
-                                  // cities.some((el) => {
-                                  //   if (rigthCities.length < 3) {
-                                  //     if (
-                                  //       el
-                                  //         .toLowerCase()
-                                  //         .indexOf(e.target.value.toLowerCase()) !== -1
-                                  //     ) {
-                                  //       rigthCities.push(el);
-                                  //     }
-                                  //     return false;
-                                  //   } else {
-                                  //     return true;
-                                  //   }
-                                  // });
-
-                                  // for (let index = 0; index < 3; index++) {
-                                  //   console.log("object :>> ", rigthCities);
-                                  //   renderCities.push(
-                                  //     <li>
-                                  //       <button
-                                  //         type="submit"
-                                  //         onClick={(e) => {
-                                  //           e.preventDefault();
-                                  //           $(".header__drop").removeClass("visible");
-                                  //           localStorage.set("city", {
-                                  //             name: rigthCities[index],
-                                  //             sourse: "U",
-                                  //           });
-                                  //         }}
-                                  //       >
-                                  //         {rigthCities[index]}
-                                  //       </button>
-                                  //     </li>
-                                  //   );
-                                  // }
                                 }
                               }}
                               onFocus={(e) => {
@@ -430,172 +498,240 @@ const CartPage = observer(
                       </span>
                     </h5>
                   </h3>
-                  {Object.keys(deliveryData).length !== 0 && (
-                    <div className="cart-page__delivery-details">
-                      <div className="row">
-                        <div className="items col col-12">
-                          <div className="item">
-                            <h5>Тип доставки:</h5>
-                            <span>
-                              {deliveryData.deliveryType === "COURIER"
-                                ? "Курьером"
-                                : "Пункт выдачи"}{" "}
-                              {deliveryData.deliveryService !== undefined
-                                ? " (" + deliveryData.deliveryService.name + ")"
-                                : deliveryData.deliveryOption.name !== null
-                                ? "( " + deliveryData.deliveryOption.name + ")"
-                                : null}
-                            </span>
-                          </div>
-
-                          <div className="item">
-                            <h5>Стоимость и сроки:</h5>
-                            <span>
-                              {localStorage.get("city").geoId === 213 &&
-                              totalPrice >= 1000
-                                ? "Бесплатно"
-                                : deliveryData.deliveryOption.cost
-                                    .deliveryForCustomer + " ₽ "}
-                              /{" "}
-                              <span className="b_gray">
-                                {deliveryData.time}{" "}
-                                {num2str(deliveryData.time, [
-                                  "день",
-                                  "дня",
-                                  "дней",
-                                ])}
-                              </span>
-                            </span>
-                          </div>
-
-                          {deliveryData.deliveryType !== "COURIER" && (
-                            <div className="item">
-                              <h5>Адрес выдачи:</h5>
-                              <span>
-                                {deliveryData.pickupPoint.address.addressString}
-                              </span>
-                            </div>
-                          )}
-                        </div>
+                  {(localStorage.get("city").geoId === 213 ||
+                    localStorage.get("city").region ===
+                      "Московская область") && (
+                    <div className="cart__tumbler">
+                      <div className="tumbler">
+                        <button
+                          className={
+                            "tumb " + (this.state.delChoose ? "active" : "")
+                          }
+                          onClick={() => {
+                            if (!this.state.delChoose)
+                              this.setState({
+                                delChoose: true,
+                                pickUpChoose: false,
+                              });
+                          }}
+                        >
+                          Курьерской службой
+                        </button>
+                        <button
+                          className={
+                            "tumb " + (this.state.pickUpChoose ? "active" : "")
+                          }
+                          onClick={() => {
+                            if (!this.state.pickUpChoose)
+                              this.setState({
+                                delChoose: false,
+                                pickUpChoose: true,
+                              });
+                          }}
+                        >
+                          Самовывоз из магазина
+                        </button>
                       </div>
-                      {deliveryData.deliveryType === "COURIER" && (
-                        <form className="row" action="">
-                          <div className="col col-6 col-s-12">
-                            <div className="input-field">
-                              <label className="required" htmlFor="address">
-                                Улица
-                              </label>
-                              <input
-                                id="address"
-                                type="text"
-                                value={adress}
-                                onFocus={(e) => {
-                                  $(e.target)
-                                    .parent()
-                                    .find("label")
-                                    .addClass("active");
-                                }}
-                                onBlur={(e) => {
-                                  if (e.target.value === "") {
-                                    $(e.target)
-                                      .parent()
-                                      .find("label")
-                                      .removeClass("active");
-                                  }
-                                }}
-                                onInput={(e) => {
-                                  this.setState({ adress: e.target.value });
-                                }}
-                                // onChange={(e) => {
-                                //   this.setState({ adress: e.target.value });
-                                // }}
-                              />
-                            </div>
-                          </div>
-
-                          <div className="col col-3 col-s-6">
-                            <div className="input-field">
-                              <label className="required" htmlFor="flat">
-                                Дом
-                              </label>
-                              <input
-                                id="flat"
-                                type="text"
-                                value={house}
-                                onFocus={(e) => {
-                                  $(e.target)
-                                    .parent()
-                                    .find("label")
-                                    .addClass("active");
-                                }}
-                                onBlur={(e) => {
-                                  if (e.target.value === "") {
-                                    $(e.target)
-                                      .parent()
-                                      .find("label")
-                                      .removeClass("active");
-                                  }
-                                }}
-                                onInput={(e) => {
-                                  this.setState({ house: e.target.value });
-                                }}
-                              />
-                            </div>
-                          </div>
-
-                          <div className="col col-3 col-s-6">
-                            <div className="input-field">
-                              <label htmlFor="porch">Кв/Офис</label>
-                              <input
-                                id="porch"
-                                type="text"
-                                value={flat}
-                                onFocus={(e) => {
-                                  $(e.target)
-                                    .parent()
-                                    .find("label")
-                                    .addClass("active");
-                                }}
-                                onBlur={(e) => {
-                                  if (e.target.value === "") {
-                                    $(e.target)
-                                      .parent()
-                                      .find("label")
-                                      .removeClass("active");
-                                  }
-                                }}
-                                onInput={(e) => {
-                                  this.setState({ flat: e.target.value });
-                                }}
-                              />
-                            </div>
-                          </div>
-                        </form>
-                      )}
                     </div>
                   )}
 
-                  {Object.keys(deliveryData).length === 0 && (
-                    <div
-                      className="btn btn_primary"
-                      onClick={() => {
-                        this.startYaDeliv(totalPrice, productInCartList);
-                      }}
-                    >
-                      Выбрать доставку
+                  {this.state.delChoose && (
+                    <Fade distance="50px" duration={500}>
+                      <>
+                        {Object.keys(deliveryData).length !== 0 && (
+                          <div className="cart-page__delivery-details">
+                            <div className="row">
+                              <div className="items col col-12">
+                                <div className="item">
+                                  <h5>Тип доставки:</h5>
+                                  <span>
+                                    {deliveryData.deliveryType === "COURIER"
+                                      ? "Курьером"
+                                      : "Пункт выдачи"}{" "}
+                                    {deliveryData.deliveryService !== undefined
+                                      ? " (" +
+                                        deliveryData.deliveryService.name +
+                                        ")"
+                                      : deliveryData.deliveryOption.name !==
+                                        null
+                                      ? "( " +
+                                        deliveryData.deliveryOption.name +
+                                        ")"
+                                      : null}
+                                  </span>
+                                </div>
+
+                                <div className="item">
+                                  <h5>Стоимость и сроки:</h5>
+                                  <span>
+                                    {localStorage.get("city").geoId === 213 &&
+                                    (totalPrice >= 1000 ||
+                                      (Object.keys(productInCart).length ===
+                                        1 &&
+                                        productInCart[
+                                          Object.keys(productInCart)[0]
+                                        ].slug === 5637285331))
+                                      ? "Бесплатно"
+                                      : deliveryData.deliveryOption.cost
+                                          .deliveryForCustomer + " ₽ "}
+                                    /{" "}
+                                    <span className="b_gray">
+                                      {deliveryData.time}{" "}
+                                      {num2str(deliveryData.time, [
+                                        "день",
+                                        "дня",
+                                        "дней",
+                                      ])}
+                                    </span>
+                                  </span>
+                                </div>
+
+                                {deliveryData.deliveryType !== "COURIER" && (
+                                  <div className="item">
+                                    <h5>Адрес выдачи:</h5>
+                                    <span>
+                                      {
+                                        deliveryData.pickupPoint.address
+                                          .addressString
+                                      }
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                            {deliveryData.deliveryType === "COURIER" && (
+                              <form className="row" action="">
+                                <div className="col col-6 col-s-12">
+                                  <div className="input-field">
+                                    <label
+                                      className="required"
+                                      htmlFor="address"
+                                    >
+                                      Улица
+                                    </label>
+                                    <input
+                                      id="address"
+                                      type="text"
+                                      value={adress}
+                                      onFocus={(e) => {
+                                        $(e.target)
+                                          .parent()
+                                          .find("label")
+                                          .addClass("active");
+                                      }}
+                                      onBlur={(e) => {
+                                        if (e.target.value === "") {
+                                          $(e.target)
+                                            .parent()
+                                            .find("label")
+                                            .removeClass("active");
+                                        }
+                                      }}
+                                      onInput={(e) => {
+                                        this.setState({
+                                          adress: e.target.value,
+                                        });
+                                      }}
+                                      // onChange={(e) => {
+                                      //   this.setState({ adress: e.target.value });
+                                      // }}
+                                    />
+                                  </div>
+                                </div>
+
+                                <div className="col col-3 col-s-6">
+                                  <div className="input-field">
+                                    <label className="required" htmlFor="flat">
+                                      Дом
+                                    </label>
+                                    <input
+                                      id="flat"
+                                      type="text"
+                                      value={house}
+                                      onFocus={(e) => {
+                                        $(e.target)
+                                          .parent()
+                                          .find("label")
+                                          .addClass("active");
+                                      }}
+                                      onBlur={(e) => {
+                                        if (e.target.value === "") {
+                                          $(e.target)
+                                            .parent()
+                                            .find("label")
+                                            .removeClass("active");
+                                        }
+                                      }}
+                                      onInput={(e) => {
+                                        this.setState({
+                                          house: e.target.value,
+                                        });
+                                      }}
+                                    />
+                                  </div>
+                                </div>
+
+                                <div className="col col-3 col-s-6">
+                                  <div className="input-field">
+                                    <label htmlFor="porch">Кв/Офис</label>
+                                    <input
+                                      id="porch"
+                                      type="text"
+                                      value={flat}
+                                      onFocus={(e) => {
+                                        $(e.target)
+                                          .parent()
+                                          .find("label")
+                                          .addClass("active");
+                                      }}
+                                      onBlur={(e) => {
+                                        if (e.target.value === "") {
+                                          $(e.target)
+                                            .parent()
+                                            .find("label")
+                                            .removeClass("active");
+                                        }
+                                      }}
+                                      onInput={(e) => {
+                                        this.setState({ flat: e.target.value });
+                                      }}
+                                    />
+                                  </div>
+                                </div>
+                              </form>
+                            )}
+                          </div>
+                        )}
+
+                        {Object.keys(deliveryData).length === 0 && (
+                          <div
+                            className="btn btn_primary"
+                            onClick={() => {
+                              this.startYaDeliv(totalPrice, productInCartList);
+                            }}
+                          >
+                            Выбрать доставку
+                          </div>
+                        )}
+                        {Object.keys(deliveryData).length !== 0 && (
+                          <div
+                            className="btn"
+                            onClick={() => {
+                              this.startYaDeliv(totalPrice, productInCartList);
+                            }}
+                          >
+                            Изменить способ доставки
+                          </div>
+                        )}
+                        <div className="Ya-block" id="yaDeliveryWidget"></div>
+                      </>
+                    </Fade>
+                  )}
+                  {this.state.pickUpChoose && (
+                    <div className="cart__list cart-page__stores">
+                      {htmlStore}
                     </div>
                   )}
-                  {Object.keys(deliveryData).length !== 0 && (
-                    <div
-                      className="btn"
-                      onClick={() => {
-                        this.startYaDeliv(totalPrice, productInCartList);
-                      }}
-                    >
-                      Изменить способ доставки
-                    </div>
-                  )}
-                  <div className="Ya-block" id="yaDeliveryWidget"></div>
                 </div>
 
                 <div className="cart-page__data">
@@ -825,7 +961,10 @@ const CartPage = observer(
                             {Object.keys(deliveryData).length === 0
                               ? totalPrice.toLocaleString()
                               : localStorage.get("city").geoId === 213 &&
-                                totalPrice >= 1000
+                                (totalPrice >= 1000 ||
+                                  (Object.keys(productInCart).length === 1 &&
+                                    productInCart[Object.keys(productInCart)[0]]
+                                      .slug === 5637285331))
                               ? totalPrice.toLocaleString()
                               : (
                                   deliveryData.deliveryOption.cost
@@ -847,12 +986,23 @@ const CartPage = observer(
                             ₽
                           </span>
                         </div>
+
+                        {coupDisc > 0 && (
+                          <div>
+                            <span>Сертификат</span>{" "}
+                            <span className="red">{coupDisc} ₽</span>
+                          </div>
+                        )}
+
                         {Object.keys(deliveryData).length !== 0 && (
                           <div>
                             <span>Доставка</span>{" "}
                             <span>
                               {localStorage.get("city").geoId === 213 &&
-                              totalPrice >= 1000
+                              (totalPrice >= 1000 ||
+                                (Object.keys(productInCart).length === 1 &&
+                                  productInCart[Object.keys(productInCart)[0]]
+                                    .slug === 5637285331))
                                 ? "Бесплатно"
                                 : deliveryData.deliveryOption.cost
                                     .deliveryForCustomer + " ₽ "}{" "}
@@ -888,54 +1038,75 @@ const CartPage = observer(
                       onClick={(e) => {
                         //NEN
 
-                        const { flat, house, adress } = this.state;
-                        if (
-                          this.deliveryOrderData.deliveryOption === undefined
-                        ) {
-                          $("html, body").animate(
-                            {
-                              scrollTop:
-                                $(".cart-page__delivery").offset().top -
-                                $(".navigation").height(),
-                            },
-                            500
-                          );
-                          return;
-                        } else {
+                        const {
+                          flat,
+                          house,
+                          adress,
+                          delChoose,
+                          pickUpChoose,
+                        } = this.state;
+                        if (delChoose) {
                           if (
-                            this.state.deliveryData.deliveryType === "COURIER"
-                          ) {
-                            if (house === "" || adress === "") {
-                              $("html, body").animate(
-                                {
-                                  scrollTop:
-                                    $(".cart-page__delivery").offset().top -
-                                    $(".navigation").height(),
-                                },
-                                500
-                              );
-                              return;
-                            }
-                          }
-
-                          if (
-                            name === "" ||
-                            secondName === "" ||
-                            email === "" ||
-                            tel === "" ||
-                            !regexEmail.test(email) ||
-                            tel.includes("_")
+                            this.deliveryOrderData.deliveryOption === undefined
                           ) {
                             $("html, body").animate(
                               {
                                 scrollTop:
-                                  $(".cart-page__data").offset().top -
+                                  $(".cart-page__delivery").offset().top -
+                                  $(".navigation").height(),
+                              },
+                              500
+                            );
+                            console.log("testtt :>> ");
+                            this.startYaDeliv(totalPrice, productInCartList);
+                            return;
+                          } else {
+                            if (
+                              this.state.deliveryData.deliveryType === "COURIER"
+                            ) {
+                              if (house === "" || adress === "") {
+                                $("html, body").animate(
+                                  {
+                                    scrollTop:
+                                      $(".cart-page__delivery").offset().top -
+                                      $(".navigation").height(),
+                                  },
+                                  500
+                                );
+                                return;
+                              }
+                            }
+                          }
+                        } else {
+                          if (this.state.pickUpStore === "") {
+                            $("html, body").animate(
+                              {
+                                scrollTop:
+                                  $(".cart-page__delivery").offset().top -
                                   $(".navigation").height(),
                               },
                               500
                             );
                             return;
                           }
+                        }
+                        if (
+                          name === "" ||
+                          secondName === "" ||
+                          email === "" ||
+                          tel === "" ||
+                          !regexEmail.test(email) ||
+                          tel.includes("_")
+                        ) {
+                          $("html, body").animate(
+                            {
+                              scrollTop:
+                                $(".cart-page__data").offset().top -
+                                $(".navigation").height(),
+                            },
+                            500
+                          );
+                          return;
                         }
 
                         $(e.target).addClass("deactive");
@@ -944,97 +1115,6 @@ const CartPage = observer(
                         const senderId = 500001936;
                         const cityLoc = localStorage.get("city");
                         // console.log("cityLoc", cityLoc);
-
-                        const recipient = {
-                          firstName: name,
-                          // middleName: "{string}",
-                          lastName: secondName,
-                          email: email.toLowerCase(),
-                          // address: {
-                          //   geoId: cityLoc.geoId,
-                          //   country: "Россия",
-                          //   region: cityLoc.region,
-                          //   locality: cityLoc.name,
-                          //   street: adress,
-                          //   house: house,
-                          //   // "housing": "{string}",
-                          //   // "building": "{string}",
-                          //   apartment: flat,
-                          // },
-                          // "pickupPointId": {int}
-                        };
-
-                        const cost = {
-                          paymentMethod: "PREPAID",
-                          assessedValue: +totalPrice,
-                          fullyPrepaid: true,
-                          manualDeliveryForCustomer:
-                            localStorage.get("city").geoId === 213 &&
-                            totalPrice >= 1000
-                              ? 0
-                              : deliveryData.deliveryOption.cost
-                                  .deliveryForCustomer,
-                        };
-
-                        const addressData = {
-                          geoId: localStorage.get("city").geoId,
-                          country: "Россия",
-                          region: cityLoc.region,
-                          locality: cityLoc.name,
-                          street: adress,
-                          house: house,
-                          // "housing": "{string}",
-                          // "building": "{string}",
-                          apartment: flat,
-                        };
-                        const contacts = [
-                          {
-                            type: "RECIPIENT",
-                            phone: String(tel),
-                            // "additional": "{string}",
-                            firstName: name,
-                            // "middleName": "{string}",
-                            lastName: secondName,
-                          },
-                        ];
-
-                        this.order = {
-                          recipient: recipient,
-                          address: addressData,
-                          cost: cost,
-                          contacts: contacts,
-                        };
-
-                        // window.widget.setOrderInfo(this.order);
-                        // window.widget.createOrder();
-                        const deliveryOrderData = Object.assign(
-                          { ...this.deliveryOrderData.deliveryOption.cost },
-                          this.deliveryOrderData
-                        );
-                        deliveryOrderData.deliveryOption.partnerId = this.deliveryOrderData.deliveryOption.partner;
-                        deliveryOrderData.deliveryOption.delivery = this.deliveryOrderData.deliveryOption.cost.delivery;
-                        deliveryOrderData.deliveryOption.deliveryForCustomer =
-                          cost.manualDeliveryForCustomer;
-                        deliveryOrderData.deliveryOption.deliveryForSender =
-                          deliveryOrderData.deliveryOption.cost.deliveryForSender;
-                        deliveryOrderData.shipment = {
-                          date:
-                            deliveryOrderData.deliveryOption.shipments[0].date,
-                          type: "WITHDRAW",
-                          fromWarehouseId: 10001568252,
-                          toPartnerId:
-                            deliveryOrderData.deliveryOption.shipments[0]
-                              .partner.id,
-                        };
-                        this.deliverySend.cost.fullyPrepaid = true;
-                        const delivery = {
-                          ...this.deliverySend,
-                          address: addressData,
-                          recipient,
-                          contacts,
-                          senderId,
-                          ...deliveryOrderData,
-                        };
 
                         const dataToSend = {
                           prod: {},
@@ -1066,190 +1146,279 @@ const CartPage = observer(
 
                         dataToSend.sum = totalPrice;
                         dataToSend.email = this.state.email.toLowerCase();
+                        dataToSend.firstName = name;
+                        dataToSend.lastName = secondName;
+                        dataToSend.phone = String(tel);
+                        dataToSend.payment = this.state.payment;
+                        dataToSend.coupon = this.state.coupon;
+                        if (delChoose) {
+                          const recipient = {
+                            firstName: name,
 
-                        console.log("object :>> ", delivery, dataToSend);
-                        if (process.env.REACT_APP_TYPE === "prod") {
-                          window.ym(65097901, "reachGoal", "Checkout");
-                        }
+                            lastName: secondName,
+                            email: email.toLowerCase(),
+                          };
 
-                        api
-                          .setOrderData({
-                            delivery,
-                            dataToSend,
-                          })
-                          .then((data) => {
-                            if (process.env.REACT_APP_TYPE === "prod") {
-                              window.dataLayer.push({
-                                ecommerce: {
-                                  purchase: {
-                                    actionField: {
-                                      id: String(data.orderId),
-                                    },
-                                    products: ecomProd,
-                                  },
-                                },
-                              });
-                            }
-                            window.widget.setOrderInfo({
-                              ...this.order,
-                              externalId: String(data.orderId),
-                            });
-                            window.widget
-                              .createOrder()
-                              .then((ok) => {
-                                console.log("ok :>> ", ok);
-                                this.props.store.productInCartList = {};
-                                this.props.store.addtoCart(false);
-                                window.location.href = data.link;
-                                // $(".cart-overlay").addClass("active");
-                                // const checkout = new window.YandexCheckout({
-                                //   confirmation_token: data.confirmationToken, //Токен, который перед проведением оплаты нужно получить от Яндекс.Кассы
-                                //   return_url: data.return, //Ссылка на страницу завершения оплаты
-                                //   embedded_3ds: true, // Способ прохождения аутентификации 3-D Secure — во всплывающем окне
-                                //   error_callback(error) {
-                                //     console.log("error :>> ", error);
-                                //   },
-                                // });
-                                // console.log("checkout :>> ", checkout);
-                                // checkout.render("payment-form");
+                          const cost = {
+                            paymentMethod: this.state.payment,
+                            assessedValue: +totalPrice,
+                            fullyPrepaid: this.state.payment === "PREPAID",
+                            manualDeliveryForCustomer:
+                              localStorage.get("city").geoId === 213 &&
+                              (totalPrice >= 1000 ||
+                                (Object.keys(productInCart).length === 1 &&
+                                  productInCart[Object.keys(productInCart)[0]]
+                                    .slug === 5637285331))
+                                ? 0
+                                : deliveryData.deliveryOption.cost
+                                    .deliveryForCustomer,
+                          };
 
-                                // console.log("checkout :>> ", checkout);
-                              })
-                              .catch((err) => {
-                                console.log("err :>> ", err);
-                                $("#createOrder").text("Произошла ошибка");
-                                setTimeout(() => {
-                                  $("#createOrder").text("Заказать");
-                                }, 3000);
-                              });
-                            // this.props.store.productInCartList = {};
-                            // this.props.store.addtoCart(false);
-                            // window.location.href = data.link;
-                          })
-                          .catch((err) => {
-                            console.log("err :>> ", err);
-                          })
-                          .finally(() => {
-                            $(e.target).removeClass("deactive");
-                            $(e.target).text("Заказать");
-                            const tett = {
-                              recipient: {
-                                firstName: "Тест",
-                                lastName: "Граев",
-                                email: "graev.k@gmail.com",
-                                address: {
-                                  geoId: 43,
-                                  country: "Россия",
-                                  region: "Республика Татарстан",
-                                  locality: "Казань",
-                                  street: "ул Волкова",
-                                  house: "д 2 ",
-                                  apartment: "5",
-                                },
-                              },
-                              $address: {
-                                geoId: 43,
-                                country: "Россия",
-                                region: "Республика Татарстан",
-                                locality: "Казань",
-                                street: "ул Волкова",
-                                house: "д 2 ",
-                                apartment: "5",
-                              },
-                              cost: {
-                                paymentMethod: "CARD",
-                                assessedValue: 1812,
-                                fullyPrepaid: true,
-                                manualDeliveryForCustomer: 307,
-                              },
-                              contacts: [
-                                {
-                                  type: "RECIPIENT",
-                                  phone: "+7 (999) 155 91 93",
-                                  firstName: "Тест",
-                                  lastName: "Граев",
-                                },
-                              ],
-                              externalId: 4646,
-                              $shipment: {
-                                date: "2020-07-02",
-                                type: "WITHDRAW",
-                                fromWarehouseId: 10001568252,
-                                toPartnerId: 51,
-                              },
-                              deliveryType: "COURIER",
-                              deliveryOption: {
-                                tariffId: 100004,
-                                partnerId: 51,
-                                services: [
-                                  {
-                                    name: "Доставка",
-                                    code: "DELIVERY",
-                                    cost: 307,
-                                    customerPay: true,
-                                    enabledByDefault: true,
-                                  },
-                                  {
-                                    name: "Возврат",
-                                    code: "RETURN",
-                                    cost: 230.25,
-                                    customerPay: false,
-                                    enabledByDefault: false,
-                                  },
-                                  {
-                                    name: "Сортировка возврата",
-                                    code: "RETURN_SORT",
-                                    cost: 20,
-                                    customerPay: false,
-                                    enabledByDefault: false,
-                                  },
-                                  {
-                                    name:
-                                      "Вознаграждение за перечисление денежных средств",
-                                    code: "CASH_SERVICE",
-                                    cost: 46.618,
-                                    customerPay: false,
-                                    enabledByDefault: true,
-                                  },
-                                ],
-                                delivery: 307,
-                                deliveryForCustomer: 307,
-                                deliveryForSender: 353.618,
-                                deliveryIntervalId: 17549384,
-                                calculatedDeliveryDateMin: "2020-07-06",
-                                calculatedDeliveryDateMax: "2020-07-06",
-                              },
-                              places: [
-                                {
-                                  items: [
-                                    {
-                                      externalId: "5637287002",
-                                      name:
-                                        "Набор бокалов для красного вина 6 шт 640 мл, Колумба",
-                                      count: 1,
-                                      price: 1812,
-                                      assessedValue: 1812,
-                                      tax: "NO_VAT",
-                                      dimensions: {
-                                        weight: 1.48,
-                                        length: 23,
-                                        width: 34,
-                                        height: 24,
+                          const addressData = {
+                            geoId: localStorage.get("city").geoId,
+                            country: "Россия",
+                            region: cityLoc.region,
+                            locality: cityLoc.name,
+                            street: adress,
+                            house: house,
+
+                            apartment: flat,
+                          };
+                          const contacts = [
+                            {
+                              type: "RECIPIENT",
+                              phone: String(tel),
+
+                              firstName: name,
+
+                              lastName: secondName,
+                            },
+                          ];
+
+                          this.order = {
+                            recipient: recipient,
+                            address: addressData,
+                            cost: cost,
+                            contacts: contacts,
+                          };
+
+                          // window.widget.setOrderInfo(this.order);
+                          // window.widget.createOrder();
+                          const deliveryOrderData = Object.assign(
+                            { ...this.deliveryOrderData.deliveryOption.cost },
+                            this.deliveryOrderData
+                          );
+                          deliveryOrderData.deliveryOption.partnerId = this.deliveryOrderData.deliveryOption.partner;
+                          deliveryOrderData.deliveryOption.delivery = this.deliveryOrderData.deliveryOption.cost.delivery;
+                          deliveryOrderData.deliveryOption.deliveryForCustomer =
+                            cost.manualDeliveryForCustomer;
+                          deliveryOrderData.deliveryOption.deliveryForSender =
+                            deliveryOrderData.deliveryOption.cost.deliveryForSender;
+                          deliveryOrderData.shipment = {
+                            date:
+                              deliveryOrderData.deliveryOption.shipments[0]
+                                .date,
+                            type: "WITHDRAW",
+                            fromWarehouseId: 10001568252,
+                            toPartnerId:
+                              deliveryOrderData.deliveryOption.shipments[0]
+                                .partner.id,
+                          };
+                          this.deliverySend.cost.fullyPrepaid = true;
+                          const delivery = {
+                            ...this.deliverySend,
+                            address: addressData,
+                            recipient,
+                            contacts,
+                            senderId,
+                            ...deliveryOrderData,
+                          };
+
+                          // console.log("object :>> ", delivery, dataToSend);
+                          if (process.env.REACT_APP_TYPE === "prod") {
+                            window.ym(65097901, "reachGoal", "Checkout");
+                          }
+
+                          api
+                            .setOrderData({
+                              delivery,
+                              dataToSend,
+                            })
+                            .then((data) => {
+                              if (process.env.REACT_APP_TYPE === "prod") {
+                                window.dataLayer.push({
+                                  ecommerce: {
+                                    purchase: {
+                                      actionField: {
+                                        id: String(data.orderId),
                                       },
+                                      products: ecomProd,
                                     },
-                                  ],
+                                  },
+                                });
+                              }
+                              localStorage.set("deleteCart", true);
+                              if (dataToSend.payment !== "CARD") {
+                                const checkout = new window.YandexCheckout({
+                                  confirmation_token: data.confirmationToken, //Токен, который перед проведением оплаты нужно получить от Яндекс.Кассы
+                                  return_url: data.return, //Ссылка на страницу завершения оплаты
+                                  embedded_3ds: true, // Способ прохождения аутентификации 3-D Secure — во всплывающем окне
+                                  error_callback(error) {
+                                    console.log("error :>> ", error);
+                                  },
+                                });
+
+                                checkout.render("payment-form");
+
+                                $(".sidebar-overlay").addClass("active");
+                                $(".sidebar-cart").addClass("visible");
+
+                                $("body").addClass("no-scroll");
+
+                                window.widget.setOrderInfo({
+                                  ...this.order,
+                                  externalId: String(data.orderId),
+                                });
+                              } else {
+                                window.widget
+                                  .setOrderInfo({
+                                    ...this.order,
+                                    externalId: String(data.orderId),
+                                  })
+                                  .then(() => {
+                                    console.log("this.order :>> ", this.order);
+                                    window.location.href = data.return;
+                                  })
+                                  .catch((err) => {
+                                    console.log("err", err);
+                                  });
+                              }
+
+                              // window.widget
+                              //   .createOrder()
+                              //   .then((ok) => {
+
+                              //   })
+                              //   .catch((err) => {
+                              //     console.log("err :>> ", err);
+
+                              //   });
+                              // this.props.store.productInCartList = {};
+                              // this.props.store.addtoCart(false);
+                              // window.location.href = data.link;
+                            })
+                            .catch((err) => {
+                              console.log("err :>> ", err);
+                              $("#createOrder").text("Произошла ошибка");
+                              setTimeout(() => {
+                                $("#createOrder").text("Заказать");
+                              }, 3000);
+                            })
+                            .finally(() => {
+                              $(e.target).removeClass("deactive");
+                              $(e.target).text("Заказать");
+                            });
+                        } else if (pickUpChoose) {
+                          dataToSend.pickUpChoose = true;
+
+                          dataToSend.address = this.stores[
+                            this.state.pickUpStore
+                          ].address;
+                          dataToSend.city = "Москва";
+                          dataToSend.store = this.state.pickUpStore;
+
+                          api
+                            .setOrderData({
+                              delivery: {
+                                pickUpChoose: true,
+                                payment: this.state.payment,
+                                store: this.state.pickUpStore,
+                                deliveryForCustomer: 0,
+                                address: {
+                                  locality: this.stores[this.state.pickUpStore]
+                                    .address,
                                 },
-                              ],
-                              apiKey: "f16336a6-8d98-4f0e-b07f-3969b2384006",
-                              senderId: 500001936,
-                            };
-                          });
+                              },
+                              dataToSend,
+                            })
+                            .then((data) => {
+                              if (process.env.REACT_APP_TYPE === "prod") {
+                                window.dataLayer.push({
+                                  ecommerce: {
+                                    purchase: {
+                                      actionField: {
+                                        id: String(data.orderId),
+                                      },
+                                      products: ecomProd,
+                                    },
+                                  },
+                                });
+                              }
+
+                              localStorage.set("deleteCart", true);
+
+                              if (dataToSend.payment !== "CARD") {
+                                const checkout = new window.YandexCheckout({
+                                  confirmation_token: data.confirmationToken, //Токен, который перед проведением оплаты нужно получить от Яндекс.Кассы
+                                  return_url: data.return, //Ссылка на страницу завершения оплаты
+                                  embedded_3ds: true, // Способ прохождения аутентификации 3-D Secure — во всплывающем окне
+                                  error_callback(error) {
+                                    console.log("error :>> ", error);
+                                  },
+                                });
+
+                                checkout.render("payment-form");
+
+                                localStorage.set("deleteCart", true);
+
+                                $(".sidebar-overlay").addClass("active");
+                                $(".sidebar-cart").addClass("visible");
+
+                                $("body").addClass("no-scroll");
+
+                                // window.widget.setOrderInfo({
+                                //   ...this.order,
+                                //   externalId: String(data.orderId),
+                                // });
+                              } else {
+                                window.location.href = data.return;
+                              }
+
+                              // window.widget
+                              //   .createOrder()
+                              //   .then((ok) => {
+
+                              //   })
+                              //   .catch((err) => {
+                              //     console.log("err :>> ", err);
+
+                              //   });
+                              // this.props.store.productInCartList = {};
+                              // this.props.store.addtoCart(false);
+                              // window.location.href = data.link;
+                            })
+                            .catch((err) => {
+                              console.log("err :>> ", err);
+                              $("#createOrder").text("Произошла ошибка");
+                              setTimeout(() => {
+                                $("#createOrder").text("Заказать");
+                              }, 3000);
+                            })
+                            .finally(() => {
+                              $(e.target).removeClass("deactive");
+                              $(e.target).text("Заказать");
+                            });
+                        }
                       }}
                     >
-                      {(this.state.deliveryData.deliveryType === "COURIER" &&
+                      {this.state.delChoose &&
+                      ((this.state.deliveryData.deliveryType === "COURIER" &&
                         (adress.length === 0 || house.length === 0)) ||
-                      Object.keys(deliveryData).length === 0
+                        Object.keys(deliveryData).length === 0)
                         ? "Выбрать доставку"
+                        : this.state.pickUpChoose &&
+                          this.state.pickUpStore === ""
+                        ? "Выбрать пункт самовывоза"
                         : name.length === 0 ||
                           secondName.length === 0 ||
                           email.length === 0 ||
@@ -1260,21 +1429,45 @@ const CartPage = observer(
                         : "Заказать"}
                     </button>
                   </div>
-                  {/* <div className="cart-page__promo">
+                  <div className="cart-page__promo">
                     <input
                       className="def"
+                      id="coup"
                       placeholder="Сертификат"
                       type="text"
                     />{" "}
-                    <button>Активировать</button>
-                  </div> */}
-                  <div className="cart-page__result-message">
-                    Сейчас оплатить заказ можно только онлайн. <br /> Мы
-                    работаем над оплатой курьеру при получении. <br />
-                    {/* <br />
-                    При оплате заказа деньги <b>не списываются</b>, а{" "}
-                    <b>блокируются </b>банком у вас на счете <b>на 7 дней</b> до
-                    момента доставки. */}
+                    <button
+                      onClick={() => {
+                        if ($("#coup").val() !== "") {
+                          api
+                            .coupon({ code: $("#coup").val().toLowerCase() })
+                            .then((d) => {
+                              if (d.status === 200) {
+                                $(".cart-page__promo").addClass("green");
+
+                                this.setState({
+                                  coupon: {
+                                    count: d.data.amount,
+                                    type: d.data.discount_type,
+                                    code: d.data.code,
+                                    id: d.data.id,
+                                  },
+                                });
+                              } else {
+                                $(".cart-page__promo").removeClass("green");
+                                $(".cart-page__promo").addClass("deactive");
+                                setTimeout(() => {
+                                  $(".cart-page__promo").removeClass(
+                                    "deactive"
+                                  );
+                                }, 4000);
+                              }
+                            });
+                        }
+                      }}
+                    >
+                      Активировать
+                    </button>
                   </div>
                 </div>
               </div>
@@ -1333,12 +1526,20 @@ const CartPage = observer(
           externalId: `${productInCart[el].slug}`,
           name: productInCart[el].name,
           count: array[el],
-          price: productInCart[el].sale
-            ? productInCart[el].sale_price
-            : productInCart[el].regular_price,
-          assessedValue: productInCart[el].sale
-            ? productInCart[el].sale_price
-            : productInCart[el].regular_price,
+          price: Math.floor(
+            productInCart[el].sale
+              ? productInCart[el].sale_price !== 0
+                ? productInCart[el].sale_price
+                : 1
+              : productInCart[el].regular_price
+          ),
+          assessedValue: Math.floor(
+            productInCart[el].sale
+              ? productInCart[el].sale_price !== 0
+                ? productInCart[el].sale_price
+                : productInCart[el].regular_price
+              : productInCart[el].regular_price
+          ),
           tax: "NO_VAT",
           dimensions: {
             weight: +productInCart[el].weight,
@@ -1368,14 +1569,14 @@ const CartPage = observer(
         cost: {
           itemsSum: sum, // сумма стоимости товаров в корзине
           assessedValue: sum, // объявленная ценность
-          fullyPrepaid: true,
+          fullyPrepaid: this.state.payment === "PREPAID",
         },
       };
       const order = {
         cost: {
-          paymentMethod: "PREPAID",
+          paymentMethod: this.state.payment,
           assessedValue: sum,
-          fullyPrepaid: false,
+          fullyPrepaid: this.state.payment === "PREPAID",
           manualDeliveryForCustomer: 0,
         },
         contacts: [

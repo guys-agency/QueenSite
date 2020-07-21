@@ -12,8 +12,8 @@ const { Component } = React;
 const AuthSidebar = observer(
   class AuthSidebar extends Component {
     state = {
-      reg: false,
-      log: true,
+      reg: true,
+      log: false,
       pass: false,
     };
     focusHandler = (e) => {
@@ -46,6 +46,16 @@ const AuthSidebar = observer(
               Регистрация
             </button>
           </div>
+
+          {/* {this.state.reg && (
+            <div className="discond-fix_sidebar">
+              <img src="/image/button/icon/gift.svg"></img>
+              <p>
+                <b>Скидка 10%</b> на первую покупку.
+                <br /> Промокод придет на почту
+              </p>
+            </div>
+          )} */}
 
           {this.state.log && (
             <Formik
@@ -349,6 +359,36 @@ const AuthSidebar = observer(
                     $("#registrBtn").text(ok.message);
                     if (ok.status === 201) {
                       $("#registrBtn").addClass("success");
+                      this.props.store.auth = true;
+                      const lc = this.props.store.likeContainer;
+                      ok.data.likeProducts.forEach((prod) => {
+                        if (!this.props.store.likeContainer.includes(prod)) {
+                          lc.push(prod);
+                        }
+                      });
+
+                      this.props.store.likeContainer = lc;
+                      // const localCartCont = Object.keys(this.props.store.productInCartList);
+                      // const serverCartCont = Object.keys(data.inCart);
+
+                      // const newCartCont = this.props.store.productInCartList
+
+                      // newCartCont.forEach(prod=>{
+                      //   if (!localCartCont.includes(prod)) {
+                      //     newCartCont[prod]=data.inCart[prod]
+                      //   }
+                      // })
+
+                      // this.props.store.productInCartList = newCartCont;
+                      this.props.store.addToLike();
+                      // this.props.store.addtoCart(true);
+                      this.props.store.sideAsk = false;
+                      this.props.store.sideLogin = false;
+                      document
+                        .querySelector(".sidebar-overlay")
+                        .classList.remove("active");
+                      $("body").removeClass("no-scroll");
+                      $(".navigation").removeClass("visible");
                     } else {
                       $("#registrBtn").addClass("error");
                     }

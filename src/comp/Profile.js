@@ -2,12 +2,11 @@ import { observer } from "mobx-react";
 import React from "react";
 import { withRouter } from "react-router";
 import api from "./api";
-import getCookie from "../ulits/getCookie";
-import moment from "moment";
+
 import { Link } from "react-router-dom";
 import ProductCard from "./ProductCard";
 import ProductCardContainer from "./ProductCardContainer";
-import ChangeProfileData from "./ChangeProfileData";
+
 const { Component } = React;
 
 const Profile = observer(
@@ -17,6 +16,13 @@ const Profile = observer(
     orders = [];
     render() {
       // const { ready } = this.state;
+      const orderStatus = {
+        cancel: "Отменен",
+        paid: "Оплачен",
+        Created: "Ожидает оплаты",
+      };
+
+      const orderStatusColor = {};
 
       const data = this.props.store.userData;
       if (this.props.store.auth) {
@@ -61,7 +67,9 @@ const Profile = observer(
                   </div>
                   <div className="orders-item__desc">
                     <div className="status">
-                      {order.status === "Created" ? "В обработке" : "Оплачен"}
+                      {orderStatus[order.status] !== undefined
+                        ? orderStatus[order.status]
+                        : order.status}
                     </div>
                     <button
                       className="link dotted"

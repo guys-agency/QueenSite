@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+        <div ref="wrp" class="wrp">
+            <table style="font-family: Times New Roman; color: #00094D; font-size: 10.5pt; width: 100%; margin-top: 100px; background: #F7F6F7; padding: 20px; border-radius: 10px;">
+                <tr style="padding-bottom: 10px;">
+                    <td>
+                        <img style="width: 81px;" src="https://wp.queenbohemia.ru/wp-content/uploads/2020/07/line.png" alt="">
+                    </td>
+                </tr>
+                <tr v-if="name">
+                    <td>
+                        <span style="font-family: Times New Roman; font-size: 13.5pt; font-weight: bold; vertical-align: middle; padding-right: 10px;">{{ name }}</span>
+                    </td>
+                </tr>
+                <tr style="padding-top: 2px;">
+                    <td>
+                        <span style="font-family: Times New Roman; font-weight: bold; font-size: 10.5pt; color: #718DA7;">
+                            {{ post }}
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td v-if="mobile" style="font-family: Times New Roman; padding-top: 25px;">
+                        Моб.: <a style="font-family: Times New Roman; font-weight: bold; color: #00094D; text-decoration: none;" :href="`tel:` + mobile">{{ mobile }}</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding-top: 10px; font-family: Times New Roman;">
+                        Офис: <a style="font-family: Times New Roman; font-weight: bold; color: #00094D; text-decoration: none;"
+                            :href="`tel:` + tel">{{ tel }}</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding-top: 10px; font-family: Times New Roman;">
+                        Почта: <a style="font-family: Times New Roman; font-weight: bold; color: #00094D; text-decoration: none;"
+                            :href="`mailto:` + mail + `@queenbohemia.ru`">{{mail}}@queenbohemia.ru</a>
+                    </td>
+                </tr>   
+                <tr>
+                    <td style="padding-top: 35px;">
+                        <a href="https://queenbohemia.ru">
+                            <img style="width: 211px;" src="https://wp.queenbohemia.ru/wp-content/uploads/2020/07/logo.png" alt="">
+                        </a>
+                    </td>
+                </tr>
+            </table>            
+        </div>
+        <div class="controls">
+            <label for="">Имя</label>
+            <input v-model="name">
+            <br>
+            <label for="">Должность</label>
+            <input v-model="post">
+            <br>
+            <label for="">Офисный телефон</label>
+            <input v-model="tel">
+            <br>
+            <label for="">Мобильный телефон</label>
+            <input v-model="mobile">
+            <br>
+            <label for="">E-mail</label>
+            <input v-model="mail">
+            <br>
+            <button v-on:click="save(name)">Скачать файлом</button>
+        </div>
+    </div>
+    <style>
+        #app{
+            margin: 100px;
+        }
+        .controls{
+            background-color: #f8f8f8;
+            padding: 15px;
+            border-radius: 2px;
+            width: 300px;
+            float: left;
+            margin-left: 130px;
+        }
+        .wrp{
+            width: 300px;
+            float: left;
+        }
+        input{
+            width: 100%;
+            font-size: 14px;
+            padding: 5px;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+        }
+        label{
+            font-family: Arial;
+            color: grey;
+            font-size: 14px;
+        }
+        button{
+            padding: 10px;
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                name: '',
+                post: 'Главный офис',
+                tel: '+7 800 250-80-21',
+                mobile: '',
+                mail: 'info',
+            },
+            methods: {
+                save: function (event) {
+                    var htmlContent = this.$refs.wrp;
+                    var elementHtml = htmlContent.outerHTML;
+                    var bl = new Blob([elementHtml], {type: "text/html"});
+                    var a = document.createElement("a");
+                    a.href = URL.createObjectURL(bl);
+                    a.download = this.mail + ".html";
+                    a.hidden = true;
+                    document.body.appendChild(a);
+                    a.innerHTML = "";
+                    a.click();
+                }
+            }
+        })
+    </script>
+</body>
+</html>

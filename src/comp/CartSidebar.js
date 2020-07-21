@@ -4,6 +4,8 @@ import ProductList from "./ProductList";
 import LikeButton from "./LikeButton";
 import { withRouter } from "react-router";
 import num2str from "../ulits/nm2wrd";
+import { Link } from "react-router-dom";
+
 const { Component } = React;
 
 const CartSidebar = observer(
@@ -119,29 +121,35 @@ const CartSidebar = observer(
             <b className="price">{totalPrice.toLocaleString()} ₽</b>
           </div>
           {dontSaleProdCount !== 0 && dontSaleProdCount % 3 !== 0 ? (
-            <div className="one-plus-one">
-              <p className="disc_perc">1 + 1 = 3</p> добавьте еще{" "}
+            <Link
+              to="/main/1+13"
+              className="one-plus-one"
+              onClick={this.props.closeSidebar}
+            >
+              Добавьте еще{" "}
               {3 * (Math.floor(dontSaleProdCount / 3) + 1) - dontSaleProdCount}{" "}
               {num2str(
                 3 * (Math.floor(dontSaleProdCount / 3) + 1) - dontSaleProdCount,
                 ["товар", "товара", "товаров"]
               )}{" "}
-              без скидки
-            </div>
+              из акции <p className="disc_perc">1 + 1 = 3</p>
+            </Link>
           ) : null}
 
           <div className="sidebar__over">
             <div className="cart__list">{productList}</div>
           </div>
-          <button
-            className="btn btn_yellow btn_wide btn_bottom"
-            onClick={() => {
-              this.props.history.push("/cart");
-              this.props.closeSidebar();
-            }}
-          >
-            Перейти к оформлению <span className="ic i_right"></span>
-          </button>
+          {productList.length > 0 && (
+            <button
+              className="btn btn_yellow btn_wide btn_bottom"
+              onClick={() => {
+                this.props.history.push("/cart");
+                this.props.closeSidebar();
+              }}
+            >
+              Перейти к оформлению <span className="ic i_right"></span>
+            </button>
+          )}
         </>
       );
     }

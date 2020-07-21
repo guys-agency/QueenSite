@@ -6,9 +6,8 @@ import LikeSidebar from "./LikeSidebar";
 import AuthSidebar from "./AuthSidebar";
 import AskSidebar from "./AskSidebar";
 import CartSidebar from "./CartSidebar";
-import localStorage from "mobx-localstorage";
 import { withRouter } from "react-router";
-import { cities, SERVER_URL } from "../constants";
+import { SERVER_URL } from "../constants";
 import ChangeSidebar from "./ChangeProfileData";
 import CityCh from "./CityCh";
 import api from "./api";
@@ -214,19 +213,21 @@ const MenuPoints = observer(
 
     componentDidMount() {
       this.createMenu();
-      api
-        .getUserData()
-        .then((data) => {
-          // this.props.store.addToLike(true);
-          this.props.store.userData = data;
-          // console.log(
-          //   "this.props.store.userData :>> ",
-          //   this.props.store.userData
-          // );
-        })
-        .catch((err) => {
-          console.log("err :>> ", err);
-        });
+      if (this.props.store.auth) {
+        api
+          .getUserData()
+          .then((data) => {
+            // this.props.store.addToLike(true);
+            this.props.store.userData = data;
+            // console.log(
+            //   "this.props.store.userData :>> ",
+            //   this.props.store.userData
+            // );
+          })
+          .catch((err) => {
+            console.log("err :>> ", err);
+          });
+      }
     }
 
     componentDidUpdate() {
@@ -356,7 +357,7 @@ const MenuPoints = observer(
                   <ul>{childsPoints}</ul>
                 </div>
               );
-            } else if (elem.name === "Аксесуары для стола") {
+            } else if (elem.name === "Аксессуары для стола") {
               menu[4] = (
                 <div key={elem.name}>
                   <h5>{elem.name}</h5>
@@ -487,6 +488,7 @@ const MenuPoints = observer(
 
     render() {
       const { collInMenu } = this.props.store;
+
       // const { store } = this.props;
       // const { collectionsData } = store;
       // if (collectionsData.length) {
@@ -524,6 +526,7 @@ const MenuPoints = observer(
       //       );
       //     }
       //   });
+
       return (
         this.state.ready && (
           <>
@@ -531,19 +534,19 @@ const MenuPoints = observer(
             <div
               className={
                 "header " +
-                (window.location.pathname.includes("/catalog") ||
-                window.location.pathname.includes("/profile") ||
-                window.location.pathname.includes("/about") ||
-                window.location.pathname.includes("/product") ||
-                window.location.pathname.includes("/closeout") ||
-                window.location.pathname.includes("/ideas") ||
-                window.location.pathname.includes("/hits") ||
-                window.location.pathname.includes("/new") ||
-                window.location.pathname.includes("/help")
+                (this.props.location.pathname.includes("/catalog") ||
+                this.props.location.pathname.includes("/profile") ||
+                this.props.location.pathname.includes("/about") ||
+                this.props.location.pathname.includes("/product") ||
+                this.props.location.pathname.includes("/closeout") ||
+                this.props.location.pathname.includes("/ideas") ||
+                this.props.location.pathname.includes("/hits") ||
+                this.props.location.pathname.includes("/new") ||
+                this.props.location.pathname.includes("/help")
                   ? "header_w "
                   : " ") +
-                (window.location.pathname.includes("/finish") ||
-                window.location.pathname.includes("/cart")
+                (this.props.location.pathname.includes("/finish") ||
+                this.props.location.pathname.includes("/cart")
                   ? "header_dn "
                   : " ")
               }
@@ -603,13 +606,13 @@ const MenuPoints = observer(
                 <button
                   className={
                     "ic i_filter head_filter vis-s " +
-                    (window.location.pathname.includes("catalog") ||
-                    window.location.pathname.includes("collections/") ||
-                    window.location.pathname.includes("actions/") ||
-                    window.location.pathname.includes("main/") ||
-                    window.location.pathname.includes("/closeout") ||
-                    window.location.pathname.includes("/ideas") ||
-                    window.location.pathname.includes("/hits")
+                    (this.props.location.pathname.includes("catalog") ||
+                    this.props.location.pathname.includes("collections/") ||
+                    this.props.location.pathname.includes("actions/") ||
+                    this.props.location.pathname.includes("main/") ||
+                    this.props.location.pathname.includes("/closeout") ||
+                    this.props.location.pathname.includes("/ideas") ||
+                    this.props.location.pathname.includes("/hits")
                       ? "visible "
                       : " ")
                   }
@@ -636,13 +639,15 @@ const MenuPoints = observer(
                     this.setState({ popCart: true });
                   }}
                 >
-                  <span className="i_bag__counter">
-                    {this.props.store.cartCount > 9
-                      ? 9
-                      : this.props.store.cartCount === 0
-                      ? ""
-                      : this.props.store.cartCount}
-                  </span>
+                  {this.props.store.cartCount !== 0 && (
+                    <span className="i_bag__counter">
+                      {this.props.store.cartCount > 9
+                        ? 9
+                        : this.props.store.cartCount === 0
+                        ? ""
+                        : this.props.store.cartCount}
+                    </span>
+                  )}
                 </button>
 
                 <div className="tooltip tooltip_cart">
@@ -658,19 +663,19 @@ const MenuPoints = observer(
             <div
               className={
                 "navigation " +
-                (window.location.pathname.includes("/catalog") ||
-                window.location.pathname.includes("/profile") ||
-                window.location.pathname.includes("/about") ||
-                window.location.pathname.includes("/product") ||
-                window.location.pathname.includes("/closeout") ||
-                window.location.pathname.includes("/ideas") ||
-                window.location.pathname.includes("/hits") ||
-                window.location.pathname.includes("/new") ||
-                window.location.pathname.includes("/help")
+                (this.props.location.pathname.includes("/catalog") ||
+                this.props.location.pathname.includes("/profile") ||
+                this.props.location.pathname.includes("/about") ||
+                this.props.location.pathname.includes("/product") ||
+                this.props.location.pathname.includes("/closeout") ||
+                this.props.location.pathname.includes("/ideas") ||
+                this.props.location.pathname.includes("/hits") ||
+                this.props.location.pathname.includes("/new") ||
+                this.props.location.pathname.includes("/help")
                   ? "navigation_w "
                   : " ") +
-                (window.location.pathname.includes("/finish") ||
-                window.location.pathname.includes("/cart")
+                (this.props.location.pathname.includes("/finish") ||
+                this.props.location.pathname.includes("/cart")
                   ? "navigation_dn "
                   : " ")
               }
@@ -810,10 +815,19 @@ const MenuPoints = observer(
                         <div className="column">
                           <ul>
                             <li>
-                              <NavLink to="/closeout">Распродажа</NavLink>
+                              <NavLink to="/closeout" onClick={this.closeNav}>
+                                Распродажа
+                              </NavLink>
                             </li>
                             <li>
-                              <NavLink to="/actions">Акции</NavLink>
+                              <NavLink to="/actions" onClick={this.closeNav}>
+                                Акции
+                              </NavLink>
+                            </li>
+                            <li>
+                              <NavLink to="/main/1+13" onClick={this.closeNav}>
+                                1 + 1 = 3
+                              </NavLink>
                             </li>
                           </ul>
                         </div>
@@ -836,7 +850,9 @@ const MenuPoints = observer(
                       onClick={(e) => {
                         this.props.store.searchText = this.searchValue;
                         this.props.history.push("/search");
+
                         e.preventDefault();
+                        this.closeNav(e);
                       }}
                     ></button>
                   </form>
@@ -868,13 +884,15 @@ const MenuPoints = observer(
                       this.setState({ popCart: true });
                     }}
                   >
-                    <span className="i_bag__counter">
-                      {this.props.store.cartCount > 9
-                        ? 9
-                        : this.props.store.cartCount === 0
-                        ? ""
-                        : this.props.store.cartCount}
-                    </span>
+                    {this.props.store.cartCount !== 0 && (
+                      <span className="i_bag__counter">
+                        {this.props.store.cartCount > 9
+                          ? 9
+                          : this.props.store.cartCount === 0
+                          ? ""
+                          : this.props.store.cartCount}
+                      </span>
+                    )}
                   </button>
                   <div className="tooltip tooltip_cart">
                     <div className="tooltip__content">
@@ -1037,6 +1055,22 @@ const MenuPoints = observer(
                 }
               }}
             ></div>
+            {/* {!this.props.store.auth && (
+              <div
+                className="discond-fix"
+                onClick={() => {
+                  document
+                    .querySelector(".sidebar-overlay")
+                    .classList.add("active");
+
+                  document.querySelector("body").classList.add("no-scroll");
+
+                  this.props.store.sideLogin = true;
+                }}
+              >
+                <img src="/image/button/icon/gift.svg"></img>
+              </div>
+            )} */}
           </>
         )
       );

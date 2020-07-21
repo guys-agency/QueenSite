@@ -21,6 +21,7 @@ const ProductCard = observer(function ProductCard(props) {
   //придумать, как не вызывать все это заного у всех при изменении у одного
   const clickHandler = (e) => {
     if (e.target.classList.contains("i_bag")) {
+      console.log("bag :>> ");
       e.preventDefault();
       const { productInCartList, addtoCart } = store;
       if (inCart !== -1) {
@@ -85,6 +86,7 @@ const ProductCard = observer(function ProductCard(props) {
 
       addtoCart(true);
     } else if (e.target.classList.contains("i_fav")) {
+      console.log("like :>> ");
       e.preventDefault();
       const { likeContainer, addToLike } = store;
 
@@ -115,18 +117,19 @@ const ProductCard = observer(function ProductCard(props) {
       }
       addToLike();
     } else {
+      console.log("data :>> ");
       store.cardContainer = data;
       // props.history.push(`/product/${data.slug}`);
 
-      store.productPage = true;
-      store.cartPage = false;
+      // store.productPage = true;
+      // store.cartPage = false;
     }
   };
 
   let imagePath = "/image/items/" + data.path_to_photo[0];
 
   return (
-    <Link to={`/product/${data.slug}`} onClick={clickHandler}>
+    <Link onClick={clickHandler} to={`/product/${data.slug}`}>
       <div className="product">
         <div className="product__image">
           <div className="product__image-wrp">
@@ -134,6 +137,7 @@ const ProductCard = observer(function ProductCard(props) {
             <div className="product__attr-cont">
               {data.hit && <div className="product__hit">Хит</div>}
               {data.sale && <div className="product__sale">Акция</div>}
+              {!data.sale && <div className="product__sale">1 + 1 = 3</div>}
               {/* {data.new && <div className="product__new">Новинка</div>} */}
             </div>
           </div>

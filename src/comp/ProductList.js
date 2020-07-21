@@ -1,5 +1,6 @@
 import { observer } from "mobx-react";
 import React from "react";
+import Fade from "react-reveal/Fade";
 
 import { Link } from "react-router-dom";
 
@@ -7,13 +8,19 @@ const { Component } = React;
 
 const ProductList = observer(
   class ProductList extends Component {
-    state = {};
+    state = {
+      show: true,
+    };
 
     deteleProduct = (el) => {
-      const { productInCartList, addtoCart } = this.props.store;
+      const { productInCartList, addtoCart, productInCart } = this.props.store;
       const { data } = this.props;
-      delete productInCartList[el];
-      addtoCart(true);
+      setTimeout(() => {
+        delete productInCart[el];
+        delete productInCartList[el];
+        addtoCart(true);
+      }, 500);
+      this.setState({ show: false });
       if (process.env.REACT_APP_TYPE === "prod") {
         window.dataLayer.push({
           ecommerce: {
@@ -98,138 +105,152 @@ const ProductList = observer(
       }
 
       return (
-        <div className="product product_h">
-          <div className="product__image">
-            <div className="product__image-wrp">
-              <img
-                src={
-                  data.path_to_photo !== undefined
-                    ? "/image/items/" + data.path_to_photo[0]
-                    : "/image/Category/Product-card/Placeholder.png"
-                }
-              />
+        <Fade distance="50px" duration={500} right when={this.state.show}>
+          <div className="product product_h">
+            <div className="product__image">
+              <div className="product__image-wrp">
+                <img
+                  src={
+                    data.path_to_photo !== undefined
+                      ? "/image/items/" + data.path_to_photo[0]
+                      : "/image/Category/Product-card/Placeholder.png"
+                  }
+                />
+              </div>
             </div>
-          </div>
-          <div className="product__info">
-            <Link className="product__name" to={"/product/" + el}>
-              {data.name}
-            </Link>
-            {data.sale ? (
-              <div className={"product__price product__price_disc"}>
-                <span className="old">
+            <div className="product__info">
+              <Link className="product__name" to={"/product/" + el}>
+                {data.name}
+              </Link>
+              {data.sale ? (
+                data.sale_price !== 0 ? (
+                  <div className={"product__price product__price_disc"}>
+                    <span className="old">
+                      {(
+                        productInCartList[el] * data.regular_price
+                      ).toLocaleString()}{" "}
+                      ₽
+                    </span>{" "}
+                    {(productInCartList[el] * data.sale_price).toLocaleString()}{" "}
+                    ₽{" "}
+                    <span className="disc_perc">
+                      {(
+                        (data.sale_price / data.regular_price - 1) *
+                        100
+                      ).toFixed(0)}
+                      %
+                    </span>
+                  </div>
+                ) : (
+                  <div className={"product__price product__price_text"}>
+                    <span className="old">
+                      {(
+                        productInCartList[el] * data.regular_price
+                      ).toLocaleString()}{" "}
+                      ₽
+                    </span>{" "}
+                    Бесплатно
+                  </div>
+                )
+              ) : (
+                <div className={"product__price"}>
                   {(
                     productInCartList[el] * data.regular_price
                   ).toLocaleString()}{" "}
-                  ₽
-                </span>{" "}
-                {(productInCartList[el] * data.sale_price).toLocaleString()} ₽{" "}
-                <span className="disc_perc">
-                  {((data.sale_price / data.regular_price - 1) * 100).toFixed(
-                    0
-                  )}
-                  %
-                </span>
-              </div>
-            ) : data.sale_price === 0 ? (
-              <div className={"product__price product__price_text"}>
-                Бесплатно
-              </div>
-            ) : (
-              <div className={"product__price"}>
-                {(productInCartList[el] * data.regular_price).toLocaleString()}{" "}
-                ₽{" "}
-              </div>
-            )}
-            {cart ? (
-              <button
-                className="ic i_close"
-                onClick={() => {
-                  this.deteleProduct(el);
-                }}
-              ></button>
-            ) : (
-              <button
-                className="ic i_fav active"
-                onClick={() => {
-                  likeContainer.splice(likeContainer.indexOf(String(el)), 1);
-                  addToLike();
-                }}
-              ></button>
-            )}
-            {cart ? (
-              <div className="product__counter">
+                  ₽{" "}
+                </div>
+              )}
+              {cart ? (
                 <button
-                  className="ic i_minus"
+                  className="ic i_close"
                   onClick={() => {
-                    if (productInCartList[el] > 1) {
-                      this.clickMinus(el);
-                    }
+                    this.deteleProduct(el);
                   }}
                 ></button>
-                <input
-                  min="1"
-                  max="100"
-                  type="number"
-                  value={productInCartList[el]}
-                  readOnly
-                />
+              ) : (
                 <button
-                  className="ic i_plus"
+                  className="ic i_fav active"
                   onClick={() => {
-                    if (productInCartList[el] < data.stock_quantity) {
-                      this.clickPlus(el);
-                    }
+                    likeContainer.splice(likeContainer.indexOf(String(el)), 1);
+                    addToLike();
                   }}
                 ></button>
-              </div>
-            ) : (
-              <button
-                className={"ic i_bag" + (inCart === -1 ? "" : " active")}
-                onClick={() => {
-                  if (inCart !== -1) {
-                    delete productInCartList[data.slug];
-                    if (process.env.REACT_APP_TYPE === "prod") {
-                      window.dataLayer.push({
-                        ecommerce: {
-                          remove: {
-                            products: [
-                              {
-                                id: data.slug,
-                                name: data.name,
-                                price: data.price,
-                                brand: data.brand,
-                              },
-                            ],
+              )}
+              {cart ? (
+                <div className="product__counter">
+                  <button
+                    className="ic i_minus"
+                    onClick={() => {
+                      if (productInCartList[el] > 1) {
+                        this.clickMinus(el);
+                      }
+                    }}
+                  ></button>
+                  <input
+                    min="1"
+                    max="100"
+                    type="number"
+                    value={productInCartList[el]}
+                    readOnly
+                  />
+                  <button
+                    className="ic i_plus"
+                    onClick={() => {
+                      if (productInCartList[el] < data.stock_quantity) {
+                        this.clickPlus(el);
+                      }
+                    }}
+                  ></button>
+                </div>
+              ) : (
+                <button
+                  className={"ic i_bag" + (inCart === -1 ? "" : " active")}
+                  onClick={() => {
+                    if (inCart !== -1) {
+                      delete productInCartList[data.slug];
+                      if (process.env.REACT_APP_TYPE === "prod") {
+                        window.dataLayer.push({
+                          ecommerce: {
+                            remove: {
+                              products: [
+                                {
+                                  id: data.slug,
+                                  name: data.name,
+                                  price: data.price,
+                                  brand: data.brand,
+                                },
+                              ],
+                            },
                           },
-                        },
-                      });
-                    }
-                  } else {
-                    productInCartList[data.slug] = 1;
-                    if (process.env.REACT_APP_TYPE === "prod") {
-                      window.dataLayer.push({
-                        ecommerce: {
-                          add: {
-                            products: [
-                              {
-                                id: data.slug,
-                                name: data.name,
-                                price: data.price,
-                                brand: data.brand,
-                                quantity: 1,
-                              },
-                            ],
+                        });
+                      }
+                    } else {
+                      productInCartList[data.slug] = 1;
+                      if (process.env.REACT_APP_TYPE === "prod") {
+                        window.dataLayer.push({
+                          ecommerce: {
+                            add: {
+                              products: [
+                                {
+                                  id: data.slug,
+                                  name: data.name,
+                                  price: data.price,
+                                  brand: data.brand,
+                                  quantity: 1,
+                                },
+                              ],
+                            },
                           },
-                        },
-                      });
+                        });
+                      }
                     }
-                  }
-                  addtoCart(true);
-                }}
-              ></button>
-            )}
+                    addtoCart(true);
+                  }}
+                ></button>
+              )}
+            </div>
           </div>
-        </div>
+        </Fade>
       );
     }
   }

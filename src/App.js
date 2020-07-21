@@ -1,12 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import "./App.css";
 import { observer } from "mobx-react";
-import { Router, Route, Switch } from "react-router";
-import { Link, NavLink } from "react-router-dom";
-import { Formik, Field, Form } from "formik";
-import api from "./comp/api";
-import LoginSchema from "./schemas/loginSchema";
-import getCookie from "./ulits/getCookie";
+import { Router, Route, Switch, Redirect } from "react-router";
+
+import { SERVER_URL } from "./constants";
 
 import MenuPoints from "./comp/MenuPoints";
 import Filters from "./comp/Filters";
@@ -23,7 +20,6 @@ import Collections from "./comp/Collections";
 import Collection from "./comp/Collection";
 
 import Actions from "./comp/Actions";
-import Action from "./comp/Action";
 
 import Shops from "./comp/Shops";
 import ShopsMap from "./comp/ShopsMap";
@@ -31,11 +27,10 @@ import ShopsMap from "./comp/ShopsMap";
 import Help from "./comp/Help";
 import About from "./comp/About";
 import Footer from "./comp/Footer";
-import querySearch from "stringquery";
-import Breadcrumbs from "./comp/breadcrumbs";
-import $ from "jquery";
 
-import Swiper from "react-id-swiper";
+import Breadcrumbs from "./comp/breadcrumbs";
+import localStorage from "mobx-localstorage";
+import $ from "jquery";
 
 // const CartPage = lazy(() => import("./comp/CartPage"));
 // const CardView = lazy(() => import("./comp/CardView"));
@@ -129,15 +124,83 @@ const MainScreen = observer(
     addToLastSeenProd = (slug) => {
       const { lastSeenProds } = this.props.store;
 
+      fetch(SERVER_URL + "/product/" + slug, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          credentials: "include",
+        },
+      })
+        .then((res) => {
+          // console.log("res", res);
+          return res.json();
+        })
+        .then((data) => {
+          // console.log("datasto :>> ", data);
+
+          this.props.store.withProds = data.addProd[0].with;
+          this.props.store.likeProds.replace(data.addProd[0].like);
+          // console.log("this.like :>> ", this.like);
+          if (+slug !== this.props.store.cardContainer.slug) {
+            this.props.store.cardContainer = data.product[0];
+          }
+        })
+        .catch((err) => {
+          console.log("err", err);
+        });
+
+      this.props.store.countInProdPage = 1;
+      const timeLastSeenProds = lastSeenProds.slice();
+      console.log("object :>> ", this.props.store.lastSeenProds.values());
       if (!lastSeenProds.includes(slug)) {
-        lastSeenProds.unshift(slug);
+        timeLastSeenProds.unshift(slug);
+        // this.props.store.lastSeenProds = timeLastSeenProds;
       } else {
         const posSlug = lastSeenProds.indexOf(slug);
-        lastSeenProds.splice(posSlug, 1);
-        lastSeenProds.unshift(slug);
+
+        timeLastSeenProds.splice(posSlug, 1);
+        timeLastSeenProds.unshift(slug);
+        // this.props.store.lastSeenProds = timeLastSeenProds;
       }
       if (lastSeenProds.length > 16) {
-        lastSeenProds.pop();
+        timeLastSeenProds.pop();
+
+        this.props.store.lastSeenProds = timeLastSeenProds.slice();
+      } else {
+        this.props.store.lastSeenProds = timeLastSeenProds.slice();
+      }
+    };
+
+    chekFinishDelete = () => {
+      if (localStorage.get("deleteCart") === true) {
+        this.props.store.productInCartList = {};
+        this.props.store.addtoCart(false);
+        if (process.env.REACT_APP_TYPE === "prod") {
+          window.ym(65097901, "reachGoal", "Checkout");
+        }
+        localStorage.removeItem("deleteCart");
+        function t(w) {
+          function start() {
+            w.removeEventListener("YaDeliveryLoad", start);
+            w.YaDelivery.createWidget({
+              containerId: "yaDeliveryWidget",
+              type: "deliveryCart",
+              params: {
+                // Нужно указать те же значения, что и при первом создании
+                apiKey: process.env.REACT_APP_SECRET_CODE_YA_WID, // Авторизационный ключ
+                senderId: 500001936,
+              },
+            })
+              .then((widget) => widget.createOrder())
+              .catch(failureCallback);
+
+            function failureCallback(error) {
+              // Эта функция будет вызвана, если при создании виджета произошли ошибки.
+            }
+          }
+          w.YaDelivery ? start() : w.addEventListener("YaDeliveryLoad", start);
+        }
+        t(window);
       }
     };
 
@@ -148,6 +211,10 @@ const MainScreen = observer(
             store={this.props.store}
             chooseMenuPoint={this.chooseMenuPoint}
           />
+          <div
+            id="yaDeliveryWidget"
+            style={{ width: "0px", height: "0px" }}
+          ></div>
           <Switch>
             <Route
               path="/"
@@ -254,7 +321,7 @@ const MainScreen = observer(
               render={(propsRout) => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
                 (this.props.store.countInProdPage = 1),
-                this.addToLastSeenProd(propsRout.match.params.id),
+                (this.addToLastSeenProd(propsRout.match.params.id),
                 (
                   <div className="main-screen">
                     <CardView
@@ -263,7 +330,7 @@ const MainScreen = observer(
                       sku={propsRout.match.params.id}
                     />
                   </div>
-                )
+                ))
               )}
             />
 
@@ -631,6 +698,7 @@ const MainScreen = observer(
               path="/finish/:id"
               render={(routProps) => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
+                this.chekFinishDelete(),
                 (
                   <div className="main-screen">
                     <Finish
@@ -641,6 +709,18 @@ const MainScreen = observer(
                 )
               )}
             />
+            <Route
+              path="/.well-known/apple-developer-merchantid-domain-association"
+              render={() => {
+                const a = document.createElement("a");
+                a.download = "apple-developer-merchantid-domain-association";
+                a.href =
+                  "/.well-known/apple-developer-merchantid-domain-association1/merchant.ru.yandex.kassa";
+                console.log("a", a);
+                a.click();
+              }}
+            />
+            <Redirect from="*" to="/" />
             <Route onEnter={() => window.location.reload()} />
           </Switch>
           {/* {(this.props.store.productPage && this.props.store.cardContainer) ||

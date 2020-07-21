@@ -23,6 +23,10 @@ class Store {
     localStorage.get("lastSeenProds") === null
       ? []
       : localStorage.get("lastSeenProds");
+
+  withProds = [];
+  likeProds = [];
+
   lastSeenProdsData = {};
   filterPointsContainers = [];
   measurePointsContainers = [];
@@ -136,7 +140,7 @@ class Store {
   });
   // e-com метрика
   eComMetric = autorun(() => {
-    this.countInProdPage = 1;
+    console.log("this.cardContainer :>> ", this.cardContainer.slug);
     if (process.env.REACT_APP_TYPE === "prod") {
       if (this.cardContainer.slug !== undefined) {
         window.dataLayer.push({
@@ -213,7 +217,9 @@ class Store {
           } else {
             timeCont.push(
               <li key={elem.slug}>
-                <NavLink to={"/collections/" + elem.slug}>{elem.name}</NavLink>
+                <NavLink to={"/collections/" + elem.slug} onClick={closeNav}>
+                  {elem.name}
+                </NavLink>
               </li>
             );
             timeCollInMenu.push(
@@ -344,6 +350,7 @@ class Store {
                   dontSaleProdCountIn
                 ) {
                   timeCont[dontSaleProd[index].slug].sale_price = 0;
+                  timeCont[dontSaleProd[index].slug].price = 0;
                   timeCont[dontSaleProd[index].slug].sale = true;
                   break;
                 } else if (
@@ -356,12 +363,16 @@ class Store {
                       dontSaleProdCountIn /
                         this.productInCartList[dontSaleProd[index].slug]);
                   timeCont[dontSaleProd[index].slug].sale = true;
+                  timeCont[dontSaleProd[index].slug].price =
+                    timeCont[dontSaleProd[index].slug].sale_price;
                   break;
                 } else if (
                   this.productInCartList[dontSaleProd[index].slug] <
                   dontSaleProdCountIn
                 ) {
-                  timeCont[dontSaleProd[index].slug].regular_price = 0;
+                  timeCont[dontSaleProd[index].slug].sale_price = 0;
+                  timeCont[dontSaleProd[index].slug].price = 0;
+                  timeCont[dontSaleProd[index].slug].sale = true;
                   dontSaleProdCountIn -= this.productInCartList[
                     dontSaleProd[index].slug
                   ];
@@ -370,6 +381,7 @@ class Store {
             }
           } else {
             this.dontSaleProd = [];
+            this.dontSaleProdCount = 0;
           }
           this.productInCart = timeCont;
         })
@@ -439,6 +451,8 @@ class Store {
       // }
     } else {
       this.productInCart = {};
+      this.dontSaleProd = [];
+      this.dontSaleProdCount = 0;
     }
   };
 
@@ -1604,6 +1618,8 @@ decorate(Store, {
   dontSaleProdCount: observable,
   lastSeenProds: observable,
   lastSeenProdsData: observable,
+  withProds: observable,
+  likeProds: observable,
 });
 
 const store = new Store();

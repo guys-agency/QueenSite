@@ -33,6 +33,7 @@ const CardView = observer(
     with = [];
     like = [];
     count = true;
+    drafts = [];
 
     inLike = this.props.store.likeContainer.length
       ? this.props.store.likeContainer.indexOf(
@@ -53,16 +54,13 @@ const CardView = observer(
       const data = store.cardContainer;
 
       const { productInCartList, addtoCart } = store;
-      console.log("inCart :>> ", this.inCart);
-      console.log("data :>> ", data);
+
       const inCart = Object.keys(this.props.store.productInCartList).length
         ? Object.keys(this.props.store.productInCartList).indexOf(
             String(this.props.store.cardContainer.slug)
           )
         : -1;
       if (inCart !== -1) {
-        console.log("test123 :>> ");
-
         $(".tooltip_cart").addClass("visible");
         $(".tooltip_cart").find(".text").text(data.name);
 
@@ -220,6 +218,8 @@ const CardView = observer(
         dontSaleProdCount,
         lastSeenProdsData,
         lastSeenProds,
+        withProds,
+        likeProds,
       } = this.props.store;
 
       if (data.slug === +this.props.sku && this.count) {
@@ -251,10 +251,15 @@ const CardView = observer(
             .timeDelivery({ data: dataDeliv })
             .then((ok) => {
               // console.log("ok :>> ", ok);
-              const time = moment(
-                ok[0].delivery.calculatedDeliveryDateMin
-              ).diff(moment(), "days");
-              this.setState({ timeDelivery: time + 2 });
+              ok.forEach((del) => {
+                if (del.tags.includes("FASTEST")) {
+                  const time = moment(
+                    del.delivery.calculatedDeliveryDateMin
+                  ).diff(moment(), "days");
+                  this.setState({ timeDelivery: time + 1 });
+                  return;
+                }
+              });
             })
             .catch((err) => {
               console.log("err :>> ", err);
@@ -262,30 +267,8 @@ const CardView = observer(
         }
       }
 
-      if (data.slug !== +this.props.sku || this.with.length === 0) {
-        fetch(SERVER_URL + "/product/" + this.props.sku, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            credentials: "include",
-          },
-        })
-          .then((res) => {
-            // console.log("res", res);
-            return res.json();
-          })
-          .then((data) => {
-            // console.log("datasto :>> ", data);
-
-            this.with = data.addProd[0].with;
-            this.like = data.addProd[0].like;
-            // console.log("this.like :>> ", this.like);
-            this.props.store.cardContainer = data.product[0];
-            this.fetchReady = true;
-          })
-          .catch((err) => {
-            console.log("err", err);
-          });
+      if (data.slug !== +this.props.sku) {
+        this.fetchReady = false;
       } else {
         this.fetchReady = true;
       }
@@ -381,8 +364,6 @@ const CardView = observer(
       //     this.props.store.seenProd.unshift(data);
       //   }
       // }
-      console.log("lastSeenProdsData :>> ", lastSeenProdsData);
-      console.log("lastSeenProds :>> ", lastSeenProds);
 
       return (
         data.slug === +this.props.sku && (
@@ -473,8 +454,8 @@ const CardView = observer(
                       {dontSaleProdCount !== 0 &&
                       dontSaleProdCount % 3 !== 0 &&
                       !data.sale ? (
-                        <div className="one-plus-one">
-                          <p className="disc_perc">1 + 1 = 3</p> добавьте еще{" "}
+                        <Link to="/main/1+13" className="one-plus-one">
+                          Добавьте еще{" "}
                           {3 * (Math.floor(dontSaleProdCount / 3) + 1) -
                             dontSaleProdCount}{" "}
                           {num2str(
@@ -482,13 +463,16 @@ const CardView = observer(
                               dontSaleProdCount,
                             ["товар", "товара", "товаров"]
                           )}{" "}
-                          без скидки
-                        </div>
+                          из акции <p className="disc_perc">1 + 1 = 3</p>
+                        </Link>
                       ) : null}
                       <div className="product-p__control">
                         <div className="product-p__buttons">
                           <button
-                            className="btn btn_primary"
+                            className={
+                              "btn btn_primary" +
+                              (data.stock_quantity ? "" : " btn_dis")
+                            }
                             onClick={this.clickHandler}
                           >
                             <span
@@ -685,7 +669,7 @@ const CardView = observer(
                 </div>
               </div>
             </div>
-            {this.with.length !== 0 && (
+            {withProds.length !== 0 && (
               <div className="carousel carousel_product">
                 <div className="container">
                   <div className="title">
@@ -695,7 +679,7 @@ const CardView = observer(
                 <div className="container container_s">
                   <div className="slider-cont">
                     <Swiper {...relativeCar}>
-                      {this.with.map((el) => {
+                      {withProds.map((el) => {
                         return (
                           <div
                             className="col col-3 col-t-4 col-s-6"
@@ -715,7 +699,7 @@ const CardView = observer(
               </div>
             )}
 
-            {this.like.length !== 0 && (
+            {likeProds.length !== 0 && (
               <div className="carousel carousel_product">
                 <div className="container">
                   <div className="title">
@@ -724,24 +708,22 @@ const CardView = observer(
                 </div>
                 <div className="container container_s">
                   <div className="slider-cont">
-                    {this.like.length && (
-                      <Swiper {...sameCar}>
-                        {this.like.map((el) => {
-                          return (
-                            <div
-                              className="col col-3 col-t-4 col-s-6"
+                    <Swiper {...sameCar}>
+                      {likeProds.map((el) => {
+                        return (
+                          <div
+                            className="col col-3 col-t-4 col-s-6"
+                            key={el.slug}
+                          >
+                            <ProductCard
                               key={el.slug}
-                            >
-                              <ProductCard
-                                key={el.slug}
-                                data={el}
-                                store={this.props.store}
-                              />
-                            </div>
-                          );
-                        })}
-                      </Swiper>
-                    )}
+                              data={el}
+                              store={this.props.store}
+                            />
+                          </div>
+                        );
+                      })}
+                    </Swiper>
                   </div>
                 </div>
               </div>
@@ -757,10 +739,6 @@ const CardView = observer(
                   <div className="slider-cont">
                     <Swiper {...relativeCar}>
                       {lastSeenProds.map((el, i) => {
-                        console.log("el :>> ", el);
-                        console.log("this.props.sku :>> ", this.props.sku);
-                        console.log("object :>> ", el !== this.props.sku);
-
                         if (lastSeenProdsData[el] !== undefined) {
                           return (
                             <div className="col col-3 col-t-4 col-s-6" key={el}>
@@ -785,14 +763,22 @@ const CardView = observer(
 
     componentDidUpdate() {
       if (document.querySelector(".drift") !== null) {
+        this.drafts.forEach((el) => {
+          el.disable();
+        });
+        console.log(
+          'document.querySelector(".drift") :>> ',
+          document.querySelector(".drift").getAttribute("data-zoom")
+        );
         var driftImgs = document.querySelectorAll(".drift");
         var pane = document.querySelector(".product-p__description");
         driftImgs.forEach((img) => {
-          new Drift(img, {
+          const d = new Drift(img, {
             paneContainer: pane,
             inlinePane: true,
             hoverDelay: 200,
           });
+          this.drafts.push(d);
         });
       }
     }

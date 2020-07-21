@@ -9,6 +9,7 @@ import store from "./MobxStore";
 import { BrowserRouter } from "react-router-dom";
 // const WooCommerceRestApi = require("@woocommerce/woocommerce-rest-api").default;
 window.dataLayer = window.dataLayer || [];
+console.log("process.env.REACT_APP_TYPE :>> ", process.env.REACT_APP_TYPE);
 if (process.env.REACT_APP_TYPE === "prod") {
   (function (m, e, t, r, i, k, a) {
     m[i] =
@@ -44,4 +45,4 @@ ReactDOM.render(
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.register();
+serviceWorker.unregister();

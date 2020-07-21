@@ -153,13 +153,22 @@
 .one-plus-one {
   display: inline-flex;
   padding: 15px;
+  padding-top: 18px;
   border: 1px solid transparent;
   background-color: #fff;
-  border-radius: 5px;
+  border-radius: 30px;
   transition: all 0.2s;
   margin-bottom: 5px;
-
   box-shadow: $sh_btn;
+  align-self: flex-start;
+
+  @include max($s) {
+    font-size: 12px;
+    padding-top: 15px;
+    flex-wrap: wrap;
+    text-align: center;
+    justify-content: left;
+  }
 
   .disc_perc {
     background-color: $red;
@@ -168,7 +177,7 @@
     font-size: 14px;
     border-radius: 30px;
     margin-left: 15px;
-    margin-right: 15px;
+
     position: relative;
     top: -2px;
     padding: {
@@ -179,6 +188,8 @@
     }
     @include max($s) {
       font-size: 12px;
+      margin-top: 5px;
+      margin-left: 0px;
     }
   }
 }

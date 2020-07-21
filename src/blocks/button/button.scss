@@ -40,6 +40,17 @@ button {
     font-weight: 500;
   }
 
+  &_dis {
+    pointer-events: none;
+    background: #ffffff;
+    opacity: 0.4;
+    box-shadow: none;
+
+    &:hover {
+      box-shadow: none;
+    }
+  }
+
   &.close {
     opacity: 0;
     visibility: hidden;
@@ -63,6 +74,17 @@ button {
         content: ".";
         animation: loading 1s ease alternate infinite;
       }
+
+      &:hover {
+        box-shadow: none;
+        transform: none;
+        opacity: 1;
+      }
+    }
+
+    .red {
+      background-color: red;
+      pointer-events: none;
 
       &:hover {
         box-shadow: none;

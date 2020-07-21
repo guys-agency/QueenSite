@@ -55,10 +55,10 @@ const Finish = observer(
 
       return (
         ready && (
-          <div className="cart-page">
+          <div className="cart-page col-12">
             <div className="container">
               <div className="row">
-                <div className="col col-7">
+                <div className="col col-7 col-s-12">
                   <h3>Заказ №{data.dbid} принят</h3>
                   <p>
                     Мы начали обрабатывать Ваш заказ.
@@ -149,7 +149,7 @@ const Finish = observer(
                           onSubmit={(values, { setSubmitting }) => {
                             api
                               .regist({
-                                name: data.delivery.recipient.firstName,
+                                name: data.name.split(" ")[0],
                                 email: values.email.toLowerCase(),
                                 password: values.password,
                               })
@@ -266,24 +266,28 @@ const Finish = observer(
                   )}
                 </div>
                 <div className="col col-1"></div>
-                <div className="col col-4">
+                <div className="col col-4 col-s-12">
                   <div className="order">
                     <h4 className="a_dark">Ваш заказ</h4>
                     <div className="orders-item__products">
                       {products}
-                      <div className="item">
-                        <span className="name">Доставка</span>
-                        <span className="price">
-                          {data.delivery.deliveryForCustomer.toLocaleString()}₽
-                          {/* / <span className="b_gray">3-4 дня</span> */}
-                        </span>
-                      </div>
+                      {(!data.delivery.pickUpChoose ||
+                        data.delivery.pickUpChoose === undefined) && (
+                        <div className="item">
+                          <span className="name">Доставка</span>
+                          <span className="price">
+                            {data.delivery.deliveryForCustomer.toLocaleString()}
+                            ₽{/* / <span className="b_gray">3-4 дня</span> */}
+                          </span>
+                        </div>
+                      )}
 
                       <div className="item">
                         <b className="name">Итого</b>
                         <b className="price">
-                          {(
-                            data.sum + data.delivery.deliveryForCustomer
+                          {(data.delivery.deliveryForCustomer !== undefined
+                            ? data.sum + data.delivery.deliveryForCustomer
+                            : data.sum
                           ).toLocaleString()}
                           ₽
                         </b>
@@ -293,23 +297,20 @@ const Finish = observer(
 
                   <h4 className="a_dark">Ваши данные</h4>
                   <div className="profile-p__card profile-p__card_no-wrp">
-                    <div className="user__name">
-                      {data.delivery.contacts.firstName}{" "}
-                      {data.delivery.contacts.lastName}
-                    </div>
+                    <div className="user__name">{data.name} </div>
                     <div className="user__contact">
-                      {data.delivery.contacts.phone && (
-                        <div className="user__phone">
-                          {data.delivery.contacts.phone}
-                        </div>
+                      {data.tel !== undefined && (
+                        <div className="user__phone">{data.tel}</div>
                       )}
                       <div className="user__mail">{data.user}</div>
                     </div>
                     <div className="user__address">
-                      г. {data.delivery.recipient.address.locality},{" "}
-                      {data.delivery.recipient.address.street}, д.{" "}
-                      {data.delivery.recipient.address.house}, кв.{" "}
-                      {data.delivery.recipient.address.apartment}
+                      {data.delivery.pickUpChoose === true
+                        ? `Магазин:${data.delivery.store}, 
+                        по адресу: ${data.delivery.address.locality}`
+                        : data.delivery.deliveryType === "PICKUP"
+                        ? `Адрес выдачи: ${data.delivery.pickupPoint.address.addressString}`
+                        : `г. ${data.delivery.address.locality}, ${data.delivery.address.street}, д. ${data.delivery.address.house}, кв. ${data.delivery.address.apartment}`}
                     </div>
                   </div>
                 </div>

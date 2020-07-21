@@ -28,6 +28,19 @@ class Api {
     });
   }
 
+  coupon(data) {
+    return fetch(SERVER_URL + "/pr", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }).then((res) => {
+      return res.json();
+    });
+  }
+
   changeData(data) {
     return fetch(SERVER_URL + "/change-data", {
       method: "POST",
