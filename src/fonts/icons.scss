@@ -162,3 +162,9 @@
     content: $i_check;
   }
 }
+
+.i_gift {
+  &:before {
+    content: $i_gift;
+  }
+}

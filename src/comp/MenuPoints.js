@@ -53,7 +53,7 @@ const MenuPoints = observer(
           Задать вопрос
         </button>
         <a href="tel:88002508021" className="phone">
-          8-800-250-80-21
+          8 800 250-80-21
         </a>
       </div>
     );
