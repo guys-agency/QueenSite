@@ -79,7 +79,15 @@
       position: relative;
 
       .tumbler {
-        max-width: 450px;
+        // max-width: 450px;
+        transition: all 0.5s linear;
+
+        &_red {
+          .tumb {
+            border-color: #ba250d;
+            color: #ba250d;
+          }
+        }
 
         button,
         .tumb {
@@ -234,8 +242,13 @@
   }
 }
 
-.cart-page__stores {
-  .cart-page__store {
+.cart-page__list {
+  #store {
+    &.active {
+      margin-bottom: 46px;
+    }
+  }
+  .cart-page__list-elem {
     display: flex;
     position: relative;
     border: 1px solid #e3e2e3;
@@ -245,11 +258,70 @@
     padding: 15px;
     cursor: pointer;
     transition: all linear 0.1s;
+
+    .red {
+      border: 1px solid #ba250d;
+    }
+
+    &_red {
+      border: 1px solid #ba250d;
+    }
+
     &:hover {
       box-shadow: 0px 6px 16px rgba(0, 9, 77, 0.05);
     }
-    // transition: color linear 0.2s;
+    &_delivery {
+      display: block;
 
+      cursor: auto;
+      padding: 0px;
+
+      &:hover {
+        box-shadow: none;
+      }
+
+      .cart-page__store-info {
+        padding: 15px;
+      }
+    }
+    // transition: color linear 0.2s;
+    .cart-page__list-choose {
+      display: flex;
+      width: 100%;
+
+      div {
+        width: 100%;
+        border: 1px solid #e3e2e3;
+        border-left: none;
+        border-bottom: none;
+        padding: 15px 20px;
+        cursor: pointer;
+
+        &.active {
+          background-color: #00007d;
+          color: #fff;
+        }
+
+        &.deactive {
+          background-color: rgba(0, 9, 77, 0.05);
+          cursor: auto;
+          pointer-events: none;
+        }
+
+        &:hover {
+          box-shadow: 0px 6px 16px rgba(0, 9, 77, 0.05);
+        }
+
+        &:first-child {
+          border-bottom-left-radius: 10px;
+        }
+
+        &:last-child {
+          border-bottom-right-radius: 10px;
+          border-right: none;
+        }
+      }
+    }
     .cart-page__store-info {
       .cart-page__store-name {
         font-family: Excentra Pro;
@@ -301,13 +373,13 @@
     &.active {
       background-color: #00007d;
       color: #fff;
-      margin-bottom: 46px;
 
       .cart-page__store-link {
         display: block;
         visibility: visible;
       }
     }
+
     .cart-page__store-link {
       font-family: Excentra Pro;
       font-style: normal;

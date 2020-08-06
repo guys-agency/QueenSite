@@ -8,6 +8,12 @@ import * as serviceWorker from "./serviceWorker";
 import store from "./MobxStore";
 import { BrowserRouter } from "react-router-dom";
 // const WooCommerceRestApi = require("@woocommerce/woocommerce-rest-api").default;
+if (
+  process.env.REACT_APP_TYPE === "prod" &&
+  typeof window.__REACT_DEVTOOLS_GLOBAL_HOOK__ === "object"
+) {
+  window.__REACT_DEVTOOLS_GLOBAL_HOOK__.inject = function () {};
+}
 window.dataLayer = window.dataLayer || [];
 console.log("process.env.REACT_APP_TYPE :>> ", process.env.REACT_APP_TYPE);
 if (process.env.REACT_APP_TYPE === "prod") {

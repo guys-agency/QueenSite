@@ -47,7 +47,7 @@ const AuthSidebar = observer(
             </button>
           </div>
 
-          {/* {this.state.reg && (
+          {this.state.reg && (
             <div className="discond-fix_sidebar">
               <img src="/image/button/icon/gift.svg"></img>
               <p>
@@ -55,7 +55,7 @@ const AuthSidebar = observer(
                 <br /> Промокод придет на почту
               </p>
             </div>
-          )} */}
+          )}
 
           {this.state.log && (
             <Formik

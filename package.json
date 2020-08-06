@@ -14,7 +14,7 @@
     "mobx": "^5.15.4",
     "mobx-localstorage": "^1.2.0",
     "mobx-react": "^6.2.2",
-    "moment": "^2.26.0",
+    "moment": "^2.27.0",
     "node-sass": "^4.14.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
@@ -43,7 +43,7 @@
   },
   "browserslist": {
     "production": [
-      "since 2010"
+      "cover 99.5%"
     ],
     "development": [
       "last 1 chrome version",

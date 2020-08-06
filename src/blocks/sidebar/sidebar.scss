@@ -12,6 +12,7 @@
   transition: all 0.3s;
   display: flex;
   flex-direction: column;
+  overflow-y: scroll;
 
   @include max($s) {
     width: 280px;

@@ -92,6 +92,12 @@ const ProductCardContainer = observer(
                         className="dropdown__list-item item"
                         onClick={this.sortClick}
                       >
+                        Сначала новые
+                      </button>
+                      <button
+                        className="dropdown__list-item item"
+                        onClick={this.sortClick}
+                      >
                         Сначала акционные
                       </button>
                     </div>

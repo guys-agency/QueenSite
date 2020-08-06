@@ -152,12 +152,16 @@ const ProductList = observer(
                     Бесплатно
                   </div>
                 )
-              ) : (
+              ) : productInCartList[el] !== undefined ? (
                 <div className={"product__price"}>
                   {(
                     productInCartList[el] * data.regular_price
                   ).toLocaleString()}{" "}
                   ₽{" "}
+                </div>
+              ) : (
+                <div className={"product__price"}>
+                  {data.regular_price.toLocaleString()} ₽{" "}
                 </div>
               )}
               {cart ? (

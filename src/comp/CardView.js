@@ -209,6 +209,35 @@ const CardView = observer(
       }
     };
 
+    relativeCar = {
+      slidesPerView: "auto",
+      slidesPerGroup: 2,
+      speed: 800,
+      draggable: true,
+      preventClicksPropagation: false,
+      preventClicks: false,
+      // autoplay: {
+      //   delay: 4000,
+      // },
+      pagination: {
+        el: ".swiper-pagination",
+        type: "bullets",
+        clickable: true,
+      },
+      navigation: {
+        nextEl: ".swiper-button-next",
+        prevEl: ".swiper-button-prev",
+      },
+      breakpoints: {
+        760: {
+          slidesPerGroup: 3,
+        },
+        951: {
+          slidesPerGroup: 4,
+        },
+      },
+    };
+
     render() {
       const data = this.props.store.cardContainer;
 
@@ -228,6 +257,7 @@ const CardView = observer(
           localStorage.get("city") !== null &&
           localStorage.get("city") !== undefined
         ) {
+          console.log("11 :>> ", 11);
           this.count = false;
 
           const dataDeliv = {
@@ -260,6 +290,12 @@ const CardView = observer(
                   return;
                 }
               });
+              if (this.state.timeDelivery === "") {
+                const time = moment(
+                  ok[0].delivery.calculatedDeliveryDateMin
+                ).diff(moment(), "days");
+                this.setState({ timeDelivery: time + 1 });
+              }
             })
             .catch((err) => {
               console.log("err :>> ", err);
@@ -272,60 +308,6 @@ const CardView = observer(
       } else {
         this.fetchReady = true;
       }
-
-      const relativeCar = {
-        slidesPerView: "auto",
-        slidesPerGroup: 2,
-        speed: 800,
-        draggable: true,
-        // autoplay: {
-        //   delay: 4000,
-        // },
-        pagination: {
-          el: ".swiper-pagination",
-          type: "bullets",
-          clickable: true,
-        },
-        navigation: {
-          nextEl: ".swiper-button-next",
-          prevEl: ".swiper-button-prev",
-        },
-        breakpoints: {
-          760: {
-            slidesPerGroup: 3,
-          },
-          951: {
-            slidesPerGroup: 4,
-          },
-        },
-      };
-
-      const sameCar = {
-        slidesPerView: "auto",
-        slidesPerGroup: 2,
-        speed: 800,
-        draggable: true,
-        // autoplay: {
-        //   delay: 4000,
-        // },
-        pagination: {
-          el: ".swiper-pagination",
-          type: "bullets",
-          clickable: true,
-        },
-        navigation: {
-          nextEl: ".swiper-button-next",
-          prevEl: ".swiper-button-prev",
-        },
-        breakpoints: {
-          760: {
-            slidesPerGroup: 3,
-          },
-          951: {
-            slidesPerGroup: 4,
-          },
-        },
-      };
 
       const storesAvali = [];
 
@@ -678,7 +660,7 @@ const CardView = observer(
                 </div>
                 <div className="container container_s">
                   <div className="slider-cont">
-                    <Swiper {...relativeCar}>
+                    <Swiper {...this.relativeCar}>
                       {withProds.map((el) => {
                         return (
                           <div
@@ -708,7 +690,7 @@ const CardView = observer(
                 </div>
                 <div className="container container_s">
                   <div className="slider-cont">
-                    <Swiper {...sameCar}>
+                    <Swiper {...this.relativeCar}>
                       {likeProds.map((el) => {
                         return (
                           <div
@@ -737,7 +719,7 @@ const CardView = observer(
                 </div>
                 <div className="container container_s">
                   <div className="slider-cont">
-                    <Swiper {...relativeCar}>
+                    <Swiper {...this.relativeCar}>
                       {lastSeenProds.map((el, i) => {
                         if (lastSeenProdsData[el] !== undefined) {
                           return (
@@ -750,6 +732,7 @@ const CardView = observer(
                             </div>
                           );
                         }
+                        return null;
                       })}
                     </Swiper>
                   </div>

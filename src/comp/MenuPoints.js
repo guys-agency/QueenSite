@@ -1055,7 +1055,7 @@ const MenuPoints = observer(
                 }
               }}
             ></div>
-            {/* {!this.props.store.auth && (
+            {!this.props.store.auth && (
               <div
                 className="discond-fix"
                 onClick={() => {
@@ -1070,7 +1070,7 @@ const MenuPoints = observer(
               >
                 <img src="/image/button/icon/gift.svg"></img>
               </div>
-            )} */}
+            )}
           </>
         )
       );

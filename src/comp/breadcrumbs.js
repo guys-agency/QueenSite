@@ -162,6 +162,11 @@ const Breadcrumbs = observer(
       ) {
         this.props.store.firstBread = "ideas";
         inPath = "/ideas/";
+      } else if (
+        window.location.pathname.includes("/brand/") ||
+        this.props.name === "ideas"
+      ) {
+        inPath = "/brand/";
       } else {
         inPath = "/catalog/";
       }

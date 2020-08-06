@@ -140,15 +140,16 @@ const CartSidebar = observer(
             <div className="cart__list">{productList}</div>
           </div>
           {productList.length > 0 && (
-            <button
+            <a
+              href="/cart"
               className="btn btn_yellow btn_wide btn_bottom"
-              onClick={() => {
-                this.props.history.push("/cart");
-                this.props.closeSidebar();
-              }}
+              // onClick={() => {
+              //   this.props.history.push("/cart");
+              //   this.props.closeSidebar();
+              // }}
             >
               Перейти к оформлению <span className="ic i_right"></span>
-            </button>
+            </a>
           )}
         </>
       );

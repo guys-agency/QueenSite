@@ -1,158 +1,197 @@
-.head{
-    width: 100%;
-    background: $a_gradient;
-    margin-top: -130px;
-    margin-bottom: 230px;
+.head {
+  width: 100%;
+  background: $a_gradient;
+  margin-top: -130px;
+  margin-bottom: 230px;
+  position: relative;
+  padding-top: 150px;
+  @include max($s) {
+    margin-bottom: 100px;
+  }
+  &_big {
+    height: 500px;
+    @include max($s) {
+      height: 300px;
+    }
+  }
+  &_sm {
+    height: 355px;
+    @include max($s) {
+      height: 200px;
+    }
+  }
+  &_list {
+    margin-top: 0;
+    padding-top: 40px;
+    margin-bottom: 100px;
+  }
+  &-car {
+    max-width: 1300px;
+    box-shadow: $sh_bottom;
+    margin-left: auto;
+    margin-right: auto;
     position: relative;
-    padding-top: 150px;
-    @include max($s){
-        margin-bottom: 100px;
+    .swiper-container {
+      border-radius: 5px;
     }
-    &_big{
-        height: 500px;
-        @include max($s){
-            height: 300px;
-        }
+    @include max(1320px) {
+      margin-left: 10px;
+      margin-right: 10px;
     }
-    &_sm{
-        height: 355px;
-        @include max($s){
-            height: 200px;
-        }
+    .swiper-pagination {
+      max-width: 1110px;
+      @include c(x);
+      bottom: 50px;
+      @include max(1160px) {
+        max-width: 100%;
+        padding-left: 15px;
+        padding-right: 15px;
+        bottom: 15px;
+      }
+      &-bullet {
+        box-shadow: $sh_btn;
+      }
     }
-    &_list{
-        margin-top: 0;
-        padding-top: 40px;
-        margin-bottom: 100px;
-    }
-    &-car{
-        max-width: 1300px;
-        box-shadow: $sh_bottom;
-        margin-left: auto;
-        margin-right: auto;
-        position: relative;
-        .swiper-container{
-            border-radius: 5px;
-        }
-        @include max(1320px){
-            margin-left: 10px;
-            margin-right: 10px;
-        }
-        .swiper-pagination{
-            max-width: 1110px;
-            @include c(x);
-            bottom: 50px;
-            @include max(1160px){
-                max-width: 100%;
-                padding-left: 15px;
-                padding-right: 15px;
-                bottom: 15px;
-            }
-            &-bullet{
-                box-shadow: $sh_btn;
-            }
-        }
-    }
-    &-cont{
-        max-width: 1300px;
-        margin-left: auto;
-        margin-right: auto;
-        position: relative; 
-        .head-banner{
-            box-shadow: $sh_bottom;
-        }
-    }
-    &-banner{
-        background-color: #fff;
-        box-shadow: $sh_main;
-        border-radius: 5px;
-        max-width: 1300px;
-        height: 570px;
-        margin-left: auto;
-        margin-right: auto;
-        background-size: cover;
-        background-position: center;
-        display: block;
-        @include max($s){
-            height: 250px;
-        }
-        @include max($d){
-            margin-right: 10px;
-            margin-left: 10px;
-        }
-        &_action{
-            height: 366px;
-            position: relative;
-            @include max($s){
-                height: 220px;
-            }
-            .text{
-                position: absolute;
-                max-width: 1110px;
-                width: 100%;
-                @include c(x);
-                @include max($d){
-                    padding-right: 20px;
-                    padding-left: 20px;
-                }
-                bottom: 20px;
-                z-index: 1;
-                color: white;
-                .label{
-                    background-color: $red;
-                    border-radius: 30px;
-                    display: inline-block;
-                    padding: {
-                        top: 4px;
-                        bottom: 4px;
-                        left: 8px;
-                        right: 8px;
-                    };
-                }
-                h1, p{
-                    color: white;
-                }
-                h1{
-                    .ic{
-                        font-size: 27px;
-                        margin-left: 10px;
-                        transition: all 0.3s;
-                        @include max($s){
-                            font-size: 21px;
-                            margin-left: 5px;
-                        }
-                    }
-                }
-            }
-            &::after{
-                content: '';
-                position: absolute;
-                left: 0;
-                right: 0;
-                width: 100%;
-                height: 100%;
-                border-radius: 5px;
-                background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.6) 100%);
-            }
-            &:hover{
-                transform: translateY(-5px);
-                h1{
-                    .ic{
-                        margin-left: 15px;
-                    }
-                }
-            }
-        }
-    }
+  }
+  &_brand {
+    background-size: contain;
+    background-position: right;
+    background-repeat: no-repeat;
+    height: auto;
+    margin-bottom: 0px;
+    border-bottom: 1px solid #f7f6f7;
+  }
+  &-cont {
+    max-width: 1300px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
 
-    &_no-link{
-        .i_right{
-            display: none;
-        }
-        .head-banner_action{
-            &:hover{
-                transform: translateY(0);
-            }  
-        }
+    &_brand {
+      display: flex;
+      justify-content: space-evenly;
+      align-items: center;
+      max-width: 1100px;
+      @include max($s) {
+        display: block;
+      }
     }
+    .head-banner {
+      box-shadow: $sh_bottom;
+
+      &_brand {
+        height: 400px;
+        background-color: transparent;
+        box-shadow: none;
+        margin-left: 0px;
+        margin-right: 0px;
+        background-position: center;
+        background-size: contain;
+        background-repeat: no-repeat;
+
+        @include max($s) {
+          height: 250px;
+          margin-bottom: 10px;
+        }
+      }
+    }
+  }
+  &-banner {
+    background-color: #fff;
+    box-shadow: $sh_main;
+    border-radius: 5px;
+    max-width: 1300px;
+    height: 570px;
+    margin-left: auto;
+    margin-right: auto;
+    background-size: cover;
+    background-position: center;
+    display: block;
+    @include max($s) {
+      height: 250px;
+    }
+    @include max($d) {
+      margin-right: 10px;
+      margin-left: 10px;
+    }
+    &_action {
+      height: 366px;
+      position: relative;
+      @include max($s) {
+        height: 220px;
+      }
+      .text {
+        position: absolute;
+        max-width: 1110px;
+        width: 100%;
+        @include c(x);
+        @include max($d) {
+          padding-right: 20px;
+          padding-left: 20px;
+        }
+        bottom: 20px;
+        z-index: 1;
+        color: white;
+        .label {
+          background-color: $red;
+          border-radius: 30px;
+          display: inline-block;
+          padding: {
+            top: 4px;
+            bottom: 4px;
+            left: 8px;
+            right: 8px;
+          }
+        }
+        h1,
+        p {
+          color: white;
+        }
+        h1 {
+          .ic {
+            font-size: 27px;
+            margin-left: 10px;
+            transition: all 0.3s;
+            @include max($s) {
+              font-size: 21px;
+              margin-left: 5px;
+            }
+          }
+        }
+      }
+      &::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 5px;
+        background: linear-gradient(
+          180deg,
+          rgba(0, 0, 0, 0) 0%,
+          rgba(0, 0, 0, 0.6) 100%
+        );
+      }
+      &:hover {
+        transform: translateY(-5px);
+        h1 {
+          .ic {
+            margin-left: 15px;
+          }
+        }
+      }
+    }
+  }
+
+  &_no-link {
+    .i_right {
+      display: none;
+    }
+    .head-banner_action {
+      &:hover {
+        transform: translateY(0);
+      }
+    }
+  }
 }

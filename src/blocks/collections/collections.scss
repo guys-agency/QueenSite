@@ -1,116 +1,132 @@
 @import "./collections-h.scss";
 
-.collections{
-    .banner{
-        height: 450px;
-        @include max($s){
-            height: 220px;
-        }
+.collections {
+  .banner {
+    height: 450px;
+    @include max($s) {
+      height: 220px;
     }
-    .head{
-        margin-bottom: 240px;
-        @include max($s){
-            margin-bottom: 120px;
-        }
-        a{
-            &:hover{
-                transform: translateY(-3px);
-            }
-        }
+  }
+  .head {
+    margin-bottom: 240px;
+    @include max($s) {
+      margin-bottom: 120px;
     }
-    &__desc{
-        background-color: #fff;
-        border-radius: 5px;
-        border: 1px solid $g_middle;
-        box-shadow: $sh_bottom;
-        position: relative;
-        top: -40px;
-        font-size: 16px;
-        line-height: 24px;
-        padding: {
-            top: 10px;
-            bottom: 10px;
-            left: 20px;
-            right: 20px;
-        };
+    a {
+      &:hover {
+        transform: translateY(-3px);
+      }
     }
-    &__list{
-        padding-bottom: 40px;
-        max-width: 1300px;
-        .banner{
-            &__desc{
-                font-size: 24px;
-                @include max($s){
-                    font-size: 18px;
-                    left: 10px;
-                    bottom: 10px;
-                }
-            }
-        }
-        .col{
-            margin-bottom: 20px;
-            &:nth-child(6n+1):nth-child(odd){
-                -ms-flex-preferred-size: 50%;
-                flex-basis: 50%;
-                max-width: 50%;
-            }
-
-            &:nth-child(6n+2):nth-child(even){
-                -ms-flex-preferred-size: 50%;
-                flex-basis: 50%;
-                max-width: 50%;
-            }
-
-            &:nth-child(6n+3):nth-child(odd){
-                -ms-flex-preferred-size: 58.33333333%;
-                flex-basis: 58.33333333%;
-                max-width: 58.33333333%;
-                @include max($s){
-                   -ms-flex-preferred-size: 50%;
-                    flex-basis: 50%;
-                    max-width: 50%; 
-                }
-            }
-
-            &:nth-child(6n+4):nth-child(even){
-                -ms-flex-preferred-size: 41.66666667%;
-                flex-basis: 41.66666667%;
-                max-width: 41.66666667%;
-                @include max($s){
-                   -ms-flex-preferred-size: 50%;
-                    flex-basis: 50%;
-                    max-width: 50%; 
-                }
-            }
-
-            &:nth-child(6n+5):nth-child(odd){
-                -ms-flex-preferred-size: 41.66666667%;
-                flex-basis: 41.66666667%;
-                max-width: 41.66666667%;
-                @include max($s){
-                   -ms-flex-preferred-size: 50%;
-                    flex-basis: 50%;
-                    max-width: 50%; 
-                }
-            }
-
-            &:nth-child(6n+6):nth-child(even){
-                -ms-flex-preferred-size: 58.33333333%;
-                flex-basis: 58.33333333%;
-                max-width: 58.33333333%;
-                @include max($s){
-                    -ms-flex-preferred-size: 50%;
-                    flex-basis: 50%;
-                    max-width: 50%;
-                }
-            }
-
-            &:last-child:nth-child(odd){
-                -ms-flex-preferred-size: 100%;
-                flex-basis: 100%;
-                max-width: 100%;
-            }
-        }
+    &_brand {
+      margin-bottom: 0px;
+      background-image: url("/image/about.png");
+      @include max($m) {
+        background: transparent;
+      }
     }
+  }
+  &__desc {
+    background-color: #fff;
+    border-radius: 5px;
+    border: 1px solid $g_middle;
+    box-shadow: $sh_bottom;
+    position: relative;
+    top: -40px;
+    font-size: 16px;
+    line-height: 24px;
+    padding: {
+      top: 10px;
+      bottom: 10px;
+      left: 20px;
+      right: 20px;
+    }
+
+    &_brand {
+      border: none;
+      top: 0px;
+      margin-left: 20px;
+
+      @include max($s) {
+        margin-bottom: 20px;
+      }
+    }
+  }
+  &__list {
+    padding-bottom: 40px;
+    max-width: 1300px;
+    .banner {
+      &__desc {
+        font-size: 24px;
+        @include max($s) {
+          font-size: 18px;
+          left: 10px;
+          bottom: 10px;
+        }
+      }
+    }
+    .col {
+      margin-bottom: 20px;
+      &:nth-child(6n + 1):nth-child(odd) {
+        -ms-flex-preferred-size: 50%;
+        flex-basis: 50%;
+        max-width: 50%;
+      }
+
+      &:nth-child(6n + 2):nth-child(even) {
+        -ms-flex-preferred-size: 50%;
+        flex-basis: 50%;
+        max-width: 50%;
+      }
+
+      &:nth-child(6n + 3):nth-child(odd) {
+        -ms-flex-preferred-size: 58.33333333%;
+        flex-basis: 58.33333333%;
+        max-width: 58.33333333%;
+        @include max($s) {
+          -ms-flex-preferred-size: 50%;
+          flex-basis: 50%;
+          max-width: 50%;
+        }
+      }
+
+      &:nth-child(6n + 4):nth-child(even) {
+        -ms-flex-preferred-size: 41.66666667%;
+        flex-basis: 41.66666667%;
+        max-width: 41.66666667%;
+        @include max($s) {
+          -ms-flex-preferred-size: 50%;
+          flex-basis: 50%;
+          max-width: 50%;
+        }
+      }
+
+      &:nth-child(6n + 5):nth-child(odd) {
+        -ms-flex-preferred-size: 41.66666667%;
+        flex-basis: 41.66666667%;
+        max-width: 41.66666667%;
+        @include max($s) {
+          -ms-flex-preferred-size: 50%;
+          flex-basis: 50%;
+          max-width: 50%;
+        }
+      }
+
+      &:nth-child(6n + 6):nth-child(even) {
+        -ms-flex-preferred-size: 58.33333333%;
+        flex-basis: 58.33333333%;
+        max-width: 58.33333333%;
+        @include max($s) {
+          -ms-flex-preferred-size: 50%;
+          flex-basis: 50%;
+          max-width: 50%;
+        }
+      }
+
+      &:last-child:nth-child(odd) {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        max-width: 100%;
+      }
+    }
+  }
 }
-

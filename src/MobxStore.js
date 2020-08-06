@@ -34,6 +34,7 @@ class Store {
   activeFilters = {
     brand: [],
     material: [],
+    glassType: [],
     country: [],
     color: [],
     measure: [],
@@ -167,11 +168,13 @@ class Store {
       api
         .getAnyProd({ slugs: this.lastSeenProds })
         .then((data) => {
+          const lastSeenProdsDataTime = {};
           Object.keys(data).forEach((prod) => {
-            this.lastSeenProdsData[data[prod].slug] = {
+            lastSeenProdsDataTime[data[prod].slug] = {
               ...data[prod],
             };
           });
+          this.lastSeenProdsData = lastSeenProdsDataTime;
         })
         .catch((err) => {
           console.log("err :>> ", err);
@@ -457,7 +460,7 @@ class Store {
   };
 
   cityCheck = autorun(() => {
-    // console.log('localStorage.get("city") :>> ', localStorage.get("city"));
+    console.log('localStorage.get("city") :>> ', localStorage.get("city"));
     if (
       localStorage.get("city") !== undefined &&
       localStorage.get("city") !== null
@@ -482,11 +485,19 @@ class Store {
                   region: data[0].addressComponents[2].name,
                   sourse: "Y",
                 });
+                this.city =
+                  data[0].addressComponents[
+                    data[0].addressComponents.length - 1
+                  ].name;
+              } else {
+                localStorage.set("city", {
+                  name: "Москва",
+                  geoId: 213,
+                  region: "Москва",
+                  sourse: "Y",
+                });
+                this.city = "Москва";
               }
-              this.city =
-                data[0].addressComponents[
-                  data[0].addressComponents.length - 1
-                ].name;
             })
             .catch((err) => {
               console.log("err :>> ", err);
@@ -854,7 +865,7 @@ class Store {
 
         //стартовый фильтр
         const sortDataClear = {};
-
+        console.log("data[0].clearSort :>> ", data[0].clearSort);
         Object.keys(data[0].clearSort[0]).forEach((name) => {
           if (
             (name !== "_id") &
@@ -864,13 +875,13 @@ class Store {
             (name !== "count")
           ) {
             sortDataClear[name] = data[0].clearSort[0][name].sort();
-          } else if (name == "measure") {
+          } else if (name === "measure") {
             const newMeasure = [];
             const sortObj = {
               names: [],
             };
             data[0].sort[0][name].forEach((elem) => {
-              if (elem.name != "") {
+              if (elem.name !== "") {
                 if (!sortObj.names.includes(elem.name[0])) {
                   sortObj.names.push(elem.name[0]);
                 }
@@ -885,15 +896,18 @@ class Store {
               }
             });
             sortObj.names.sort();
-
+            console.log("sortObj :>> ", sortObj);
             sortObj.names.forEach((sn) => {
-              newMeasure.push({
-                name: sn,
-                value: sortObj[sn].sort(function (a, b) {
-                  return a - b;
-                }),
-                unit: sortObj[sn + "Unit"][0],
-              });
+              console.log("sn :>> ", sn);
+              if (sn !== undefined) {
+                newMeasure.push({
+                  name: sn,
+                  value: sortObj[sn].sort(function (a, b) {
+                    return a - b;
+                  }),
+                  unit: sortObj[sn + "Unit"][0],
+                });
+              }
             });
             sortDataClear[name] = newMeasure;
           } else {
@@ -919,13 +933,13 @@ class Store {
               (name !== "premium")
             ) {
               sortData[name] = data[0].sort[0][name].sort();
-            } else if (name == "measure") {
+            } else if (name === "measure") {
               const newMeasure = [];
               const sortObj = {
                 names: [],
               };
               data[0].sort[0][name].forEach((elem) => {
-                if (elem.name != "") {
+                if (elem.name !== "") {
                   if (!sortObj.names.includes(elem.name[0])) {
                     sortObj.names.push(elem.name[0]);
                   }
@@ -942,13 +956,15 @@ class Store {
               sortObj.names.sort();
 
               sortObj.names.forEach((sn) => {
-                newMeasure.push({
-                  name: sn,
-                  value: sortObj[sn].sort(function (a, b) {
-                    return a - b;
-                  }),
-                  unit: sortObj[sn + "Unit"][0],
-                });
+                if (sortObj[sn] !== undefined) {
+                  newMeasure.push({
+                    name: sn,
+                    value: sortObj[sn].sort(function (a, b) {
+                      return a - b;
+                    }),
+                    unit: sortObj[sn + "Unit"][0],
+                  });
+                }
               });
               sortData[name] = newMeasure;
             } else {
@@ -1165,6 +1181,7 @@ class Store {
     this.activeFilters = {
       brand: [],
       material: [],
+      glassType: [],
       country: [],
       color: [],
       measure: [],
@@ -1373,6 +1390,8 @@ class Store {
       bodyJSON.sort = 1;
     } else if (this.sortInProd === "Сначала акционные") {
       bodyJSON.sort = 0;
+    } else if (this.sortInProd === "Сначала новые") {
+      bodyJSON.sort = "date";
     }
     this.getData(bodyJSON, { ...clearJSON }, TStart);
   };
@@ -1391,7 +1410,10 @@ class Store {
     const measurePoints = [];
     const optPoints = [];
     Object.keys(availableFilters).forEach((filterType) => {
-      if (filterType === "brand") {
+      if (
+        filterType === "brand" &&
+        !window.location.pathname.includes("/brand/")
+      ) {
         if (this.activeFilters.choosePoint.indexOf(filterType) === 0) {
           Object.keys(this.categoryFilter).forEach((name) => {
             if (!this.activeFilters.choosePoint.includes(name)) {
@@ -1420,7 +1442,36 @@ class Store {
             />
           );
         }
-      } else if (filterType == "material") {
+      } else if (filterType === "glassType") {
+        if (this.activeFilters.choosePoint.indexOf(filterType) === 0) {
+          Object.keys(this.categoryFilter).forEach((name) => {
+            if (!this.activeFilters.choosePoint.includes(name)) {
+              this.dirtyFilter[name] = availableFilters[name];
+            }
+          });
+        }
+        if (this.activeFilters.choosePoint.includes(filterType)) {
+          filterPoints.push(
+            <FilterPoint
+              name="Тип бокалов"
+              objectName={filterType}
+              key={filterType}
+              data={this.dirtyFilter[filterType]}
+              store={this}
+            />
+          );
+        } else {
+          filterPoints.push(
+            <FilterPoint
+              name="Тип бокалов"
+              objectName={filterType}
+              key={filterType}
+              data={availableFilters[filterType]}
+              store={this}
+            />
+          );
+        }
+      } else if (filterType === "material") {
         if (this.activeFilters.choosePoint.indexOf(filterType) === 0) {
           Object.keys(this.categoryFilter).forEach((name) => {
             if (!this.activeFilters.choosePoint.includes(name)) {
@@ -1449,7 +1500,7 @@ class Store {
             />
           );
         }
-      } else if (filterType == "country") {
+      } else if (filterType === "country") {
         if (this.activeFilters.choosePoint.indexOf(filterType) === 0) {
           Object.keys(this.categoryFilter).forEach((name) => {
             if (!this.activeFilters.choosePoint.includes(name)) {

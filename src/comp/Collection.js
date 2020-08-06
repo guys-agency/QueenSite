@@ -6,6 +6,13 @@ import ProductCardContainer from "./ProductCardContainer";
 import Breadcrumbs from "./breadcrumbs";
 const { Component } = React;
 
+const brandData = {
+  "Crystalite%20Bohemia": {
+    img: "",
+    text: "",
+  },
+};
+
 const Collection = observer(
   class Collection extends Component {
     state = {};
@@ -19,7 +26,38 @@ const Collection = observer(
       );
 
       if (dataColl.length) {
-        if (dataColl[0].type !== "sale") {
+        if (dataColl[0].type === "brend") {
+          collRender.push(
+            <React.Fragment key={dataColl[0].slug}>
+              <div className="head head_big head_brand">
+                <div className="head-cont head-cont_brand">
+                  <div
+                    className="head-banner head-banner_brand col col-5 col-s-1"
+                    style={{
+                      backgroundImage: `url(/image/brends/${
+                        typeDevice
+                          ? dataColl[0]["image-mob-large"]
+                          : dataColl[0]["image-desc-large"]
+                      })`,
+                    }}
+                  ></div>
+                  {dataColl[0].description !== "" &&
+                    dataColl[0].description !== undefined && (
+                      <div className="container">
+                        <div className="row">
+                          <div className="col col-10 col-s-11">
+                            <div className="collections__desc collections__desc_brand">
+                              {dataColl[0].description}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                </div>
+              </div>
+            </React.Fragment>
+          );
+        } else if (dataColl[0].type !== "sale") {
           collRender.push(
             <React.Fragment key={dataColl[0].slug}>
               <div className="head head_big">
@@ -36,18 +74,19 @@ const Collection = observer(
                   ></div>
                 </div>
               </div>
-              {dataColl[0].description !== "" && (
-                <div className="container">
-                  <div className="row">
-                    <div className="col col-3"></div>
-                    <div className="col col-8">
-                      <div className="collections__desc">
-                        {dataColl[0].description}
+              {dataColl[0].description !== "" &&
+                dataColl[0].description !== undefined && (
+                  <div className="container">
+                    <div className="row">
+                      <div className="col col-3"></div>
+                      <div className="col col-8">
+                        <div className="collections__desc">
+                          {dataColl[0].description}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              )}
+                )}
             </React.Fragment>
           );
         } else {
@@ -68,9 +107,10 @@ const Collection = observer(
                   <h1>
                     {dataColl[0].name} <span className="ic i_right"></span>
                   </h1>
-                  {dataColl[0].description !== "" && (
-                    <p>{dataColl[0].description}</p>
-                  )}
+                  {dataColl[0].description !== "" &&
+                    dataColl[0].description !== undefined && (
+                      <p>{dataColl[0].description}</p>
+                    )}
                 </div>
               </div>
             </div>

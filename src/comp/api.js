@@ -254,6 +254,38 @@ class Api {
     });
   }
 
+  deliveryVar(data) {
+    return fetch(SERVER_URL + "/del-var", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }).then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      Promise.reject(res.json());
+    });
+  }
+
+  createDeliveryOrder(data) {
+    return fetch(SERVER_URL + "/test", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }).then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      Promise.reject(res.json());
+    });
+  }
+
   getFinishData(id) {
     return fetch(SERVER_URL + "/finish/" + id, {
       method: "GET",

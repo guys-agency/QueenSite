@@ -276,7 +276,9 @@ const Finish = observer(
                         <div className="item">
                           <span className="name">Доставка</span>
                           <span className="price">
-                            {data.delivery.deliveryForCustomer.toLocaleString()}
+                            {data.delivery.deliveryOption === undefined
+                              ? data.delivery.cost.deliveryForCustomer.toLocaleString()
+                              : data.delivery.deliveryForCustomer.toLocaleString()}
                             ₽{/* / <span className="b_gray">3-4 дня</span> */}
                           </span>
                         </div>
@@ -285,8 +287,12 @@ const Finish = observer(
                       <div className="item">
                         <b className="name">Итого</b>
                         <b className="price">
-                          {(data.delivery.deliveryForCustomer !== undefined
-                            ? data.sum + data.delivery.deliveryForCustomer
+                          {(data.delivery.deliveryForCustomer !== undefined ||
+                          data.delivery.deliveryOption === undefined
+                            ? data.delivery.deliveryOption === undefined
+                              ? data.sum +
+                                data.delivery.cost.deliveryForCustomer
+                              : data.sum + data.delivery.deliveryForCustomer
                             : data.sum
                           ).toLocaleString()}
                           ₽

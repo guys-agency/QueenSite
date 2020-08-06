@@ -8,7 +8,10 @@ const Collections = observer(
     state = {};
     render() {
       const { store } = this.props;
-      const { collections } = store.bannersData;
+      let { collections } = store.bannersData;
+      if (window.location.href.includes("/ideas")) {
+        collections = store.bannersData.ideas;
+      }
       const renderColl = [];
       const mainBan = [];
       const sortData = [];

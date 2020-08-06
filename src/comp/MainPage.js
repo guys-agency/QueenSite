@@ -108,6 +108,7 @@ const MainPage = observer(
       const collLast = [];
       const saleCont = [];
       const ideasCon = [];
+      const brandCon = [];
       if (bannersData.main !== undefined) {
         bannersData.main.forEach((elem) => {
           mainBanners.push(
@@ -123,6 +124,14 @@ const MainPage = observer(
                 })`,
               }}
             ></Link>
+          );
+        });
+
+        bannersData.brand.forEach((elem) => {
+          brandCon.push(
+            <Link to={"/brand/" + elem.slug} className="slider-brand">
+              <img src={"/image/brends/" + elem["image-mob-large"]} />
+            </Link>
           );
         });
 
@@ -324,6 +333,8 @@ const MainPage = observer(
         slidesPerGroup: 2,
         speed: 800,
         draggable: true,
+        preventClicksPropagation: false,
+        preventClicks: false,
         pagination: {
           el: ".swiper-pagination",
           type: "bullets",
@@ -348,6 +359,8 @@ const MainPage = observer(
         slidesPerGroup: 2,
         speed: 800,
         draggable: true,
+        preventClicksPropagation: false,
+        preventClicks: false,
         pagination: {
           el: ".swiper-pagination",
           type: "bullets",
@@ -371,6 +384,8 @@ const MainPage = observer(
         slidesPerView: "auto",
         speed: 500,
         draggable: true,
+        preventClicksPropagation: false,
+        preventClicks: false,
         autoplay: {
           delay: 4000,
         },
@@ -430,84 +445,19 @@ const MainPage = observer(
             </div>
           </div>
 
-          <div className="carousel carousel_brand">
-            <div className="container">
-              <div className="title">
-                <h2>Бренды</h2>
-              </div>
+          {brandCon.length !== 0 && (
+            <div className="carousel carousel_brand">
+              <div className="container">
+                <div className="title">
+                  <h2>Бренды</h2>
+                </div>
 
-              <div className="slider-cont slider-cont_brand">
-                <Swiper {...brandCar}>
-                  <Link
-                    to="/catalog?brand=Crystalite%20Bohemia"
-                    className="slider-brand"
-                  >
-                    <img src="/image/logos/cbm.png" />
-                  </Link>
-                  <Link
-                    to="/catalog?brand=Bohemia%20Crystall"
-                    className="slider-brand"
-                  >
-                    <img src="/image/logos/Bohemia Crystall.png" />
-                  </Link>
-                  <Link
-                    to="/catalog?brand=Queen%20of%20Bohemia"
-                    className="slider-brand"
-                  >
-                    <img src="/image/logos/Queen of Bohemia NEW.jpg" />
-                  </Link>
-                  <Link
-                    to="/catalog?brand=Aurum%20Crystal"
-                    className="slider-brand"
-                  >
-                    <img src="/image/logos/Aurum design.jpg" />
-                  </Link>
-                  <Link
-                    to="/catalog?brand=Crystal%20Art"
-                    className="slider-brand"
-                  >
-                    <img src="/image/logos/Crystal Art.JPG" />
-                  </Link>
-                  <Link
-                    to="/catalog?brand=Porcelaine%20Czech%20Gold%20Hands"
-                    className="slider-brand"
-                  >
-                    <img src="/image/logos/Czech_Gold_Hands_Logo_1(1).jpg" />
-                  </Link>
-                  <Link to="/catalog?brand=Diva" className="slider-brand">
-                    <img src="/image/logos/diva.jpg" />
-                  </Link>
-                  <Link
-                    to="/catalog?brand=Easy%20Life"
-                    className="slider-brand"
-                  >
-                    <img src="/image/logos/easylife logo.jpg" />
-                  </Link>
-                  <Link to="/catalog?brand=G.Benedikt" className="slider-brand">
-                    <img src="/image/logos/G. Benedikt logo white on color.png" />
-                  </Link>
-                  <Link to="/catalog?brand=Lilien" className="slider-brand">
-                    <img src="/image/logos/Lilien Austria logo white on color.png" />
-                  </Link>
-                  <Link
-                    to="/catalog?brand=Stara%20Role"
-                    className="slider-brand"
-                  >
-                    <img src="/image/logos/MZ logo.jpg" />
-                  </Link>
-                  <Link
-                    to="/catalog?brand=Queen%20Anne"
-                    className="slider-brand"
-                  >
-                    <img src="/image/logos/queen anne.jpg" />
-                  </Link>
-                  <Link to="/catalog?brand=Langenthal" className="slider-brand">
-                    <img src="/image/logos/Suisse Lagenthal logo white on color.png" />
-                  </Link>
-                </Swiper>
+                <div className="slider-cont slider-cont_brand">
+                  <Swiper {...brandCar}>{brandCon}</Swiper>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           <div className="main-background">
             <div className="container">

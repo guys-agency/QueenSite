@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import "./App.css";
 import { observer } from "mobx-react";
 import { Router, Route, Switch, Redirect } from "react-router";
@@ -8,29 +8,28 @@ import { SERVER_URL } from "./constants";
 import MenuPoints from "./comp/MenuPoints";
 import Filters from "./comp/Filters";
 import ProductCardContainer from "./comp/ProductCardContainer";
-import CartPage from "./comp/CartPage";
-import Finish from "./comp/Finish";
 
 import CardView from "./comp/CardView";
 import MainPage from "./comp/MainPage";
-
-import Profile from "./comp/Profile";
 
 import Collections from "./comp/Collections";
 import Collection from "./comp/Collection";
 
 import Actions from "./comp/Actions";
 
+import Footer from "./comp/Footer";
 import Shops from "./comp/Shops";
 import ShopsMap from "./comp/ShopsMap";
-
-import Help from "./comp/Help";
-import About from "./comp/About";
-import Footer from "./comp/Footer";
 
 import Breadcrumbs from "./comp/breadcrumbs";
 import localStorage from "mobx-localstorage";
 import $ from "jquery";
+const CartPage = React.lazy(() => import("./comp/CartPage"));
+const Finish = React.lazy(() => import("./comp/Finish"));
+const Profile = React.lazy(() => import("./comp/Profile"));
+
+const Help = React.lazy(() => import("./comp/Help"));
+const About = React.lazy(() => import("./comp/About"));
 
 // const CartPage = lazy(() => import("./comp/CartPage"));
 // const CardView = lazy(() => import("./comp/CardView"));
@@ -136,22 +135,21 @@ const MainScreen = observer(
           return res.json();
         })
         .then((data) => {
-          // console.log("datasto :>> ", data);
-
-          this.props.store.withProds = data.addProd[0].with;
-          this.props.store.likeProds.replace(data.addProd[0].like);
-          // console.log("this.like :>> ", this.like);
           if (+slug !== this.props.store.cardContainer.slug) {
             this.props.store.cardContainer = data.product[0];
           }
+          this.props.store.withProds = data.addProd[0].with;
+          this.props.store.likeProds.replace(data.addProd[0].like);
+          // console.log("this.like :>> ", this.like);
         })
         .catch((err) => {
           console.log("err", err);
         });
 
       this.props.store.countInProdPage = 1;
-      const timeLastSeenProds = lastSeenProds.slice();
-      console.log("object :>> ", this.props.store.lastSeenProds.values());
+
+      let timeLastSeenProds = lastSeenProds.slice();
+      // console.log("object :>> ", this.props.store.lastSeenProds.values());
       if (!lastSeenProds.includes(slug)) {
         timeLastSeenProds.unshift(slug);
         // this.props.store.lastSeenProds = timeLastSeenProds;
@@ -162,12 +160,14 @@ const MainScreen = observer(
         timeLastSeenProds.unshift(slug);
         // this.props.store.lastSeenProds = timeLastSeenProds;
       }
-      if (lastSeenProds.length > 16) {
-        timeLastSeenProds.pop();
-
+      if (timeLastSeenProds.length > 16) {
+        timeLastSeenProds = timeLastSeenProds.slice(0, 16);
+        // console.log("object :>> ", timeLastSeenProds.length);
+        // console.log("object :>> ", timeLastSeenProds.slice());
         this.props.store.lastSeenProds = timeLastSeenProds.slice();
       } else {
         this.props.store.lastSeenProds = timeLastSeenProds.slice();
+        console.log("object :>> ", timeLastSeenProds.slice());
       }
     };
 
@@ -179,28 +179,33 @@ const MainScreen = observer(
           window.ym(65097901, "reachGoal", "Checkout");
         }
         localStorage.removeItem("deleteCart");
-        function t(w) {
-          function start() {
-            w.removeEventListener("YaDeliveryLoad", start);
-            w.YaDelivery.createWidget({
-              containerId: "yaDeliveryWidget",
-              type: "deliveryCart",
-              params: {
-                // Нужно указать те же значения, что и при первом создании
-                apiKey: process.env.REACT_APP_SECRET_CODE_YA_WID, // Авторизационный ключ
-                senderId: 500001936,
-              },
-            })
-              .then((widget) => widget.createOrder())
-              .catch(failureCallback);
+        if (localStorage.get("sendDeliveryPickUp") === true) {
+          function t(w) {
+            function start() {
+              w.removeEventListener("YaDeliveryLoad", start);
+              w.YaDelivery.createWidget({
+                containerId: "yaDeliveryWidget",
+                type: "deliveryCart",
+                params: {
+                  // Нужно указать те же значения, что и при первом создании
+                  apiKey: process.env.REACT_APP_SECRET_CODE_YA_WID, // Авторизационный ключ
+                  senderId: 500001936,
+                },
+              })
+                .then((widget) => widget.createOrder())
+                .catch(failureCallback);
 
-            function failureCallback(error) {
-              // Эта функция будет вызвана, если при создании виджета произошли ошибки.
+              function failureCallback(error) {
+                // Эта функция будет вызвана, если при создании виджета произошли ошибки.
+              }
             }
+            w.YaDelivery
+              ? start()
+              : w.addEventListener("YaDeliveryLoad", start);
           }
-          w.YaDelivery ? start() : w.addEventListener("YaDeliveryLoad", start);
+          t(window);
+          localStorage.removeItem("sendDeliveryPickUp");
         }
-        t(window);
       }
     };
 
@@ -311,7 +316,9 @@ const MainScreen = observer(
                       }
                     }}
                   >
-                    <CartPage store={this.props.store} />
+                    <Suspense fallback={<div></div>}>
+                      <CartPage store={this.props.store} />
+                    </Suspense>
                   </div>
                 )
               )}
@@ -320,7 +327,6 @@ const MainScreen = observer(
               path="/product/:id"
               render={(propsRout) => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
-                (this.props.store.countInProdPage = 1),
                 (this.addToLastSeenProd(propsRout.match.params.id),
                 (
                   <div className="main-screen">
@@ -339,9 +345,11 @@ const MainScreen = observer(
               render={() => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
                 (
-                  <div className="main-screen">
-                    <Profile store={this.props.store} />
-                  </div>
+                  <Suspense fallback={<div></div>}>
+                    <div className="main-screen">
+                      <Profile store={this.props.store} />
+                    </div>
+                  </Suspense>
                 )
               )}
             />
@@ -361,6 +369,35 @@ const MainScreen = observer(
                   : null,
                 (this.props.store.bannerFilter = {
                   type: "collections",
+                  slug: propsRout.match.params.slug,
+                }),
+                this.props.store.filtration(),
+                (
+                  <div className="main-screen">
+                    <Collection
+                      store={this.props.store}
+                      slug={propsRout.match.params.slug}
+                    />
+                  </div>
+                )
+              )}
+            />
+
+            <Route
+              path="/brand/:slug"
+              render={(propsRout) => (
+                (this.props.store.nameMainCat = ""),
+                (this.props.store.nameSecondCat = ""),
+                this.props.store.bannerFilter.slug !==
+                propsRout.match.params.slug
+                  ? this.props.store.cleaningActiveFilters()
+                  : null,
+                this.props.store.bannerFilter.slug !==
+                propsRout.match.params.slug
+                  ? $("html, body").animate({ scrollTop: 0 }, 500)
+                  : null,
+                (this.props.store.bannerFilter = {
+                  type: "brend",
                   slug: propsRout.match.params.slug,
                 }),
                 this.props.store.filtration(),
@@ -444,6 +481,18 @@ const MainScreen = observer(
                 )
               )}
             />
+
+            {/* <Route
+              path="/ideas"
+              render={() => (
+                $("html, body").animate({ scrollTop: 0 }, 500),
+                (
+                  <div className="main-screen">
+                    <Collections store={this.props.store} />
+                  </div>
+                )
+              )}
+            /> */}
 
             <Route
               path="/hits"
@@ -651,9 +700,11 @@ const MainScreen = observer(
               render={() => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
                 (
-                  <div className="main-screen">
-                    <Shops store={this.props.store} />
-                  </div>
+                  <Suspense fallback={<div></div>}>
+                    <div className="main-screen">
+                      <Shops store={this.props.store} />
+                    </div>
+                  </Suspense>
                 )
               )}
             />
@@ -663,9 +714,11 @@ const MainScreen = observer(
               render={() => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
                 (
-                  <div className="main-screen">
-                    <ShopsMap store={this.props.store} />
-                  </div>
+                  <Suspense fallback={<div></div>}>
+                    <div className="main-screen">
+                      <ShopsMap store={this.props.store} />
+                    </div>
+                  </Suspense>
                 )
               )}
             />
@@ -675,9 +728,11 @@ const MainScreen = observer(
               render={(routProps) => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
                 (
-                  <div className="main-screen">
-                    <Help path={routProps.match.params.options} />
-                  </div>
+                  <Suspense fallback={<div>Loading...</div>}>
+                    <div className="main-screen">
+                      <Help path={routProps.match.params.options} />
+                    </div>
+                  </Suspense>
                 )
               )}
             />
@@ -687,9 +742,11 @@ const MainScreen = observer(
               render={() => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
                 (
-                  <div className="main-screen">
-                    <About store={this.props.store} />
-                  </div>
+                  <Suspense fallback={<div></div>}>
+                    <div className="main-screen">
+                      <About store={this.props.store} />
+                    </div>
+                  </Suspense>
                 )
               )}
             />
@@ -700,12 +757,14 @@ const MainScreen = observer(
                 $("html, body").animate({ scrollTop: 0 }, 500),
                 this.chekFinishDelete(),
                 (
-                  <div className="main-screen">
-                    <Finish
-                      id={routProps.match.params.id}
-                      store={this.props.store}
-                    />
-                  </div>
+                  <Suspense fallback={<div></div>}>
+                    <div className="main-screen">
+                      <Finish
+                        id={routProps.match.params.id}
+                        store={this.props.store}
+                      />
+                    </div>
+                  </Suspense>
                 )
               )}
             />
