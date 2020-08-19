@@ -9,6 +9,8 @@
   display: flex;
   align-items: center;
   @include max($s) {
+    margin-top: 5px;
+
     font-size: 18px;
     flex-wrap: wrap;
   }

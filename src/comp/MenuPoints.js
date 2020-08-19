@@ -148,6 +148,10 @@ const MenuPoints = observer(
       $(e.target).addClass("active");
       $(e.target).parent().find(".menu_sub").addClass("visible");
       if ($(window).width() <= 760) {
+        if (e.target.textContent === "Коллекции") {
+          this.closeNav(e);
+          return;
+        }
         e.stopPropagation();
         e.preventDefault();
       }
