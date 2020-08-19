@@ -1,0 +1,184 @@
+.gift {
+  background-image: url("/image/gift-back.png");
+  background-size: 100% 100%;
+  background-position: top;
+  height: 800px;
+  margin-bottom: 0px;
+  display: flex;
+  padding-top: 155px;
+  justify-content: center;
+  align-items: center;
+
+  .gift__img {
+    width: 40%;
+  }
+  .gift__desc {
+    width: 40%;
+    background: #ffffff;
+    border: 1px solid #dab958;
+    box-sizing: border-box;
+    border-radius: 5px;
+    padding: 15px;
+    .gift__ps {
+      font-family: Excentra Pro;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 12px;
+      line-height: 19px;
+      color: #00094d;
+      padding-top: 20px;
+      border-top: 2px solid #f7f6f7;
+    }
+  }
+  .gift__code-cont {
+    p {
+      font-family: Excentra Pro;
+      font-style: normal;
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 14px;
+      color: #718da7;
+    }
+
+    .gift__code {
+      display: flex;
+      max-height: 40px;
+      margin-bottom: 20px;
+      p {
+        font-family: Excentra Pro;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 16px;
+        line-height: 24px;
+        height: 100%;
+        color: #1e1e23;
+        background: #ffffff;
+        border: 1px solid #ebebeb;
+        box-sizing: border-box;
+        border-radius: 30px;
+        padding: 7px 48px;
+        margin-right: 20px;
+      }
+      button {
+        display: inline-block;
+      }
+    }
+  }
+  @include max($m) {
+    flex-direction: column;
+    width: 100%;
+    height: auto;
+    padding: 30px 0px;
+
+    .gift__img {
+      width: 60%;
+      margin-bottom: 0px;
+    }
+    .gift__desc {
+      margin-top: -60px;
+      width: 80%;
+    }
+  }
+
+  @include max($s) {
+    flex-direction: column;
+    width: 100%;
+    height: auto;
+    padding: 70px 0px;
+    background-image: none;
+
+    .gift__img {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    .gift__desc {
+      margin-top: -60px;
+      width: 90%;
+    }
+    .gift__code-cont {
+      .gift__code {
+        flex-direction: column;
+        max-height: none;
+        p {
+          width: 100%;
+          text-align: center;
+        }
+      }
+    }
+  }
+}
+
+.gift__buttons {
+  display: flex;
+  align-items: center;
+
+  .gift__drop-btn {
+    @include max($s) {
+      order: 1;
+      margin-top: 20px;
+      margin-left: 0px;
+    }
+  }
+
+  @include max($s) {
+    flex-wrap: wrap;
+    .btn {
+      margin-right: 30px;
+    }
+  }
+  @include max(320px) {
+    .btn {
+      width: auto;
+      margin-bottom: 0px;
+    }
+    .product__counter {
+      margin-left: 0px;
+      margin-right: 20px;
+    }
+  }
+}
+
+.gift__drop-btn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+
+  cursor: pointer;
+
+  text-align: center;
+
+  p {
+    display: inline-block;
+    margin: 0px;
+    margin-right: 39px;
+  }
+  @include max($s) {
+    order: 1;
+    margin-top: 20px;
+    margin-left: 0px;
+  }
+
+  //   background-image: url("/image/>.svg");
+  //   background-repeat: no-repeat;
+  //   background-position: right;
+}
+
+.gift__link {
+  display: block;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.gift__change-text {
+  display: inline;
+  border-bottom: dashed 1px #718da7;
+  color: #00007d;
+  margin: 0px;
+  position: absolute;
+  bottom: 12px;
+  cursor: pointer;
+  @include max($s) {
+    position: static;
+  }
+}

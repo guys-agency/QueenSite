@@ -6,6 +6,8 @@ import api from "./api";
 import { Link } from "react-router-dom";
 import ProductCard from "./ProductCard";
 import ProductCardContainer from "./ProductCardContainer";
+import moment from "moment";
+import "moment/locale/ru";
 
 const { Component } = React;
 
@@ -42,7 +44,7 @@ const Profile = observer(
           if (data !== undefined && this.orders.length === 0) {
             data.orders.forEach((order) => {
               const prodCon = [];
-              Object.keys(order.products).map((prod) => {
+              Object.keys(order.products).forEach((prod) => {
                 prodCon.push(
                   <div className="item">
                     <span className="name">{order.products[prod].name}</span>
@@ -63,7 +65,9 @@ const Profile = observer(
                     <h4>
                       Заказ №{order.dbid} на сумму {order.sum.toLocaleString()}₽
                     </h4>
-                    <div className="date">{}</div>
+                    <div className="date">
+                      {moment(order.date).format("DD.MM.YYYY")}
+                    </div>
                   </div>
                   <div className="orders-item__desc">
                     <div className="status">

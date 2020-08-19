@@ -6,13 +6,6 @@ import ProductCardContainer from "./ProductCardContainer";
 import Breadcrumbs from "./breadcrumbs";
 const { Component } = React;
 
-const brandData = {
-  "Crystalite%20Bohemia": {
-    img: "",
-    text: "",
-  },
-};
-
 const Collection = observer(
   class Collection extends Component {
     state = {};

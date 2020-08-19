@@ -5,6 +5,7 @@
   margin-bottom: 230px;
   position: relative;
   padding-top: 150px;
+
   @include max($s) {
     margin-bottom: 100px;
   }

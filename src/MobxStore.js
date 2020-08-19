@@ -66,6 +66,7 @@ class Store {
   sideAsk = false;
   sideLogin = false;
   changeSide = false;
+  sideGift = false;
 
   menuAccor = {};
 
@@ -80,6 +81,8 @@ class Store {
   searchText = "";
 
   sortInProd = "";
+
+  certInCart = 0;
 
   canSale = false;
   canPremium = false;
@@ -309,6 +312,7 @@ class Store {
         .getAnyProd({ slugs: Object.keys(this.productInCartList) })
         .then((data) => {
           const timeCont = {};
+          this.certInCart = 0;
           // console.log("prodCart :>> ", data);
           Object.keys(data).forEach((prod) => {
             timeCont[data[prod].slug] = {
@@ -324,9 +328,13 @@ class Store {
           let dontSaleProdCount = 0;
           if (Object.keys(timeCont).length) {
             Object.keys(timeCont).forEach((el) => {
-              if (!timeCont[el].sale) {
-                dontSaleProdCount += +this.productInCartList[el];
-                dontSaleProd.push(timeCont[el]);
+              if (typeof this.productInCartList[el] === "number") {
+                if (!timeCont[el].sale) {
+                  dontSaleProdCount += +this.productInCartList[el];
+                  dontSaleProd.push(timeCont[el]);
+                }
+              } else {
+                this.certInCart = el;
               }
             });
             this.dontSaleProdCount = dontSaleProdCount;
@@ -360,11 +368,12 @@ class Store {
                   this.productInCartList[dontSaleProd[index].slug] >
                   dontSaleProdCountIn
                 ) {
-                  timeCont[dontSaleProd[index].slug].sale_price =
+                  timeCont[dontSaleProd[index].slug].sale_price = Math.floor(
                     timeCont[dontSaleProd[index].slug].regular_price *
-                    (1 -
-                      dontSaleProdCountIn /
-                        this.productInCartList[dontSaleProd[index].slug]);
+                      (1 -
+                        dontSaleProdCountIn /
+                          this.productInCartList[dontSaleProd[index].slug])
+                  );
                   timeCont[dontSaleProd[index].slug].sale = true;
                   timeCont[dontSaleProd[index].slug].price =
                     timeCont[dontSaleProd[index].slug].sale_price;
@@ -1052,8 +1061,9 @@ class Store {
             });
 
             //данные баннера
-            if (data.collData !== undefined && !this.dataColl.length) {
+            if (data.collData !== undefined) {
               this.dataColl = data.collData;
+              document.title = data.collData[0].name + " - Queen of Bohemia";
             }
 
             // console.log("data :>> ", data);
@@ -1164,7 +1174,7 @@ class Store {
     this.bannerFilter = {};
     this.dirtyFilter = {};
     this.prodCats = [];
-    this.dataColl = [];
+    // this.dataColl = [];
     this.pathS = "";
     this.startPag = 0;
     this.stopPag = 42;
@@ -1195,9 +1205,17 @@ class Store {
 
     // console.log("search :>> ", window.location.href.split("?")[1]);
 
-    const decodSearch = decodeURIComponent(window.location.href.split("?")[1]);
+    let decodSearch = decodeURIComponent(window.location.href.split("?")[1]);
     // console.log("ddecodSearche :>> ", decodSearch);
-    if (decodSearch !== "undefined" && decodSearch !== "") {
+    if (
+      decodSearch !== "undefined" &&
+      decodSearch !== "" &&
+      !window.location.href.includes("?yclid")
+    ) {
+      console.log("1111 :>> ", 1111);
+      if (decodSearch.includes("&yclid=")) {
+        decodSearch = decodSearch.split("&yclid=")[0];
+      }
       decodSearch.split("&&").forEach((elem) => {
         const elemSp = elem.split("=");
         if (elemSp[0] !== "measure") {
@@ -1664,6 +1682,7 @@ decorate(Store, {
   canPremium: observable,
   canSale: observable,
   sideLogin: observable,
+  sideGift: observable,
   changeSide: observable,
   userData: observable,
   dontSaleProdCount: observable,
@@ -1671,6 +1690,7 @@ decorate(Store, {
   lastSeenProdsData: observable,
   withProds: observable,
   likeProds: observable,
+  certInCart: observable,
 });
 
 const store = new Store();

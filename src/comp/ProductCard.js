@@ -10,12 +10,20 @@ import $ from "jquery";
 const ProductCard = observer(function ProductCard(props) {
   const { data, store } = props;
 
+  const { productInCartList, addtoCart, certInCart } = store;
+
   const inLike = store.likeContainer.length
     ? store.likeContainer.indexOf(String(data.slug))
     : -1;
-  const inCart = Object.keys(store.productInCartList).length
+  let inCart = Object.keys(store.productInCartList).length
     ? Object.keys(store.productInCartList).indexOf(String(data.slug))
     : -1;
+
+  if (Object.keys(productInCartList).length) {
+    if (data.name === "Электронный подарочный сертификат" && certInCart) {
+      inCart = Object.keys(productInCartList).indexOf(certInCart);
+    }
+  }
 
   // console.log("inLike :>> ", store.productInCartList);
   //придумать, как не вызывать все это заного у всех при изменении у одного
@@ -23,7 +31,7 @@ const ProductCard = observer(function ProductCard(props) {
     if (e.target.classList.contains("i_bag")) {
       console.log("bag :>> ");
       e.preventDefault();
-      const { productInCartList, addtoCart } = store;
+
       if (inCart !== -1) {
         $(".tooltip_cart").addClass("visible");
         $(".tooltip_cart").find(".text").text(data.name);
@@ -36,7 +44,11 @@ const ProductCard = observer(function ProductCard(props) {
           $(".tooltip_cart").removeClass("visible");
         }, 2000);
 
-        delete productInCartList[data.slug];
+        if (data.name === "Электронный подарочный сертификат") {
+          delete productInCartList[certInCart];
+        } else {
+          delete productInCartList[data.slug];
+        }
         if (process.env.REACT_APP_TYPE === "prod") {
           window.dataLayer.push({
             ecommerce: {
@@ -54,7 +66,11 @@ const ProductCard = observer(function ProductCard(props) {
           });
         }
       } else {
-        productInCartList[data.slug] = 1;
+        if (data.name === "Электронный подарочный сертификат") {
+          productInCartList[data.slug] = "";
+        } else {
+          productInCartList[data.slug] = 1;
+        }
 
         $(".tooltip_cart").find(".ic").removeClass("i_fav-f");
         $(".tooltip_cart").find(".ic").removeClass("i_minus");
@@ -144,7 +160,10 @@ const ProductCard = observer(function ProductCard(props) {
           <div className="product__attr-cont">
             {data.hit && <div className="product__hit">Хит</div>}
             {data.sale && <div className="product__sale">Акция</div>}
-            {!data.sale && <div className="product__sale">1 + 1 = 3</div>}
+            {!data.sale &&
+              data.categories[0].childsSlug[0] !== "sertificats" && (
+                <div className="product__sale">1 + 1 = 3</div>
+              )}
             {/* {data.new && <div className="product__new">Новинка</div>} */}
           </div>
         </div>

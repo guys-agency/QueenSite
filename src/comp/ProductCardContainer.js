@@ -13,6 +13,31 @@ const ProductCardContainer = observer(
 
     testContainer = [];
 
+    // sertData = {
+    //   attributes: [],
+    //   categories: [
+    //     {
+    //       childs: ["Сертификаты"],
+    //       childsSlug: ["sertificats"],
+    //       name: "Подарки",
+    //       slugName: "podarki",
+    //     },
+    //   ],
+    //   closeout: false,
+    //   country: "Россия",
+    //   dimensions: { height: "1", length: "1", width: "1" },
+    //   name: "Электронный подарочный сертификат",
+    //   price: 1000,
+    //   regular_price: 1000,
+    //   sale: false,
+    //   slug: 1111,
+    //   stock_quantity: 999,
+    //   weight: 0,
+    //   path_to_photo: ["5637284388_00116001.jpg"],
+    //   description:
+    //     "Подарочные карты - отличный и модный подарок , когда есть повод, а вы не знаете, что подарить. Подарите своим близким и знакомым радость выбора с подарочными картами магазина «Queen of Bohemia»! Ссылка на подарочную страницу будет сгенерирована сразу после покупки и продублируется вам на почту. Подробнее об условиях",
+    // };
+
     test = (data) => {
       this.props.ch(data);
     };

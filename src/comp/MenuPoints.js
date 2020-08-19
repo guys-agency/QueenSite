@@ -6,6 +6,7 @@ import LikeSidebar from "./LikeSidebar";
 import AuthSidebar from "./AuthSidebar";
 import AskSidebar from "./AskSidebar";
 import CartSidebar from "./CartSidebar";
+import GiftSidebar from "./GiftSidebar";
 import { withRouter } from "react-router";
 import { SERVER_URL } from "../constants";
 import ChangeSidebar from "./ChangeProfileData";
@@ -52,8 +53,8 @@ const MenuPoints = observer(
         >
           Задать вопрос
         </button>
-        <a href="tel:88002508021" className="phone">
-          8 800 250-80-21
+        <a href="tel:88006003421" className="phone">
+          8 800 600-34-21
         </a>
       </div>
     );
@@ -94,6 +95,17 @@ const MenuPoints = observer(
               Публичная оферта
             </Link>
           </li>
+          <li>
+            <Link to="/help/offer" onClick={this.closeNav}>
+              Публичная оферта
+            </Link>
+          </li>
+          <li>
+            <Link to="/help/certificate" onClick={this.closeNav}>
+              Сертификат
+            </Link>
+          </li>
+
           {/* <li>
             <Link to="/help/bonus">Бонусы</Link>
           </li> */}
@@ -289,9 +301,13 @@ const MenuPoints = observer(
         })
         .then((data) => {
           const menu = {};
+          console.log("data :>> ", data);
 
           data.forEach((elem, i) => {
             const childsPoints = [];
+            if (elem.name === "Подарки") {
+              elem.childs.push({ name: "Сертификаты", slug: "sertificats" });
+            }
 
             this.props.store.menuAccor[elem.slug] = elem.name;
 
@@ -467,6 +483,7 @@ const MenuPoints = observer(
       });
       this.props.store.sideAsk = false;
       this.props.store.sideLogin = false;
+      this.props.store.sideGift = false;
       this.props.store.changeSide = false;
       document.querySelector(".sidebar-overlay").classList.remove("active");
       $("body").removeClass("no-scroll");
@@ -972,6 +989,7 @@ const MenuPoints = observer(
               className={
                 "sidebar" +
                 (this.props.store.sideLogin ||
+                this.props.store.sideGift ||
                 this.state.popCart ||
                 this.state.popLike ||
                 this.props.store.sideAsk ||
@@ -1025,6 +1043,12 @@ const MenuPoints = observer(
                   store={this.props.store}
                 />
               )}
+              {this.props.store.sideGift && (
+                <GiftSidebar
+                  closeSidebar={this.closeSidebar}
+                  store={this.props.store}
+                />
+              )}
               {this.state.popCart && (
                 <CartSidebar
                   store={this.props.store}
@@ -1042,6 +1066,7 @@ const MenuPoints = observer(
                 });
                 this.props.store.sideLogin = false;
                 this.props.store.sideAsk = false;
+                this.props.store.sideGift = false;
                 $("body").removeClass("no-scroll");
                 $(".navigation").removeClass("visible");
                 $(".header__drop_city").removeClass("active");

@@ -28,6 +28,19 @@ class Api {
     });
   }
 
+  getCertData(certificateCode) {
+    return fetch(SERVER_URL + "/get-cert", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ code: certificateCode }),
+    }).then((res) => {
+      return res.json();
+    });
+  }
+
   coupon(data) {
     return fetch(SERVER_URL + "/pr", {
       method: "POST",

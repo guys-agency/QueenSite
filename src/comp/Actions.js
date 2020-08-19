@@ -49,6 +49,9 @@ const Actions = observer(
                   }`}
                 >
                   <Link
+                    onClick={() => {
+                      this.props.store.dataColl = [data[nEl]];
+                    }}
                     to={"actions/" + data[nEl].slug}
                     className="head-banner head-banner_action"
                     style={{

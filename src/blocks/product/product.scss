@@ -17,30 +17,30 @@
   &:nth-child(3n) {
     margin-right: 0px;
   }
-  &__action{
+  &__action {
     visibility: hidden;
     opacity: 0;
     transform: translateY(10px);
     transition: all 0.3s;
   }
-  &__image{
+  &__image {
     transition: all 0.3s;
   }
   @media (pointer: fine) {
-    &:hover{
+    &:hover {
       cursor: pointer;
-      .product{
-        &__action{
+      .product {
+        &__action {
           visibility: visible;
           opacity: 1;
           bottom: 10px;
           transform: translateY(0px);
         }
-        &__name{
+        &__name {
           color: $b_light;
           text-decoration: underline;
         }
-        &__image{
+        &__image {
           box-shadow: $sh_bottom;
           transform: translateY(-2px);
         }
@@ -48,35 +48,35 @@
     }
   }
 
-  &_h{
+  &_h {
     flex-direction: row;
     align-items: stretch;
     justify-content: flex-start;
-    &:hover{
+    &:hover {
       cursor: initial;
-      .product{
-        &__name{
+      .product {
+        &__name {
           color: $b_dark;
           text-decoration: none;
         }
-        &__image{
+        &__image {
           box-shadow: $sh_no;
           transform: translateY(0px);
         }
       }
     }
-    .product{
-      &__image{
+    .product {
+      &__image {
         margin-right: 15px;
         margin-bottom: 0;
         width: 110px;
         height: 110px;
         padding: 0;
         flex: 0 0 auto;
-        &-wrp{
+        &-wrp {
           width: 110px;
           height: 110px;
-          img{
+          img {
             position: absolute;
             top: -1px;
             left: -2px;
@@ -84,47 +84,49 @@
           }
         }
       }
-      &__name{
+      &__name {
         height: initial;
         margin: 0;
         transition: all 0.3s;
         overflow: hidden;
         max-width: calc(100% - 40px);
         display: inline-block;
-        height: 40px;
-        @include max($s){
+        margin-bottom: 10px;
+        max-height: 38px;
+        @include max($s) {
           height: 40px;
         }
-        &:hover{
+        &:hover {
           color: $b_light;
           text-decoration: underline;
           cursor: pointer;
         }
       }
-      &__price{
-        @include max($s){
+      &__price {
+        @include max($s) {
           margin-top: 5px;
           margin-bottom: 5px;
         }
       }
-      &__info{
+      &__info {
         width: 100%;
         position: relative;
-        .i_close{
+
+        .i_close {
           position: absolute;
           right: 0;
           top: 0;
           font-size: 20px;
-          &:hover{
+          &:hover {
             color: $red;
           }
         }
       }
-      &__counter{
+      &__counter {
         position: absolute;
         bottom: 0;
         right: 0;
-        @include max($s){
+        @include max($s) {
           position: relative;
           margin-top: 10px;
         }

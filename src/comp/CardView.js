@@ -10,7 +10,7 @@ import { SERVER_URL } from "../constants";
 import api from "./api";
 import moment from "moment";
 import num2str from "../ulits/nm2wrd";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import Breadcrumbs from "./breadcrumbs";
 import $ from "jquery";
 
@@ -53,14 +53,23 @@ const CardView = observer(
       e.target.classList.toggle("active");
       const data = store.cardContainer;
 
-      const { productInCartList, addtoCart } = store;
+      const { productInCartList, addtoCart, certInCart } = store;
 
-      const inCart = Object.keys(this.props.store.productInCartList).length
-        ? Object.keys(this.props.store.productInCartList).indexOf(
-            String(this.props.store.cardContainer.slug)
-          )
-        : -1;
-      if (inCart !== -1) {
+      // this.inCart = Object.keys(this.props.store.productInCartList).length
+      //   ? Object.keys(this.props.store.productInCartList).indexOf(
+      //       String(this.props.store.cardContainer.slug)
+      //     )
+      //   : -1;
+
+      // if (Object.keys(this.props.store.productInCartList).length) {
+      //   if (data.name === "Электронный подарочный сертификат" && certInCart) {
+      //     this.inCart = Object.keys(this.props.store.productInCartList).indexOf(
+      //       certInCart
+      //     );
+      //   }
+      // }
+
+      if (this.inCart !== -1) {
         $(".tooltip_cart").addClass("visible");
         $(".tooltip_cart").find(".text").text(data.name);
 
@@ -71,8 +80,12 @@ const CardView = observer(
         setTimeout(() => {
           $(".tooltip_cart").removeClass("visible");
         }, 2000);
+        if (data.name === "Электронный подарочный сертификат") {
+          delete productInCartList[certInCart];
+        } else {
+          delete productInCartList[data.slug];
+        }
 
-        delete productInCartList[data.slug];
         window.dataLayer.push({
           ecommerce: {
             remove: {
@@ -97,8 +110,12 @@ const CardView = observer(
         setTimeout(() => {
           $(".tooltip_cart").removeClass("visible");
         }, 2000);
+        if (data.name === "Электронный подарочный сертификат") {
+          productInCartList[data.slug] = $("#mess").val();
+        } else {
+          productInCartList[data.slug] = store.countInProdPage;
+        }
 
-        productInCartList[data.slug] = store.countInProdPage;
         window.dataLayer.push({
           ecommerce: {
             add: {
@@ -156,15 +173,15 @@ const CardView = observer(
       const data = store.cardContainer;
 
       const { likeContainer, addToLike } = store;
-      const inLike = this.props.store.likeContainer.length
+      this.inLike = this.props.store.likeContainer.length
         ? this.props.store.likeContainer.indexOf(
             String(this.props.store.cardContainer.slug)
           )
         : -1;
 
       e.target.classList.toggle("active");
-      if (inLike !== -1) {
-        likeContainer.splice(inLike, 1);
+      if (this.inLike !== -1) {
+        likeContainer.splice(this.inLike, 1);
 
         $(".tooltip_cart").addClass("visible");
         $(".tooltip_cart").find(".text").text(data.name);
@@ -199,12 +216,21 @@ const CardView = observer(
     clickPlus = () => {
       const data = this.props.store.cardContainer;
       if (this.props.store.countInProdPage < data.stock_quantity) {
+        if (this.inCart !== -1) {
+          this.props.store.productInCartList[data.slug] += 1;
+          this.props.store.addtoCart(false);
+        }
         this.props.store.countInProdPage += 1;
       }
     };
 
     clickMinus = () => {
+      const data = this.props.store.cardContainer;
       if (this.props.store.countInProdPage > 1) {
+        if (this.inCart !== -1) {
+          this.props.store.productInCartList[data.slug] -= 1;
+          this.props.store.addtoCart(false);
+        }
         this.props.store.countInProdPage -= 1;
       }
     };
@@ -239,7 +265,18 @@ const CardView = observer(
     };
 
     render() {
+      if (
+        this.props.store.productInCartList[this.props.sku] !== undefined &&
+        this.props.store.countInProdPage !==
+          this.props.store.productInCartList[this.props.sku]
+      ) {
+        this.props.store.countInProdPage = this.props.store.productInCartList[
+          this.props.sku
+        ];
+      }
       const data = this.props.store.cardContainer;
+
+      const itsSert = data.name === "Электронный подарочный сертификат";
 
       const { timeDelivery } = this.state;
 
@@ -249,6 +286,7 @@ const CardView = observer(
         lastSeenProds,
         withProds,
         likeProds,
+        certInCart,
       } = this.props.store;
 
       if (data.slug === +this.props.sku && this.count) {
@@ -312,34 +350,44 @@ const CardView = observer(
       const storesAvali = [];
 
       if (data.slug === +this.props.sku) {
-        data.stores.forEach((el) => {
-          if (+el.count > 0) {
-            storesAvali.push(
-              <div className="drop_shop-list" key={el.name}>
-                <div>
-                  <b>{el.name}:</b> {el.address}
+        if (data.stores !== undefined) {
+          data.stores.forEach((el) => {
+            if (+el.count > 0) {
+              storesAvali.push(
+                <div className="drop_shop-list" key={el.name}>
+                  <div>
+                    <b>{el.name}:</b> {el.address}
+                  </div>
+                  <a href={"tel:" + el.tel}>{el.tel}</a>{" "}
+                  <a className="underline" href={"mailto:" + el.email}>
+                    {el.email}
+                  </a>
                 </div>
-                <a href={"tel:" + el.tel}>{el.tel}</a>{" "}
-                <a className="underline" href={"mailto:" + el.email}>
-                  {el.email}
-                </a>
-              </div>
-            );
-          }
-        });
+              );
+            }
+          });
+        }
       }
 
-      const inLike = this.props.store.likeContainer.length
+      this.inLike = this.props.store.likeContainer.length
         ? this.props.store.likeContainer.indexOf(
             String(this.props.store.cardContainer.slug)
           )
         : -1;
 
-      const inCart = Object.keys(this.props.store.productInCartList).length
+      this.inCart = Object.keys(this.props.store.productInCartList).length
         ? Object.keys(this.props.store.productInCartList).indexOf(
             String(this.props.store.cardContainer.slug)
           )
         : -1;
+
+      if (Object.keys(this.props.store.productInCartList).length) {
+        if (data.name === "Электронный подарочный сертификат" && certInCart) {
+          this.inCart = Object.keys(this.props.store.productInCartList).indexOf(
+            certInCart
+          );
+        }
+      }
 
       // if (data.slug === +this.props.sku) {
       //   if (!this.props.store.seenProd.includes(data.slug)) {
@@ -356,7 +404,10 @@ const CardView = observer(
 
               var container = document.querySelector(".drop");
               if (container !== null) {
-                if (!container.contains(e.target)) {
+                if (
+                  !container.contains(e.target) &&
+                  document.querySelector(".drop_shop-btn")
+                ) {
                   document
                     .querySelector(".drop_shop-btn")
                     .classList.remove("active");
@@ -400,15 +451,17 @@ const CardView = observer(
                     <div className="product-p__description">
                       <div className="product-p__head">
                         <h4 className="product-p__name">{data.name}</h4>
-                        <div className="product-p__article">
-                          {"Артикул: " + data.slug}
-                          <Link
-                            className="underline"
-                            to={"/catalog?brand=" + data.brand}
-                          >
-                            {data.brand}
-                          </Link>
-                        </div>
+                        {!itsSert && (
+                          <div className="product-p__article">
+                            {"Артикул: " + data.slug}
+                            <Link
+                              className="underline"
+                              to={"/catalog?brand=" + data.brand}
+                            >
+                              {data.brand}
+                            </Link>
+                          </div>
+                        )}
                         {data.sale ? (
                           <div className={"product__price product__price_disc"}>
                             <span className="old">
@@ -430,10 +483,47 @@ const CardView = observer(
                         )}
                       </div>
 
-                      {data.description && (
-                        <p className="product-p__info">{data.description}</p>
+                      {itsSert ? (
+                        <>
+                          <p className="product-p__info">
+                            Подарочные карты - отличный и модный подарок , когда
+                            есть повод, а вы не знаете, что подарить. Подарите
+                            своим близким и знакомым радость выбора с
+                            подарочными картами магазина «Queen of Bohemia»!
+                            <br />
+                            <br />
+                            Ссылка на подарочную страницу будет сгенерирована
+                            сразу после покупки и продублируется вам на почту.
+                            <br />
+                            <br />
+                            <Link to="/help/certificate" className="underline">
+                              Подробнее об условиях
+                            </Link>
+                          </p>
+                          <div className="product-p__message input-field">
+                            <label className="required" for="mess">
+                              Текст сообщения
+                            </label>
+                            <textarea
+                              name="mess"
+                              id="mess"
+                              onFocus={(e) => {
+                                $(e.target)
+                                  .parent()
+                                  .find("label")
+                                  .addClass("active");
+                              }}
+                            ></textarea>
+                          </div>
+                        </>
+                      ) : (
+                        data.description && (
+                          <p className="product-p__info">{data.description}</p>
+                        )
                       )}
-                      {dontSaleProdCount !== 0 &&
+
+                      {!itsSert &&
+                      dontSaleProdCount !== 0 &&
                       dontSaleProdCount % 3 !== 0 &&
                       !data.sale ? (
                         <Link to="/main/1+13" className="one-plus-one">
@@ -449,7 +539,12 @@ const CardView = observer(
                         </Link>
                       ) : null}
                       <div className="product-p__control">
-                        <div className="product-p__buttons">
+                        <div
+                          className={
+                            "product-p__buttons " +
+                            (itsSert ? " gift__buttons" : "")
+                          }
+                        >
                           <button
                             className={
                               "btn btn_primary" +
@@ -459,76 +554,139 @@ const CardView = observer(
                           >
                             <span
                               className={
-                                "ic i_bag " + (inCart === -1 ? "" : " active")
+                                "ic i_bag " +
+                                (this.inCart === -1 ? "" : " active")
                               }
                             ></span>{" "}
-                            {inCart === -1 ? "В корзину" : " В корзинe"}
+                            {this.inCart === -1 ? "В корзину" : " В корзинe"}
                           </button>
-                          <div className="product__counter">
-                            <button
-                              className="ic i_minus"
-                              onClick={this.clickMinus}
-                            ></button>
-                            <input
-                              min="1"
-                              max="100"
-                              type="number"
-                              value={this.props.store.countInProdPage}
-                            />
-                            <button
-                              className="ic i_plus"
-                              onClick={this.clickPlus}
-                            ></button>
-                          </div>
-                          <button
-                            className={
-                              "ic i_fav" + (inLike === -1 ? "" : " active")
-                            }
-                            onClick={this.clickFav}
-                          ></button>
-                        </div>
-                        <div className="product-p__available">
-                          <span
-                            className={
-                              "product-p__stock " +
-                              (data.stock_quantity ? "" : "un-stock")
-                            }
-                          >
-                            {data.stock_quantity
-                              ? "Есть на складе"
-                              : "Нет на складе"}
-                          </span>
-                          <span className="product-p__delivery">
-                            Доставка от{" "}
-                            <b>
-                              {timeDelivery}{" "}
-                              {num2str(timeDelivery, ["дня", "дней", "дней"])}
-                            </b>
-                          </span>
-                          {storesAvali.length > 0 && (
-                            <>
+                          {!itsSert ? (
+                            <div className="product__counter">
                               <button
-                                className="link dotted drop_shop-btn"
+                                className="ic i_minus"
+                                onClick={this.clickMinus}
+                              ></button>
+                              <input
+                                min="1"
+                                max="100"
+                                type="number"
+                                value={this.props.store.countInProdPage}
+                              />
+                              <button
+                                className="ic i_plus"
+                                onClick={this.clickPlus}
+                              ></button>
+                            </div>
+                          ) : (
+                            <>
+                              <div
+                                className="product__counter gift__drop-btn"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   e.target.classList.toggle("active");
                                   var drop = document.querySelector(
                                     ".drop_shop"
                                   );
+
+                                  $(".drop_shop").offset({
+                                    top:
+                                      $(".gift__drop-btn").offset().top +
+                                      $(".gift__drop-btn").height() +
+                                      12,
+                                    left: $(".gift__drop-btn").offset().left,
+                                  });
+                                  $(".drop_shop").width(
+                                    $(".gift__drop-btn").width()
+                                  );
                                   drop.classList.toggle("visible");
                                 }}
                               >
-                                Есть в {storesAvali.length}{" "}
-                                {num2str(storesAvali.length, [
-                                  "магазине",
-                                  "магазинах",
-                                  "магазинах",
-                                ])}{" "}
-                                <span className="ic i_drop"></span>
-                              </button>
+                                <p>
+                                  Номинал {data.regular_price.toLocaleString()}{" "}
+                                  ₽
+                                </p>
+                                <img src="/image/>.svg"></img>
+                              </div>
                               <div className="drop drop_shop">
-                                {storesAvali}
-                                {/* <div className="drop_shop-list">
+                                <div className="drop_shop-list">
+                                  <NavLink
+                                    className="gift__link"
+                                    to="/product/1111"
+                                  >
+                                    Номинал 1 000 ₽
+                                  </NavLink>
+                                  <NavLink
+                                    className="gift__link"
+                                    to="/product/1112"
+                                  >
+                                    Номинал 3 000 ₽
+                                  </NavLink>
+                                  <NavLink
+                                    className="gift__link"
+                                    to="/product/1113"
+                                  >
+                                    Номинал 5 000 ₽
+                                  </NavLink>
+                                  <NavLink
+                                    className="gift__link"
+                                    to="/product/1114"
+                                  >
+                                    Номинал 10 000 ₽
+                                  </NavLink>
+                                </div>
+                              </div>
+                            </>
+                          )}
+                          <button
+                            className={
+                              "ic i_fav" + (this.inLike === -1 ? "" : " active")
+                            }
+                            onClick={this.clickFav}
+                          ></button>
+                        </div>
+                        {!itsSert && (
+                          <div className="product-p__available">
+                            <span
+                              className={
+                                "product-p__stock " +
+                                (data.stock_quantity ? "" : "un-stock")
+                              }
+                            >
+                              {data.stock_quantity
+                                ? "Есть на складе"
+                                : "Нет на складе"}
+                            </span>
+                            <span className="product-p__delivery">
+                              Доставка от{" "}
+                              <b>
+                                {timeDelivery}{" "}
+                                {num2str(timeDelivery, ["дня", "дней", "дней"])}
+                              </b>
+                            </span>
+                            {storesAvali.length > 0 && (
+                              <>
+                                <button
+                                  className="link dotted drop_shop-btn"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    e.target.classList.toggle("active");
+                                    var drop = document.querySelector(
+                                      ".drop_shop"
+                                    );
+                                    drop.classList.toggle("visible");
+                                  }}
+                                >
+                                  Есть в {storesAvali.length}{" "}
+                                  {num2str(storesAvali.length, [
+                                    "магазине",
+                                    "магазинах",
+                                    "магазинах",
+                                  ])}{" "}
+                                  <span className="ic i_drop"></span>
+                                </button>
+                                <div className="drop drop_shop">
+                                  {storesAvali}
+                                  {/* <div className="drop_shop-list">
                               <div>
                                 <b>ТРЦ OUTLET Белая дача:</b> Новорязанское
                                 шоссе 8, Котельники, Московская область
@@ -571,22 +729,45 @@ const CardView = observer(
                                 salaris@queenbohemia.ru
                               </a>
                             </div> */}
-                              </div>
-                            </>
-                          )}
-                        </div>
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        )}
                       </div>
 
-                      <div className="product-p__spec">
-                        <div>
-                          <h5>Детали:</h5>
-                          <div className="product-p__spec-detail">
-                            <ul>
-                              <li>{data.weight + "кг."}</li>
-                              {data.color !== "" && <li>{data.color}</li>}
-                              {data.material && <li>{data.material}</li>}
-                              {$(window).width() <= 760 && (
-                                <>
+                      {!itsSert && (
+                        <div className="product-p__spec">
+                          <div>
+                            <h5>Детали:</h5>
+                            <div className="product-p__spec-detail">
+                              <ul>
+                                <li>{data.weight + "кг."}</li>
+                                {data.color !== "" && <li>{data.color}</li>}
+                                {data.material && <li>{data.material}</li>}
+                                {$(window).width() <= 760 && (
+                                  <>
+                                    <li>
+                                      {data.dimensions.length.toLocaleString() +
+                                        " x " +
+                                        data.dimensions.width.toLocaleString() +
+                                        " x " +
+                                        data.dimensions.height.toLocaleString() +
+                                        "см"}
+                                    </li>
+                                    <li>{data.country}</li>
+                                    {data.attributes.length !== 0 && (
+                                      <li>
+                                        {data.attributes[0].name}:{" "}
+                                        {data.attributes[0].value +
+                                          data.attributes[0].unit}
+                                      </li>
+                                    )}
+                                  </>
+                                )}
+                              </ul>
+                              {$(window).width() >= 760 && (
+                                <ul>
                                   <li>
                                     {data.dimensions.length.toLocaleString() +
                                       " x " +
@@ -603,49 +784,29 @@ const CardView = observer(
                                         data.attributes[0].unit}
                                     </li>
                                   )}
-                                </>
+                                  {/* <li>{data.brand}</li> */}
+                                </ul>
                               )}
+                            </div>
+                          </div>
+                          <div>
+                            <h5>Можно использовать:</h5>
+                            <ul>
+                              <li>
+                                <span className={data.microwave ? "" : "lth"}>
+                                  в микроволновке
+                                </span>
+                              </li>
+                              <li>
+                                <span className={data.pm ? "" : "lth"}>
+                                  в посудомойке
+                                </span>
+                              </li>
+                              {/* {data.microwave && } */}
                             </ul>
-                            {$(window).width() >= 760 && (
-                              <ul>
-                                <li>
-                                  {data.dimensions.length.toLocaleString() +
-                                    " x " +
-                                    data.dimensions.width.toLocaleString() +
-                                    " x " +
-                                    data.dimensions.height.toLocaleString() +
-                                    "см"}
-                                </li>
-                                <li>{data.country}</li>
-                                {data.attributes.length !== 0 && (
-                                  <li>
-                                    {data.attributes[0].name}:{" "}
-                                    {data.attributes[0].value +
-                                      data.attributes[0].unit}
-                                  </li>
-                                )}
-                                {/* <li>{data.brand}</li> */}
-                              </ul>
-                            )}
                           </div>
                         </div>
-                        <div>
-                          <h5>Можно использовать:</h5>
-                          <ul>
-                            <li>
-                              <span className={data.microwave ? "" : "lth"}>
-                                в микроволновке
-                              </span>
-                            </li>
-                            <li>
-                              <span className={data.pm ? "" : "lth"}>
-                                в посудомойке
-                              </span>
-                            </li>
-                            {/* {data.microwave && } */}
-                          </ul>
-                        </div>
-                      </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -745,14 +906,15 @@ const CardView = observer(
     }
 
     componentDidUpdate() {
-      if (document.querySelector(".drift") !== null) {
+      console.log("$(window).width :>> ", $(window).width());
+      if (
+        document.querySelector(".drift") !== null &&
+        $(window).width() > 425
+      ) {
         this.drafts.forEach((el) => {
           el.disable();
         });
-        console.log(
-          'document.querySelector(".drift") :>> ',
-          document.querySelector(".drift").getAttribute("data-zoom")
-        );
+
         var driftImgs = document.querySelectorAll(".drift");
         var pane = document.querySelector(".product-p__description");
         driftImgs.forEach((img) => {

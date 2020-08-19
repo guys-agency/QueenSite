@@ -21,6 +21,7 @@ const MainPage = observer(
       hitCont: [],
       newCont: [],
       allCont: [],
+      certificate: "",
       ready: false,
     };
 
@@ -77,16 +78,47 @@ const MainPage = observer(
               </div>
             );
           });
-          this.setState({
-            hitCont: hitContTime,
-            newCont: newContTime,
-            allCont: allContTime,
-            ready: true,
-          });
+          console.log("cert :>> ", this.props.gift);
+          if (this.props.gift === undefined) {
+            this.setState({
+              hitCont: hitContTime,
+              newCont: newContTime,
+              allCont: allContTime,
+              ready: true,
+            });
+          } else {
+            api
+              .getCertData(this.props.gift)
+              .then((ok) => {
+                this.setState({
+                  hitCont: hitContTime,
+                  newCont: newContTime,
+                  allCont: allContTime,
+                  certificate: ok.data,
+                  ready: true,
+                });
+              })
+              .catch((err) => {
+                console.log("err :>> ", err);
+              });
+          }
         })
         .catch((err) => {
           console.log("err", err);
         });
+    };
+
+    copy = (str) => {
+      let tmp = document.createElement("INPUT"), // Создаём новый текстовой input
+        focus = document.activeElement; // Получаем ссылку на элемент в фокусе (чтобы не терять фокус)
+
+      tmp.value = str; // Временному input вставляем текст для копирования
+
+      document.body.appendChild(tmp); // Вставляем input в DOM
+      tmp.select(); // Выделяем весь текст в input
+      document.execCommand("copy"); // Магия! Копирует в буфер выделенный текст (см. команду выше)
+      document.body.removeChild(tmp); // Удаляем временный input
+      focus.focus(); // Возвращаем фокус туда, где был
     };
 
     openLogSide = () => {
@@ -115,6 +147,9 @@ const MainPage = observer(
             <Link
               key={elem.slug}
               className="head-banner"
+              onClick={() => {
+                this.props.store.dataColl = [elem];
+              }}
               to={"/main/" + elem.slug}
               style={{
                 backgroundImage: `url(/image/banners/${
@@ -129,7 +164,13 @@ const MainPage = observer(
 
         bannersData.brand.forEach((elem) => {
           brandCon.push(
-            <Link to={"/brand/" + elem.slug} className="slider-brand">
+            <Link
+              onClick={() => {
+                this.props.store.dataColl = [elem];
+              }}
+              to={"/brand/" + elem.slug}
+              className="slider-brand"
+            >
               <img src={"/image/brends/" + elem["image-mob-large"]} />
             </Link>
           );
@@ -139,6 +180,9 @@ const MainPage = observer(
           <div className="row" key={bannersData.collections[0].slug}>
             <div className="col col-7 col-s-12">
               <Link
+                onClick={() => {
+                  this.props.store.dataColl = [bannersData.collections[0]];
+                }}
                 to={"collections/" + bannersData.collections[0].slug}
                 className="banner banner_overlay main"
                 style={{
@@ -158,6 +202,9 @@ const MainPage = observer(
               <div className="row row_inner">
                 <div className="col col-12">
                   <Link
+                    onClick={() => {
+                      this.props.store.dataColl = [bannersData.collections[1]];
+                    }}
                     to={"collections/" + bannersData.collections[1].slug}
                     className="banner banner_overlay small"
                     style={{
@@ -175,6 +222,9 @@ const MainPage = observer(
                 </div>
                 <div className="col col-12">
                   <Link
+                    onClick={() => {
+                      this.props.store.dataColl = [bannersData.collections[2]];
+                    }}
                     to={"collections/" + bannersData.collections[2].slug}
                     className="banner banner_overlay small"
                     style={{
@@ -200,6 +250,9 @@ const MainPage = observer(
             <div className="action">
               <div className="head head_sm head_list">
                 <Link
+                  onClick={() => {
+                    this.props.store.dataColl = [bannersData.sale[0]];
+                  }}
                   to={"/actions/" + bannersData.sale[0].slug}
                   className="head-banner head-banner_action"
                   style={{
@@ -412,13 +465,60 @@ const MainPage = observer(
 
       return (
         <div className="main-page">
-          <div className="head head_big">
-            <div className="head-car">
-              {mainBanners.length ? (
-                <Swiper {...headCar}>{mainBanners}</Swiper>
-              ) : null}
+          {window.location.pathname.includes("/gift/") ? (
+            <div className="head head_big gift">
+              <img
+                className="gift__img"
+                src={`/image/items/${this.state.certificate.sum}cert.png`}
+              ></img>
+              <div className="gift__desc">
+                <p>{this.state.certificate.message}</p>
+                <div className="gift__code-cont">
+                  <p>Промокод:</p>
+                  <div className="gift__code">
+                    <p>{this.state.certificate.coupon}</p>
+                    <button
+                      className="btn btn_primary"
+                      id="gift-copy"
+                      onClick={() => {
+                        try {
+                          this.copy(`${this.state.certificate.coupon}`);
+                          $("#gift-copy").css("border", "1px solid lightgreen");
+                          setTimeout(() => {
+                            $("#gift-copy").css("border", "");
+                          }, 3000);
+                        } catch {
+                          $("#gift-copy").css(
+                            "border",
+                            "1px solid rgb(235, 87, 87)"
+                          );
+                          setTimeout(() => {
+                            $("#gift-copy").css("border", "");
+                          }, 3000);
+                        }
+                      }}
+                    >
+                      Скопировать
+                    </button>
+                  </div>
+                </div>
+                <p className="gift__ps">
+                  Примените промокод во время оформления заказа. При стоимости
+                  заказа более суммы сертификата вы можете доплатить разницу
+                  наличными или банковской картой. Срок действия — 1 год.
+                </p>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="head head_big">
+              <div className="head-car">
+                {mainBanners.length ? (
+                  <Swiper {...headCar}>{mainBanners}</Swiper>
+                ) : null}
+              </div>
+            </div>
+          )}
+
           <div className="carousel carousel_product">
             <div className="container">
               <div className="title">

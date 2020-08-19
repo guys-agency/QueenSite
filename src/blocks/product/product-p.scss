@@ -69,6 +69,7 @@
   &__article {
     font-size: 14px;
     color: $a_dark;
+    margin-bottom: 15px;
     .underline {
       margin-left: 10px;
     }
@@ -86,6 +87,19 @@
       font-size: 14px;
     }
   }
+
+  &__message {
+    order: 2;
+    margin-top: 40px;
+    textarea {
+      height: 30px;
+      transition: all 0.4s linear;
+      &:focus {
+        height: 200px;
+      }
+    }
+  }
+
   &__control {
     order: 2;
     margin-top: 40px;
@@ -93,6 +107,7 @@
   &__buttons {
     display: flex;
     align-items: center;
+
     .product__counter {
       margin-left: 20px;
       margin-right: 20px;
@@ -112,6 +127,19 @@
       font-size: 24px;
       &:hover {
         color: $g_middle;
+      }
+    }
+    @include max(320px) {
+      flex-wrap: wrap;
+
+      .btn {
+        width: 100%;
+        justify-content: center;
+        margin-bottom: 20px;
+      }
+      .product__counter {
+        margin-left: 0px;
+        margin-right: 20px;
       }
     }
   }

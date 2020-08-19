@@ -146,6 +146,48 @@
       }
     }
   }
+
+  &__coups {
+    width: 100%;
+    margin-top: 20px;
+    position: relative;
+    div {
+      position: relative;
+      display: flex;
+      align-items: center;
+
+      font-family: Excentra Pro;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 16px;
+      line-height: 24px;
+
+      color: #00094d;
+
+      border-bottom: 1px solid #e3e2e3;
+      box-sizing: border-box;
+
+      padding: 10px 0px;
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+
+    p {
+      margin: 0px;
+      color: green;
+      margin-left: 5px;
+    }
+
+    button {
+      position: absolute;
+      right: 5px;
+      width: 12.39px;
+      height: 12.39px;
+    }
+  }
+
   &__promo {
     width: 100%;
     margin-top: 20px;
@@ -258,6 +300,12 @@
     padding: 15px;
     cursor: pointer;
     transition: all linear 0.1s;
+
+    &.deactiv {
+      background: #ffffff;
+      opacity: 0.4;
+      pointer-events: none;
+    }
 
     .red {
       border: 1px solid #ba250d;

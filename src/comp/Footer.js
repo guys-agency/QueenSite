@@ -99,8 +99,8 @@ const Footer = observer(
               </div>
 
               <div className="footer__column">
-                <a href="tel:88002508021">
-                  <h4 className="white">8 800 250-80-21</h4>
+                <a href="tel:88006003421">
+                  <h4 className="white">8 800 600-34-21</h4>
                 </a>
                 <button
                   className="link dotted ask"

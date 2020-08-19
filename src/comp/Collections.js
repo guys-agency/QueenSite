@@ -26,6 +26,9 @@ const Collections = observer(
               <Link
                 key={el.slug}
                 className="head-banner"
+                onClick={() => {
+                  this.props.store.dataColl = [el];
+                }}
                 style={{
                   backgroundImage: `url(/image/banners/${
                     typeDevice ? el["image-mob-large"] : el["image-desc-large"]
@@ -40,6 +43,9 @@ const Collections = observer(
                 <Link
                   href="#"
                   className="banner banner_overlay main"
+                  onClick={() => {
+                    this.props.store.dataColl = [el];
+                  }}
                   to={"collections/" + el.slug}
                   style={{
                     backgroundImage: `url(/image/banners/${

@@ -140,6 +140,7 @@ const MainScreen = observer(
           }
           this.props.store.withProds = data.addProd[0].with;
           this.props.store.likeProds.replace(data.addProd[0].like);
+          document.title = data.product[0].name + " - Queen of Bohemia";
           // console.log("this.like :>> ", this.like);
         })
         .catch((err) => {
@@ -227,7 +228,23 @@ const MainScreen = observer(
               render={(routProps) => (
                 this.props.store.cleaningActiveFilters(),
                 $("html, body").animate({ scrollTop: 0 }, 500),
+                (document.title = "Queen of Bohemia"),
                 (<MainPage store={this.props.store} />)
+              )}
+            />
+            <Route
+              path="/gift/:id"
+              exact
+              render={(routProps) => (
+                this.props.store.cleaningActiveFilters(),
+                $("html, body").animate({ scrollTop: 0 }, 500),
+                (document.title = "Queen of Bohemia"),
+                (
+                  <MainPage
+                    store={this.props.store}
+                    gift={routProps.match.params.id}
+                  />
+                )
               )}
             />
             <Route
@@ -255,6 +272,19 @@ const MainScreen = observer(
                   routProps.match.params.childName),
                 this.props.store.filtration(),
                 (this.props.store.activeCats = this.props.store.fullCats),
+                this.props.store.menuAccor[
+                  routProps.match.params.parentName
+                ] !== undefined
+                  ? routProps.match.params.childName
+                    ? (document.title =
+                        this.props.store.menuAccor[
+                          routProps.match.params.childName
+                        ] + " - Queen of Bohemia")
+                    : (document.title =
+                        this.props.store.menuAccor[
+                          routProps.match.params.parentName
+                        ] + " - Queen of Bohemia")
+                  : (document.title = "Queen of Bohemia"),
                 (
                   <div className="main-screen">
                     <div className="container">
@@ -299,22 +329,23 @@ const MainScreen = observer(
               path="/cart"
               render={() => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
+                (document.title = "Корзина - Queen of Bohemia"),
                 (
                   <div
                     className="main-screen"
-                    onClick={(e) => {
-                      e.stopPropagation();
+                    // onClick={(e) => {
+                    //   e.stopPropagation();
 
-                      var container = document.querySelector(".city__drop");
-                      if (!container.contains(e.target)) {
-                        document
-                          .querySelector(".city__btn")
-                          .classList.remove("active");
-                        document
-                          .querySelector(".city__drop")
-                          .classList.remove("active");
-                      }
-                    }}
+                    //   var container = document.querySelector(".city__drop");
+                    //   if (!container.contains(e.target)) {
+                    //     document
+                    //       .querySelector(".city__btn")
+                    //       .classList.remove("active");
+                    //     document
+                    //       .querySelector(".city__drop")
+                    //       .classList.remove("active");
+                    //   }
+                    // }}
                   >
                     <Suspense fallback={<div></div>}>
                       <CartPage store={this.props.store} />
@@ -344,6 +375,7 @@ const MainScreen = observer(
               path="/profile"
               render={() => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
+                (document.title = "Профиль - Queen of Bohemia"),
                 (
                   <Suspense fallback={<div></div>}>
                     <div className="main-screen">
@@ -416,6 +448,7 @@ const MainScreen = observer(
               path="/collections"
               render={() => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
+                (document.title = "Коллекции - Queen of Bohemia"),
                 (
                   <div className="main-screen">
                     <Collections store={this.props.store} />
@@ -505,6 +538,7 @@ const MainScreen = observer(
                   : null,
                 (this.props.store.pathS = "hits"),
                 this.props.store.filtration(),
+                (document.title = "Хиты - Queen of Bohemia"),
                 (
                   <div className="main-screen">
                     <div className="container">
@@ -544,6 +578,7 @@ const MainScreen = observer(
                   : null,
                 (this.props.store.pathS = "new"),
                 this.props.store.filtration(),
+                (document.title = "Новинки - Queen of Bohemia"),
                 (
                   <div className="main-screen">
                     <div className="container">
@@ -585,6 +620,7 @@ const MainScreen = observer(
                   : null,
                 (this.props.store.pathS = "closeout"),
                 this.props.store.filtration(),
+                (document.title = "Расспродажа - Queen of Bohemia"),
                 (
                   <div className="main-screen">
                     <div className="container">
@@ -648,6 +684,7 @@ const MainScreen = observer(
               path="/actions"
               render={() => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
+                (document.title = "Акции - Queen of Bohemia"),
                 (
                   <div className="main-screen">
                     <Actions store={this.props.store} />
@@ -667,6 +704,7 @@ const MainScreen = observer(
                   : null,
                 (this.props.store.pathS = "search"),
                 this.props.store.filtration(),
+                (document.title = "Поиск - Queen of Bohemia"),
                 (
                   <div className="main-screen">
                     <div className="container">
@@ -699,6 +737,7 @@ const MainScreen = observer(
               path="/shops"
               render={() => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
+                (document.title = "Магазины - Queen of Bohemia"),
                 (
                   <Suspense fallback={<div></div>}>
                     <div className="main-screen">
@@ -713,6 +752,7 @@ const MainScreen = observer(
               path="/shops-map"
               render={() => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
+                (document.title = "Магазины - Queen of Bohemia"),
                 (
                   <Suspense fallback={<div></div>}>
                     <div className="main-screen">
@@ -727,6 +767,7 @@ const MainScreen = observer(
               path={["/help/:options"]}
               render={(routProps) => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
+                (document.title = "Помощь - Queen of Bohemia"),
                 (
                   <Suspense fallback={<div>Loading...</div>}>
                     <div className="main-screen">
@@ -741,6 +782,7 @@ const MainScreen = observer(
               path="/about"
               render={() => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
+                (document.title = "О нас - Queen of Bohemia"),
                 (
                   <Suspense fallback={<div></div>}>
                     <div className="main-screen">
@@ -756,6 +798,7 @@ const MainScreen = observer(
               render={(routProps) => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
                 this.chekFinishDelete(),
+                (document.title = "Поздравляем с покупкой - Queen of Bohemia"),
                 (
                   <Suspense fallback={<div></div>}>
                     <div className="main-screen">
