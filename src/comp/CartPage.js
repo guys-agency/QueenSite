@@ -47,10 +47,10 @@ const CartPage = observer(
       coupon: { count: 0, type: "", code: "", id: "" },
       delVar: [],
       coupsCont:
-        localStorage.get("coupsCont") === undefined ||
-        localStorage.get("coupsCont") === null
+        localStorage.getItem("coupsCont") === undefined ||
+        localStorage.getItem("coupsCont") === null
           ? {}
-          : localStorage.get("coupsCont"),
+          : localStorage.getItem("coupsCont"),
     };
 
     deliveryOrderData = {};
@@ -538,7 +538,7 @@ const CartPage = observer(
       }
 
       console.log("coupDisc :>> ", coupDisc);
-      if (this.totalPrice === 0) {
+      if (Object.keys(productInCart).length && this.totalPrice === 0) {
         this.choosePaymentType(undefined, "PREPAID");
       }
 
@@ -594,6 +594,8 @@ const CartPage = observer(
           </div>
         );
       }
+
+      console.log("coup :>> ", this.state.coupsCont);
 
       return (
         <div className="cart-page">
@@ -1704,6 +1706,7 @@ const CartPage = observer(
                         const ecomProd = [];
                         const productForYA = [];
                         let totalProductSum = 0;
+                        let noSaleSum = 0;
 
                         Object.keys(productInCart).forEach((el) => {
                           ecomProd.push({
@@ -1725,6 +1728,12 @@ const CartPage = observer(
                           if (productInCart[el].sale) {
                             dataToSend.prod[el].sale_price =
                               productInCart[el].sale_price;
+                          } else {
+                            if (el !== certInCart) {
+                              noSaleSum +=
+                                productInCart[el].regular_price *
+                                productInCartList[el];
+                            }
                           }
 
                           productForYA.push({
@@ -1824,6 +1833,9 @@ const CartPage = observer(
                         dataToSend.phone = String(tel);
                         dataToSend.payment = this.state.payment;
                         dataToSend.coupon = this.state.coupsCont;
+                        if (noSaleSum) {
+                          dataToSend.noSaleSum = noSaleSum;
+                        }
 
                         if (delChoose || pickUpChoose) {
                           const recipient = {
@@ -1960,8 +1972,8 @@ const CartPage = observer(
                                   },
                                 });
                               }
-                              localStorage.removeItem("coupsCont");
-                              localStorage.set("deleteCart", true);
+                              localStorage.setItem("coupsCont", undefined);
+                              localStorage.setItem("deleteCart", true);
 
                               if (dataToSend.payment === "PREPAID") {
                                 const checkout = new window.YandexCheckout({
@@ -1983,7 +1995,10 @@ const CartPage = observer(
                                   deliveryData.deliveryOption !== undefined &&
                                   deliveryData.type === undefined
                                 ) {
-                                  localStorage.set("sendDeliveryPickUp", true);
+                                  localStorage.setItem(
+                                    "sendDeliveryPickUp",
+                                    true
+                                  );
                                   window.widget.setOrderInfo({
                                     ...this.order,
                                     externalId: String(data.orderId),
@@ -2187,7 +2202,7 @@ const CartPage = observer(
                                   id: d.data.id,
                                 };
 
-                                localStorage.set("coupsCont", newCoupsCont);
+                                localStorage.setItem("coupsCont", newCoupsCont);
                                 $("#coup").val("");
                                 this.setState({
                                   coupsCont: newCoupsCont,
@@ -2224,27 +2239,47 @@ const CartPage = observer(
 
       tel.mask($("#phone"));
 
-      if (this.props.store.auth) {
-        api
-          .getUserData()
-          .then((data) => {
-            console.log("data :>> ", data);
-            // this.props.store.addToLike(true);
-            this.setState({
-              name: data.user.name,
-              email: data.user.email,
-              tel: data.user.tel !== undefined ? data.user.tel.substr(1) : "",
-            });
-            // this.props.store.userData = data;
-            // console.log(
-            //   "this.props.store.userData :>> ",
-            //   this.props.store.userData
-            // );
-          })
-          .catch((err) => {
-            console.log("err :>> ", err);
+      const coupsCont = localStorage.getItem("coupsCont");
+
+      if (coupsCont !== undefined || coupsCont !== null) {
+        Object.keys(coupsCont).forEach((coup) => {
+          api.coupon({ code: coup.toLowerCase() }).then((d) => {
+            if (d.status === 400) {
+              const newCoupsCont = this.state.coupsCont;
+
+              delete newCoupsCont[coup];
+
+              localStorage.setItem("coupsCont", newCoupsCont);
+
+              this.setState({
+                coupsCont: newCoupsCont,
+              });
+            }
           });
+        });
       }
+
+      // if (this.props.store.auth) {
+      //   api
+      //     .getUserData()
+      //     .then((data) => {
+      //       console.log("data :>> ", data);
+      //       // this.props.store.addToLike(true);
+      //       this.setState({
+      //         name: data.user.name,
+      //         email: data.user.email,
+      //         tel: data.user.tel !== undefined ? data.user.tel.substr(1) : "",
+      //       });
+      //       // this.props.store.userData = data;
+      //       // console.log(
+      //       //   "this.props.store.userData :>> ",
+      //       //   this.props.store.userData
+      //       // );
+      //     })
+      //     .catch((err) => {
+      //       console.log("err :>> ", err);
+      //     });
+      // }
     }
 
     startYaDeliv = (fullPrice, array) => {
