@@ -168,3 +168,9 @@
     content: $i_gift;
   }
 }
+
+.i_coin {
+  &:before {
+    content: $i_coin;
+  }
+}
