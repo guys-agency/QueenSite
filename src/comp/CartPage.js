@@ -48,7 +48,8 @@ const CartPage = observer(
       delVar: [],
       coupsCont:
         localStorage.getItem("coupsCont") === undefined ||
-        localStorage.getItem("coupsCont") === null
+        localStorage.getItem("coupsCont") === null ||
+        localStorage.getItem("coupsCont") === "undefined"
           ? {}
           : localStorage.getItem("coupsCont"),
     };
@@ -484,8 +485,8 @@ const CartPage = observer(
       let coupDisc = 0;
       let certDisc = 0;
 
-      console.log("coupsCont :>> ", coupsCont);
-      if (Object.keys(productInCart).length) {
+      console.log("coupsCont1 :>> ", coupsCont);
+      if (Object.keys(productInCart).length && Object.keys(coupsCont).length) {
         Object.keys(coupsCont).forEach((coupon) => {
           coupRender.push(
             <div key={coupsCont[coupon].code}>
@@ -2240,8 +2241,13 @@ const CartPage = observer(
       tel.mask($("#phone"));
 
       const coupsCont = localStorage.getItem("coupsCont");
+      // console.log("coupsCont :>> ", coupsCont);
 
-      if (coupsCont !== undefined || coupsCont !== null) {
+      if (
+        coupsCont !== undefined &&
+        coupsCont !== null &&
+        coupsCont !== "undefined"
+      ) {
         Object.keys(coupsCont).forEach((coup) => {
           api.coupon({ code: coup.toLowerCase() }).then((d) => {
             if (d.status === 400) {
