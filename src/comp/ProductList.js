@@ -15,7 +15,7 @@ const ProductList = observer(
 
     changeCertSum = (elNew) => {
       const { productInCartList, addtoCart, productInCart } = this.props.store;
-      console.log("el :>> ", this.props.el);
+      // console.log("el :>> ", this.props.el);
       if (this.props.el === elNew) {
         return;
       } else {

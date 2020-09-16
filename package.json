@@ -16,8 +16,10 @@
     "mobx-react": "^6.2.2",
     "moment": "^2.27.0",
     "node-sass": "^4.14.1",
+    "pinch-zoom-js": "^2.3.4",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-helmet": "^6.1.0",
     "react-id-swiper": "^3.0.0",
     "react-lazy-load-image-component": "^1.5.0-beta.0",
     "react-reveal": "^1.2.2",
@@ -25,6 +27,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
     "react-yandex-maps": "^4.4.0",
+    "react-zoom-pan-pinch": "^1.6.1",
     "semantic-ui-css": "^2.4.1",
     "stringquery": "^1.0.8",
     "suggestions-jquery": "^20.3.0",
@@ -35,6 +38,7 @@
   "scripts": {
     "start": "REACT_APP_TYPE=dev react-scripts start",
     "build": "REACT_APP_TYPE=prod react-scripts build && rimraf build/**/*.map && gzipper --verbose ./build --exclude jpg,JPG",
+    "superDev": "REACT_APP_TYPE=superDev REACT_APP_SUPER_DEV_LOGIN=rick REACT_APP_SUPER_DEV_PASSWORD=cucumber react-scripts build && gzipper --verbose ./build --exclude jpg,JPG",
     "postbuild": "rimraf build/**/*.map",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

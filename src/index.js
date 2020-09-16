@@ -33,6 +33,7 @@ if (process.env.REACT_APP_TYPE === "prod") {
   window.ym(65097901, "init", {
     clickmap: true,
     trackLinks: true,
+    trackHash: true,
     accurateTrackBounce: true,
     webvisor: true,
     ecommerce: "dataLayer",

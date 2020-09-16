@@ -128,6 +128,19 @@ class Api {
     });
   }
 
+  updateLikeCount(id) {
+    return fetch(SERVER_URL + "/update-like", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id }),
+    }).then((res) => {
+      return res.json();
+    });
+  }
+
   updateCart(cart) {
     return fetch(SERVER_URL + "/user-cart", {
       method: "POST",

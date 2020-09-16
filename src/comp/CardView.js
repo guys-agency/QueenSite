@@ -13,6 +13,7 @@ import num2str from "../ulits/nm2wrd";
 import { Link, NavLink } from "react-router-dom";
 import Breadcrumbs from "./breadcrumbs";
 import $ from "jquery";
+import Helmet from "react-helmet";
 
 const { Component } = React;
 const historyAll = createBrowserHistory();
@@ -287,6 +288,7 @@ const CardView = observer(
         withProds,
         likeProds,
         certInCart,
+        brandSlugs,
       } = this.props.store;
 
       if (data.slug === +this.props.sku && this.count) {
@@ -295,7 +297,7 @@ const CardView = observer(
           localStorage.get("city") !== null &&
           localStorage.get("city") !== undefined
         ) {
-          console.log("11 :>> ", 11);
+          // console.log("11 :>> ", 11);
           this.count = false;
 
           const dataDeliv = {
@@ -416,6 +418,16 @@ const CardView = observer(
               }
             }}
           >
+            <Helmet
+              title={data.name + " - Queen of Bohemia"}
+              meta={[
+                { name: "description", content: data.description },
+                {
+                  property: "og:image",
+                  content: `https://queenbohemia.ru/image/items/${data.path_to_photo[0]}`,
+                },
+              ]}
+            />
             <div className="container">
               <div>
                 <Breadcrumbs
@@ -456,7 +468,11 @@ const CardView = observer(
                             {"Артикул: " + data.slug}
                             <Link
                               className="underline"
-                              to={"/catalog?brand=" + data.brand}
+                              to={
+                                Object.keys(brandSlugs).includes(data.brand)
+                                  ? `/brand/${brandSlugs[data.brand]}`
+                                  : `/catalog?brand=${data.brand}`
+                              }
                             >
                               {data.brand}
                             </Link>
@@ -479,6 +495,20 @@ const CardView = observer(
                         ) : (
                           <div className={"product__price"}>
                             {data.regular_price.toLocaleString()} ₽{" "}
+                            <div className="product__bonus">
+                              <p className="i_coin"></p>
+                              <p>
+                                +{" "}
+                                {Math.round(
+                                  data.regular_price * 0.1
+                                ).toLocaleString()}{" "}
+                                {num2str(Math.round(data.regular_price * 0.1), [
+                                  "бонусный балл",
+                                  "бонусных баллов",
+                                  "бонусных баллов",
+                                ])}{" "}
+                              </p>
+                            </div>
                           </div>
                         )}
                       </div>
@@ -522,6 +552,46 @@ const CardView = observer(
                         )
                       )}
 
+                      {data.kit !== undefined && data.kit.length !== 0 && (
+                        <>
+                          <button
+                            className="link dotted drop_kit-btn"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              e.target.classList.toggle("active");
+                              var drop = document.querySelector(".drop_kit");
+                              $(".drop_kit").offset({
+                                top:
+                                  $(".drop_kit-btn").offset().top +
+                                  $(".drop_kit-btn").height() +
+                                  12,
+                                left: $(".drop_kit-btn").offset().left,
+                              });
+                              // $(".drop_shop").width(
+                              //   $(".drop_kit-btn").width()
+                              // );
+
+                              drop.classList.toggle("visible");
+                            }}
+                          >
+                            Комплектация
+                            <span className="ic i_drop"></span>
+                          </button>
+                          <div className="drop drop_kit">
+                            {data.kit.map((el) => {
+                              return (
+                                <div className="drop_shop-list" key={el}>
+                                  <p>
+                                    {el.substr(0, 1).toUpperCase() +
+                                      el.substr(1)}
+                                  </p>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </>
+                      )}
+
                       {!itsSert &&
                       dontSaleProdCount !== 0 &&
                       dontSaleProdCount % 3 !== 0 &&
@@ -547,7 +617,7 @@ const CardView = observer(
                         >
                           <button
                             className={
-                              "btn btn_primary" +
+                              "btn btn_primary " +
                               (data.stock_quantity ? "" : " btn_dis")
                             }
                             onClick={this.clickHandler}
@@ -648,21 +718,28 @@ const CardView = observer(
                           <div className="product-p__available">
                             <span
                               className={
-                                "product-p__stock " +
-                                (data.stock_quantity ? "" : "un-stock")
+                                data.stock_quantity
+                                  ? "product-p__stock "
+                                  : "product-p__un-stock"
                               }
                             >
                               {data.stock_quantity
                                 ? "Есть на складе"
                                 : "Нет на складе"}
                             </span>
-                            <span className="product-p__delivery">
-                              Доставка от{" "}
-                              <b>
-                                {timeDelivery}{" "}
-                                {num2str(timeDelivery, ["дня", "дней", "дней"])}
-                              </b>
-                            </span>
+                            {data.stock_quantity ? (
+                              <span className="product-p__delivery">
+                                Доставка от{" "}
+                                <b>
+                                  {timeDelivery}{" "}
+                                  {num2str(timeDelivery, [
+                                    "дня",
+                                    "дней",
+                                    "дней",
+                                  ])}
+                                </b>
+                              </span>
+                            ) : null}
                             {storesAvali.length > 0 && (
                               <>
                                 <button
@@ -906,7 +983,7 @@ const CardView = observer(
     }
 
     componentDidUpdate() {
-      console.log("$(window).width :>> ", $(window).width());
+      // console.log("$(window).width :>> ", $(window).width());
       if (
         document.querySelector(".drift") !== null &&
         $(window).width() > 425

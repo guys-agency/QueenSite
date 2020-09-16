@@ -36,7 +36,8 @@ const CartPage = observer(
           ? this.props.store.userData.user.email
           : "",
       tel:
-        this.props.store.userData.user !== undefined
+        this.props.store.userData.user !== undefined &&
+        this.props.store.userData.user.tel !== undefined
           ? this.props.store.userData.user.tel.substr(1)
           : "",
       delChoose: true,
@@ -48,9 +49,12 @@ const CartPage = observer(
       delVar: [],
       coupsCont:
         localStorage.get("coupsCont") === undefined ||
-        localStorage.get("coupsCont") === null
+        localStorage.get("coupsCont") === null ||
+        localStorage.getItem("coupsCont") === "undefined"
           ? {}
           : localStorage.get("coupsCont"),
+      bonus: 0,
+      useBonus: 0,
     };
 
     deliveryOrderData = {};
@@ -226,8 +230,8 @@ const CartPage = observer(
         height: heightSumm,
         weight: weightSumm,
       };
-      console.log("moment :>> ", moment().hour());
-      console.log("object :>> ", moment().add(1, "days").format("YYYY-MM-DD"));
+      // console.log("moment :>> ", moment().hour());
+      // console.log("object :>> ", moment().add(1, "days").format("YYYY-MM-DD"));
 
       api
         .deliveryVar({
@@ -243,7 +247,7 @@ const CartPage = observer(
           cost: order.cost,
           shipment: {
             date:
-              moment().hour() > 14
+              moment().hour() > 10
                 ? moment().add(1, "days").format("YYYY-MM-DD")
                 : moment().format("YYYY-MM-DD"),
             type: "WITHDRAW",
@@ -362,8 +366,29 @@ const CartPage = observer(
         this.props.history.push("/");
       }
 
-      const { productInCart, productInCartList, certInCart } = this.props.store;
-      const { deliveryData, coupon, delVar } = this.state;
+      const {
+        productInCart,
+        productInCartList,
+        certInCart,
+        userData,
+        auth,
+      } = this.props.store;
+
+      const {
+        adress,
+        flat,
+        house,
+        name,
+        secondName,
+        email,
+        tel,
+        coupsCont,
+        useBonus,
+        deliveryData,
+        coupon,
+        delVar,
+      } = this.state;
+
       const regexEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
       const productList = [];
@@ -372,6 +397,7 @@ const CartPage = observer(
       let totalSale = 0;
       let totalFullprice = 0;
       let address = "";
+      let coupDisc = 0;
 
       const delVarRender = [];
       const htmlStore = [];
@@ -395,11 +421,10 @@ const CartPage = observer(
             ? productInCartList[el] * productInCart[el].regular_price
             : productInCart[el].regular_price;
 
-          this.totalNotSalePrice += productInCart[el].sale
-            ? 0
-            : el !== certInCart
-            ? productInCartList[el] * productInCart[el].regular_price
-            : 0;
+          this.totalNotSalePrice +=
+            productInCart[el].sale || el === certInCart
+              ? 0
+              : productInCartList[el] * productInCart[el].regular_price;
 
           totalSale += productInCart[el].sale
             ? (productInCart[el].regular_price - productInCart[el].sale_price) *
@@ -412,16 +437,9 @@ const CartPage = observer(
         });
       }
 
-      const {
-        adress,
-        flat,
-        house,
-        name,
-        secondName,
-        email,
-        tel,
-        coupsCont,
-      } = this.state;
+      if (useBonus) {
+        this.totalPrice -= useBonus;
+      }
 
       Object.keys(productInCart).forEach((slug) => {
         productInCart[slug].stores.forEach((str) => {
@@ -481,10 +499,8 @@ const CartPage = observer(
 
       const coupRender = [];
 
-      let coupDisc = 0;
       let certDisc = 0;
 
-      console.log("coupsCont :>> ", coupsCont);
       if (Object.keys(productInCart).length) {
         Object.keys(coupsCont).forEach((coupon) => {
           coupRender.push(
@@ -503,23 +519,36 @@ const CartPage = observer(
           );
           if (coupsCont[coupon].count > 0) {
             if (coupsCont[coupon].type === "percent") {
-              if (certInCart) {
-                coupDisc += Math.round(
-                  (this.totalPrice - productInCart[certInCart].regular_price) *
-                    (+coupsCont[coupon].count / 100)
-                );
-              } else {
-                coupDisc += Math.round(
-                  this.totalPrice * (+coupsCont[coupon].count / 100)
-                );
-              }
+              Object.keys(productInCart).forEach((el) => {
+                coupDisc +=
+                  Math.ceil(
+                    el === certInCart
+                      ? 0
+                      : productInCart[el].sale
+                      ? (+coupsCont[coupon].count / 100) *
+                        productInCart[el].sale_price
+                      : (+coupsCont[coupon].count / 100) *
+                        productInCart[el].regular_price
+                  ) * productInCartList[el];
+              });
+
+              // if (certInCart && productInCart[certInCart] !== undefined) {
+              //   coupDisc += Math.round(
+              //     (this.totalPrice - productInCart[certInCart].regular_price) *
+              //       (+coupsCont[coupon].count / 100)
+              //   );
+              // } else {
+              //   coupDisc += Math.round(
+              //     this.totalPrice * (+coupsCont[coupon].count / 100)
+              //   );
+              // }
             } else if (coupsCont[coupon].type === "fixed_cart") {
-              certDisc += Math.round(coupsCont[coupon].count);
+              certDisc += Math.round(+coupsCont[coupon].count);
             }
           }
         });
 
-        if (certInCart) {
+        if (certInCart && productInCart[certInCart] !== undefined) {
           if (
             this.totalPrice - productInCart[certInCart].regular_price >
             coupDisc + certDisc
@@ -537,8 +566,8 @@ const CartPage = observer(
         }
       }
 
-      console.log("coupDisc :>> ", coupDisc);
-      if (this.totalPrice === 0) {
+      // console.log("coupDisc :>> ", coupDisc);
+      if (this.totalPrice === 0 && Object.keys(productInCart).length) {
         this.choosePaymentType(undefined, "PREPAID");
       }
 
@@ -594,6 +623,15 @@ const CartPage = observer(
           </div>
         );
       }
+      const autnAndUserData = auth && Object.keys(userData).length;
+      let maxBonusCount = 0;
+      if (autnAndUserData) {
+        maxBonusCount =
+          userData.bonus.bonusSum - userData.bonus.useBonusValue >
+          this.totalPrice / 2
+            ? this.totalPrice / 2
+            : userData.bonus.bonusSum - userData.bonus.useBonusValue;
+      }
 
       return (
         <div className="cart-page">
@@ -609,7 +647,16 @@ const CartPage = observer(
           </div>
           <div className="container">
             <p>
-              <a className="btn" onClick={this.props.history.goBack}>
+              <a
+                className="btn"
+                onClick={() => {
+                  if (this.props.history.length) {
+                    this.props.history.goBack();
+                  } else {
+                    this.props.history.push("/");
+                  }
+                }}
+              >
                 {" "}
                 <span className="ic i_left"></span> Вернуться в магазин
               </a>
@@ -697,7 +744,7 @@ const CartPage = observer(
                     <h3 className="tilda">
                       Доставка
                       <h5 className="dib">
-                        Ваш город:
+                        Населенный пункт:
                         <span>
                           <button
                             className="link dotted city__btn"
@@ -710,6 +757,12 @@ const CartPage = observer(
 
                               if ($(window).width() < 760) {
                                 $(".sidebar-overlay").addClass("active");
+                                $(".sidebar-overlay").click(() => {
+                                  $(".sidebar-overlay").removeClass("active");
+                                  document
+                                    .querySelector(".city__drop")
+                                    .classList.remove("active");
+                                });
                               }
                             }}
                           >
@@ -719,7 +772,7 @@ const CartPage = observer(
                           <form className="city__drop header__drop header__drop_city">
                             <div className="input-field">
                               <label className="active" htmlFor="citySearch">
-                                Ваш город
+                                Населенный пункт
                               </label>
                               <input
                                 id="citySearch"
@@ -1442,10 +1495,111 @@ const CartPage = observer(
                     </div>
                   </form>
                 </div>
+                {Object.keys(userData).length !== 0 &&
+                  userData.bonus.bonusSum - userData.bonus.useBonusValue >
+                    0 && (
+                    <div className="cart-page__delivery" id="bonusCont">
+                      <div className="cart__list cart-page__list ">
+                        <div
+                          className={`cart-page__list-elem cart-page__list-elem_not-c ${
+                            this.state.useBonus
+                              ? "cart-page__list-elem_use-bonus"
+                              : ""
+                          }`}
+                        >
+                          <div className="cart-page__store-info">
+                            <p className="cart-page__store-name">
+                              Бонусные баллы{" "}
+                              <span className="dib">
+                                (можно оплатить до 50% от покупки)
+                              </span>
+                            </p>
+                            {this.state.useBonus ? (
+                              <div className="cart-page__bonus">
+                                <div className="cart-page__bonus-block">
+                                  <p>Использованно: </p>
+                                  <div style={{ marginLeft: "5px" }}>
+                                    <p>
+                                      <b> {this.state.useBonus}</b>
+                                    </p>
+                                    <p className="i_coin" />
+                                  </div>
+                                </div>
+                                <button
+                                  className="ic i_close"
+                                  onClick={() => {
+                                    this.setState({ useBonus: 0 });
+                                  }}
+                                ></button>
+                              </div>
+                            ) : (
+                              <div className="cart-page__bonus">
+                                <div className="cart-page__bonus-block">
+                                  <p>Баланс: </p>
+                                  <div style={{ marginLeft: "5px" }}>
+                                    <p>
+                                      <b>
+                                        {" "}
+                                        {userData.bonus.bonusSum -
+                                          userData.bonus.useBonusValue}
+                                      </b>
+                                    </p>
+                                    <p className="i_coin" />
+                                  </div>
+                                </div>
+                                <div className="cart-page__bonus-block">
+                                  <p>Использовать: </p>
+                                  <div>
+                                    <input
+                                      type="number"
+                                      placeholder={maxBonusCount}
+                                      onChange={(e) => {
+                                        if (+e.target.value > maxBonusCount) {
+                                          this.setState({
+                                            bonus: maxBonusCount,
+                                          });
+                                        } else {
+                                          this.setState({
+                                            bonus: +e.target.value,
+                                          });
+                                        }
+                                      }}
+                                      value={
+                                        this.state.bonus ? this.state.bonus : ""
+                                      }
+                                    />
+                                    <p className="i_coin" />
+                                  </div>
+                                </div>
+                                <button
+                                  onClick={() => {
+                                    this.setState({
+                                      useBonus: this.state.bonus,
+                                    });
+                                  }}
+                                >
+                                  Активировать
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
               </div>
               <div className="col col-1 hide-s"></div>
               <div className="col col-4 col-s-12">
                 <div className="cart-page__result-stick">
+                  {this.totalNotSalePrice ? (
+                    <div className="cart-page__bonus-sum">
+                      <p>Бонусные баллы через 14 дней:</p>
+                      <div>
+                        + {Math.round(this.totalNotSalePrice * 0.1)}{" "}
+                        <p className="i_coin"></p>
+                      </div>
+                    </div>
+                  ) : null}
                   <div className="cart-page__result">
                     <ul>
                       <li>
@@ -1505,6 +1659,14 @@ const CartPage = observer(
                             <span>Сертификат</span>{" "}
                             <span className="red">
                               - {certDisc.toLocaleString()} ₽
+                            </span>
+                          </div>
+                        )}
+                        {useBonus > 0 && (
+                          <div>
+                            <span>Бонусы</span>{" "}
+                            <span className="red">
+                              - {useBonus.toLocaleString()} ₽
                             </span>
                           </div>
                         )}
@@ -1574,6 +1736,7 @@ const CartPage = observer(
                           pickUpStoreChoose,
                           payment,
                           coupsCont,
+                          useBonus,
                         } = this.state;
                         if (payment === "") {
                           $("html, body").animate(
@@ -1651,7 +1814,7 @@ const CartPage = observer(
                                 },
                                 500
                               );
-                              console.log("testtt :>> ");
+                              // console.log("testtt :>> ");
                               this.startYaDeliv(
                                 this.totalPrice,
                                 productInCartList
@@ -1704,6 +1867,16 @@ const CartPage = observer(
                         const ecomProd = [];
                         const productForYA = [];
                         let totalProductSum = 0;
+                        let bonusDisc;
+
+                        if (useBonus) {
+                          bonusDisc =
+                            1 - useBonus / (this.totalPrice + useBonus);
+                        }
+
+                        const payItems = [];
+
+                        // console.log("bonusDisc :>> ", bonusDisc);
 
                         Object.keys(productInCart).forEach((el) => {
                           ecomProd.push({
@@ -1718,13 +1891,22 @@ const CartPage = observer(
                             countIn: productInCartList[el],
                             sale: productInCart[el].sale,
                             slug: productInCart[el].slug,
-                            regular_price: productInCart[el].regular_price,
+                            regular_price: useBonus
+                              ? productInCart[el].regular_price * bonusDisc
+                              : productInCart[el].regular_price,
                             dbid: productInCart[el].dbid,
                             name: productInCart[el].name,
+                            priceForWoo: useBonus
+                              ? productInCart[el].regular_price * bonusDisc
+                              : productInCart[el].regular_price,
                           };
                           if (productInCart[el].sale) {
-                            dataToSend.prod[el].sale_price =
-                              productInCart[el].sale_price;
+                            dataToSend.prod[el].sale_price = useBonus
+                              ? productInCart[el].sale_price * bonusDisc
+                              : productInCart[el].sale_price;
+                            dataToSend.prod[el].priceForWoo = useBonus
+                              ? productInCart[el].sale_price * bonusDisc
+                              : productInCart[el].sale_price;
                           }
 
                           productForYA.push({
@@ -1767,28 +1949,100 @@ const CartPage = observer(
                             let couponC = coupsCont[coupon].count;
                             productForYA.forEach((el, i) => {
                               if (el.price > 1) {
-                                if (coupon.type === "percent") {
-                                  productForYA[i].price *= 0.9;
-                                } else if (coupon.type === "fixed_cart") {
+                                if (coupsCont[coupon].type === "percent") {
+                                  productForYA[i].price = Math.floor(
+                                    productForYA[i].price *
+                                      (1 - +coupsCont[coupon].count / 100)
+                                  );
+                                } else if (
+                                  coupsCont[coupon].type === "fixed_cart"
+                                ) {
                                   if (couponC > 0) {
                                     if (el.price - couponC >= 1) {
                                       productForYA[i].price -= couponC;
+
                                       couponC = 0;
                                     } else {
                                       productForYA[i].price = 1;
+
                                       couponC -= productForYA[i].price - 1;
                                     }
                                   }
                                 }
                               }
-                              totalProductSum += productForYA[i].price;
+                              totalProductSum +=
+                                productForYA[i].price * productForYA[i].count;
+                            });
+                            Object.keys(dataToSend.prod).forEach((el) => {
+                              if (dataToSend.prod[el].sale_price !== 0) {
+                                if (coupsCont[coupon].type === "percent") {
+                                  if (dataToSend.prod[el].sale) {
+                                    dataToSend.prod[el].sale_price = Math.floor(
+                                      dataToSend.prod[el].sale_price *
+                                        (1 - +coupsCont[coupon].count / 100)
+                                    );
+                                  } else {
+                                    dataToSend.prod[
+                                      el
+                                    ].regular_price = Math.floor(
+                                      dataToSend.prod[el].regular_price *
+                                        (1 - +coupsCont[coupon].count / 100)
+                                    );
+                                  }
+                                } else if (
+                                  coupsCont[coupon].type === "fixed_cart"
+                                ) {
+                                  if (couponC > 0) {
+                                    if (dataToSend.prod[el].sale) {
+                                      if (
+                                        dataToSend.prod[el].sale_price -
+                                          couponC >=
+                                        0
+                                      ) {
+                                        dataToSend.prod[
+                                          el
+                                        ].sale_price -= couponC;
+
+                                        couponC = 0;
+                                      } else {
+                                        dataToSend.prod[el].sale_price = 0;
+
+                                        couponC -=
+                                          dataToSend.prod[el].sale_price;
+                                      }
+                                    } else {
+                                      if (
+                                        dataToSend.prod[el].regular_price -
+                                          couponC >=
+                                        0
+                                      ) {
+                                        dataToSend.prod[
+                                          el
+                                        ].regular_price -= couponC;
+
+                                        couponC = 0;
+                                      } else {
+                                        dataToSend.prod[el].regular_price = 0;
+
+                                        couponC -=
+                                          dataToSend.prod[el].regular_price;
+                                      }
+                                    }
+                                  }
+                                }
+                              }
                             });
                           });
                         }
 
+                        let noPriceCount = 1;
+                        // console.log("totalProductSum :>> ", totalProductSum);
+                        // console.log("this.totalPrice :>> ", this.totalPrice);
+
                         if (totalProductSum !== this.totalPrice) {
                           let totalDeff = totalProductSum - this.totalPrice;
                           let i = 0;
+                          // console.log("totalDeff :>> ", totalDeff);
                           while (totalDeff > 0) {
                             if (i < productForYA.length) {
                               if (productForYA[i].price > 1) {
@@ -1797,15 +2051,19 @@ const CartPage = observer(
                                     totalDeff / productForYA[i].count >
                                   1
                                 ) {
-                                  productForYA[i].price =
+                                  productForYA[i].price = Math.floor(
                                     productForYA[i].price -
-                                    totalDeff / productForYA[i].count;
+                                      totalDeff / productForYA[i].count
+                                  );
+                                  noPriceCount = productForYA[i].count;
                                   totalDeff = 0;
                                 } else {
                                   totalDeff -=
                                     productForYA[i].price *
-                                    productForYA[i].count;
+                                      productForYA[i].count -
+                                    1;
                                   productForYA[i].price = 1;
+
                                   i += 1;
                                 }
                               } else {
@@ -1816,6 +2074,34 @@ const CartPage = observer(
                             }
                           }
                         }
+
+                        productForYA.forEach((el, i) => {
+                          if (el.price > 1) {
+                            payItems.push({
+                              description: el.name,
+                              quantity: el.count,
+                              amount: {
+                                value: String(el.price),
+                                currency: "RUB",
+                              },
+                              vat_code: 1,
+                            });
+                          } else {
+                            productForYA[i].price *= noPriceCount / el.count;
+                            payItems.push({
+                              description: el.name,
+                              quantity: el.count,
+                              amount: {
+                                value: String(el.price),
+                                currency: "RUB",
+                              },
+                              vat_code: 1,
+                            });
+                            productForYA[i].price = Math.floor(
+                              productForYA[i].price
+                            );
+                          }
+                        });
 
                         dataToSend.sum = this.totalPrice;
                         dataToSend.email = this.state.email.toLowerCase();
@@ -1910,6 +2196,7 @@ const CartPage = observer(
                             };
                           }
                           this.deliverySend.productForYA = productForYA;
+                          this.deliverySend.payItems = payItems;
 
                           // this.deliverySend.cost.fullyPrepaid = dataToSend.payment === "PREPAID";
                           const delivery = {
@@ -1923,6 +2210,12 @@ const CartPage = observer(
 
                           if (certInCart) {
                             dataToSend.certInCart = certInCart;
+                          }
+                          if (this.totalNotSalePrice) {
+                            dataToSend.totalNotSalePrice = this.totalNotSalePrice;
+                          }
+                          if (useBonus) {
+                            dataToSend.useBonus = useBonus;
                           }
 
                           // console.log("object :>> ", delivery, dataToSend);
@@ -1938,7 +2231,7 @@ const CartPage = observer(
                           //   .catch((err) => {
                           //     console.log("err :>> ", err);
                           //   });
-
+                          // console.log("productInCart :>> ", productInCart);
                           // console.log("delivery :>> ", delivery);
                           // console.log("dataToSend :>> ", dataToSend);
                           // return;
@@ -2172,8 +2465,19 @@ const CartPage = observer(
                         const thisCertAvalHere = Object.keys(
                           this.state.coupsCont
                         ).includes($("#coup").val().toLowerCase());
+                        let avalRegistCert = false;
 
-                        if ($("#coup").val() !== "" && !thisCertAvalHere) {
+                        Object.keys(this.state.coupsCont).forEach((coup) => {
+                          if (coup.includes("r-")) {
+                            avalRegistCert = true;
+                          }
+                        });
+
+                        if (
+                          $("#coup").val() !== "" &&
+                          !thisCertAvalHere &&
+                          !avalRegistCert
+                        ) {
                           api
                             .coupon({ code: $("#coup").val().toLowerCase() })
                             .then((d) => {
@@ -2201,6 +2505,11 @@ const CartPage = observer(
                                 }, 4000);
                               }
                             });
+                        } else {
+                          $(".cart-page__promo").addClass("deactive");
+                          setTimeout(() => {
+                            $(".cart-page__promo").removeClass("deactive");
+                          }, 4000);
                         }
                       }}
                     >
@@ -2224,27 +2533,52 @@ const CartPage = observer(
 
       tel.mask($("#phone"));
 
-      if (this.props.store.auth) {
-        api
-          .getUserData()
-          .then((data) => {
-            console.log("data :>> ", data);
-            // this.props.store.addToLike(true);
-            this.setState({
-              name: data.user.name,
-              email: data.user.email,
-              tel: data.user.tel !== undefined ? data.user.tel.substr(1) : "",
-            });
-            // this.props.store.userData = data;
-            // console.log(
-            //   "this.props.store.userData :>> ",
-            //   this.props.store.userData
-            // );
-          })
-          .catch((err) => {
-            console.log("err :>> ", err);
+      const coupsCont = localStorage.getItem("coupsCont");
+      // console.log("coupsCont :>> ", coupsCont);
+
+      if (
+        coupsCont !== undefined &&
+        coupsCont !== null &&
+        coupsCont !== "undefined"
+      ) {
+        Object.keys(coupsCont).forEach((coup) => {
+          api.coupon({ code: coup.toLowerCase() }).then((d) => {
+            if (d.status === 400) {
+              const newCoupsCont = this.state.coupsCont;
+
+              delete newCoupsCont[coup];
+
+              localStorage.setItem("coupsCont", newCoupsCont);
+
+              this.setState({
+                coupsCont: newCoupsCont,
+              });
+            }
           });
+        });
       }
+
+      // if (this.props.store.auth) {
+      //   api
+      //     .getUserData()
+      //     .then((data) => {
+      //       console.log("data :>> ", data);
+      //       // this.props.store.addToLike(true);
+      //       this.setState({
+      //         name: data.user.name,
+      //         email: data.user.email,
+      //         tel: data.user.tel !== undefined ? data.user.tel.substr(1) : "",
+      //       });
+      //       // this.props.store.userData = data;
+      //       // console.log(
+      //       //   "this.props.store.userData :>> ",
+      //       //   this.props.store.userData
+      //       // );
+      //     })
+      //     .catch((err) => {
+      //       console.log("err :>> ", err);
+      //     });
+      // }
     }
 
     startYaDeliv = (fullPrice, array) => {
@@ -2313,27 +2647,31 @@ const CartPage = observer(
         }
       });
 
-      const { coupon } = this.state;
-      if (coupon.count > 0) {
+      const { coupsCont } = this.state;
+      if (Object.keys(coupsCont).length) {
         prodSumm = 0;
-        let couponC = +coupon.count;
-        items.forEach((el, i) => {
-          if (el.price > 1) {
-            if (coupon.type === "percent") {
-              items[i].price *= 0.9;
-            } else if (coupon.type === "fixed_cart") {
-              if (couponC > 0) {
-                if (el.price - couponC >= 1) {
-                  items[i].price -= couponC;
-                  couponC = 0;
-                } else {
-                  items[i].price = 1;
-                  couponC -= items[i].price - 1;
+        Object.keys(coupsCont).forEach((coupon) => {
+          let couponC = +coupsCont[coupon].count;
+          items.forEach((el, i) => {
+            if (el.price > 1) {
+              if (coupsCont[coupon].type === "percent") {
+                items[i].price = Math.floor(
+                  items[i].price * (1 - +coupsCont[coupon].count / 100)
+                );
+              } else if (coupsCont[coupon].type === "fixed_cart") {
+                if (couponC > 0) {
+                  if (el.price - couponC >= 1) {
+                    items[i].price -= couponC;
+                    couponC = 0;
+                  } else {
+                    items[i].price = 1;
+                    couponC -= items[i].price - 1;
+                  }
                 }
               }
             }
-          }
-          prodSumm += items[i].price;
+            prodSumm += items[i].price;
+          });
         });
       }
 
@@ -2438,7 +2776,7 @@ const CartPage = observer(
           // Подробнее об объекте cart.
           widget.showDeliveryOptions(cart);
 
-          console.log("widget :>> ", widget);
+          // console.log("widget :>> ", widget);
 
           // Чтобы привязать обработчик к событию submitDeliveryOption (пользователь
           // выбрал вариант доставки), нужно вызвать метод on с двумя аргументами:

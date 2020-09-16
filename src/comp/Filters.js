@@ -28,9 +28,9 @@ const Filters = observer(
 
     checkBoxHandler = (name, value) => {
       const { activeFilters, filtration } = this.props.store;
-      console.log("value :>> ", value);
+      // console.log("value :>> ", value);
       if (value) {
-        console.log(" :>> test");
+        // console.log(" :>> test");
         if (name !== "premium") {
           if (!activeFilters.attr.includes(name)) {
             activeFilters.attr.push(name);
@@ -41,10 +41,10 @@ const Filters = observer(
           activeFilters.choosePoint.push("premium");
         }
       } else {
-        console.log(
-          "activeFilters.attr.includes(name) :>> ",
-          activeFilters.attr.includes(name)
-        );
+        // console.log(
+        //   "activeFilters.attr.includes(name) :>> ",
+        //   activeFilters.attr.includes(name)
+        // );
         if (name !== "premium") {
           if (activeFilters.attr.includes(name)) {
             activeFilters.attr.splice(activeFilters.attr.indexOf(name), 1);
@@ -94,7 +94,7 @@ const Filters = observer(
           } else {
             if (Object.keys(activeFilters[filterName]).length) {
               Object.keys(activeFilters[filterName]).forEach((ind) => {
-                console.log("ind :>> ", activeFilters[filterName][ind]);
+                // console.log("ind :>> ", activeFilters[filterName][ind]);
                 if (!searchQt.length) {
                   searchQt =
                     filterName +
@@ -116,7 +116,7 @@ const Filters = observer(
           }
         }
       });
-      console.log("searchQt :>> ", searchQt);
+      // console.log("searchQt :>> ", searchQt);
       this.props.history.replace({ search: searchQt });
     };
 
@@ -513,7 +513,7 @@ const Filters = observer(
                         }
                       }
                       if (+activeFilters.maxPrice > 0) {
-                        console.log("2 :>> ", 2);
+                        // console.log("2 :>> ", 2);
                         activeFilters.choosePoint.push("maxPrice");
                         activeFilters.count += 1;
                       } else {
@@ -563,10 +563,10 @@ const Filters = observer(
                             if (Object.keys(activeFilters[filterName]).length) {
                               Object.keys(activeFilters[filterName]).forEach(
                                 (ind) => {
-                                  console.log(
-                                    "ind :>> ",
-                                    activeFilters[filterName][ind]
-                                  );
+                                  // console.log(
+                                  //   "ind :>> ",
+                                  //   activeFilters[filterName][ind]
+                                  // );
                                   if (!searchQt.length) {
                                     searchQt =
                                       filterName +
@@ -617,10 +617,10 @@ const Filters = observer(
                           type="checkbox"
                           checked={activeFilters.attr.includes("hit")}
                           onChange={(e) => {
-                            console.log(
-                              "e.target.value",
-                              $(e.target).is(":checked")
-                            );
+                            // console.log(
+                            //   "e.target.value",
+                            //   $(e.target).is(":checked")
+                            // );
 
                             this.checkBoxHandler(
                               "hit",
@@ -640,10 +640,10 @@ const Filters = observer(
                           type="checkbox"
                           checked={activeFilters.premium === "true"}
                           onChange={(e) => {
-                            console.log(
-                              "e.target.value",
-                              $(e.target).is(":checked")
-                            );
+                            // console.log(
+                            //   "e.target.value",
+                            //   $(e.target).is(":checked")
+                            // );
 
                             this.checkBoxHandler(
                               "premium",
@@ -662,10 +662,10 @@ const Filters = observer(
                           type="checkbox"
                           checked={activeFilters.attr.includes("sale")}
                           onChange={(e) => {
-                            console.log(
-                              "e.target.value",
-                              $(e.target).is(":checked")
-                            );
+                            // console.log(
+                            //   "e.target.value",
+                            //   $(e.target).is(":checked")
+                            // );
 
                             this.checkBoxHandler(
                               "sale",

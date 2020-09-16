@@ -164,7 +164,7 @@ const ChangeSidebar = observer(
                 api
                   .changePassword({
                     oldPassword: values.oldPassword,
-                    email: this.props.email,
+                    email: this.props.store.userData.user.email,
                     password: values.password,
                   })
                   .then((ok) => {

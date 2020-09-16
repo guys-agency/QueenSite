@@ -1,26 +1,31 @@
 //Blue
 $b_dark: #00094d;
 $b_middle: #000166;
-$b_light: #00007D;
+$b_light: #00007d;
 $b_gray: #747498;
 
 //Aqua
-$a_darkest: #718DA7;
-$a_dark: #89A5BF;
-$a_middle: #ADC9E3;
-$a_light: #C4DCF3;
-$a_gradient: radial-gradient(242.18% 175.14% at 50% 11.86%, #C4DCF3 0%, #93BAE0 100%);
+$a_darkest: #718da7;
+$a_dark: #89a5bf;
+$a_middle: #adc9e3;
+$a_light: #c4dcf3;
+$a_gradient: radial-gradient(
+  242.18% 175.14% at 50% 11.86%,
+  #c4dcf3 0%,
+  #93bae0 100%
+);
 
 //Gold
-$g_dark: #C9B164;
-$g_middle: #DAB958;
-$g_light: #FFD65C;
-$g_gradient: linear-gradient(91.08deg, #DAB958 -140.48%, #EFD27E 99.78%);
+$g_dark: #c9b164;
+$g_middle: #dab958;
+$g_light: #ffd65c;
+$g_gradient: linear-gradient(91.08deg, #dab958 -140.48%, #efd27e 99.78%);
+$g_gradient_btn: linear-gradient(90.09deg, #fadf90 0.08%, #efd27e 99.9%);
 
 //Gray
-$gr_middle: #E3E2E3;
-$gr_light: #F7F6F7;
+$gr_middle: #e3e2e3;
+$gr_light: #f7f6f7;
 
 //More
-$red: #BA250D;
-$green: #27AE60;
+$red: #ba250d;
+$green: #27ae60;

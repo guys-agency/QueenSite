@@ -13,9 +13,10 @@ const { Component } = React;
 
 const Profile = observer(
   class Profile extends Component {
-    state = { ready: false, fav: false };
+    state = { ready: false, fav: false, bonus: false };
     data = {};
     orders = [];
+    bonus = [];
     render() {
       // const { ready } = this.state;
       const orderStatus = {
@@ -33,6 +34,7 @@ const Profile = observer(
             .getUserData()
             .then((data) => {
               // this.props.store.addToLike(true);
+
               this.data = data;
               this.props.store.userData = data;
               this.setState({ ready: true });
@@ -42,6 +44,134 @@ const Profile = observer(
             });
         } else {
           if (data !== undefined && this.orders.length === 0) {
+            if (data.bonus.bonusUseWithOrder.length) {
+              data.bonus.bonusUseWithOrder.forEach((el) => {
+                el.use = true;
+                data.bonus.bonusWithOrder.push(el);
+              });
+            }
+            if (data.bonus.bonusWithOrder.length) {
+              data.bonus.bonusWithOrder.sort((a, b) => {
+                if (a.use && b.use === undefined) {
+                  const d = moment(b.dateOfReceipt)
+                    .add(14, "days")
+                    .toISOString();
+                  if (a.date > d) {
+                    return -1;
+                  }
+                  if (a.date < d) {
+                    return 1;
+                  }
+                  return 0;
+                } else if (a.use === undefined && b.use) {
+                  const d = moment(a.dateOfReceipt)
+                    .add(14, "days")
+                    .toISOString();
+                  if (a.date < d) {
+                    return -1;
+                  }
+                  if (a.date > d) {
+                    return 1;
+                  }
+                  return 0;
+                } else if (a.use && b.use) {
+                  if (a.date > b.date) {
+                    return -1;
+                  }
+                  if (a.date < b.date) {
+                    return 1;
+                  }
+                  return 0;
+                } else if (a.use === undefined && b.use === undefined) {
+                  if (a.dateOfReceipt > b.dateOfReceipt) {
+                    return -1;
+                  }
+                  if (a.dateOfReceipt < b.dateOfReceipt) {
+                    return 1;
+                  }
+                  return 0;
+                }
+              });
+
+              data.bonus.bonusWithOrder.forEach((ord) => {
+                if (ord.use) {
+                  this.bonus.push(
+                    <div className="orders-item">
+                      <div className="orders-item__head">
+                        <h4>
+                          Списание{" "}
+                          <b className="red">
+                            {ord.useBonusValue.toLocaleString()}{" "}
+                            <p className="i_coin red"></p>
+                          </b>
+                        </h4>
+
+                        <div className="date">
+                          {moment(ord.date).format("DD.MM.YYYY")}
+                        </div>
+                      </div>
+                      <div className="orders-item__desc">
+                        Заказ №{ord.dbid} на сумму {ord.sum.toLocaleString()}₽
+                      </div>
+                    </div>
+                  );
+                } else {
+                  const prodCon = [];
+                  Object.keys(ord.products).forEach((prod) => {
+                    if (!ord.products[prod].sale) {
+                      prodCon.push(
+                        <div className="item">
+                          <span className="name">
+                            {ord.products[prod].name}
+                          </span>
+                          <span className="price">
+                            {Math.round(
+                              ord.products[prod].regular_price * 0.1
+                            ).toLocaleString()}{" "}
+                            <p className="i_coin" />
+                          </span>
+                        </div>
+                      );
+                    }
+                  });
+                  this.bonus.push(
+                    <div className="orders-item">
+                      <div className="orders-item__head">
+                        <h4>
+                          Зачисление{" "}
+                          <b style={{ color: "#219653" }}>
+                            {Math.round(ord.noSaleSum * 0.1).toLocaleString()}{" "}
+                            <p
+                              className="i_coin"
+                              style={{ color: "#219653" }}
+                            ></p>
+                          </b>
+                        </h4>
+                        <div className="date">
+                          {moment(ord.date).format("DD.MM.YYYY")}
+                        </div>
+                      </div>
+                      <div className="orders-item__desc">
+                        Заказ №{ord.dbid} на сумму {ord.sum.toLocaleString()}₽
+                        <button
+                          className="link dotted"
+                          onClick={(e) => {
+                            e.target.classList.toggle("active");
+                            e.target
+                              .closest(".orders-item")
+                              .classList.toggle("active");
+                          }}
+                        >
+                          состав заказа <span className="ic i_drop"></span>
+                        </button>
+                      </div>
+                      <div className="orders-item__products">{prodCon}</div>
+                    </div>
+                  );
+                }
+              });
+            }
+
             data.orders.forEach((order) => {
               const prodCon = [];
               Object.keys(order.products).forEach((prod) => {
@@ -98,6 +228,7 @@ const Profile = observer(
           this.props.history.push("/#profile");
         }
       }
+
       return (
         Object.keys(data).length !== 0 && (
           <div className="profile-p">
@@ -106,11 +237,12 @@ const Profile = observer(
                 <li>
                   <a
                     className={
-                      "small-nav__btn " + (this.state.fav ? "" : " active")
+                      "small-nav__btn " +
+                      (!this.state.fav && !this.state.bonus ? " active" : "")
                     }
                     href=""
                     onClick={(e) => {
-                      this.setState({ fav: false });
+                      this.setState({ fav: false, bonus: false });
                       e.preventDefault();
                     }}
                   >
@@ -136,13 +268,44 @@ const Profile = observer(
                         );
                       });
                       this.props.store.productsToRender = testContainer;
-                      this.setState({ fav: true });
+                      this.setState({ fav: true, bonus: false });
                       e.preventDefault();
                     }}
                   >
                     <span className="ic i_fav"></span>Избранное
                   </a>
                 </li>
+                {data.bonus.bonusWithOrder.length !== 0 && (
+                  <li>
+                    <a
+                      href=""
+                      className={
+                        "small-nav__btn " + (this.state.bonus ? " active" : "")
+                      }
+                      onClick={(e) => {
+                        const testContainer = [];
+                        this.props.store.likeData.forEach((element) => {
+                          testContainer.push(
+                            <div
+                              className="col col-4 col-s-6"
+                              key={element.slug}
+                            >
+                              <ProductCard
+                                data={element}
+                                store={this.props.store}
+                              />
+                            </div>
+                          );
+                        });
+                        this.props.store.productsToRender = testContainer;
+                        this.setState({ fav: false, bonus: true });
+                        e.preventDefault();
+                      }}
+                    >
+                      <span className="ic i_coin"></span>История бонусов
+                    </a>
+                  </li>
+                )}
                 <li>
                   <button
                     href=""
@@ -187,16 +350,42 @@ const Profile = observer(
             ) : (
               <div className="container">
                 <div className="row">
-                  <div className="col col-7 col-s-12">
-                    <h4>Последние заказы</h4>
-                    <div className="orders">{this.orders}</div>
-                  </div>
+                  {this.state.bonus ? (
+                    <div className="col col-7 col-s-12">
+                      <h4>История бонусов:</h4>
+                      <div className="orders">{this.bonus}</div>
+                    </div>
+                  ) : (
+                    <div className="col col-7 col-s-12">
+                      <h4>Последние заказы</h4>
+                      <div className="orders">{this.orders}</div>
+                    </div>
+                  )}
                   <div className="col col-1 hide-s">
                     <div className="profile-p__divider"></div>
                   </div>
                   <div className="col col-4 col-s-12">
                     <div className="profile-p__side">
-                      <h4>Данные</h4>
+                      <div className="profile-p__bonus-total">
+                        <div>
+                          <p>Бонусные баллы:</p>
+                          <p>
+                            {(
+                              data.bonus.bonusSum - data.bonus.useBonusValue
+                            ).toLocaleString()}{" "}
+                            <p className="i_coin"></p>
+                          </p>{" "}
+                        </div>
+                        {data.bonus.bonusToBe ? (
+                          <div>
+                            <p>К зачислению:</p>
+                            <p>
+                              {data.bonus.bonusToBe.toLocaleString()}{" "}
+                              <p className="i_coin"></p>
+                            </p>{" "}
+                          </div>
+                        ) : null}
+                      </div>
                       <div className="profile-p__card">
                         <div className="user__name">{data.user.name}</div>
                         <div className="user__contact">

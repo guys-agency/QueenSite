@@ -15,6 +15,8 @@ import MainPage from "./comp/MainPage";
 import Collections from "./comp/Collections";
 import Collection from "./comp/Collection";
 
+import GiftsPage from "./comp/GiftsPage";
+
 import Actions from "./comp/Actions";
 
 import Footer from "./comp/Footer";
@@ -47,6 +49,11 @@ const MainScreen = observer(
   class MainScreen extends Component {
     state = {
       cardRender: false,
+      loginDev:
+        localStorage.get("dev-login") === undefined ||
+        localStorage.get("dev-login") === null
+          ? false
+          : localStorage.get("dev-login"),
     };
 
     cardContainer = [];
@@ -140,7 +147,7 @@ const MainScreen = observer(
           }
           this.props.store.withProds = data.addProd[0].with;
           this.props.store.likeProds.replace(data.addProd[0].like);
-          document.title = data.product[0].name + " - Queen of Bohemia";
+
           // console.log("this.like :>> ", this.like);
         })
         .catch((err) => {
@@ -168,7 +175,7 @@ const MainScreen = observer(
         this.props.store.lastSeenProds = timeLastSeenProds.slice();
       } else {
         this.props.store.lastSeenProds = timeLastSeenProds.slice();
-        console.log("object :>> ", timeLastSeenProds.slice());
+        // console.log("object :>> ", timeLastSeenProds.slice());
       }
     };
 
@@ -209,6 +216,26 @@ const MainScreen = observer(
         }
       }
     };
+    itsSuperDev = process.env.REACT_APP_TYPE === "superDev";
+
+    checkSuperDevLogin = (e) => {
+      e.preventDefault();
+      console.log("test :>> ");
+      console.log("object :>> ", $("#login-dev").val());
+      console.log('$("#password-dev").val() :>> ', $("#password-dev").val());
+      if ($("#login-dev").val() === process.env.REACT_APP_SUPER_DEV_LOGIN) {
+        if (
+          $("#password-dev").val() === process.env.REACT_APP_SUPER_DEV_PASSWORD
+        ) {
+          localStorage.set("dev-login", true);
+          this.setState({ loginDev: true });
+        } else {
+          localStorage.set("dev-login", false);
+        }
+      } else {
+        localStorage.set("dev-login", false);
+      }
+    };
 
     render() {
       return (
@@ -222,6 +249,42 @@ const MainScreen = observer(
             style={{ width: "0px", height: "0px" }}
           ></div>
           <Switch>
+            <Route
+              path="/login-dev"
+              exact
+              render={(routProps) => (
+                this.props.store.cleaningActiveFilters(),
+                $("html, body").animate({ scrollTop: 0 }, 500),
+                (document.title = "Queen of Bohemia"),
+                (<div>ddd</div>)
+              )}
+            />
+            {this.itsSuperDev && !this.state.loginDev && (
+              <Route
+                path="/"
+                onEnter={this.checkSuperDevLogin}
+                render={(routProps) => (
+                  console.log("object"),
+                  (
+                    <div className="dev-login__form">
+                      <form>
+                        <label for="login-dev">Логин</label>
+                        <input id="login-dev"></input>
+                        <label for="password-dev">Пароль</label>
+                        <input id="password-dev"></input>
+                        <button
+                          onClick={(e) => {
+                            this.checkSuperDevLogin(e);
+                          }}
+                        >
+                          Вход
+                        </button>
+                      </form>
+                    </div>
+                  )
+                )}
+              />
+            )}
             <Route
               path="/"
               exact
@@ -456,6 +519,16 @@ const MainScreen = observer(
                 )
               )}
             />
+            <Route
+              path="/gifts"
+              exact
+              render={(routProps) => (
+                this.props.store.cleaningActiveFilters(),
+                $("html, body").animate({ scrollTop: 0 }, 500),
+                (document.title = "Подарки - Queen of Bohemia"),
+                (<GiftsPage store={this.props.store} />)
+              )}
+            />
 
             <Route
               path="/main/:slug"
@@ -515,7 +588,7 @@ const MainScreen = observer(
               )}
             />
 
-            {/* <Route
+            <Route
               path="/ideas"
               render={() => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
@@ -525,7 +598,7 @@ const MainScreen = observer(
                   </div>
                 )
               )}
-            /> */}
+            />
 
             <Route
               path="/hits"
@@ -818,12 +891,12 @@ const MainScreen = observer(
                 a.download = "apple-developer-merchantid-domain-association";
                 a.href =
                   "/.well-known/apple-developer-merchantid-domain-association1/merchant.ru.yandex.kassa";
-                console.log("a", a);
+                // console.log("a", a);
                 a.click();
               }}
             />
-            <Redirect from="*" to="/" />
             <Route onEnter={() => window.location.reload()} />
+            <Redirect from="*" to="/" />
           </Switch>
           {/* {(this.props.store.productPage && this.props.store.cardContainer) ||
               (!this.props.store.productPage && !this.props.store.cartPage && (
