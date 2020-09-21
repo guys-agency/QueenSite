@@ -77,6 +77,11 @@
   &_scroll {
     background: #fff;
     box-shadow: $sh_bottom;
+
+    .cart {
+      background: $g_gradient_btn;
+    }
+
     .i_qd {
       opacity: 1;
       visibility: visible;

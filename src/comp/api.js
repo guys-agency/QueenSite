@@ -128,14 +128,15 @@ class Api {
     });
   }
 
-  updateLikeCount(id) {
-    return fetch(SERVER_URL + "/update-like", {
+  //типы cart, like, view
+  updateCountStats(id, typeStats) {
+    return fetch(SERVER_URL + "/update-stats", {
       method: "POST",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ id }),
+      body: JSON.stringify({ id, typeStats }),
     }).then((res) => {
       return res.json();
     });

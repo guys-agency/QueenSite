@@ -19,7 +19,11 @@
     padding: 9.5px 7px;
     padding-right: 16px;
     margin-left: 12px;
-    background-color: #efd27e;
+    background: radial-gradient(
+      242.18% 175.14% at 50% 11.86%,
+      #c4dcf3 0%,
+      #93bae0 100%
+    );
     border-radius: 20px;
 
     /* identical to box height */
@@ -40,6 +44,8 @@
       font-weight: 500;
       font-size: 14px;
       line-height: 14px;
+
+      text-align: center;
     }
   }
   &_disc {

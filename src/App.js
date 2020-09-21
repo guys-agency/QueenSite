@@ -3,6 +3,8 @@ import "./App.css";
 import { observer } from "mobx-react";
 import { Router, Route, Switch, Redirect } from "react-router";
 
+import api from "./comp/api";
+
 import { SERVER_URL } from "./constants";
 
 import MenuPoints from "./comp/MenuPoints";
@@ -147,6 +149,7 @@ const MainScreen = observer(
           }
           this.props.store.withProds = data.addProd[0].with;
           this.props.store.likeProds.replace(data.addProd[0].like);
+          api.updateCountStats(data.product[0]._id, "view");
 
           // console.log("this.like :>> ", this.like);
         })

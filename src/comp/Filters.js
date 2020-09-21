@@ -26,6 +26,10 @@ const Filters = observer(
     minPriceLocal = 0;
     maxPriceLocal = 0;
 
+    typeDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      navigator.userAgent
+    );
+
     checkBoxHandler = (name, value) => {
       const { activeFilters, filtration } = this.props.store;
       // console.log("value :>> ", value);
@@ -222,8 +226,8 @@ const Filters = observer(
                 onClick={this.subCat}
               >
                 {elem.name}
-                <span className="ic i_drop"></span>
               </h5>
+              <span className="ic i_drop"></span>
               <ul
                 className={
                   pathname.includes(elem.slug)
@@ -247,8 +251,8 @@ const Filters = observer(
                 onClick={this.subCat}
               >
                 {elem.name}
-                <span className="ic i_drop"></span>
               </h5>
+              <span className="ic i_drop"></span>
               <ul
                 className={
                   pathname.includes(elem.slug)
@@ -272,8 +276,8 @@ const Filters = observer(
                 onClick={this.subCat}
               >
                 {elem.name}
-                <span className="ic i_drop"></span>
               </h5>
+              <span className="ic i_drop"></span>
               <ul
                 className={
                   pathname.includes(elem.slug)
@@ -297,8 +301,8 @@ const Filters = observer(
                 onClick={this.subCat}
               >
                 {elem.name}
-                <span className="ic i_drop"></span>
               </h5>
+              <span className="ic i_drop"></span>
               <ul
                 className={
                   pathname.includes(elem.slug)
@@ -322,8 +326,8 @@ const Filters = observer(
                 onClick={this.subCat}
               >
                 {elem.name}
-                <span className="ic i_drop"></span>
               </h5>
+              <span className="ic i_drop"></span>
               <ul
                 className={
                   pathname.includes(elem.slug)
@@ -347,8 +351,8 @@ const Filters = observer(
                 onClick={this.subCat}
               >
                 {elem.name}
-                <span className="ic i_drop"></span>
               </h5>
+              <span className="ic i_drop"></span>
               <ul
                 className={
                   pathname.includes(elem.slug)
@@ -372,8 +376,8 @@ const Filters = observer(
                 onClick={this.subCat}
               >
                 {elem.name}
-                <span className="ic i_drop"></span>
               </h5>
+              <span className="ic i_drop"></span>
               <ul
                 className={
                   pathname.includes(elem.slug)
@@ -397,8 +401,8 @@ const Filters = observer(
                 onClick={this.subCat}
               >
                 {elem.name}
-                <span className="ic i_drop"></span>
               </h5>
+              <span className="ic i_drop"></span>
               <ul
                 className={
                   pathname.includes(elem.slug)
@@ -422,9 +426,18 @@ const Filters = observer(
       return (
         <div id="sidebar" className="catalog__bar">
           <div className="sidebar__inner">
-            <div className="categories-block">
-              <ul>{menu}</ul>
-            </div>
+            {this.typeDevice ? (
+              <button className="filters-btn categories-name">
+                Категория{" "}
+                <p>
+                  {this.props.store.menuAccor[this.props.store.nameSecondCat]}
+                </p>
+              </button>
+            ) : (
+              <div className="categories-block">
+                <ul>{menu}</ul>
+              </div>
+            )}
             <div className="filters-block">
               <div className="main-filers-block price">
                 <h5>Цена</h5>

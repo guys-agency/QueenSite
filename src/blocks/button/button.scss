@@ -60,7 +60,7 @@ button {
   &_yellow {
     box-shadow: $sh_no;
     border: 1px solid $g_middle;
-    background-color: $g_light;
+    background: $g_gradient_btn;
     font-weight: 500;
     &:hover {
       box-shadow: $sh_no;

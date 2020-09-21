@@ -6,26 +6,54 @@
   border-right: 1px solid $gr_light;
   padding-top: 15px;
   padding-bottom: 15px;
-  @include max($t){
+
+  @include max($t) {
     margin-right: 0;
     border-right: 0px;
     padding-right: 0;
     padding-bottom: 0;
   }
-  .filter-block{
+  .filter-block {
     position: relative;
+
+    @include max($s) {
+      display: flex;
+      flex-direction: column;
+
+      padding: 15px;
+      align-items: flex-start;
+
+      margin-bottom: 15px;
+
+      min-height: 42px;
+      background: #ffffff;
+      /* bottom */
+
+      box-shadow: 0px 4px 16px rgba(0, 9, 77, 0.05);
+      border-radius: 20px;
+    }
   }
+
+  .i_drop {
+    position: absolute;
+    right: 15px;
+    top: 14px;
+    color: $a_middle;
+    transition: all 0.2s;
+  }
+
   .main-filers-block {
     margin-bottom: 20px;
+    padding: 0 20px;
     &.price {
       position: relative;
-      @include max($t){
+      @include max($t) {
         position: static;
       }
       div {
         display: flex;
         align-items: center;
-        @include max($s){
+        @include max($s) {
           flex-wrap: wrap;
         }
         p {
@@ -77,10 +105,10 @@
           z-index: 9;
           position: absolute;
           right: -100px;
-          @include max($t){
+          @include max($t) {
             right: -70px;
           }
-          @include max($s){
+          @include max($s) {
             right: 0;
             position: relative;
             width: 100%;
@@ -107,23 +135,23 @@
 
     color: $b_dark;
     transition: all 0.2s;
-    .ic{
-      position: absolute;
-      right: 0;
-      top: 0;
-      color: $a_middle;
-      transition: all 0.2s;
+
+    @include max($t) {
+      display: inline-block;
+      width: 100%;
+      z-index: 2;
     }
-    &:hover{
+
+    &:hover {
       color: $g_middle;
-      .ic{
+      .ic {
         color: $g_middle;
         transform: translateY(2px);
       }
     }
-    &.active{
+    &.active {
       color: $g_middle;
-      .ic{
+      .ic {
         color: $g_middle;
         transform: scale(-1);
       }
@@ -134,31 +162,37 @@
     max-height: 0;
     padding-left: 1px;
     padding-right: 1px;
-    padding-top: 13px;
-    margin-bottom: 5px;
-    transition: max-height 0.1s, opacity 0.3s, visibility 0.3s;
+
+    transition: max-height 0.1s, opacity 0.3s, visibility 0.3s padding-top 0.1s;
     opacity: 0;
     visibility: hidden;
     overflow: hidden;
     display: flex;
     flex-wrap: wrap;
-    &::before{
-      content: '';
-      width: 100%;
-      height: 15px;
-      background: linear-gradient( #fff, rgba(255, 255, 255, 0));
-      position: absolute;
-      left: 0;
-      top: 15px;
+
+    &::before {
+      @include min($t) {
+        content: "";
+        width: 100%;
+        height: 15px;
+        background: linear-gradient(#fff, rgba(255, 255, 255, 0));
+        position: absolute;
+        left: 0;
+        top: 15px;
+      }
     }
-    &::after{
-      content: '';
+
+    &::after {
+      content: "";
       width: 100%;
       height: 30px;
-      background: linear-gradient( rgba(255, 255, 255, 0), #fff);
+      background: linear-gradient(rgba(255, 255, 255, 0), #fff);
       position: absolute;
       left: 0;
       bottom: 0px;
+      @include max($t) {
+        border-radius: 20px;
+      }
     }
     &::-webkit-scrollbar {
       display: none;
@@ -170,14 +204,15 @@
       opacity: 1;
       visibility: visible;
       overflow-y: auto;
-
+      margin-bottom: 5px;
+      padding-top: 13px;
       // margin-bottom: 15px;
     }
 
     .filter__point {
       font-size: 13px;
       height: 25px;
-      display: inline-block;    
+      display: inline-block;
       align-items: center;
       padding: 0px 10px;
       padding-top: 2px;
@@ -193,7 +228,7 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      &:hover{
+      &:hover {
         box-shadow: $sh_btn;
       }
       &.active {
@@ -201,28 +236,71 @@
         border: 1px solid $b_light;
         background-color: $b_light;
       }
-      &:last-child{
+      &:last-child {
         margin-bottom: 25px;
+      }
+      @include max($t) {
+        // margin-bottom: 5px;
+        &:last-child {
+          margin-bottom: 0px;
+        }
       }
     }
   }
 }
 
-
-.sidebar__inner{
-
+.sidebar__inner {
 }
 
-.categories-block{
+.filters-btn {
+  height: 42px;
+  border: 1px solid #e3e2e3;
+  box-sizing: border-box;
+  border-radius: 20px;
+
+  display: flex;
+  justify-content: start;
+  align-items: center;
+
+  font-size: 16px;
+  line-height: 16px;
+}
+
+.categories-name {
+  padding-left: 15px;
+
+  p {
+    font-family: Excentra Pro;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 14px;
+
+    /* identical to box height */
+
+    /* Aqua/Darkest */
+
+    color: #718da7;
+
+    /* Inside Auto Layout */
+
+    flex: none;
+    order: 1;
+    align-self: center;
+    margin-left: 8px;
+  }
+}
+
+.categories-block {
   margin-right: 20px;
   padding-bottom: 40px;
   border-right: 1px solid $gr_light;
-  @include max($t){
+  @include max($t) {
     margin-right: 0;
     border-right: 0px;
   }
-  &::after{
-    content: '';
+  &::after {
+    content: "";
     width: 80%;
     margin-left: auto;
     margin-right: auto;
@@ -231,11 +309,11 @@
     display: block;
     margin-top: 30px;
   }
-  ul{
+  ul {
     list-style: none;
     padding: 0;
     margin: 0;
-    h5{
+    h5 {
       font-weight: normal;
       font-size: 15px;
       color: $b_dark;
@@ -243,7 +321,7 @@
       padding-bottom: 10px;
       cursor: pointer;
       transition: all 0.2s;
-      .ic{
+      .ic {
         position: relative;
         top: 2px;
         margin-left: 10px;
@@ -251,25 +329,25 @@
         color: $a_middle;
         transition: all 0.2s;
       }
-      &:hover{
+      &:hover {
         color: $g_middle;
-        .ic{
+        .ic {
           opacity: 1;
         }
       }
-      &.active{
+      &.active {
         font-weight: 500;
-        .ic{
+        .ic {
           opacity: 1;
           color: $g_middle;
           transform: scale(-1);
         }
       }
     }
-    &>li{
+    & > li {
       position: relative;
     }
-    ul{
+    ul {
       padding-left: 15px;
       overflow: auto;
       visibility: hidden;
@@ -281,37 +359,37 @@
       }
       -ms-overflow-style: none;
       overflow: -moz-scrollbars-none;
-      &.visible{
+      &.visible {
         opacity: 1;
         visibility: visible;
         max-height: 300px;
       }
-      &::before{
-        content: '';
+      &::before {
+        content: "";
         width: 100%;
         height: 15px;
-        background: linear-gradient( #fff, rgba(255, 255, 255, 0));
+        background: linear-gradient(#fff, rgba(255, 255, 255, 0));
         position: absolute;
         left: 0;
         top: 25px;
         z-index: 1;
       }
-      &::after{
-        content: '';
+      &::after {
+        content: "";
         width: 100%;
         height: 30px;
-        background: linear-gradient( rgba(255, 255, 255, 0), #fff);
+        background: linear-gradient(rgba(255, 255, 255, 0), #fff);
         position: absolute;
         left: 0;
         bottom: 0px;
       }
-      li{
+      li {
         padding-bottom: 7px;
         cursor: pointer;
-        &:first-child{
+        &:first-child {
           padding-top: 10px;
         }
-        &:last-child{
+        &:last-child {
           padding-bottom: 30px;
         }
       }
@@ -319,9 +397,8 @@
   }
 }
 
-
-.catalog__bar{
-  @include max($t){
+.catalog__bar {
+  @include max($t) {
     position: absolute;
     z-index: 97;
     background-color: #fff;
@@ -329,13 +406,15 @@
     left: 10px;
     top: 50px;
     box-shadow: $sh_main;
-    padding: 20px;
+
     border-radius: 3px;
     visibility: hidden;
     opacity: 0;
     transform: translateX(-250px);
     transition: all 0.4s;
-    .sidebar__inner{
+    .sidebar__inner {
+      display: flex;
+      flex-direction: column;
       max-height: 65vh;
       padding-top: 10px;
       overflow-y: auto;
@@ -345,74 +424,78 @@
       -ms-overflow-style: none;
       overflow: -moz-scrollbars-none;
     }
-     &::before{
-        content: '';
-        width: 100%;
-        height: 15px;
-        background: linear-gradient( #fff, rgba(255, 255, 255, 0));
-        position: absolute;
-        left: 0;
-        top: 20px;
-        z-index: 1;
-      }
-      &::after{
-        content: '';
-        width: 100%;
-        height: 30px;
-        background: linear-gradient( rgba(255, 255, 255, 0), #fff);
-        position: absolute;
-        left: 0;
-        bottom: 20px;
-      }
-      &.visible{
-        transform: translateX(0);
-        visibility: visible;
-        opacity: 1;
-      }
+    &::before {
+      content: "";
+      width: 100%;
+      height: 15px;
+      background: linear-gradient(#fff, rgba(255, 255, 255, 0));
+      position: absolute;
+      left: 0;
+      top: 20px;
+      z-index: 1;
+    }
+    &::after {
+      content: "";
+      width: 100%;
+      height: 30px;
+      background: linear-gradient(rgba(255, 255, 255, 0), #fff);
+      position: absolute;
+      left: 0;
+      bottom: 20px;
+    }
+    &.visible {
+      transform: translateX(0);
+      visibility: visible;
+      opacity: 1;
+    }
   }
-  @include max($s){
-    width: 280px;
+  @include max($s) {
+    width: 100vw;
     right: 0;
     left: auto;
-    top: 0;
-    height: 100vh;
+    top: auto;
+    bottom: 0px;
+    height: 80vh;
     position: fixed;
     z-index: 99;
-    transform: translateX(280px);
+    transform: translateY(280px);
     transition: all 0.2s;
-    &.visible{
-      transform: translate(0);
+    border-top-right-radius: 20px;
+    border-top-left-radius: 20px;
+    &.visible {
+      transform: translateY(0);
     }
-    &::after{
+    &::after {
       bottom: 0px;
     }
-    .sidebar__inner{
+    .sidebar__inner {
       max-height: 100vh;
-      padding-bottom: 100px;
+      padding-bottom: 150px;
     }
   }
 }
 
-.sort{
+.sort {
   display: flex;
   margin-bottom: 30px;
   top: 90px;
-  .dropdown{
-    @include max($s){
+  .dropdown {
+    @include max($s) {
       width: 100%;
     }
   }
-  .i_filter{
+  .i_filter {
     margin-left: 20px;
     font-size: 21px;
     display: none;
-    @include max($t){
+    @include max($t) {
       display: inline-block;
     }
-    @include max($s){
+    @include max($s) {
       display: none;
     }
-    &:hover,&.active{
+    &:hover,
+    &.active {
       color: $g_middle;
     }
   }

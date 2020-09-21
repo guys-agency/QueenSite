@@ -116,7 +116,7 @@ const CardView = observer(
         } else {
           productInCartList[data.slug] = store.countInProdPage;
         }
-
+        api.updateCountStats(data._id, "cart");
         window.dataLayer.push({
           ecommerce: {
             add: {
@@ -205,6 +205,7 @@ const CardView = observer(
         setTimeout(() => {
           $(".tooltip_cart").removeClass("visible");
         }, 2000);
+        api.updateCountStats(data._id, "like");
       }
       addToLike();
     };
@@ -617,7 +618,7 @@ const CardView = observer(
                         >
                           <button
                             className={
-                              "btn btn_primary " +
+                              "btn btn_yellow btn_primary " +
                               (data.stock_quantity ? "" : " btn_dis")
                             }
                             onClick={this.clickHandler}
@@ -820,7 +821,8 @@ const CardView = observer(
                             <div className="product-p__spec-detail">
                               <ul>
                                 <li>{data.weight + "кг."}</li>
-                                {data.color !== "" && <li>{data.color}</li>}
+                                {data.color !== undefined &&
+                                  data.color !== "" && <li>{data.color}</li>}
                                 {data.material && <li>{data.material}</li>}
                                 {$(window).width() <= 760 && (
                                   <>

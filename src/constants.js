@@ -6,7 +6,7 @@ const SERVER_URL =
     ? "https://api.queenbohemia.ru"
     : process.env.REACT_APP_TYPE === "superDev"
     ? "https://api-dev.queenbohemia.ru"
-    : "http://127.0.0.1:3010";
+    : "http://127.0.0.1:3050";
 // : "http://127.0.0.1:3010";
 
 export { SERVER_URL };

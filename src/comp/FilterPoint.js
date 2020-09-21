@@ -164,9 +164,8 @@ const FilterPoint = observer(
               }}
             >
               {name}
-              <div className="ic i_drop"></div>
             </h3>
-
+            <div className="ic i_drop"></div>
             <div
               className={"filter__container " + (classStyle ? "active" : "")}
             >

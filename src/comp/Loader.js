@@ -8,7 +8,7 @@ import { Link, NavLink } from "react-router-dom";
 import $ from "jquery";
 import api from "./api";
 
-const ProductCard = observer(function ProductCard(props) {
+const StartLoader = observer(function StartLoader(props) {
   const { data, store } = props;
 
   const { productInCartList, addtoCart, certInCart } = store;
@@ -198,4 +198,4 @@ const ProductCard = observer(function ProductCard(props) {
   );
 });
 
-export default withRouter(ProductCard);
+export default withRouter(StartLoader);

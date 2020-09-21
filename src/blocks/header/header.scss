@@ -2,35 +2,51 @@
 @import "./__right/header__right.scss";
 @import "./__drop/header__drop.scss";
 
-
 .header {
   width: 100%;
   z-index: 99;
   padding: {
     top: 18px;
     bottom: 10px;
-  };
+  }
   transition: all 0.3s;
   position: relative;
   height: 60px;
-  @include max($t){
+  @include max($t) {
     padding-top: 10px;
     z-index: 98;
     height: 40px;
   }
-  @include max($s){
+  @include max($s) {
     position: sticky;
     position: -webkit-sticky;
     top: 0;
     height: initial;
+
+    .cart {
+      width: 36px;
+      height: 36px;
+      border-radius: 50px;
+
+      background: #ffffff;
+      /* Gold/Middle */
+
+      border: 1px solid #dab958;
+      box-sizing: border-box;
+      /* btn */
+
+      box-shadow: 0px 5px 18px rgba(5, 18, 120, 0.11);
+
+      position: relative;
+    }
   }
-  .header__left{
+  .header__left {
     margin-right: auto;
-      @include max($s){
-        display: none;
-      }
+    @include max($s) {
+      display: none;
+    }
   }
-  .container{
+  .container {
     align-items: center;
   }
 
@@ -40,112 +56,132 @@
     margin-left: auto;
     position: absolute;
     @include c(x);
-    @include max(1115px){
+    @include max(1115px) {
       transform: translateX(-50%) scale(0.8);
-      .i_qd{
+      .i_qd {
         display: none;
       }
     }
-    @include max($s){
+    @include max($s) {
       left: 0;
       position: relative;
       transform: scale(0.8);
     }
   }
 
-  &_scroll{
+  &_scroll {
     background-color: #fff;
-    @include max($s){
+
+    @include max($s) {
       box-shadow: $sh_main;
+
+      .cart {
+        background: #ffffff;
+        border: 1px solid #fff;
+        box-shadow: none;
+      }
     }
   }
 
-  .i_menu{
-      display: none;
-      @include max($s){
-        display: inline-block;
-      }
-      font-size: 15px;
-      margin-left: 5px;
-      &:hover{
-        color: $g_middle;
-      }
+  .i_menu {
+    display: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 100px;
+    border: 1px solid #e3e2e3;
+    background: #f7f6f7;
+    box-shadow: 0px 5px 18px rgba(5, 18, 120, 0.11);
+    @include max($s) {
+      display: inline-block;
+    }
+    font-size: 15px;
+    margin-left: 5px;
+    &:hover {
+      color: $g_middle;
+    }
   }
-  .i_bag{
-     display: none;
-    @include max($s){
+  .i_bag {
+    display: none;
+    @include max($s) {
       display: inline-block;
     }
     font-size: 21px;
     margin-right: 5px;
-    &:hover{
+    &:hover {
       color: $g_middle;
     }
   }
-  .tooltip{
+  .tooltip {
     display: none;
-    @include max($s){
+    @include max($s) {
       display: block;
     }
   }
-  .i_filter{
+  .i_filter {
     font-size: 21px;
     margin-right: 15px;
     margin-left: -36px;
-    &:hover{
+    &:hover {
       color: $g_middle;
     }
     opacity: 0;
     visibility: hidden;
     transition: all 0s;
-    &.visible{
+    &.visible {
       visibility: visible;
       opacity: 1;
     }
   }
-  &__btn-city{
+  &__btn-city {
     overflow: hidden;
     max-width: 145px;
     height: 16px;
     white-space: nowrap;
     text-overflow: ellipsis;
-    @include max(1045px){
+    @include max(1045px) {
       max-width: 90px;
     }
-    @include max($s){
+    @include max($s) {
       max-width: 143px;
       height: 20px;
     }
   }
 
-  .logo_vl{
+  .logo_vl {
     color: $b_dark;
-    .i_of{
+    .i_of {
       color: $b_dark;
     }
-    &:hover{
+    &:hover {
       color: $b_light;
-      .i_of{
+      .i_of {
         color: $b_light;
       }
     }
   }
-  &_w{
-    .logo_vl{
+  &_w {
+    .logo_vl {
       color: $b_dark;
-      .i_of{
+      .i_of {
         color: $g_middle;
       }
-      &:hover{
+      &:hover {
         opacity: 1;
         color: $g_middle;
-        .i_of{
+        .i_of {
           color: $g_middle;
         }
       }
     }
+    @include max($s) {
+      .cart {
+        background: #ffffff;
+        border: 1px solid #fff;
+        box-shadow: none;
+      }
+    }
   }
-  &_dn{
+  &_dn {
     display: none;
   }
 }
