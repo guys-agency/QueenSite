@@ -1,53 +1,55 @@
 .navigation__left {
   margin-right: auto;
-  .i_qd{
+  .i_qd {
     font-size: 40px !important;
     position: absolute;
     opacity: 0;
     visibility: hidden;
     transition: all 0.2s;
-    @include max($t){
+    @include max($t) {
       display: none;
     }
   }
-  @include max($s){
+  @include max($s) {
     display: flex;
     flex-direction: column;
     margin-right: 0;
     order: 1;
-    span:last-child{
-      a{
+    span:last-child {
+      a {
         border-bottom: 0;
         margin-bottom: 10px;
       }
     }
   }
-  >.btn-menu {
+  > .btn-menu {
     margin-right: 20px;
-    @include max($t){
+    @include max($t) {
       margin-right: 15px;
+      font-size: 0;
     }
-    .i_menu{
+    .i_menu {
       font-size: 14px;
     }
-    @include max($s){ 
+    @include max($s) {
       border: 0px;
       border-bottom: 1px solid $g_middle;
       border-radius: 0px;
       box-shadow: none;
       text-align: left;
       font-weight: 400;
+      font-size: initial;
       padding: {
         left: 0;
         bottom: 10px;
         top: 30px;
-      };
+      }
       margin-right: 0;
       position: relative;
-      .ic{
+      .ic {
         display: none;
       }
-      &::after{
+      &::after {
         @include icon;
         content: $i_right;
         font-size: 16px;
@@ -56,10 +58,10 @@
         bottom: 13px;
       }
 
-      &:hover{
+      &:hover {
         transform: translateY(0);
         color: $g_middle;
-        &::after{
+        &::after {
           color: $g_middle;
         }
       }
@@ -74,11 +76,11 @@
     line-height: 16px;
     margin-right: 20px;
     /* identical to box height */
-    @include max($t){
+    @include max($t) {
       font-size: 14px;
       margin-right: 15px;
     }
-    @include max($s){
+    @include max($s) {
       font-size: 16px;
       display: block;
       padding-top: 30px;
@@ -86,7 +88,7 @@
       border-bottom: 1px solid $gr_light;
       margin-right: 0;
       position: relative;
-      &::after{
+      &::after {
         @include icon;
         content: $i_right;
         font-size: 16px;
@@ -96,8 +98,9 @@
       }
     }
   }
-  .menu__drop, .menu__sub{
-    @include max($s){
+  .menu__drop,
+  .menu__sub {
+    @include max($s) {
       display: block;
     }
   }

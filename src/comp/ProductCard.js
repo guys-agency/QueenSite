@@ -6,6 +6,7 @@ import "react-lazy-load-image-component/src/effects/blur.css";
 import localStorage from "mobx-localstorage";
 import { Link, NavLink } from "react-router-dom";
 import $ from "jquery";
+import api from "./api";
 
 const ProductCard = observer(function ProductCard(props) {
   const { data, store } = props;
@@ -29,7 +30,7 @@ const ProductCard = observer(function ProductCard(props) {
   //придумать, как не вызывать все это заного у всех при изменении у одного
   const clickHandler = (e) => {
     if (e.target.classList.contains("i_bag")) {
-      console.log("bag :>> ");
+      // console.log("bag :>> ");
       e.preventDefault();
 
       if (inCart !== -1) {
@@ -99,7 +100,7 @@ const ProductCard = observer(function ProductCard(props) {
           });
         }
       }
-
+      api.updateCountStats(data._id, "cart");
       addtoCart(true);
     } else if (e.target.classList.contains("i_fav")) {
       // console.log("like :>> ");
@@ -130,6 +131,7 @@ const ProductCard = observer(function ProductCard(props) {
         setTimeout(() => {
           $(".tooltip_cart").removeClass("visible");
         }, 2000);
+        api.updateCountStats(data._id, "like");
       }
       addToLike();
     } else {
@@ -145,7 +147,7 @@ const ProductCard = observer(function ProductCard(props) {
     }
   };
 
-  let imagePath = "/image/items/" + data.path_to_photo[0];
+  let imagePath = `/image/items/${data.path_to_photo[0]}`;
 
   return (
     // <Link className="product" to={`/product/${data.slug}`}>

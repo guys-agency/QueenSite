@@ -2,6 +2,7 @@ import { observer } from "mobx-react";
 import React from "react";
 import Fade from "react-reveal/Fade";
 import $ from "jquery";
+import api from "./api";
 
 import { Link, NavLink } from "react-router-dom";
 
@@ -15,7 +16,7 @@ const ProductList = observer(
 
     changeCertSum = (elNew) => {
       const { productInCartList, addtoCart, productInCart } = this.props.store;
-      console.log("el :>> ", this.props.el);
+      // console.log("el :>> ", this.props.el);
       if (this.props.el === elNew) {
         return;
       } else {
@@ -229,6 +230,7 @@ const ProductList = observer(
                   className="ic i_fav active"
                   onClick={() => {
                     likeContainer.splice(likeContainer.indexOf(String(el)), 1);
+                    api.updateCountStats(data._id, "like");
                     addToLike();
                   }}
                 ></button>

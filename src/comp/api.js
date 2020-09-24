@@ -128,6 +128,20 @@ class Api {
     });
   }
 
+  //типы cart, like, view
+  updateCountStats(id, typeStats) {
+    return fetch(SERVER_URL + "/update-stats", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id, typeStats }),
+    }).then((res) => {
+      return res.json();
+    });
+  }
+
   updateCart(cart) {
     return fetch(SERVER_URL + "/user-cart", {
       method: "POST",

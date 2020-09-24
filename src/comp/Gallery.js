@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from "react";
 import Swiper from "react-id-swiper";
+import PinchZoom from "pinch-zoom-js";
+
 const Gallery = (props) => {
   const [gallerySwiper, getGallerySwiper] = useState(null);
   const [thumbnailSwiper, getThumbnailSwiper] = useState(null);
+  const typeDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent
+  );
   const gallerySwiperParams = {
     getSwiper: getGallerySwiper,
     slidesPerView: 1,
@@ -36,12 +41,29 @@ const Gallery = (props) => {
     }
   }, [gallerySwiper, thumbnailSwiper]);
 
+  useEffect(() => {
+    if (typeDevice) {
+      let els = document.querySelectorAll("#imgs");
+      els.forEach((el) => {
+        let pz = new PinchZoom(el, {
+          minZoom: 1,
+          verticalPadding: 0,
+          horizontalPadding: 0,
+          lockDragAxis: true,
+          draggableUnzoomed: false,
+        });
+        // el.setAttribute("style", "margin:50% 0");
+      });
+    }
+  }, [props.path, typeDevice]);
+
   const main = [];
   const small = [];
   props.path.forEach((p, i) => {
     main.push(
       <div className="main-img" key={i}>
         <img
+          id="imgs"
           className="drift"
           src={"/image/items/" + p}
           data-zoom={"/image/items/" + p}

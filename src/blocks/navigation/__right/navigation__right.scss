@@ -1,137 +1,152 @@
 .navigation {
-    .search {
-      background: transparent;
-      border: 1px solid $a_darkest;
-      @include max($s){
-        border: 1px solid $gr_middle;
-      }
-      box-sizing: border-box;
-      border-radius: 25px;
-      padding-left: 20px;
-      padding-right: 30px;
-      width: 132px;
-      height: 36px;
-      margin-right: 10px;
+  .search {
+    background: transparent;
+    border: 1px solid $a_darkest;
+    @include max($s) {
+      border: 1px solid $gr_middle;
+    }
+    box-sizing: border-box;
+    border-radius: 25px;
+    padding-left: 20px;
+    padding-right: 30px;
+    width: 132px;
+    height: 36px;
+    margin-right: 10px;
 
-      transition: all 0.3s;
-      @include max(800px){
-        font-size: 16px;
+    transition: all 0.3s;
+    @include max(800px) {
+      font-size: 16px;
+    }
+    @include max($s) {
+      width: 100%;
+    }
+
+    &::placeholder {
+      opacity: 1;
+      color: #88a4bd;
+      @include max($s) {
+        color: #bdbdbd;
       }
-      @include max($s){
+    }
+
+    &:focus {
+      background: #ffffff;
+      box-shadow: $sh_btn;
+      border: 1px solid #fff;
+      width: 300px;
+      @include max($s) {
         width: 100%;
       }
-
-      &::placeholder{
-          opacity: 1;
-          color: #88A4BD;
-          @include max($s){
-            color: #bdbdbd;
-          }
-      } 
-
-      &:focus{
-        background: #ffffff;
-        box-shadow: $sh_btn;
-        border: 1px solid #fff;
-        width: 300px;
-        @include max($s){
-          width: 100%;
-        }
+    }
+    &-pos {
+      position: relative;
+      order: 0;
+      width: 132px;
+      @include max($s) {
+        width: 100%;
       }
-      &-pos{
+    }
+    &-wrp {
+      right: 0px;
+      top: 4px;
+      position: absolute;
+      @include max(800px) {
+        top: 3px;
+      }
+      @include max($s) {
         position: relative;
+        right: 0;
+        top: 0;
+        width: 100%;
         order: 0;
-        width: 132px;
-        @include max($s){
-          width: 100%;
-        }
+        padding-right: 20px;
       }
-      &-wrp{
-        right: 0px;
-        top: 4px;
+      .ic {
         position: absolute;
-        @include max(800px){
-          top: 3px;
+        font-size: 20px;
+        right: 20px;
+        top: 7px;
+        @include max(800px) {
+          font-size: 18px;
+          top: 9px;
         }
-        @include max($s){
-          position: relative;
-          right: 0;
-          top: 0;
-          width: 100%;
-          order: 0;
-          padding-right: 20px;
-        }
-        .ic{
-          position: absolute;
-          font-size: 20px;
-          right: 20px;
-          top: 7px;
-          @include max(800px){
-            font-size: 18px;
-            top: 9px;
-          }
-          @include max($s){
-            right: 35px;
-            top: 8px;
-          }
-        }
-      }
-    }
-
-    .ic {
-      margin-right: 15px;
-      font-size: 20px;
-      color: $b_dark;
-      transition: all 0.3s;
-      @include max(800px){
-        font-size: 16px;
-      }
-      &:last-child{
-        margin-right: 0;
-      }
-      &:hover{
-        color: $g_middle;
-      }
-    }
-  &__buttons{
-    display: flex;
-    position: relative;
-    @include max($s){
-      position: static;
-      margin-top: 20px;
-      order: 2;
-      justify-content: stretch;
-      .tooltip{
-        display: none;
-      }
-      .i_bag{
-        display: none;
-      }
-      .ic{
-        background-color: $gr_light;
-        border-radius: 5px;
-        padding-top: 5px;
-        padding-bottom: 5px;
-        flex-grow: 1;
-        &:last-child{
-          @include max($s){
-            margin-right: 20px;
-          }
-        }
-        span{
-          font-size: 16px;
-          padding-left: 5px;
-          font-family: "Excentra Pro", 'Times New Roman', Times, serif;
+        @include max($s) {
+          right: 35px;
+          top: 8px;
         }
       }
     }
   }
 
-  &_w{
-    .search{
+  .ic {
+    margin-right: 15px;
+    font-size: 20px;
+    color: $b_dark;
+    transition: all 0.3s;
+    @include max(800px) {
+      font-size: 16px;
+    }
+    &:last-child {
+      margin-right: 0;
+    }
+    &:hover {
+      color: $g_middle;
+    }
+  }
+  &__buttons {
+    display: flex;
+    position: relative;
+    align-items: center;
+
+    .cart {
+      background: #fff;
+      border-radius: 100px;
+      border: 1px solid #dab958;
+      height: 32px;
+      width: 32px;
+      box-shadow: 0px 5px 18px rgba(5, 18, 120, 0.11);
+      transition: all 5s linear;
+    }
+
+    @include max($s) {
+      position: static;
+      margin-top: 20px;
+      order: 2;
+      justify-content: stretch;
+      .tooltip {
+        display: none;
+      }
+      .i_bag {
+        display: none;
+      }
+      .ic {
+        background-color: $gr_light;
+        border-radius: 5px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        flex-grow: 1;
+        &:last-child {
+          @include max($s) {
+            margin-right: 20px;
+          }
+        }
+        span {
+          font-size: 16px;
+          padding-left: 5px;
+          font-family: "Excentra Pro", "Times New Roman", Times, serif;
+        }
+      }
+    }
+  }
+
+  &_w {
+    .cart {
+      background: $g_gradient_btn;
+    }
+    .search {
       border: 1px solid $gr_middle;
-      &::placeholder{
-        color: #BDBDBD;
+      &::placeholder {
+        color: #bdbdbd;
       }
     }
   }

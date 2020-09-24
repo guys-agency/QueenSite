@@ -89,6 +89,12 @@ class Store {
   canHit = false;
 
   cartCount = 0;
+
+  coupDisc = 0;
+  certDisc = 0;
+
+  resetPage = false;
+
   productInCart = {};
   productInCartList =
     localStorage.get("productInCart") === null
@@ -120,6 +126,7 @@ class Store {
   city = "";
 
   bannersData = {};
+  brandSlugs = {};
   collInMenu = [];
   dataColl = [];
 
@@ -142,9 +149,22 @@ class Store {
       this.activeCats = this.fullCats;
     }
   });
+  cityCheck = autorun(() => {
+    if (this.auth) {
+      api
+        .getUserData()
+        .then((data) => {
+          // console.log("123123123 :>> ", data);
+          this.userData = data;
+        })
+        .catch((err) => {
+          console.log("err :>> ", err);
+        });
+    }
+  });
   // e-com метрика
   eComMetric = autorun(() => {
-    console.log("this.cardContainer :>> ", this.cardContainer.slug);
+    // console.log("this.cardContainer :>> ", this.cardContainer.slug);
     if (process.env.REACT_APP_TYPE === "prod") {
       if (this.cardContainer.slug !== undefined) {
         window.dataLayer.push({
@@ -203,11 +223,23 @@ class Store {
       .getAllCollections()
       .then((data) => {
         // console.log("dataBanners :>> ", data);
+        data[0].podarki_price.sort((a, b) => {
+          if (+a.name < +b.name) return -1;
+          if (+a.name > +b.name) return 1;
+          return 0;
+        });
         this.bannersData = data[0];
         const timeCollInMenu = [];
         let ind = 0;
         let sum = 0;
         let timeCont = [];
+
+        const timeBrandSlug = {};
+        this.bannersData.brand.forEach((brand) => {
+          timeBrandSlug[brand.name] = brand.slug;
+        });
+
+        this.brandSlugs = timeBrandSlug;
 
         this.bannersData.collections.forEach((elem) => {
           if (ind < 5 && sum < this.bannersData.collections.length - 1) {
@@ -351,10 +383,10 @@ class Store {
                 return 0;
               });
 
-              console.log("dont :>> ", dontSaleProd);
+              // console.log("dont :>> ", dontSaleProd);
               minProdSlugs.push(minProdSlug);
               let dontSaleProdCountIn = Math.floor(dontSaleProdCount / 3);
-              console.log("minProdSlugs :>> ", minProdSlugs);
+              // console.log("minProdSlugs :>> ", minProdSlugs);
               for (let index = 0; index < dontSaleProd.length; index++) {
                 if (
                   this.productInCartList[dontSaleProd[index].slug] ===
@@ -391,6 +423,108 @@ class Store {
                 }
               }
             }
+            // let totalProductSum = 0;
+            // let totalSum = 0;
+
+            // Object.keys(timeCont).forEach((prod) => {
+            //   timeCont[prod].yaPrice = Math.floor(
+            //     timeCont[prod].sale
+            //       ? timeCont[prod].sale_price === 0
+            //         ? 1
+            //         : timeCont[prod].sale_price
+            //       : timeCont[prod].regular_price
+            //   );
+
+            //   totalProductSum +=
+            //     Math.floor(timeCont[prod].yaPrice) * timeCont[prod].count;
+
+            //   totalSum =
+            //     Math.floor(
+            //       timeCont[prod].sale
+            //         ? timeCont[prod].sale_price
+            //         : timeCont[prod].regular_price
+            //     ) * timeCont[prod].count;
+            // });
+            // const coupsCont =
+            //   localStorage.get("coupsCont") === undefined ||
+            //   localStorage.get("coupsCont") === null ||
+            //   localStorage.getItem("coupsCont") === "undefined"
+            //     ? {}
+            //     : localStorage.get("coupsCont");
+
+            // if (Object.keys(coupsCont).length) {
+            //   totalProductSum = 0;
+            //   this.coupDisc = 0;
+            //   this.certDisc = 0;
+
+            //   Object.keys(coupsCont).forEach((coupon) => {
+            //     let couponC = coupsCont[coupon].count;
+            //     Object.keys(timeCont).forEach((el, i) => {
+            //       if (timeCont[el].yaPrice > 1) {
+            //         if (coupsCont[coupon].type === "percent") {
+            //           if (el !== this.certInCart) {
+            //             this.coupDisc +=
+            //               Math.round(
+            //                 timeCont[el].yaPrice *
+            //                   (+coupsCont[coupon].count / 100)
+            //               ) * this.productInCartList[el];
+            //             timeCont[el].yaPrice = Math.floor(
+            //               timeCont[el].yaPrice *
+            //                 (1 - +coupsCont[coupon].count / 100)
+            //             );
+            //           }
+            //         } else if (coupsCont[coupon].type === "fixed_cart") {
+            //           if (el !== this.certInCart) {
+            //             if (couponC > 0) {
+            //               if (timeCont[el].yaPrice - couponC >= 1) {
+            //                 timeCont[el].yaPrice -= couponC;
+            //                 couponC = 0;
+            //               } else {
+            //                 timeCont[el].yaPrice = 1;
+            //                 couponC -= timeCont[el].yaPrice - 1;
+            //               }
+            //             }
+            //             this.certDisc += Math.round(+coupsCont[coupon].count);
+            //           }
+            //         }
+            //       }
+            //       totalProductSum += timeCont[el].yaPrice;
+            //     });
+            //   });
+            // }
+
+            // if (totalProductSum !== totalSum) {
+            //   let totalDeff = totalProductSum - this.totalPrice;
+            //   const timeContArray = Object.keys(timeCont);
+            //   let i = 0;
+            //   while (totalDeff > 0) {
+            //     if (i < timeContArray.length) {
+            //       if (timeCont[timeContArray[i]].yaPrice > 1) {
+            //         if (
+            //           timeCont[timeContArray[i]].yaPrice -
+            //             totalDeff / timeCont[timeContArray[i]].count >
+            //           1
+            //         ) {
+            //           timeCont[timeContArray[i]].yaPrice = Math.floor(
+            //             timeCont[timeContArray[i]].yaPrice -
+            //               totalDeff / timeCont[timeContArray[i]].count
+            //           );
+            //           totalDeff = 0;
+            //         } else {
+            //           totalDeff -=
+            //             timeCont[timeContArray[i]].yaPrice *
+            //             timeCont[timeContArray[i]].count;
+            //           timeCont[timeContArray[i]].yaPrice = 1;
+            //           i += 1;
+            //         }
+            //       } else {
+            //         i += 1;
+            //       }
+            //     } else {
+            //       break;
+            //     }
+            //   }
+            // }
           } else {
             this.dontSaleProd = [];
             this.dontSaleProdCount = 0;
@@ -469,7 +603,7 @@ class Store {
   };
 
   cityCheck = autorun(() => {
-    console.log('localStorage.get("city") :>> ', localStorage.get("city"));
+    // console.log('localStorage.get("city") :>> ', localStorage.get("city"));
     if (
       localStorage.get("city") !== undefined &&
       localStorage.get("city") !== null
@@ -477,9 +611,9 @@ class Store {
       this.city = localStorage.get("city").name;
     } else {
       const init = () => {
-        console.log("window.ymaps :>> ", window.ymaps);
+        // console.log("window.ymaps :>> ", window.ymaps);
         const geolocation = window.ymaps.geolocation;
-        console.log("geolocation :>> ", geolocation);
+        // console.log("geolocation :>> ", geolocation);
         if (geolocation) {
           api
             .getCity(geolocation.region + " " + geolocation.city)
@@ -764,6 +898,7 @@ class Store {
     //   //     console.log("err", err);
     //   //   });
     // } else {
+
     fetch(SERVER_URL, {
       method: "POST",
       headers: {
@@ -776,6 +911,7 @@ class Store {
         return res.json();
       })
       .then((data) => {
+        console.log("data", data);
         const TEnd = new Date();
         // console.log("TTTTTT", TEnd - t);
         //продукты
@@ -859,6 +995,9 @@ class Store {
               return;
             }
           }
+          //  else {
+          //   window.location.replace("/");
+          // }
         } else {
           data[0].product.forEach((element) => {
             testContainer.push(
@@ -874,7 +1013,7 @@ class Store {
 
         //стартовый фильтр
         const sortDataClear = {};
-        console.log("data[0].clearSort :>> ", data[0].clearSort);
+        // console.log("data[0].clearSort :>> ", data[0].clearSort);
         Object.keys(data[0].clearSort[0]).forEach((name) => {
           if (
             (name !== "_id") &
@@ -905,9 +1044,9 @@ class Store {
               }
             });
             sortObj.names.sort();
-            console.log("sortObj :>> ", sortObj);
+            // console.log("sortObj :>> ", sortObj);
             sortObj.names.forEach((sn) => {
-              console.log("sn :>> ", sn);
+              // console.log("sn :>> ", sn);
               if (sn !== undefined) {
                 newMeasure.push({
                   name: sn,
@@ -1077,6 +1216,7 @@ class Store {
       })
       .catch((err) => {
         console.log("err", err);
+        window.location.replace("/");
       });
 
     // fetch(SERVER_URL + "/sort-names", {
@@ -1212,7 +1352,7 @@ class Store {
       decodSearch !== "" &&
       !window.location.href.includes("?yclid")
     ) {
-      console.log("1111 :>> ", 1111);
+      // console.log("1111 :>> ", 1111);
       if (decodSearch.includes("&yclid=")) {
         decodSearch = decodSearch.split("&yclid=")[0];
       }
@@ -1227,6 +1367,12 @@ class Store {
             elemSp[0] === "hit"
           ) {
             this.activeFilters[elemSp[0]] = elemSp[1];
+          } else if (elemSp[0] === "page") {
+            if (!this.resetPage) {
+              this.startPag = +elemSp[1] * 42;
+              this.stopPag = (+elemSp[1] + 1) * 42;
+            }
+            this.resetPage = false;
           } else {
             this.activeFilters[elemSp[0]] = elemSp[1].split(",");
             this.activeFilters.choosePoint.push(elemSp[0]);
@@ -1316,7 +1462,7 @@ class Store {
       // console.log("onePointFilter :>> ", onePointFilter);
     }
 
-    if (this.activeFilters.maxPrice | this.activeFilters.minPrice) {
+    if (this.activeFilters.maxPrice || this.activeFilters.minPrice) {
       const price = { price: {} };
       if (this.activeFilters.maxPrice) {
         price.price["$lte"] = Number(this.activeFilters.maxPrice);
@@ -1691,6 +1837,8 @@ decorate(Store, {
   withProds: observable,
   likeProds: observable,
   certInCart: observable,
+  coupDisc: observable,
+  certDisc: observable,
 });
 
 const store = new Store();

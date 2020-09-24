@@ -29,7 +29,7 @@ const CityCh = observer(
             </button>
             <div className="input-field">
               <label className="active" htmlFor="citySearch">
-                Ваш город
+                Населенный пункт
               </label>
               <input
                 id="citySearch"

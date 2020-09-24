@@ -34,7 +34,7 @@ const Collections = observer(
                     typeDevice ? el["image-mob-large"] : el["image-desc-large"]
                   })`,
                 }}
-                to={"collections/" + el.slug}
+                to={`${el.type}/${el.slug}`}
               ></Link>
             );
           } else {
@@ -46,7 +46,7 @@ const Collections = observer(
                   onClick={() => {
                     this.props.store.dataColl = [el];
                   }}
-                  to={"collections/" + el.slug}
+                  to={`${el.type}/${el.slug}`}
                   style={{
                     backgroundImage: `url(/image/banners/${
                       typeDevice

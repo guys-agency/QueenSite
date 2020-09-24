@@ -1,0 +1,24 @@
+.dev-login {
+  &__form {
+    width: 80vw;
+    height: 40vh;
+    margin: auto;
+    margin-top: 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    form {
+      display: flex;
+      flex-direction: column;
+
+      button {
+        margin-top: 10px;
+
+        background-color: $g_light;
+        height: 20px;
+        border-radius: 6px;
+      }
+    }
+  }
+}

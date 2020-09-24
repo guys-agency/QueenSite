@@ -51,11 +51,15 @@ const Finish = observer(
         api
           .getFinishData(this.props.id)
           .then((data) => {
-            console.log("22 :>> ", 22);
+            // console.log("22 :>> ", 22);
+            if (Object.keys(data).length === 0) {
+              this.props.history.replace("/");
+            }
             this.setState({ data: data._doc, ready: true });
           })
           .catch((err) => {
             console.log("err :>> ", err);
+            this.props.history.replace("/");
           });
       } else {
         // if (

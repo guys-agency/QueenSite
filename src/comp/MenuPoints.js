@@ -96,13 +96,13 @@ const MenuPoints = observer(
             </Link>
           </li>
           <li>
-            <Link to="/help/offer" onClick={this.closeNav}>
-              Публичная оферта
+            <Link to="/help/certificate" onClick={this.closeNav}>
+              Сертификат
             </Link>
           </li>
           <li>
-            <Link to="/help/certificate" onClick={this.closeNav}>
-              Сертификат
+            <Link to="/help/bonus" onClick={this.closeNav}>
+              Бонусы
             </Link>
           </li>
 
@@ -145,8 +145,8 @@ const MenuPoints = observer(
       $(".menu-point").removeClass("active");
       $(".header__drop").removeClass("visible");
       $(".header__btn").removeClass("active");
-      $(e.target).addClass("active");
-      $(e.target).parent().find(".menu_sub").addClass("visible");
+      $(e.target).toggleClass("active");
+      $(e.target).parent().find(".menu_sub").toggleClass("visible");
       if ($(window).width() <= 760) {
         if (e.target.textContent === "Коллекции") {
           this.closeNav(e);
@@ -254,23 +254,46 @@ const MenuPoints = observer(
       $(".btn-menu").on("click", this.toggleMenu);
 
       var self = this;
+      $(window).off("resize");
       $(window)
         .on("resize", function () {
           if ($(window).width() > 760) {
             $(".btn-menu").off("mouseenter", self.hoverMenuBtn);
             $(".btn-menu").on("mouseenter", self.hoverMenuBtn);
+            // $(".menu-point_gifts").on("click", (e) => {
+            //   console.log(
+            //     "object :>> ",
+            //     $(e.target).parent().find(".menu_sub").hasClass("visible")
+            //   );
+            //   if ($(e.target).parent().find(".menu_sub").hasClass("visible")) {
+            //     self.offDrop();
+            //   }
+            // });
 
             $(".menu-point").off("mouseenter", self.toggleDrop);
             $(".menu-point").on("mouseenter", self.toggleDrop);
+            $(".menu-point_news").off("mouseenter", self.toggleDrop);
             $(".menu_sub").off("mouseleave", self.offDrop);
             $(".menu_sub").on("mouseleave", self.offDrop);
+
+            // $(".menu-point_gifts").off("mouseenter", self.toggleDrop);
+            // $(".menu_gift").off("mouseleave", self.offDrop);
+            // $(e.target).parent().find(".menu_sub").toggleClass("visible");
           } else {
             $(".btn-menu").off("mouseenter", self.hoverMenuBtn);
             $(".menu-point").off("mouseenter", self.toggleDrop);
             $(".menu_sub").off("mouseleave", self.offDrop);
+            // $(".menu-point_gifts").off("click", self.toggleDrop);
 
             $(".menu-point").off("click", self.toggleDrop);
             $(".menu-point").on("click", self.toggleDrop);
+            $(".menu-point_news").off("click", self.toggleDrop);
+            $(".menu-point_news").on("click", self.closeNav);
+            $(".menu-point_collections").off("click", self.toggleDrop);
+            $(".menu-point_collections").on("click", self.closeNav);
+            $(".menu-point_gifts").off("click", self.toggleDrop);
+            $(".menu-point_gifts").on("click", self.closeNav);
+            $(".menu_sub").off("click", self.toggleDrop);
           }
         })
         .resize();
@@ -305,7 +328,7 @@ const MenuPoints = observer(
         })
         .then((data) => {
           const menu = {};
-          console.log("data :>> ", data);
+          // console.log("data :>> ", data);
 
           data.forEach((elem, i) => {
             const childsPoints = [];
@@ -624,7 +647,7 @@ const MenuPoints = observer(
 
                 {this.phone}
 
-                <button
+                {/* <button
                   className={
                     "ic i_filter head_filter vis-s " +
                     (this.props.location.pathname.includes("catalog") ||
@@ -633,7 +656,9 @@ const MenuPoints = observer(
                     this.props.location.pathname.includes("main/") ||
                     this.props.location.pathname.includes("/closeout") ||
                     this.props.location.pathname.includes("/ideas") ||
-                    this.props.location.pathname.includes("/hits")
+                    this.props.location.pathname.includes("/hits") ||
+                    this.props.location.pathname.includes("/brand/") ||
+                    this.props.location.pathname.includes("/new")
                       ? "visible "
                       : " ")
                   }
@@ -646,7 +671,7 @@ const MenuPoints = observer(
                       .querySelector(".sidebar-overlay")
                       .classList.add("active");
                   }}
-                ></button>
+                ></button> */}
 
                 <button
                   className="cart ic i_bag"
@@ -703,7 +728,7 @@ const MenuPoints = observer(
             >
               <div className="container container_f">
                 <div className="navigation__city-ch">
-                  <h5>Ваш город:</h5>
+                  <h5>Населенный пункт:</h5>
                   <CityCh store={this.props.store} />
                   {this.phone}
                 </div>
@@ -714,7 +739,10 @@ const MenuPoints = observer(
                     <span className="ic i_menu"></span> Каталог
                   </button>
                   <span className="menu__sub ">
-                    <Link to="/collections" className="menu-point">
+                    <Link
+                      to="/collections"
+                      className="menu-point menu-point_collections"
+                    >
                       Коллекции
                     </Link>
                     <div className="menu menu_sub menu_collection">
@@ -791,15 +819,16 @@ const MenuPoints = observer(
                   </span>
 
                   <span className="menu__sub">
-                    <a
-                      href=""
-                      className="menu-point"
+                    <Link
+                      to="/gifts"
+                      className="menu-point menu-point_gifts"
                       onClick={(e) => {
-                        e.preventDefault();
+                        // this.toggleDrop(e);
+                        // e.preventDefault();
                       }}
                     >
                       Подарки
-                    </a>
+                    </Link>
                     <div className="menu menu_sub menu_gift">
                       <div className="container container_f">
                         <button
@@ -815,6 +844,12 @@ const MenuPoints = observer(
                         {this.gifts}
                       </div>
                     </div>
+                  </span>
+
+                  <span className="menu__drop">
+                    <Link to="/new" className="menu-point menu-point_news">
+                      Новинки
+                    </Link>
                   </span>
 
                   <span className="menu__drop">
@@ -862,6 +897,7 @@ const MenuPoints = observer(
                       type="text"
                       className="search"
                       placeholder="Поиск"
+                      defaultValue={this.props.store.searchText}
                       onChange={(e) => {
                         this.searchValue = e.target.value;
                       }}
@@ -1081,6 +1117,9 @@ const MenuPoints = observer(
                   document
                     .querySelector(".catalog__bar")
                     .classList.remove("visible");
+                  document
+                    .querySelector(".i_filter")
+                    .classList.remove("active");
                 }
               }}
             ></div>

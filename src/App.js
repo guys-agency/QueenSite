@@ -3,6 +3,8 @@ import "./App.css";
 import { observer } from "mobx-react";
 import { Router, Route, Switch, Redirect } from "react-router";
 
+import api from "./comp/api";
+
 import { SERVER_URL } from "./constants";
 
 import MenuPoints from "./comp/MenuPoints";
@@ -15,15 +17,19 @@ import MainPage from "./comp/MainPage";
 import Collections from "./comp/Collections";
 import Collection from "./comp/Collection";
 
+import GiftsPage from "./comp/GiftsPage";
+
 import Actions from "./comp/Actions";
 
 import Footer from "./comp/Footer";
 import Shops from "./comp/Shops";
 import ShopsMap from "./comp/ShopsMap";
+import { Link } from "react-router-dom";
 
 import Breadcrumbs from "./comp/breadcrumbs";
 import localStorage from "mobx-localstorage";
 import $ from "jquery";
+import { withRouter } from "react-router";
 const CartPage = React.lazy(() => import("./comp/CartPage"));
 const Finish = React.lazy(() => import("./comp/Finish"));
 const Profile = React.lazy(() => import("./comp/Profile"));
@@ -47,6 +53,11 @@ const MainScreen = observer(
   class MainScreen extends Component {
     state = {
       cardRender: false,
+      loginDev:
+        localStorage.get("dev-login") === undefined ||
+        localStorage.get("dev-login") === null
+          ? false
+          : localStorage.get("dev-login"),
     };
 
     cardContainer = [];
@@ -140,36 +151,39 @@ const MainScreen = observer(
           }
           this.props.store.withProds = data.addProd[0].with;
           this.props.store.likeProds.replace(data.addProd[0].like);
-          document.title = data.product[0].name + " - Queen of Bohemia";
-          // console.log("this.like :>> ", this.like);
+
+          api.updateCountStats(data.product[0]._id, "view");
+
+          let timeLastSeenProds = lastSeenProds.slice();
+          // console.log("object :>> ", this.props.store.lastSeenProds.values());
+
+          if (!lastSeenProds.includes(slug)) {
+            timeLastSeenProds.unshift(slug);
+            // this.props.store.lastSeenProds = timeLastSeenProds;
+          } else {
+            const posSlug = lastSeenProds.indexOf(slug);
+
+            timeLastSeenProds.splice(posSlug, 1);
+            timeLastSeenProds.unshift(slug);
+            // this.props.store.lastSeenProds = timeLastSeenProds;
+          }
+
+          if (timeLastSeenProds.length > 16) {
+            timeLastSeenProds = timeLastSeenProds.slice(0, 16);
+            // console.log("object :>> ", timeLastSeenProds.length);
+            // console.log("object :>> ", timeLastSeenProds.slice());
+            this.props.store.lastSeenProds = timeLastSeenProds.slice();
+          } else {
+            this.props.store.lastSeenProds = timeLastSeenProds.slice();
+            // console.log("object :>> ", timeLastSeenProds.slice());
+          }
         })
         .catch((err) => {
           console.log("err", err);
+          this.props.history.replace("/");
         });
 
       this.props.store.countInProdPage = 1;
-
-      let timeLastSeenProds = lastSeenProds.slice();
-      // console.log("object :>> ", this.props.store.lastSeenProds.values());
-      if (!lastSeenProds.includes(slug)) {
-        timeLastSeenProds.unshift(slug);
-        // this.props.store.lastSeenProds = timeLastSeenProds;
-      } else {
-        const posSlug = lastSeenProds.indexOf(slug);
-
-        timeLastSeenProds.splice(posSlug, 1);
-        timeLastSeenProds.unshift(slug);
-        // this.props.store.lastSeenProds = timeLastSeenProds;
-      }
-      if (timeLastSeenProds.length > 16) {
-        timeLastSeenProds = timeLastSeenProds.slice(0, 16);
-        // console.log("object :>> ", timeLastSeenProds.length);
-        // console.log("object :>> ", timeLastSeenProds.slice());
-        this.props.store.lastSeenProds = timeLastSeenProds.slice();
-      } else {
-        this.props.store.lastSeenProds = timeLastSeenProds.slice();
-        console.log("object :>> ", timeLastSeenProds.slice());
-      }
     };
 
     chekFinishDelete = () => {
@@ -209,10 +223,55 @@ const MainScreen = observer(
         }
       }
     };
+    itsSuperDev = process.env.REACT_APP_TYPE === "superDev";
+
+    checkSuperDevLogin = (e) => {
+      e.preventDefault();
+      console.log("test :>> ");
+      console.log("object :>> ", $("#login-dev").val());
+      console.log('$("#password-dev").val() :>> ', $("#password-dev").val());
+      if ($("#login-dev").val() === process.env.REACT_APP_SUPER_DEV_LOGIN) {
+        if (
+          $("#password-dev").val() === process.env.REACT_APP_SUPER_DEV_PASSWORD
+        ) {
+          localStorage.set("dev-login", true);
+          this.setState({ loginDev: true });
+        } else {
+          localStorage.set("dev-login", false);
+        }
+      } else {
+        localStorage.set("dev-login", false);
+      }
+    };
 
     render() {
       return (
         <>
+          <div className="loader-page">
+            <div className="loader-page__container">
+              <Link className="logo logo_vl" to="/">
+                <span className="i_queen"></span>
+                <span className="i_of"></span>
+                <span className="i_bohemia"></span>
+                <span className="i_qd"></span>
+              </Link>
+
+              <div className="loader-page__loader">
+                <svg className="circle" viewBox="0 0 42 42">
+                  {/* <circle transform="rotate(-90)" r="30" cx="-37" cy="37" /> */}
+                  <circle
+                    // transform="rotate(0)"
+                    style={{ "stroke-dasharray": "85px 15px" }}
+                    r="15.91549430918954"
+                    cx="21"
+                    cy="21"
+                  />
+                </svg>
+                <div className="pie spinner"></div>
+              </div>
+              <div className="wrapper"></div>
+            </div>
+          </div>
           <MenuPoints
             store={this.props.store}
             chooseMenuPoint={this.chooseMenuPoint}
@@ -222,6 +281,32 @@ const MainScreen = observer(
             style={{ width: "0px", height: "0px" }}
           ></div>
           <Switch>
+            {this.itsSuperDev && !this.state.loginDev && (
+              <Route
+                path="/"
+                onEnter={this.checkSuperDevLogin}
+                render={(routProps) => (
+                  console.log("object"),
+                  (
+                    <div className="dev-login__form">
+                      <form>
+                        <label for="login-dev">Логин</label>
+                        <input id="login-dev"></input>
+                        <label for="password-dev">Пароль</label>
+                        <input id="password-dev"></input>
+                        <button
+                          onClick={(e) => {
+                            this.checkSuperDevLogin(e);
+                          }}
+                        >
+                          Вход
+                        </button>
+                      </form>
+                    </div>
+                  )
+                )}
+              />
+            )}
             <Route
               path="/"
               exact
@@ -456,6 +541,16 @@ const MainScreen = observer(
                 )
               )}
             />
+            <Route
+              path="/gifts"
+              exact
+              render={(routProps) => (
+                this.props.store.cleaningActiveFilters(),
+                $("html, body").animate({ scrollTop: 0 }, 500),
+                (document.title = "Подарки - Queen of Bohemia"),
+                (<GiftsPage store={this.props.store} />)
+              )}
+            />
 
             <Route
               path="/main/:slug"
@@ -515,7 +610,7 @@ const MainScreen = observer(
               )}
             />
 
-            {/* <Route
+            <Route
               path="/ideas"
               render={() => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
@@ -525,7 +620,7 @@ const MainScreen = observer(
                   </div>
                 )
               )}
-            /> */}
+            />
 
             <Route
               path="/hits"
@@ -577,6 +672,7 @@ const MainScreen = observer(
                   ? this.props.store.cleaningActiveFilters()
                   : null,
                 (this.props.store.pathS = "new"),
+                (this.props.store.sortInProd = "Сначала новые"),
                 this.props.store.filtration(),
                 (document.title = "Новинки - Queen of Bohemia"),
                 (
@@ -818,10 +914,32 @@ const MainScreen = observer(
                 a.download = "apple-developer-merchantid-domain-association";
                 a.href =
                   "/.well-known/apple-developer-merchantid-domain-association1/merchant.ru.yandex.kassa";
-                console.log("a", a);
+                // console.log("a", a);
                 a.click();
               }}
             />
+
+            <Route
+              path="/yandex-market.yml"
+              render={() => {
+                const a = document.createElement("a");
+                a.download = "yandex-market.yml";
+                a.href = "/yandex-market.yml";
+                // console.log("a", a);
+                a.click();
+              }}
+            />
+            <Route
+              path="/google-market.xml"
+              render={() => {
+                const a = document.createElement("a");
+                a.download = "google-market.xml";
+                a.href = "/google-market.xml";
+                // console.log("a", a);
+                a.click();
+              }}
+            />
+
             <Redirect from="*" to="/" />
             <Route onEnter={() => window.location.reload()} />
           </Switch>
@@ -851,5 +969,5 @@ class LoginAuth extends Component {
     return <div className="log-auth"></div>;
   }
 }
-
-export { MainScreen };
+export default withRouter(MainScreen);
+// export { MainScreen };

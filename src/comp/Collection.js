@@ -71,12 +71,13 @@ const Collection = observer(
                 dataColl[0].description !== undefined && (
                   <div className="container">
                     <div className="row">
-                      <div className="col col-3"></div>
-                      <div className="col col-8">
+                      <div className="col col-3 col-s-1"></div>
+                      <div className="col col-8 col-s-10">
                         <div className="collections__desc">
                           {dataColl[0].description}
                         </div>
                       </div>
+                      <div className="col col-s-1"></div>
                     </div>
                   </div>
                 )}
@@ -112,20 +113,7 @@ const Collection = observer(
       }
 
       return (
-        dataColl.length !== 0 &&
-        (window.location.pathname.includes("ideas") ? (
-          <div className="main-screen">
-            <div className="container">
-              <Breadcrumbs name={this.props.slug} store={this.props.store} />
-              <div className="row catalog">
-                <div className="col col-3">
-                  <Filters store={this.props.store} />
-                </div>
-                <ProductCardContainer store={this.props.store} />
-              </div>
-            </div>
-          </div>
-        ) : (
+        dataColl.length !== 0 && (
           <div
             className={dataColl[0].type !== "sale" ? "collections" : "actions"}
           >
@@ -145,7 +133,7 @@ const Collection = observer(
               </div>
             </div>
           </div>
-        ))
+        )
       );
     }
   }

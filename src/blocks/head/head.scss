@@ -8,6 +8,19 @@
 
   @include max($s) {
     margin-bottom: 100px;
+    &.head_gift {
+      margin-bottom: 20px;
+    }
+  }
+  @include max($t) {
+    &.head_gift {
+      margin-bottom: 20px;
+    }
+  }
+  @include max($m) {
+    &.head_gift {
+      margin-bottom: 75px;
+    }
   }
   &_big {
     height: 500px;
@@ -32,6 +45,11 @@
     margin-left: auto;
     margin-right: auto;
     position: relative;
+
+    img {
+      width: 100%;
+    }
+
     .swiper-container {
       border-radius: 5px;
     }

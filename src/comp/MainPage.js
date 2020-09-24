@@ -78,7 +78,7 @@ const MainPage = observer(
               </div>
             );
           });
-          console.log("cert :>> ", this.props.gift);
+          // console.log("cert :>> ", this.props.gift);
           if (this.props.gift === undefined) {
             this.setState({
               hitCont: hitContTime,
@@ -295,8 +295,8 @@ const MainPage = observer(
                 style={{
                   backgroundImage: `url(/image/banners/${
                     typeDevice
-                      ? bannersData.ideas[0]["image-mob-large"]
-                      : bannersData.ideas[0]["image-desc-large"]
+                      ? bannersData.ideas[0]["image-mob-main"]
+                      : bannersData.ideas[0]["image-desc-main"]
                   })`,
                 }}
               >
@@ -312,8 +312,8 @@ const MainPage = observer(
                     style={{
                       backgroundImage: `url(/image/banners/${
                         typeDevice
-                          ? bannersData.ideas[1]["image-mob-large"]
-                          : bannersData.ideas[1]["image-desc-large"]
+                          ? bannersData.ideas[1]["image-mob-main"]
+                          : bannersData.ideas[1]["image-desc-main"]
                       })`,
                     }}
                   >
@@ -329,8 +329,8 @@ const MainPage = observer(
                     style={{
                       backgroundImage: `url(/image/banners/${
                         typeDevice
-                          ? bannersData.ideas[2]["image-mob-large"]
-                          : bannersData.ideas[2]["image-desc-large"]
+                          ? bannersData.ideas[2]["image-mob-main"]
+                          : bannersData.ideas[2]["image-desc-main"]
                       })`,
                     }}
                   >
@@ -346,8 +346,8 @@ const MainPage = observer(
                     style={{
                       backgroundImage: `url(/image/banners/${
                         typeDevice
-                          ? bannersData.ideas[3]["image-mob-large"]
-                          : bannersData.ideas[3]["image-desc-large"]
+                          ? bannersData.ideas[3]["image-mob-main"]
+                          : bannersData.ideas[3]["image-desc-main"]
                       })`,
                     }}
                   >
@@ -562,7 +562,16 @@ const MainPage = observer(
           <div className="main-background">
             <div className="container">
               <div className="title">
-                <h2 className="tilda">Идеи</h2>
+                {/* <h2 className="tilda">Идеи</h2> */}
+                <Link to="/ideas">
+                  <h2 className="tilda">
+                    Идеи{" "}
+                    <span className="link">
+                      <span className="hide-s">Все идеи</span>{" "}
+                      <span className="ic i_right"></span>
+                    </span>
+                  </h2>
+                </Link>
               </div>
               {ideasCon}
               {/* <div className="row ideas-block">
@@ -616,11 +625,19 @@ const MainPage = observer(
                 </div>
               </div> */}
               <div className="title">
-                <h2>Подарки</h2>
+                <Link to="/gifts">
+                  <h2 className="dib">
+                    Подарки{" "}
+                    <span className="link">
+                      <span className="hide-s">Все подарки</span>{" "}
+                      <span className="ic i_right"></span>
+                    </span>
+                  </h2>
+                </Link>
               </div>
-              <div className="gifts row">
+              <div className="gifts row gifts_price">
                 <Swiper {...giftCar}>
-                  <div className="col col-4 col-t-5 col-s-9">
+                  <div className="col col-4 col-t-6 col-s-9">
                     <Link
                       to="/catalog/podarki/podarki_do_500_russian_ruble"
                       className="banner"
@@ -632,7 +649,7 @@ const MainPage = observer(
                     </Link>
                   </div>
 
-                  <div className="col col-4 col-t-5 col-s-9">
+                  <div className="col col-4 col-t-6 col-s-9">
                     <Link
                       to="/catalog/podarki/podarki_do_1000_russian_ruble"
                       className="banner"
@@ -644,7 +661,7 @@ const MainPage = observer(
                     </Link>
                   </div>
 
-                  <div className="col col-4 col-t-5 col-s-9">
+                  <div className="col col-4 col-t-6 col-s-9">
                     <Link
                       to="/catalog/podarki/podarki_do_2000_russian_ruble"
                       className="banner"

@@ -1,68 +1,80 @@
-@mixin icon{
-	font-family: 'icons' !important;
-	speak: none;
-	font-style: normal;
-	font-weight: normal;
-	font-variant: normal;
-	text-transform: none;
-	line-height: 1;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
+@mixin icon {
+  font-family: "icons" !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-@mixin gold-txt{
-    background: $g_gradient;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+@mixin gold-txt {
+  background: $g_gradient;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 @mixin placeholder {
-  &::-webkit-input-placeholder {@content;}
-  &:-moz-placeholder {@content;}
-  &::-moz-placeholder {@content;}
-  &:-ms-input-placeholder {@content;}
+  &::-webkit-input-placeholder {
+    @content;
+  }
+  &:-moz-placeholder {
+    @content;
+  }
+  &::-moz-placeholder {
+    @content;
+  }
+  &:-ms-input-placeholder {
+    @content;
+  }
 }
 
-@mixin max($media){
-	@media screen and (max-width: $media){ @content; }
+@mixin max($media) {
+  @media screen and (max-width: $media) {
+    @content;
+  }
 }
 
-@mixin c($xy:xy) {
+@mixin min($media) {
+  @media screen and (min-width: $media) {
+    @content;
+  }
+}
+
+@mixin c($xy: xy) {
   @if $xy == xy {
     left: 50%;
     top: 50%;
     bottom: auto;
-	right: auto;
-	transform: translateX(-50%) translateY(-50%) ;
-  }
-  @else if $xy == x {
+    right: auto;
+    transform: translateX(-50%) translateY(-50%);
+  } @else if $xy == x {
     left: 50%;
-	right: auto;
-	transform: translateX(-50%);
-  }
-  @else if $xy == y {
+    right: auto;
+    transform: translateX(-50%);
+  } @else if $xy == y {
     top: 50%;
-	bottom: auto;
-	transform: translateY(-50%);
+    bottom: auto;
+    transform: translateY(-50%);
   }
 }
 
-@mixin cr($xy:xy) {
+@mixin cr($xy: xy) {
   @if $xy == xy {
     left: auto;
     top: auto;
     bottom: auto;
     right: auto;
-	transform: translateX(0) translateY(0);
-  }
-  @else if $xy == x {
+    transform: translateX(0) translateY(0);
+  } @else if $xy == x {
     left: auto;
     right: auto;
     transform: translateX(0);
-  }
-  @else if $xy == y {
+  } @else if $xy == y {
     top: auto;
-	bottom: auto;
+    bottom: auto;
     transform: translateY(0);
   }
 }
