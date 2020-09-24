@@ -1995,37 +1995,43 @@ const CartPage = observer(
                                   if (couponC > 0) {
                                     if (dataToSend.prod[el].sale) {
                                       if (
-                                        dataToSend.prod[el].sale_price -
+                                        dataToSend.prod[el].sale_price *
+                                          productInCartList[el] -
                                           couponC >=
                                         0
                                       ) {
                                         dataToSend.prod[
                                           el
-                                        ].sale_price -= couponC;
+                                        ].sale_price -= Math.round(
+                                          couponC / productInCartList[el]
+                                        );
 
                                         couponC = 0;
                                       } else {
-                                        dataToSend.prod[el].sale_price = 0;
-
                                         couponC -=
-                                          dataToSend.prod[el].sale_price;
+                                          dataToSend.prod[el].sale_price *
+                                          productInCartList[el];
+                                        dataToSend.prod[el].sale_price = 0;
                                       }
                                     } else {
                                       if (
-                                        dataToSend.prod[el].regular_price -
+                                        dataToSend.prod[el].regular_price *
+                                          productInCartList[el] -
                                           couponC >=
                                         0
                                       ) {
                                         dataToSend.prod[
                                           el
-                                        ].regular_price -= couponC;
+                                        ].regular_price -= Math.round(
+                                          couponC / productInCartList[el]
+                                        );
 
                                         couponC = 0;
                                       } else {
-                                        dataToSend.prod[el].regular_price = 0;
-
                                         couponC -=
-                                          dataToSend.prod[el].regular_price;
+                                          dataToSend.prod[el].regular_price *
+                                          productInCartList[el];
+                                        dataToSend.prod[el].regular_price = 0;
                                       }
                                     }
                                   }
@@ -2348,6 +2354,7 @@ const CartPage = observer(
                                     .address,
                                 },
                                 productForYA,
+                                payItems,
                               },
                               dataToSend,
                             })

@@ -24,10 +24,12 @@ import Actions from "./comp/Actions";
 import Footer from "./comp/Footer";
 import Shops from "./comp/Shops";
 import ShopsMap from "./comp/ShopsMap";
+import { Link } from "react-router-dom";
 
 import Breadcrumbs from "./comp/breadcrumbs";
 import localStorage from "mobx-localstorage";
 import $ from "jquery";
+import { withRouter } from "react-router";
 const CartPage = React.lazy(() => import("./comp/CartPage"));
 const Finish = React.lazy(() => import("./comp/Finish"));
 const Profile = React.lazy(() => import("./comp/Profile"));
@@ -149,37 +151,39 @@ const MainScreen = observer(
           }
           this.props.store.withProds = data.addProd[0].with;
           this.props.store.likeProds.replace(data.addProd[0].like);
+
           api.updateCountStats(data.product[0]._id, "view");
 
-          // console.log("this.like :>> ", this.like);
+          let timeLastSeenProds = lastSeenProds.slice();
+          // console.log("object :>> ", this.props.store.lastSeenProds.values());
+
+          if (!lastSeenProds.includes(slug)) {
+            timeLastSeenProds.unshift(slug);
+            // this.props.store.lastSeenProds = timeLastSeenProds;
+          } else {
+            const posSlug = lastSeenProds.indexOf(slug);
+
+            timeLastSeenProds.splice(posSlug, 1);
+            timeLastSeenProds.unshift(slug);
+            // this.props.store.lastSeenProds = timeLastSeenProds;
+          }
+
+          if (timeLastSeenProds.length > 16) {
+            timeLastSeenProds = timeLastSeenProds.slice(0, 16);
+            // console.log("object :>> ", timeLastSeenProds.length);
+            // console.log("object :>> ", timeLastSeenProds.slice());
+            this.props.store.lastSeenProds = timeLastSeenProds.slice();
+          } else {
+            this.props.store.lastSeenProds = timeLastSeenProds.slice();
+            // console.log("object :>> ", timeLastSeenProds.slice());
+          }
         })
         .catch((err) => {
           console.log("err", err);
+          this.props.history.replace("/");
         });
 
       this.props.store.countInProdPage = 1;
-
-      let timeLastSeenProds = lastSeenProds.slice();
-      // console.log("object :>> ", this.props.store.lastSeenProds.values());
-      if (!lastSeenProds.includes(slug)) {
-        timeLastSeenProds.unshift(slug);
-        // this.props.store.lastSeenProds = timeLastSeenProds;
-      } else {
-        const posSlug = lastSeenProds.indexOf(slug);
-
-        timeLastSeenProds.splice(posSlug, 1);
-        timeLastSeenProds.unshift(slug);
-        // this.props.store.lastSeenProds = timeLastSeenProds;
-      }
-      if (timeLastSeenProds.length > 16) {
-        timeLastSeenProds = timeLastSeenProds.slice(0, 16);
-        // console.log("object :>> ", timeLastSeenProds.length);
-        // console.log("object :>> ", timeLastSeenProds.slice());
-        this.props.store.lastSeenProds = timeLastSeenProds.slice();
-      } else {
-        this.props.store.lastSeenProds = timeLastSeenProds.slice();
-        // console.log("object :>> ", timeLastSeenProds.slice());
-      }
     };
 
     chekFinishDelete = () => {
@@ -243,6 +247,31 @@ const MainScreen = observer(
     render() {
       return (
         <>
+          <div className="loader-page">
+            <div className="loader-page__container">
+              <Link className="logo logo_vl" to="/">
+                <span className="i_queen"></span>
+                <span className="i_of"></span>
+                <span className="i_bohemia"></span>
+                <span className="i_qd"></span>
+              </Link>
+
+              <div className="loader-page__loader">
+                <svg className="circle" viewBox="0 0 42 42">
+                  {/* <circle transform="rotate(-90)" r="30" cx="-37" cy="37" /> */}
+                  <circle
+                    // transform="rotate(0)"
+                    style={{ "stroke-dasharray": "85px 15px" }}
+                    r="15.91549430918954"
+                    cx="21"
+                    cy="21"
+                  />
+                </svg>
+                <div className="pie spinner"></div>
+              </div>
+              <div className="wrapper"></div>
+            </div>
+          </div>
           <MenuPoints
             store={this.props.store}
             chooseMenuPoint={this.chooseMenuPoint}
@@ -252,16 +281,6 @@ const MainScreen = observer(
             style={{ width: "0px", height: "0px" }}
           ></div>
           <Switch>
-            <Route
-              path="/login-dev"
-              exact
-              render={(routProps) => (
-                this.props.store.cleaningActiveFilters(),
-                $("html, body").animate({ scrollTop: 0 }, 500),
-                (document.title = "Queen of Bohemia"),
-                (<div>ddd</div>)
-              )}
-            />
             {this.itsSuperDev && !this.state.loginDev && (
               <Route
                 path="/"
@@ -653,6 +672,7 @@ const MainScreen = observer(
                   ? this.props.store.cleaningActiveFilters()
                   : null,
                 (this.props.store.pathS = "new"),
+                (this.props.store.sortInProd = "Сначала новые"),
                 this.props.store.filtration(),
                 (document.title = "Новинки - Queen of Bohemia"),
                 (
@@ -898,8 +918,30 @@ const MainScreen = observer(
                 a.click();
               }}
             />
-            <Route onEnter={() => window.location.reload()} />
+
+            <Route
+              path="/yandex-market.yml"
+              render={() => {
+                const a = document.createElement("a");
+                a.download = "yandex-market.yml";
+                a.href = "/yandex-market.yml";
+                // console.log("a", a);
+                a.click();
+              }}
+            />
+            <Route
+              path="/google-market.xml"
+              render={() => {
+                const a = document.createElement("a");
+                a.download = "google-market.xml";
+                a.href = "/google-market.xml";
+                // console.log("a", a);
+                a.click();
+              }}
+            />
+
             <Redirect from="*" to="/" />
+            <Route onEnter={() => window.location.reload()} />
           </Switch>
           {/* {(this.props.store.productPage && this.props.store.cardContainer) ||
               (!this.props.store.productPage && !this.props.store.cartPage && (
@@ -927,5 +969,5 @@ class LoginAuth extends Component {
     return <div className="log-auth"></div>;
   }
 }
-
-export { MainScreen };
+export default withRouter(MainScreen);
+// export { MainScreen };

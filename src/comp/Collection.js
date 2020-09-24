@@ -71,12 +71,13 @@ const Collection = observer(
                 dataColl[0].description !== undefined && (
                   <div className="container">
                     <div className="row">
-                      <div className="col col-3"></div>
-                      <div className="col col-8">
+                      <div className="col col-3 col-s-1"></div>
+                      <div className="col col-8 col-s-10">
                         <div className="collections__desc">
                           {dataColl[0].description}
                         </div>
                       </div>
+                      <div className="col col-s-1"></div>
                     </div>
                   </div>
                 )}

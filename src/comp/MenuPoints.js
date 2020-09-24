@@ -643,7 +643,7 @@ const MenuPoints = observer(
 
                 {this.phone}
 
-                <button
+                {/* <button
                   className={
                     "ic i_filter head_filter vis-s " +
                     (this.props.location.pathname.includes("catalog") ||
@@ -667,7 +667,7 @@ const MenuPoints = observer(
                       .querySelector(".sidebar-overlay")
                       .classList.add("active");
                   }}
-                ></button>
+                ></button> */}
 
                 <button
                   className="cart ic i_bag"
@@ -893,6 +893,7 @@ const MenuPoints = observer(
                       type="text"
                       className="search"
                       placeholder="Поиск"
+                      defaultValue={this.props.store.searchText}
                       onChange={(e) => {
                         this.searchValue = e.target.value;
                       }}
@@ -1112,6 +1113,9 @@ const MenuPoints = observer(
                   document
                     .querySelector(".catalog__bar")
                     .classList.remove("visible");
+                  document
+                    .querySelector(".i_filter")
+                    .classList.remove("active");
                 }
               }}
             ></div>

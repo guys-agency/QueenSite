@@ -1,6 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { Link, NavLink } from "react-router-dom";
+import { withRouter } from "react-router";
 const { Component } = React;
 
 const Help = observer(
@@ -1079,6 +1080,8 @@ const Help = observer(
         this.renderBlock = this.certificate;
       } else if (this.props.path === "bonus") {
         this.renderBlock = this.bonus;
+      } else {
+        this.props.history.replace("/");
       }
       return (
         <div className="help">
@@ -1201,4 +1204,4 @@ const Help = observer(
   }
 );
 
-export default Help;
+export default withRouter(Help);

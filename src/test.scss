@@ -37,6 +37,7 @@
 @import "./blocks/footer/footer.scss";
 @import "./blocks/gift/gift.scss";
 @import "./blocks/dev-login/dev-login.scss";
+@import "./blocks/loader-page/loader-page.scss";
 
 //HOME ELEMENTS
 @import "./blocks/carousel/carousel.scss";
@@ -303,28 +304,27 @@ code {
     border-radius: 50%;
     color: #fff;
     right: -5px;
-    @include max($s) {
-      font-family: Excentra Pro;
-      font-style: normal;
-      font-weight: bold;
-      font-size: 13px;
-      line-height: 13px;
-      /* identical to box height */
+    // @include max($s) {
+    //   font-family: Excentra Pro;
+    //   font-style: normal;
+    //   font-weight: bold;
+    //   font-size: 13px;
+    //   line-height: 13px;
+    //   /* identical to box height */
 
-      display: flex;
-      align-items: center;
-      text-align: center;
+    //   display: flex;
+    //   align-items: center;
+    //   text-align: center;
 
-      color: #000166;
+    //   color: #000166;
 
-      height: auto;
-      width: auto;
+    //   height: auto;
+    //   width: auto;
 
-      background: none;
+    //   background: none;
 
-      top: 13px;
-      left: 14px;
-    }
+    //   right: -5px;
+    // }
   }
 }
 

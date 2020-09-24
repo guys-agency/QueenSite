@@ -76,7 +76,7 @@
       box-shadow: $sh_main;
 
       .cart {
-        background: #ffffff;
+        background: $g_gradient_btn;
         border: 1px solid #fff;
         box-shadow: none;
       }
@@ -175,8 +175,8 @@
     }
     @include max($s) {
       .cart {
-        background: #ffffff;
-        border: 1px solid #fff;
+        background: $g_gradient_btn;
+        border: 1px solid #dab958;
         box-shadow: none;
       }
     }

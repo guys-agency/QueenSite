@@ -1,0 +1,68 @@
+.loader-page {
+  display: flex;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  width: 100vw;
+  height: 100vh;
+  background-color: #ffffff;
+  z-index: 9999;
+
+  .loader-page__container {
+    margin: auto;
+    .logo {
+      .i_queen {
+        font-size: 72px;
+      }
+      .i_of {
+        font-size: 72px;
+      }
+      .i_bohemia {
+        font-size: 72px;
+      }
+      .i_qd {
+        font-size: 72px;
+      }
+    }
+
+    .loader-page__loader {
+      margin-right: auto;
+      margin-left: auto;
+      width: 76px;
+      height: 76px;
+      border-radius: 50px;
+
+      overflow: visible;
+      position: relative;
+    }
+  }
+}
+
+.circle {
+  display: block;
+  z-index: -1;
+  //   transform: rotate(30deg);
+}
+// circle {
+//   fill: rgba(0, 0, 0, 0);
+//   stroke: #eee;
+//   stroke-width: 5;
+//   stroke-dasharray: 408px 408px;
+// }
+circle {
+  fill: rgba(0, 0, 0, 0);
+  stroke: #fadf90;
+  stroke-width: 3;
+
+  border-radius: 10px;
+}
+
+.pie {
+  //   position: absolute;
+  width: 74px;
+  height: 74px;
+  border-radius: 50px;
+  top: 0px;
+
+  background-color: red;
+}

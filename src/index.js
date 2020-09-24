@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import "semantic-ui-css/semantic.min.css";
 import "swiper/css/swiper.css";
 import "./test.scss";
-import { MainScreen } from "./App";
+import MainScreen from "./App";
 import * as serviceWorker from "./serviceWorker";
 import store from "./MobxStore";
 import { BrowserRouter } from "react-router-dom";

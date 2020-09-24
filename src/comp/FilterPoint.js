@@ -120,6 +120,7 @@ const FilterPoint = observer(
       const { data, name, objectName } = this.props;
       const { classStyle } = this.state;
       const { activeFilters } = this.props.store;
+      const activeFilt = [];
 
       let act = false;
       const filterPoints = [];
@@ -135,7 +136,9 @@ const FilterPoint = observer(
           } else {
             number = activeFilters[objectName].includes(filterPoint);
           }
-
+          if (number) {
+            activeFilt.push(filterPoint);
+          }
           filterPoints.push(
             <span
               className={!number ? "filter__point" : "filter__point active"}
@@ -163,9 +166,11 @@ const FilterPoint = observer(
                 this.setState({ classStyle: !classStyle });
               }}
             >
-              {name}
+              {name}{" "}
+              <p className="filter__active-filt">{activeFilt.join(", ")}</p>
+              <div className="ic i_drop"></div>
             </h3>
-            <div className="ic i_drop"></div>
+
             <div
               className={"filter__container " + (classStyle ? "active" : "")}
             >

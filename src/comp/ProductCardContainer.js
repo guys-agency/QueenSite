@@ -1,5 +1,6 @@
 import { observer } from "mobx-react";
 import React from "react";
+import { withRouter } from "react-router";
 import ProductCard from "./ProductCard";
 
 import Paginat from "./paginat";
@@ -8,8 +9,13 @@ const ProductCardContainer = observer(
   class ProductCardContainer extends React.Component {
     state = {
       ready: false,
-      sortLabel: "По умолчанию",
+      sortLabel:
+        this.props.store.sortInProd === ""
+          ? "По умолчанию"
+          : this.props.store.sortInProd,
     };
+
+    searchValue = "";
 
     testContainer = [];
 
@@ -49,7 +55,10 @@ const ProductCardContainer = observer(
       });
 
       e.target.classList.toggle("active");
+      this.props.store.startPag = 0;
+      this.props.store.stopPag = 42;
       this.props.store.sortInProd = e.target.textContent;
+      this.props.store.resetPage = true;
       this.props.store.filtration();
       this.setState({ sortLabel: e.target.textContent });
 
@@ -76,6 +85,31 @@ const ProductCardContainer = observer(
         <div className="col col-9 col-t-12">
           <div className="row row_inner">
             <div className="col col-12">
+              {this.props.location.pathname.includes("/search") && (
+                <div className="search-pos search-pos_mob">
+                  <form className="search-wrp">
+                    <input
+                      type="text"
+                      className="search"
+                      placeholder="Поиск"
+                      defaultValue={this.props.store.searchText}
+                      onChange={(e) => {
+                        this.searchValue = e.target.value;
+                      }}
+                    ></input>
+                    <button
+                      className="ic i_search"
+                      onClick={(e) => {
+                        this.props.store.searchText = this.searchValue;
+                        this.props.history.push("/search");
+
+                        e.preventDefault();
+                      }}
+                    ></button>
+                  </form>
+                </div>
+              )}
+
               {!window.location.pathname.includes("profile") && (
                 <div className="sort">
                   <div className="dropdown">
@@ -128,14 +162,25 @@ const ProductCardContainer = observer(
                     </div>
                   </div>
                   <button
-                    className="ic i_filter"
+                    className="ic i_filter btn"
                     onClick={(e) => {
                       e.target.classList.toggle("active");
                       document
                         .querySelector(".catalog__bar")
                         .classList.toggle("visible");
+
+                      if (document.body.clientWidth < 760) {
+                        document
+                          .querySelector(".sidebar-overlay")
+                          .classList.add("active");
+                        document
+                          .querySelector("body")
+                          .classList.add("no-scroll");
+                      }
                     }}
-                  ></button>
+                  >
+                    <p>Фильтр</p>
+                  </button>
                 </div>
               )}
             </div>
@@ -154,4 +199,4 @@ const ProductCardContainer = observer(
   }
 );
 
-export default ProductCardContainer;
+export default withRouter(ProductCardContainer);

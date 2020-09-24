@@ -14,6 +14,7 @@ import { Link, NavLink } from "react-router-dom";
 import Breadcrumbs from "./breadcrumbs";
 import $ from "jquery";
 import Helmet from "react-helmet";
+import { withRouter } from "react-router";
 
 const { Component } = React;
 const historyAll = createBrowserHistory();
@@ -496,7 +497,12 @@ const CardView = observer(
                         ) : (
                           <div className={"product__price"}>
                             {data.regular_price.toLocaleString()} ₽{" "}
-                            <div className="product__bonus">
+                            <div
+                              className="product__bonus"
+                              onClick={() => {
+                                this.props.history.push("/help/bonus");
+                              }}
+                            >
                               <p className="i_coin"></p>
                               <p>
                                 +{" "}
@@ -1009,4 +1015,4 @@ const CardView = observer(
   }
 );
 
-export default CardView;
+export default withRouter(CardView);

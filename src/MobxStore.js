@@ -93,6 +93,8 @@ class Store {
   coupDisc = 0;
   certDisc = 0;
 
+  resetPage = false;
+
   productInCart = {};
   productInCartList =
     localStorage.get("productInCart") === null
@@ -896,6 +898,7 @@ class Store {
     //   //     console.log("err", err);
     //   //   });
     // } else {
+
     fetch(SERVER_URL, {
       method: "POST",
       headers: {
@@ -908,6 +911,7 @@ class Store {
         return res.json();
       })
       .then((data) => {
+        console.log("data", data);
         const TEnd = new Date();
         // console.log("TTTTTT", TEnd - t);
         //продукты
@@ -991,6 +995,9 @@ class Store {
               return;
             }
           }
+          //  else {
+          //   window.location.replace("/");
+          // }
         } else {
           data[0].product.forEach((element) => {
             testContainer.push(
@@ -1209,6 +1216,7 @@ class Store {
       })
       .catch((err) => {
         console.log("err", err);
+        window.location.replace("/");
       });
 
     // fetch(SERVER_URL + "/sort-names", {
@@ -1360,8 +1368,11 @@ class Store {
           ) {
             this.activeFilters[elemSp[0]] = elemSp[1];
           } else if (elemSp[0] === "page") {
-            this.startPag = +elemSp[1] * 42;
-            this.stopPag = (+elemSp[1] + 1) * 42;
+            if (!this.resetPage) {
+              this.startPag = +elemSp[1] * 42;
+              this.stopPag = (+elemSp[1] + 1) * 42;
+            }
+            this.resetPage = false;
           } else {
             this.activeFilters[elemSp[0]] = elemSp[1].split(",");
             this.activeFilters.choosePoint.push(elemSp[0]);
@@ -1451,7 +1462,7 @@ class Store {
       // console.log("onePointFilter :>> ", onePointFilter);
     }
 
-    if (this.activeFilters.maxPrice | this.activeFilters.minPrice) {
+    if (this.activeFilters.maxPrice || this.activeFilters.minPrice) {
       const price = { price: {} };
       if (this.activeFilters.maxPrice) {
         price.price["$lte"] = Number(this.activeFilters.maxPrice);
