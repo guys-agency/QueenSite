@@ -945,105 +945,118 @@ const CartPage = observer(
                       <Fade distance="50px" duration={500}>
                         <>
                           <div className="cart-page__delivery-details">
-                            <form className="row" action="">
-                              <div className="col col-6 col-s-12">
-                                <div className="input-field">
-                                  <label className="required" htmlFor="address">
-                                    Улица
-                                  </label>
-                                  <input
-                                    id="address"
-                                    type="text"
-                                    value={adress}
-                                    onFocus={(e) => {
-                                      $(e.target)
-                                        .parent()
-                                        .find("label")
-                                        .addClass("active");
-                                    }}
-                                    onBlur={(e) => {
-                                      if (e.target.value === "") {
-                                        $(e.target)
-                                          .parent()
-                                          .find("label")
-                                          .removeClass("active");
-                                      }
-                                    }}
-                                    onInput={(e) => {
-                                      this.setState({
-                                        adress: e.target.value,
-                                      });
-                                    }}
-                                    // onChange={(e) => {
-                                    //   this.setState({ adress: e.target.value });
-                                    // }}
-                                  />
-                                </div>
-                              </div>
-
-                              <div className="col col-3 col-s-6">
-                                <div className="input-field">
-                                  <label className="required" htmlFor="flat">
-                                    Дом
-                                  </label>
-                                  <input
-                                    id="flat"
-                                    type="text"
-                                    value={house}
-                                    onFocus={(e) => {
-                                      $(e.target)
-                                        .parent()
-                                        .find("label")
-                                        .addClass("active");
-                                    }}
-                                    onBlur={(e) => {
-                                      if (e.target.value === "") {
-                                        $(e.target)
-                                          .parent()
-                                          .find("label")
-                                          .removeClass("active");
-                                      }
-                                    }}
-                                    onInput={(e) => {
-                                      this.setState({
-                                        house: e.target.value,
-                                      });
-                                    }}
-                                  />
-                                </div>
-                              </div>
-
-                              <div className="col col-3 col-s-6">
-                                <div className="input-field">
-                                  <label htmlFor="porch">Кв/Офис</label>
-                                  <input
-                                    id="porch"
-                                    type="text"
-                                    value={flat}
-                                    onFocus={(e) => {
-                                      $(e.target)
-                                        .parent()
-                                        .find("label")
-                                        .addClass("active");
-                                    }}
-                                    onBlur={(e) => {
-                                      if (e.target.value === "") {
-                                        $(e.target)
-                                          .parent()
-                                          .find("label")
-                                          .removeClass("active");
-                                      }
-                                    }}
-                                    onInput={(e) => {
-                                      this.setState({ flat: e.target.value });
-                                    }}
-                                  />
-                                </div>
-                              </div>
-                            </form>
-                            <br />
-                            <br />
                             <div className="cart__list cart-page__list ">
+                              <div className="cart-page__list-elem cart-page__list-elem_adress">
+                                <div className="cart-page__store-info">
+                                  <p className="cart-page__store-name">
+                                    Адрес доставки
+                                  </p>
+                                </div>
+                                <form className="row" action="">
+                                  <div className="col col-6 col-s-12">
+                                    <div className="input-field">
+                                      <label
+                                        className="required"
+                                        htmlFor="address"
+                                      >
+                                        Улица
+                                      </label>
+                                      <input
+                                        id="address"
+                                        type="text"
+                                        value={adress}
+                                        onFocus={(e) => {
+                                          $(e.target)
+                                            .parent()
+                                            .find("label")
+                                            .addClass("active");
+                                        }}
+                                        onBlur={(e) => {
+                                          if (e.target.value === "") {
+                                            $(e.target)
+                                              .parent()
+                                              .find("label")
+                                              .removeClass("active");
+                                          }
+                                        }}
+                                        onInput={(e) => {
+                                          this.setState({
+                                            adress: e.target.value,
+                                          });
+                                        }}
+                                        // onChange={(e) => {
+                                        //   this.setState({ adress: e.target.value });
+                                        // }}
+                                      />
+                                    </div>
+                                  </div>
+
+                                  <div className="col col-3 col-s-6">
+                                    <div className="input-field">
+                                      <label
+                                        className="required"
+                                        htmlFor="flat"
+                                      >
+                                        Дом
+                                      </label>
+                                      <input
+                                        id="flat"
+                                        type="text"
+                                        value={house}
+                                        onFocus={(e) => {
+                                          $(e.target)
+                                            .parent()
+                                            .find("label")
+                                            .addClass("active");
+                                        }}
+                                        onBlur={(e) => {
+                                          if (e.target.value === "") {
+                                            $(e.target)
+                                              .parent()
+                                              .find("label")
+                                              .removeClass("active");
+                                          }
+                                        }}
+                                        onInput={(e) => {
+                                          this.setState({
+                                            house: e.target.value,
+                                          });
+                                        }}
+                                      />
+                                    </div>
+                                  </div>
+
+                                  <div className="col col-3 col-s-6">
+                                    <div className="input-field">
+                                      <label htmlFor="porch">Кв/Офис</label>
+                                      <input
+                                        id="porch"
+                                        type="text"
+                                        value={flat}
+                                        onFocus={(e) => {
+                                          $(e.target)
+                                            .parent()
+                                            .find("label")
+                                            .addClass("active");
+                                        }}
+                                        onBlur={(e) => {
+                                          if (e.target.value === "") {
+                                            $(e.target)
+                                              .parent()
+                                              .find("label")
+                                              .removeClass("active");
+                                          }
+                                        }}
+                                        onInput={(e) => {
+                                          this.setState({
+                                            flat: e.target.value,
+                                          });
+                                        }}
+                                      />
+                                    </div>
+                                  </div>
+                                </form>
+                              </div>
                               {localStorage.get("city").geoId === 213 && (
                                 <div
                                   className="cart-page__list-elem cart-page__list-elem_delivery"

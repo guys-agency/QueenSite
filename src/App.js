@@ -24,6 +24,7 @@ import Actions from "./comp/Actions";
 import Footer from "./comp/Footer";
 import Shops from "./comp/Shops";
 import ShopsMap from "./comp/ShopsMap";
+import StartLoader from "./comp/Loader";
 import { Link } from "react-router-dom";
 
 import Breadcrumbs from "./comp/breadcrumbs";
@@ -224,6 +225,7 @@ const MainScreen = observer(
       }
     };
     itsSuperDev = process.env.REACT_APP_TYPE === "superDev";
+    itsDev = process.env.REACT_APP_TYPE === "dev";
 
     checkSuperDevLogin = (e) => {
       e.preventDefault();
@@ -247,31 +249,7 @@ const MainScreen = observer(
     render() {
       return (
         <>
-          <div className="loader-page">
-            <div className="loader-page__container">
-              <Link className="logo logo_vl" to="/">
-                <span className="i_queen"></span>
-                <span className="i_of"></span>
-                <span className="i_bohemia"></span>
-                <span className="i_qd"></span>
-              </Link>
-
-              <div className="loader-page__loader">
-                <svg className="circle" viewBox="0 0 42 42">
-                  {/* <circle transform="rotate(-90)" r="30" cx="-37" cy="37" /> */}
-                  <circle
-                    // transform="rotate(0)"
-                    style={{ "stroke-dasharray": "85px 15px" }}
-                    r="15.91549430918954"
-                    cx="21"
-                    cy="21"
-                  />
-                </svg>
-                <div className="pie spinner"></div>
-              </div>
-              <div className="wrapper"></div>
-            </div>
-          </div>
+          {!this.itsDev && <StartLoader store={this.props.store} />}
           <MenuPoints
             store={this.props.store}
             chooseMenuPoint={this.chooseMenuPoint}
@@ -280,6 +258,7 @@ const MainScreen = observer(
             id="yaDeliveryWidget"
             style={{ width: "0px", height: "0px" }}
           ></div>
+
           <Switch>
             {this.itsSuperDev && !this.state.loginDev && (
               <Route

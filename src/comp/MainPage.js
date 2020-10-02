@@ -141,7 +141,19 @@ const MainPage = observer(
       const saleCont = [];
       const ideasCon = [];
       const brandCon = [];
+
       if (bannersData.main !== undefined) {
+        mainBanners.push(
+          <Link
+            className="head-banner"
+            to="catalog/podarki/uchitelyam"
+            style={{
+              backgroundImage: `url(/image/banners/${
+                typeDevice ? "dayTeaMobile" : "dayTea"
+              }.jpg`,
+            }}
+          ></Link>
+        );
         bannersData.main.forEach((elem) => {
           mainBanners.push(
             <Link
@@ -637,6 +649,30 @@ const MainPage = observer(
               </div>
               <div className="gifts row gifts_price">
                 <Swiper {...giftCar}>
+                  <div className="col col-4 col-t-6 col-s-9">
+                    <Link
+                      to="/catalog/podarki/uchitelyam"
+                      className="banner banner_overlay"
+                      style={{
+                        backgroundImage:
+                          "url(" + "/image/gifts/dayTeaMainPage.jpg" + ")",
+                      }}
+                    >
+                      <div className="banner__desc">Для учителей</div>
+                    </Link>
+                  </div>
+                  <div className="col col-4 col-t-6 col-s-9">
+                    <Link
+                      to="catalog/podarki/sertificats"
+                      className="banner"
+                      style={{
+                        backgroundImage:
+                          "url(" + "/image/gifts/certMainPage.png" + ")",
+                      }}
+                    >
+                      <div className="banner__desc">Сертификаты</div>
+                    </Link>
+                  </div>
                   <div className="col col-4 col-t-6 col-s-9">
                     <Link
                       to="/catalog/podarki/podarki_do_500_russian_ruble"

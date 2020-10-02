@@ -127,6 +127,14 @@
           margin-bottom: 40px;
         }
       }
+
+      .col-s-6 {
+        .input-field {
+          @include max($s) {
+            margin-bottom: 10px;
+          }
+        }
+      }
     }
     .header__drop_city {
       @include max($s) {
@@ -343,6 +351,23 @@
     padding: 15px;
     cursor: pointer;
     transition: all linear 0.1s;
+
+    &_adress {
+      flex-direction: column;
+      background: #ffffff;
+
+      box-shadow: 0px 4px 16px rgba(0, 9, 77, 0.05);
+      border-radius: 10px;
+      border: none;
+      margin-bottom: 40px;
+
+      .cart-page__store-info {
+        margin-bottom: 15px;
+        .cart-page__store-name {
+          margin-bottom: 40px;
+        }
+      }
+    }
 
     &_not-c {
       cursor: auto;

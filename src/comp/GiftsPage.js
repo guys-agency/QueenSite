@@ -34,6 +34,7 @@ const GiftsPage = observer(
       const ideasCon = [];
 
       const priceCont = [];
+      const mainBanner = [];
       const forTypeData = {
         muzhchinam: "dlya_muzhchin",
         vlyublennym: "dlya_vlyublennyh",
@@ -47,6 +48,28 @@ const GiftsPage = observer(
         const occasion = [];
 
         const lastCont = [];
+
+        mainBanner.push(
+          <Link
+            className="head-banner"
+            to="catalog/podarki/uchitelyam"
+            style={{
+              backgroundImage: `url(/image/banners/${
+                typeDevice ? "dayTeaMobile" : "dayTea"
+              }.jpg`,
+            }}
+          ></Link>
+        );
+        mainBanner.push(
+          <Link
+            className="head-banner"
+            to="catalog/podarki/sertificats"
+            style={{
+              backgroundImage: `url(/image/banners/${bannersData["podarki_sert"][0]["image-desc-large"]})`,
+            }}
+          ></Link>
+        );
+
         bannersData.podarki_occasion.forEach((o, i) => {
           if (i > 2) {
             lastCont.push(
@@ -141,7 +164,7 @@ const GiftsPage = observer(
           forType.push(
             <div className="col col-4 col-t-6  col-s-9" key={d.id}>
               <Link
-                to={`/catalog/podarki/${forTypeData[d.slug]}`}
+                to={`/catalog/podarki/${d.slug}`}
                 className="banner banner_overlay"
                 style={{
                   backgroundImage:
@@ -206,19 +229,38 @@ const GiftsPage = observer(
           },
         },
       };
+      const headCar = {
+        slidesPerView: 1,
+        effect: "fade",
+        speed: 500,
+        draggable: true,
+        autoplay: {
+          delay: 5000,
+        },
+        pagination: {
+          el: ".swiper-pagination",
+          type: "bullets",
+          clickable: true,
+        },
+        navigation: {
+          nextEl: ".swiper-button-next",
+          prevEl: ".swiper-button-prev",
+        },
+      };
 
       return (
         forType.length !== 0 && (
           <div className="main-page">
             <div className="head head_big ">
               <div className="head-car">
-                <Link
+                <Swiper {...headCar}>{mainBanner}</Swiper>
+                {/* <Link
                   className="head-banner"
                   to="catalog/podarki/sertificats"
                   style={{
                     backgroundImage: `url(/image/banners/${bannersData["podarki_sert"][0]["image-desc-large"]})`,
                   }}
-                ></Link>
+                ></Link> */}
               </div>
             </div>
 

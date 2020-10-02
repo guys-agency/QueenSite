@@ -101,6 +101,12 @@
         // transform: translateX(0px);
       }
     }
+    &.city {
+      display: flex;
+      &::after {
+        display: none;
+      }
+    }
     &::after {
       @include icon;
       content: none;
@@ -193,4 +199,14 @@
       margin-left: 10px;
     }
   }
+}
+
+.city-check {
+  display: flex;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 0px;
+  left: 0px;
+  z-index: 120;
 }

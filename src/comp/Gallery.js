@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Swiper from "react-id-swiper";
 import PinchZoom from "pinch-zoom-js";
+import VideoPlayer from "react-video-js-player";
+import $ from "jquery";
 
 const Gallery = (props) => {
   const [gallerySwiper, getGallerySwiper] = useState(null);
@@ -57,8 +59,61 @@ const Gallery = (props) => {
     }
   }, [props.path, typeDevice]);
 
+  let player = {};
+
+  const onPlayerReady = (player1) => {
+    console.log("Player is ready: ", player1);
+    player = player1;
+    player.muted(true);
+  };
+
+  const onVideoPlay = (duration) => {
+    console.log("Video played at: ", duration);
+  };
+
+  const onVideoPause = (duration) => {
+    console.log("Video paused at: ", duration);
+  };
+
+  const onVideoTimeUpdate = (duration) => {
+    console.log("Time updated: ", duration);
+  };
+
+  const onVideoSeeking = (duration) => {
+    console.log("Video seeking: ", duration);
+  };
+
+  const onVideoSeeked = (from, to) => {
+    console.log(`Video seeked from ${from} to ${to}`);
+  };
+
+  const onVideoEnd = () => {
+    // player.reset();
+    console.log("Video ended");
+  };
+
   const main = [];
   const small = [];
+  main.push(
+    <div className="main-img" key={"12"}>
+      <VideoPlayer
+        controls={true}
+        src="/image/videos/IMG_6621.mov"
+        poster="/image/items/1000cert.png"
+        // width="100%"
+        // height="100%"
+        onReady={onPlayerReady}
+        onPlay={onVideoPlay}
+        onPause={onVideoPause}
+        onTimeUpdate={onVideoTimeUpdate}
+        onSeeking={onVideoSeeking}
+        onSeeked={onVideoSeeked}
+        onEnd={onVideoEnd}
+        className="videoQB"
+        hideControls={["volume", "timer", "fullscreen"]}
+      />
+    </div>
+  );
   props.path.forEach((p, i) => {
     main.push(
       <div className="main-img" key={i}>

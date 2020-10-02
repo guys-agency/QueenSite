@@ -12,6 +12,7 @@ import { SERVER_URL } from "../constants";
 import ChangeSidebar from "./ChangeProfileData";
 import CityCh from "./CityCh";
 import api from "./api";
+import localStorage from "mobx-localstorage";
 
 const { Component } = React;
 
@@ -290,6 +291,19 @@ const MenuPoints = observer(
             $(".menu-point_gifts").off("click", self.toggleDrop);
             $(".menu-point_gifts").on("click", self.closeNav);
             $(".menu_sub").off("click", self.toggleDrop);
+            if (
+              document.body.clientWidth < 760 &&
+              localStorage.get("city") !== null &&
+              localStorage.get("city") !== undefined &&
+              document.querySelector(".sidebar-overlay") !== null &&
+              localStorage.get("city").sourse === "Y"
+            ) {
+              document
+                .querySelector(".sidebar-overlay")
+                .classList.add("active");
+              document.querySelector(".sidebar-overlay").classList.add("city");
+              document.querySelector("body").classList.add("no-scroll");
+            }
           }
         })
         .resize();
@@ -312,7 +326,44 @@ const MenuPoints = observer(
       }
     }
 
+    loaderIncPlus = () => {
+      const intLoader = setInterval(() => {
+        console.log(
+          "this.props.store.loaderPercent :>> ",
+          this.props.store.loaderPercent
+        );
+        if (this.props.store.loaderPercent <= this.props.store.loaderInc + 1) {
+          this.props.store.loaderPercent += 2;
+        }
+        if (this.props.store.loaderPercent >= 100) {
+          $(".loader-page").addClass("deact");
+          this.props.store.loaderPercent = 0;
+          // $(".loader-page").remove();
+          // $("body").addClass("no-scroll");
+          // $("body").removeClass("no-scroll");
+          clearInterval(intLoader);
+        }
+      }, 50);
+
+      // if (this.props.store.loaderPercent <= this.props.store.loaderInc) {
+      //   this.props.store.loaderPercent += 1;
+      //   setTimeout(() => {
+      //     this.loaderIncPlus();
+      //   }, this.props.store.loaderPercent * 500);
+      // }
+    };
+
     createMenu = () => {
+      this.props.store.loaderInc = 50;
+      if (
+        window.location.pathname.includes("/cart") ||
+        window.location.pathname.includes("/finish/") ||
+        window.location.pathname.includes("/product/")
+      ) {
+        this.props.store.loaderPercent = 100;
+      }
+
+      this.loaderIncPlus();
       fetch(SERVER_URL + "/categories", {
         method: "GET",
         headers: {
@@ -353,19 +404,41 @@ const MenuPoints = observer(
                 return 1;
               }
             });
+            const firstName = [
+              "Учителям",
+              "Влюбленным",
+              "Женщинам",
+              "Мужчинам",
+              "Родителям",
+            ];
+            const first = [];
+
             elem.childs.forEach((child, iCh) => {
               this.props.store.menuAccor[child.slug] = child.name;
               //убрать tr, так как будут поля с транскрипцией в бд
-              childsPoints.push(
-                <li key={child.name}>
-                  <NavLink
-                    to={`/catalog/${elem.slug}/${child.slug}`}
-                    onClick={this.closeNav}
-                  >
-                    {child.name}
-                  </NavLink>
-                </li>
-              );
+              if (elem.name === "Подарки" && firstName.includes(child.name)) {
+                first.push(
+                  <li key={child.name}>
+                    <NavLink
+                      to={`/catalog/${elem.slug}/${child.slug}`}
+                      onClick={this.closeNav}
+                    >
+                      {child.name}
+                    </NavLink>
+                  </li>
+                );
+              } else {
+                childsPoints.push(
+                  <li key={child.name}>
+                    <NavLink
+                      to={`/catalog/${elem.slug}/${child.slug}`}
+                      onClick={this.closeNav}
+                    >
+                      {child.name}
+                    </NavLink>
+                  </li>
+                );
+              }
             });
 
             if (elem.name === "Сервировка стола") {
@@ -432,6 +505,7 @@ const MenuPoints = observer(
               let sum = 0;
               let key = 0;
               let timeCont = [];
+
               // childsPoints.sort((prev, next) => {
               //   console.log("object :>> ", prev, next);
               //   if (prev.name.includes(" до ") && next.name.includes(" до ")) {
@@ -445,6 +519,13 @@ const MenuPoints = observer(
               //     return 1;
               //   }
               // });
+              if (first.length) {
+                this.gifts.push(
+                  <div className="column" key={key}>
+                    <ul>{first}</ul>
+                  </div>
+                );
+              }
               childsPoints.forEach((elem) => {
                 if (ind < 4 && sum < childsPoints.length - 1) {
                   timeCont.push(elem);
@@ -481,6 +562,8 @@ const MenuPoints = observer(
               </div>
             );
           }
+          this.props.store.loaderInc = 100;
+          // this.loaderIncPlus();
           this.setState({ ready: true });
         })
         .catch((err) => {
@@ -925,28 +1008,7 @@ const MenuPoints = observer(
                   >
                     <span className="vis-s">Избранное</span>
                   </button>
-                  <button
-                    className="cart ic i_bag"
-                    onClick={() => {
-                      document
-                        .querySelector(".sidebar-overlay")
-                        .classList.add("active");
 
-                      document.querySelector("body").classList.add("no-scroll");
-
-                      this.setState({ popCart: true });
-                    }}
-                  >
-                    {this.props.store.cartCount !== 0 && (
-                      <span className="i_bag__counter">
-                        {this.props.store.cartCount > 9
-                          ? 9
-                          : this.props.store.cartCount === 0
-                          ? ""
-                          : this.props.store.cartCount}
-                      </span>
-                    )}
-                  </button>
                   <div className="tooltip tooltip_cart">
                     <div className="tooltip__content">
                       <span className="ic i_plus"></span>
@@ -974,6 +1036,28 @@ const MenuPoints = observer(
                     }}
                   >
                     <span className="vis-s">Войти</span>
+                  </button>
+                  <button
+                    className="cart ic i_bag"
+                    onClick={() => {
+                      document
+                        .querySelector(".sidebar-overlay")
+                        .classList.add("active");
+
+                      document.querySelector("body").classList.add("no-scroll");
+
+                      this.setState({ popCart: true });
+                    }}
+                  >
+                    {this.props.store.cartCount !== 0 && (
+                      <span className="i_bag__counter">
+                        {this.props.store.cartCount > 9
+                          ? 9
+                          : this.props.store.cartCount === 0
+                          ? ""
+                          : this.props.store.cartCount}
+                      </span>
+                    )}
                   </button>
                 </div>
                 <div className="navigation__service">
@@ -1100,6 +1184,7 @@ const MenuPoints = observer(
                   popCart: false,
                   popLike: false,
                 });
+
                 this.props.store.sideLogin = false;
                 this.props.store.sideAsk = false;
                 this.props.store.sideGift = false;
@@ -1119,22 +1204,185 @@ const MenuPoints = observer(
                 }
               }}
             ></div>
-            {!this.props.store.auth && (
-              <div
-                className="discond-fix"
-                onClick={() => {
-                  document
-                    .querySelector(".sidebar-overlay")
-                    .classList.add("active");
 
-                  document.querySelector("body").classList.add("no-scroll");
+            {document.body.clientWidth < 760 &&
+              localStorage.get("city") !== null &&
+              localStorage.get("city") !== undefined &&
+              localStorage.get("city").sourse === "Y" && (
+                <div
+                  className="city-check"
+                  onClick={(e) => {
+                    if (e.target.classList.contains("city-check")) {
+                      const cityData = localStorage.get("city");
+                      cityData.sourse = "U";
+                      document
+                        .querySelector(".sidebar-overlay")
+                        .classList.remove("active");
+                      document
+                        .querySelector(".sidebar-overlay")
+                        .classList.remove("city");
+                      document
+                        .querySelector("body")
+                        .classList.remove("no-scroll");
+                      localStorage.setItem("city", cityData);
+                    }
+                  }}
+                >
+                  <div className="header__drop header__drop_city-check">
+                    <p>
+                      {" "}
+                      Регион доставки:
+                      <b> {this.props.store.city} ?</b>
+                    </p>
+                    <div>
+                      <button
+                        className="btn"
+                        onClick={() => {
+                          $(".header__drop_city-check").addClass("deactiv");
+                          $(".header__drop_city-overlay").addClass("vis");
+                        }}
+                      >
+                        Выбрать другой
+                      </button>
+                      <button
+                        className=" btn_yellow btn"
+                        onClick={() => {
+                          const cityData = localStorage.get("city");
+                          cityData.sourse = "U";
+                          document
+                            .querySelector(".sidebar-overlay")
+                            .classList.remove("active");
+                          document
+                            .querySelector(".sidebar-overlay")
+                            .classList.remove("city");
+                          document
+                            .querySelector("body")
+                            .classList.remove("no-scroll");
+                          localStorage.setItem("city", cityData);
+                        }}
+                      >
+                        Да
+                      </button>
+                    </div>
+                  </div>
+                  <form className="header__drop header__drop_city header__drop_city-overlay">
+                    <div className="input-field">
+                      <label className="active" htmlFor="citySearch">
+                        Населенный пункт
+                      </label>
+                      <input
+                        id="citySearch"
+                        placeholder="Поиск"
+                        type="text"
+                        onInput={(e) => {
+                          if (e.target.value.length >= 3) {
+                            const renderCities = [];
+                            api
+                              .getCity(e.target.value)
+                              .then((c) => {
+                                c.forEach((one) => {
+                                  if (one.addressComponents.length < 6) {
+                                    renderCities.push(
+                                      <li key={one.geoId}>
+                                        <button
+                                          type="submit"
+                                          onClick={(e) => {
+                                            e.preventDefault();
+                                            $(".header__drop").removeClass(
+                                              "visible"
+                                            );
+                                            document
+                                              .querySelector(".sidebar-overlay")
+                                              .classList.remove("active");
+                                            document
+                                              .querySelector(".sidebar-overlay")
+                                              .classList.remove("city");
+                                            document
+                                              .querySelector("body")
+                                              .classList.remove("no-scroll");
+                                            localStorage.set("city", {
+                                              name:
+                                                one.addressComponents[
+                                                  one.addressComponents.length -
+                                                    1
+                                                ].name,
+                                              geoId: one.geoId,
+                                              region:
+                                                one.addressComponents[2].name,
+                                              sourse: "U",
+                                            });
+                                          }}
+                                        >
+                                          {one.addressComponents[
+                                            one.addressComponents.length - 2
+                                          ].name +
+                                            ", " +
+                                            one.addressComponents[
+                                              one.addressComponents.length - 1
+                                            ].name}
+                                        </button>
+                                      </li>
+                                    );
+                                  }
+                                });
+                                this.setState({ cities: renderCities });
+                              })
+                              .catch((err) => {
+                                console.log("err :>> ", err);
+                              });
+                          }
+                        }}
+                        onFocus={(e) => {
+                          $(e.target).parent().find("label").addClass("active");
+                        }}
+                        onBlur={(e) => {
+                          if (e.target.value === "") {
+                            // $(e.target).parent().find('label').removeClass('active');
+                          }
+                        }}
+                      />
+                    </div>
+                    <ul>{this.state.cities}</ul>
+                  </form>
+                </div>
+              )}
 
-                  this.props.store.sideLogin = true;
-                }}
-              >
-                <img src="/image/button/icon/gift.svg"></img>
-              </div>
-            )}
+            <div className="bottom-fix">
+              {!this.props.store.auth &&
+                !window.location.pathname.includes("/cart") &&
+                !window.location.pathname.includes("/finish/") && (
+                  <div
+                    className="discond-fix"
+                    onClick={() => {
+                      document
+                        .querySelector(".sidebar-overlay")
+                        .classList.add("active");
+
+                      document.querySelector("body").classList.add("no-scroll");
+
+                      this.props.store.sideLogin = true;
+                    }}
+                  >
+                    <img src="/image/button/icon/gift.svg"></img>
+                  </div>
+                )}
+
+              {(localStorage.getItem("cookie-close") === undefined ||
+                localStorage.getItem("cookie-close") === null) && (
+                <div className="cookie-message">
+                  <p>Наш сайт использует cookie</p>
+                  <button
+                    className="ic i_close"
+                    onClick={() => {
+                      $(".bottom-fix").addClass("hide");
+                      setTimeout(() => {
+                        localStorage.setItem("cookie-close", "true");
+                      }, 1000);
+                    }}
+                  ></button>
+                </div>
+              )}
+            </div>
           </>
         )
       );
@@ -1144,6 +1392,14 @@ const MenuPoints = observer(
       if (!Object.keys(this.props.store.bannersData).length) {
         this.props.store.getCollections();
       }
+      //   if (
+      //     document.body.clientWidth < 760 &&
+      //     (localStorage.get("city") !== null &&
+      //       localStorage.get("city") !== undefined) &&
+      //     localStorage.get("city").sourse === "Y"
+      //   ) {
+
+      //   }
     }
   }
 );

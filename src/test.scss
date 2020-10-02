@@ -38,6 +38,7 @@
 @import "./blocks/gift/gift.scss";
 @import "./blocks/dev-login/dev-login.scss";
 @import "./blocks/loader-page/loader-page.scss";
+@import "./blocks/bottom-fix/bottom-fix.scss";
 
 //HOME ELEMENTS
 @import "./blocks/carousel/carousel.scss";
@@ -252,8 +253,28 @@ code {
     // }
     margin-right: auto;
     margin-left: auto;
-    &:nth-child(3) {
+    &:last-child {
       margin-right: 0px;
+    }
+    &.banner_overlay {
+      &::after {
+        content: "";
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        left: 0;
+        top: 0;
+        background: linear-gradient(
+          180deg,
+          rgba(0, 0, 0, 0) 0%,
+          rgba(0, 0, 0, 0.4) 100%
+        );
+        border-radius: 5px;
+      }
+      .banner__desc {
+        color: #fff;
+        z-index: 1;
+      }
     }
   }
 }
@@ -370,6 +391,49 @@ code {
     display: flex;
     flex-wrap: wrap;
     margin-bottom: 15px;
+  }
+}
+
+.videoQB.video-js {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  background-color: #fff;
+  .vjs-poster {
+    background-color: #fff;
+  }
+  .vjs-tech {
+    position: static;
+    height: auto;
+    width: 100%;
+    margin-top: auto;
+    margin-bottom: auto;
+  }
+
+  .vjs-control-bar {
+    background-color: transparent;
+    .vjs-progress-control {
+      background-color: #fff;
+      border-radius: 20px;
+      height: 12px;
+      margin-top: auto;
+      margin-bottom: auto;
+      margin-right: 16px;
+      .vjs-play-progress {
+        background-color: #dab958;
+      }
+      .vjs-load-progress {
+        div {
+          background-color: #f7f6f7;
+        }
+      }
+    }
+    .vjs-playback-rate {
+      display: none;
+    }
   }
 }
 

@@ -77,6 +77,7 @@
   &_scroll {
     background: #fff;
     box-shadow: $sh_bottom;
+    z-index: 99;
 
     .cart {
       background: $g_gradient_btn;

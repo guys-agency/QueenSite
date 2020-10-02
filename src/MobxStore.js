@@ -137,6 +137,9 @@ class Store {
       ? false
       : true;
 
+  loaderPercent = 0;
+  loaderInc = 0;
+
   // seenProdAdd = autorun(() => {
   //   localStorage.set("seenProd", this.seenProd);
   // });
@@ -149,7 +152,8 @@ class Store {
       this.activeCats = this.fullCats;
     }
   });
-  cityCheck = autorun(() => {
+
+  getUserInfo = autorun(() => {
     if (this.auth) {
       api
         .getUserData()
@@ -1839,6 +1843,7 @@ decorate(Store, {
   certInCart: observable,
   coupDisc: observable,
   certDisc: observable,
+  loaderPercent: observable,
 });
 
 const store = new Store();

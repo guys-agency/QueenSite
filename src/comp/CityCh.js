@@ -17,6 +17,45 @@ const CityCh = observer(
           <button className="link dotted header__btn header__btn-city">
             {this.props.store.city} <span className="ic i_drop"></span>
           </button>
+          {localStorage.get("city") !== null &&
+            localStorage.get("city") !== undefined &&
+            localStorage.get("city").sourse === "Y" && (
+              <div className="header__drop header__drop_city-check">
+                <p>
+                  {" "}
+                  Регион доставки:
+                  <b> {this.props.store.city} ?</b>
+                </p>
+                <div>
+                  <button
+                    className="btn"
+                    onClick={() => {
+                      $(".menu_mega").removeClass("visible");
+                      $(".menu_sub").removeClass("visible");
+                      $(".menu-point").removeClass("active");
+                      $(".header__drop").removeClass("visible");
+                      $(".header__btn").removeClass("active");
+
+                      $(".header__drop_city-check").addClass("deactiv");
+                      $(".header__drop_city").addClass("visible");
+                      $(".header__btn-city").addClass("active");
+                    }}
+                  >
+                    Выбрать другой
+                  </button>
+                  <button
+                    className=" btn_yellow btn"
+                    onClick={() => {
+                      const cityData = localStorage.get("city");
+                      cityData.sourse = "U";
+                      localStorage.setItem("city", cityData);
+                    }}
+                  >
+                    Да
+                  </button>
+                </div>
+              </div>
+            )}
           <form className="header__drop header__drop_city">
             <button
               className="btn btn_wide vis-s"

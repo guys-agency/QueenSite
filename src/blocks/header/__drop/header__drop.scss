@@ -76,6 +76,21 @@
 
   &_city {
     padding-top: 40px;
+
+    &-overlay {
+      display: none;
+      position: static;
+      margin: auto;
+      width: 330px;
+      height: auto;
+
+      &.vis {
+        display: block !important;
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0px);
+      }
+    }
     .vis-s {
       margin-bottom: 50px;
     }
@@ -97,6 +112,43 @@
             color: $g_middle;
           }
         }
+      }
+    }
+  }
+
+  &_city-check {
+    padding: 20px 15px;
+    width: 271px;
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0px);
+    z-index: 51;
+
+    @include max($s) {
+      position: static;
+      margin: auto;
+
+      height: auto;
+      z-index: 150;
+    }
+
+    &.deactiv {
+      display: none;
+    }
+
+    p {
+      margin-bottom: 30px;
+    }
+
+    div {
+      display: flex;
+      justify-content: left;
+      align-items: center;
+      width: 100%;
+      .btn_yellow {
+        margin-left: 14px;
+        height: 40px;
+        padding: 8px 20px;
       }
     }
   }

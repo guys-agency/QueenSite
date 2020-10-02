@@ -8,9 +8,16 @@
   background-color: #ffffff;
   z-index: 9999;
 
+  &.deact {
+    // animation: deact 0.5s linear forwards;
+    display: none;
+    z-index: -9999;
+  }
+
   .loader-page__container {
     margin: auto;
     .logo {
+      margin-bottom: 40px;
       .i_queen {
         font-size: 72px;
       }
@@ -22,6 +29,51 @@
       }
       .i_qd {
         font-size: 72px;
+      }
+      .i_line-h {
+        display: none;
+      }
+
+      @include max($s) {
+        position: relative;
+        width: 122px;
+        height: 84px;
+        // transform: scale(1.05);
+        display: block;
+
+        .i {
+          &_queen {
+            font-size: 60px;
+          }
+          &_of {
+            position: absolute;
+            top: 33px;
+            left: 55px;
+            font-size: 40px;
+            color: $g_middle;
+          }
+          &_line-h {
+            display: inline-block;
+            position: absolute;
+            font-size: 60px;
+            left: 72px;
+            top: 21px;
+
+            color: $g_middle;
+          }
+          &_bohemia {
+            font-size: 53px;
+            position: absolute;
+            left: 0;
+            top: 46px;
+          }
+          &_qd {
+            font-size: 40px;
+            position: absolute;
+            right: -35px;
+            top: -5px;
+          }
+        }
       }
     }
 
@@ -41,28 +93,94 @@
 .circle {
   display: block;
   z-index: -1;
+  width: 100%;
+  height: 100%;
+  transform-origin: center;
+  transform: rotate(-90deg);
   //   transform: rotate(30deg);
+  animation: rot 5s linear infinite;
+
+  circle {
+    fill: rgba(0, 0, 0, 0);
+    stroke: #fadf90;
+    stroke-width: 2;
+    transform: translate(1px, 1px);
+
+    stroke-dasharray: 232;
+    stroke-dashoffset: 232;
+    stroke-linecap: round;
+
+    &:nth-child(1) {
+      stroke-dashoffset: 0;
+      stroke: #f4f4f4;
+      box-shadow: 0px 2px 16px rgba(0, 0, 0, 0.07);
+    }
+
+    &:nth-child(2) {
+      stroke-dashoffset: 232;
+      stroke: rgba(250, 223, 144, 1);
+    }
+  }
 }
-// circle {
-//   fill: rgba(0, 0, 0, 0);
-//   stroke: #eee;
-//   stroke-width: 5;
-//   stroke-dasharray: 408px 408px;
-// }
-circle {
-  fill: rgba(0, 0, 0, 0);
-  stroke: #fadf90;
-  stroke-width: 3;
 
-  border-radius: 10px;
+.percent {
+  position: relative;
+  width: 76px;
+  height: 76px;
+  .number {
+    position: absolute;
+    display: flex;
+    font-size: 16px;
+    line-height: 16px;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    top: 0px;
+    left: 0px;
+    margin: 0px;
+    * {
+      margin: 0px;
+    }
+  }
+
+  .shadow {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    border-radius: 50px;
+    background-color: inherit;
+    box-shadow: 0px 2px 16px rgba(0, 0, 0, 0.07);
+    z-index: -1;
+  }
 }
 
-.pie {
-  //   position: absolute;
-  width: 74px;
-  height: 74px;
-  border-radius: 50px;
-  top: 0px;
+@keyframes rot {
+  0% {
+    transform: rotate(-90deg);
+  }
+  50% {
+    transform: rotate(90deg);
+  }
+  100% {
+    transform: rotate(270deg);
+  }
+}
 
-  background-color: red;
+@keyframes deact {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  99% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+    z-index: -9999;
+  }
 }
