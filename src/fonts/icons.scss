@@ -179,3 +179,15 @@
     content: $i_coin;
   }
 }
+
+.i_play {
+  &:before {
+    content: $i_play;
+  }
+}
+
+.i_pause {
+  &:before {
+    content: $i_pause;
+  }
+}
