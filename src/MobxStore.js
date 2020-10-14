@@ -245,8 +245,13 @@ class Store {
 
         this.brandSlugs = timeBrandSlug;
 
+        const maxInColl = Math.floor(this.bannersData.collections.length / 4);
+
         this.bannersData.collections.forEach((elem) => {
-          if (ind < 5 && sum < this.bannersData.collections.length - 1) {
+          if (
+            ind < maxInColl &&
+            sum < this.bannersData.collections.length - 1
+          ) {
             timeCont.push(
               <li key={elem.slug}>
                 <NavLink to={"/collections/" + elem.slug} onClick={closeNav}>

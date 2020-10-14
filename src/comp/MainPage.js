@@ -143,17 +143,17 @@ const MainPage = observer(
       const brandCon = [];
 
       if (bannersData.main !== undefined) {
-        mainBanners.push(
-          <Link
-            className="head-banner"
-            to="catalog/podarki/uchitelyam"
-            style={{
-              backgroundImage: `url(/image/banners/${
-                typeDevice ? "dayTeaMobile" : "dayTea"
-              }.jpg`,
-            }}
-          ></Link>
-        );
+        // mainBanners.push(
+        //   <Link
+        //     className="head-banner"
+        //     to="catalog/podarki/uchitelyam"
+        //     style={{
+        //       backgroundImage: `url(/image/banners/${
+        //         typeDevice ? "dayTeaMobile" : "dayTea"
+        //       }.jpg`,
+        //     }}
+        //   ></Link>
+        // );
         bannersData.main.forEach((elem) => {
           mainBanners.push(
             <Link
@@ -377,10 +377,10 @@ const MainPage = observer(
       const headCar = {
         slidesPerView: 1,
         effect: "fade",
-        speed: 500,
+        speed: 1000,
         draggable: true,
         autoplay: {
-          delay: 5000,
+          delay: 7500,
         },
         pagination: {
           el: ".swiper-pagination",
@@ -649,7 +649,7 @@ const MainPage = observer(
               </div>
               <div className="gifts row gifts_price">
                 <Swiper {...giftCar}>
-                  <div className="col col-4 col-t-6 col-s-9">
+                  {/* <div className="col col-4 col-t-6 col-s-9">
                     <Link
                       to="/catalog/podarki/uchitelyam"
                       className="banner banner_overlay"
@@ -660,7 +660,7 @@ const MainPage = observer(
                     >
                       <div className="banner__desc">Для учителей</div>
                     </Link>
-                  </div>
+                  </div> */}
                   <div className="col col-4 col-t-6 col-s-9">
                     <Link
                       to="catalog/podarki/sertificats"

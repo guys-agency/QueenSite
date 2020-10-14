@@ -49,17 +49,17 @@ const GiftsPage = observer(
 
         const lastCont = [];
 
-        mainBanner.push(
-          <Link
-            className="head-banner"
-            to="catalog/podarki/uchitelyam"
-            style={{
-              backgroundImage: `url(/image/banners/${
-                typeDevice ? "dayTeaMobile" : "dayTea"
-              }.jpg`,
-            }}
-          ></Link>
-        );
+        // mainBanner.push(
+        //   <Link
+        //     className="head-banner"
+        //     to="catalog/podarki/uchitelyam"
+        //     style={{
+        //       backgroundImage: `url(/image/banners/${
+        //         typeDevice ? "dayTeaMobile" : "dayTea"
+        //       }.jpg`,
+        //     }}
+        //   ></Link>
+        // );
         mainBanner.push(
           <Link
             className="head-banner"

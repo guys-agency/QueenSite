@@ -328,10 +328,10 @@ const MenuPoints = observer(
 
     loaderIncPlus = () => {
       const intLoader = setInterval(() => {
-        console.log(
-          "this.props.store.loaderPercent :>> ",
-          this.props.store.loaderPercent
-        );
+        // console.log(
+        //   "this.props.store.loaderPercent :>> ",
+        //   this.props.store.loaderPercent
+        // );
         if (this.props.store.loaderPercent <= this.props.store.loaderInc + 1) {
           this.props.store.loaderPercent += 2;
         }

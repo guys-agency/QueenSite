@@ -40,6 +40,7 @@ const CartPage = observer(
         this.props.store.userData.user.tel !== undefined
           ? this.props.store.userData.user.tel.substr(1)
           : "",
+      acceptedTerms: true,
       delChoose: true,
       pickUpChoose: false,
       pickUpStoreChoose: false,
@@ -117,6 +118,9 @@ const CartPage = observer(
     };
 
     setDeliveryData = (e, data) => {
+      $(".cart-page__list-elem_delivery")
+        .find(".alert-message")
+        .removeClass("alert-message_active");
       if (e !== undefined) {
         document.querySelectorAll("#delivery").forEach((elem) => {
           elem.classList.remove("active");
@@ -151,6 +155,9 @@ const CartPage = observer(
 
     choosePaymentType = (e, type) => {
       const { productInCart, productInCartList, certInCart } = this.props.store;
+      $("#paymentMethod")
+        .find(".alert-message")
+        .removeClass("alert-message_active");
       if (certInCart && Object.keys(productInCart).length === 1) {
         if (type === "PREPAID") {
           if (e !== undefined) {
@@ -182,7 +189,7 @@ const CartPage = observer(
         return max;
       }
 
-      let sum = this.totalPrice;
+      let sum = 0;
       const lengths = [];
       const widths = [];
 
@@ -197,6 +204,13 @@ const CartPage = observer(
             parseInt(productInCart[el].dimensions.height, 10) *
             productInCartList[el];
           weightSumm += +productInCart[el].weight * productInCartList[el];
+          sum += productInCart[el].sale
+            ? productInCart[el].sale_price * productInCartList[el]
+            : productInCart[el].regular_price * productInCartList[el];
+        } else {
+          sum += productInCart[el].sale
+            ? productInCart[el].sale_price * productInCartList[el]
+            : productInCart[el].regular_price * productInCartList[el];
         }
       });
 
@@ -255,7 +269,12 @@ const CartPage = observer(
           },
         })
         .then((d) => {
-          this.setState({ payment: type, delVar: d });
+          console.log("d :>> ", d);
+          if (d.length) {
+            this.setState({ payment: type, delVar: d });
+          } else {
+            this.setState({ payment: type, delVar: false });
+          }
         })
         .catch((err) => {
           console.log("err :>> ", err);
@@ -283,7 +302,7 @@ const CartPage = observer(
         elem.classList.remove("active");
       });
       this.choosePaymentType(undefined, this.state.payment);
-      this.setState({ deliveryData: {} });
+      this.setState({ deliveryData: {}, delVar: [] });
     };
 
     dadataInit = false;
@@ -674,6 +693,17 @@ const CartPage = observer(
                     <h3 className="tilda">Оплата</h3>
 
                     <div className="cart__list cart-page__list">
+                      <div className="alert-message alert-message_error">
+                        <p>Выберите способ оплаты</p>
+                        <button
+                          className="ic i_close"
+                          onClick={(e) => {
+                            $(e.target)
+                              .parent()
+                              .removeClass("alert-message_active");
+                          }}
+                        ></button>
+                      </div>
                       <div
                         className="cart-page__list-elem"
                         id="payment"
@@ -943,228 +973,299 @@ const CartPage = observer(
 
                     {this.state.delChoose && (
                       <Fade distance="50px" duration={500}>
-                        <>
-                          <div className="cart-page__delivery-details">
-                            <div className="cart__list cart-page__list ">
-                              <div className="cart-page__list-elem cart-page__list-elem_adress">
-                                <div className="cart-page__store-info">
-                                  <p className="cart-page__store-name">
-                                    Адрес доставки
-                                  </p>
+                        {this.state.delVar === false ? (
+                          <div
+                            className="alert-message alert-message_error alert-message_active"
+                            style={{ position: "relative" }}
+                          >
+                            <p>
+                              Доставка выбранным способом в данный населенный
+                              пункт невозможна
+                            </p>
+                          </div>
+                        ) : (
+                          <>
+                            <div
+                              className="cart-page__delivery-details"
+                              id="addresLabels"
+                            >
+                              <div className="cart__list cart-page__list ">
+                                <div className="cart-page__list-elem cart-page__list-elem_adress">
+                                  <div className="alert-message alert-message_error">
+                                    <p>Укажите адрес доставки</p>
+                                    <button
+                                      className="ic i_close"
+                                      onClick={(e) => {
+                                        $(e.target)
+                                          .parent()
+                                          .removeClass("alert-message_active");
+                                      }}
+                                    ></button>
+                                  </div>
+                                  <div className="cart-page__store-info">
+                                    <p className="cart-page__store-name">
+                                      Адрес доставки
+                                    </p>
+                                  </div>
+                                  <form className="row" action="">
+                                    <div className="col col-6 col-s-12">
+                                      <div className="input-field">
+                                        <label
+                                          className="required"
+                                          htmlFor="address"
+                                        >
+                                          Улица
+                                        </label>
+                                        <input
+                                          id="address"
+                                          type="text"
+                                          value={adress}
+                                          onFocus={(e) => {
+                                            $(e.target)
+                                              .parent()
+                                              .find("label")
+                                              .addClass("active");
+                                          }}
+                                          onBlur={(e) => {
+                                            if (e.target.value === "") {
+                                              $(e.target)
+                                                .parent()
+                                                .find("label")
+                                                .removeClass("active");
+                                            }
+                                          }}
+                                          onInput={(e) => {
+                                            $(".cart-page__list-elem_adress")
+                                              .find(".alert-message")
+                                              .removeClass(
+                                                "alert-message_active"
+                                              );
+                                            this.setState({
+                                              adress: e.target.value,
+                                            });
+                                          }}
+                                          // onChange={(e) => {
+                                          //   this.setState({ adress: e.target.value });
+                                          // }}
+                                        />
+                                      </div>
+                                    </div>
+
+                                    <div className="col col-3 col-s-6">
+                                      <div className="input-field">
+                                        <label
+                                          className="required"
+                                          htmlFor="flat"
+                                        >
+                                          Дом
+                                        </label>
+                                        <input
+                                          id="flat"
+                                          type="text"
+                                          value={house}
+                                          onFocus={(e) => {
+                                            $(e.target)
+                                              .parent()
+                                              .find("label")
+                                              .addClass("active");
+                                          }}
+                                          onBlur={(e) => {
+                                            if (e.target.value === "") {
+                                              $(e.target)
+                                                .parent()
+                                                .find("label")
+                                                .removeClass("active");
+                                            }
+                                          }}
+                                          onInput={(e) => {
+                                            $(".cart-page__list-elem_adress")
+                                              .find(".alert-message")
+                                              .removeClass(
+                                                "alert-message_active"
+                                              );
+                                            this.setState({
+                                              house: e.target.value,
+                                            });
+                                          }}
+                                        />
+                                      </div>
+                                    </div>
+
+                                    <div className="col col-3 col-s-6">
+                                      <div className="input-field">
+                                        <label htmlFor="porch">Кв/Офис</label>
+                                        <input
+                                          id="porch"
+                                          type="text"
+                                          value={flat}
+                                          onFocus={(e) => {
+                                            $(e.target)
+                                              .parent()
+                                              .find("label")
+                                              .addClass("active");
+                                          }}
+                                          onBlur={(e) => {
+                                            if (e.target.value === "") {
+                                              $(e.target)
+                                                .parent()
+                                                .find("label")
+                                                .removeClass("active");
+                                            }
+                                          }}
+                                          onInput={(e) => {
+                                            this.setState({
+                                              flat: e.target.value,
+                                            });
+                                          }}
+                                        />
+                                      </div>
+                                    </div>
+                                  </form>
                                 </div>
-                                <form className="row" action="">
-                                  <div className="col col-6 col-s-12">
-                                    <div className="input-field">
-                                      <label
-                                        className="required"
-                                        htmlFor="address"
+                                {localStorage.get("city").geoId === 213 && (
+                                  <div
+                                    className="cart-page__list-elem cart-page__list-elem_delivery"
+                                    onClick={(e) => {
+                                      // this.choosePickUpPoint(e, st);
+                                    }}
+                                  >
+                                    <div className="alert-message alert-message_error">
+                                      <p>Выберите способ доставки</p>
+                                      <button
+                                        className="ic i_close"
+                                        onClick={(e) => {
+                                          $(e.target)
+                                            .parent()
+                                            .removeClass(
+                                              "alert-message_active"
+                                            );
+                                        }}
+                                      ></button>
+                                    </div>
+                                    <div className="cart-page__store-info">
+                                      <p className="cart-page__store-name">
+                                        Экспресс
+                                      </p>
+                                      <div className="cart-page__store-adress">
+                                        {/* <span className="old">152 ₽</span> 152 ₽{" "}
+                              <span className="disc_perc">-20%</span> */}
+                                        <p>
+                                          Возможна проверка заказа и частичный
+                                          отказ.
+                                          <br />
+                                          <b>Бесплатно</b> при заказе от{" "}
+                                          <b>20 000 ₽</b>.
+                                        </p>
+                                      </div>
+                                    </div>
+                                    <div className="cart-page__list-choose">
+                                      <div
+                                        id="delivery"
+                                        className={
+                                          moment().hour() > 16 ? "deactive" : ""
+                                        }
+                                        onClick={(e) => {
+                                          document
+                                            .querySelectorAll("#delivery")
+                                            .forEach((elem) => {
+                                              elem.classList.remove("active");
+                                            });
+                                          $(e.currentTarget).addClass("active");
+                                          $(".cart-page__list-elem_delivery")
+                                            .find(".alert-message")
+                                            .removeClass(
+                                              "alert-message_active"
+                                            );
+                                          this.setState({
+                                            deliveryData: {
+                                              type: "express",
+                                              cost: 1000,
+                                              time: 0,
+                                            },
+                                          });
+                                        }}
                                       >
-                                        Улица
-                                      </label>
-                                      <input
-                                        id="address"
-                                        type="text"
-                                        value={adress}
-                                        onFocus={(e) => {
-                                          $(e.target)
-                                            .parent()
-                                            .find("label")
-                                            .addClass("active");
-                                        }}
-                                        onBlur={(e) => {
-                                          if (e.target.value === "") {
-                                            $(e.target)
-                                              .parent()
-                                              .find("label")
-                                              .removeClass("active");
-                                          }
-                                        }}
-                                        onInput={(e) => {
+                                        Сегодня — 1 000 ₽
+                                        {moment().hour() > 16 && (
+                                          <p
+                                            style={{
+                                              color: "#747498",
+                                              fontSize: "14px",
+                                            }}
+                                          >
+                                            Доступно до 17:00
+                                          </p>
+                                        )}
+                                      </div>
+                                      <div
+                                        id="delivery"
+                                        onClick={(e) => {
+                                          document
+                                            .querySelectorAll("#delivery")
+                                            .forEach((elem) => {
+                                              elem.classList.remove("active");
+                                            });
+                                          $(e.currentTarget).addClass("active");
+                                          $(".cart-page__list-elem_delivery")
+                                            .find(".alert-message")
+                                            .removeClass(
+                                              "alert-message_active"
+                                            );
                                           this.setState({
-                                            adress: e.target.value,
+                                            deliveryData: {
+                                              type: "express",
+                                              cost: 500,
+                                              time: 1,
+                                            },
                                           });
                                         }}
-                                        // onChange={(e) => {
-                                        //   this.setState({ adress: e.target.value });
-                                        // }}
-                                      />
-                                    </div>
-                                  </div>
-
-                                  <div className="col col-3 col-s-6">
-                                    <div className="input-field">
-                                      <label
-                                        className="required"
-                                        htmlFor="flat"
                                       >
-                                        Дом
-                                      </label>
-                                      <input
-                                        id="flat"
-                                        type="text"
-                                        value={house}
-                                        onFocus={(e) => {
-                                          $(e.target)
-                                            .parent()
-                                            .find("label")
-                                            .addClass("active");
-                                        }}
-                                        onBlur={(e) => {
-                                          if (e.target.value === "") {
-                                            $(e.target)
-                                              .parent()
-                                              .find("label")
-                                              .removeClass("active");
-                                          }
-                                        }}
-                                        onInput={(e) => {
-                                          this.setState({
-                                            house: e.target.value,
-                                          });
-                                        }}
-                                      />
+                                        Завтра — 500 ₽
+                                      </div>
                                     </div>
                                   </div>
+                                )}
 
-                                  <div className="col col-3 col-s-6">
-                                    <div className="input-field">
-                                      <label htmlFor="porch">Кв/Офис</label>
-                                      <input
-                                        id="porch"
-                                        type="text"
-                                        value={flat}
-                                        onFocus={(e) => {
-                                          $(e.target)
-                                            .parent()
-                                            .find("label")
-                                            .addClass("active");
-                                        }}
-                                        onBlur={(e) => {
-                                          if (e.target.value === "") {
-                                            $(e.target)
-                                              .parent()
-                                              .find("label")
-                                              .removeClass("active");
-                                          }
-                                        }}
-                                        onInput={(e) => {
-                                          this.setState({
-                                            flat: e.target.value,
-                                          });
-                                        }}
-                                      />
-                                    </div>
-                                  </div>
-                                </form>
-                              </div>
-                              {localStorage.get("city").geoId === 213 && (
                                 <div
                                   className="cart-page__list-elem cart-page__list-elem_delivery"
                                   onClick={(e) => {
                                     // this.choosePickUpPoint(e, st);
                                   }}
                                 >
+                                  <div className="alert-message alert-message_error">
+                                    <p>Выберите способ доставки</p>
+                                    <button
+                                      className="ic i_close"
+                                      onClick={(e) => {
+                                        $(e.target)
+                                          .parent()
+                                          .removeClass("alert-message_active");
+                                      }}
+                                    ></button>
+                                  </div>
                                   <div className="cart-page__store-info">
                                     <p className="cart-page__store-name">
-                                      Экспресс
+                                      Курьерскими службами
                                     </p>
                                     <div className="cart-page__store-adress">
                                       {/* <span className="old">152 ₽</span> 152 ₽{" "}
                               <span className="disc_perc">-20%</span> */}
                                       <p>
-                                        Возможна проверка заказа и частичный
-                                        отказ.
-                                        <br />
-                                        <b>Бесплатно</b> при заказе от{" "}
-                                        <b>20 000 ₽</b>.
+                                        Боксберри, Стриж, СДЭК. Возможна
+                                        проверка заказа, частичный отказ{" "}
+                                        <b>недоступен</b>. Бесплатно при заказе
+                                        от 3 000 ₽ по Москве.
                                       </p>
                                     </div>
                                   </div>
                                   <div className="cart-page__list-choose">
-                                    <div
-                                      id="delivery"
-                                      className={
-                                        moment().hour() > 16 ? "deactive" : ""
-                                      }
-                                      onClick={(e) => {
-                                        document
-                                          .querySelectorAll("#delivery")
-                                          .forEach((elem) => {
-                                            elem.classList.remove("active");
-                                          });
-                                        $(e.currentTarget).addClass("active");
-                                        this.setState({
-                                          deliveryData: {
-                                            type: "express",
-                                            cost: 1000,
-                                            time: 0,
-                                          },
-                                        });
-                                      }}
-                                    >
-                                      Сегодня — 1 000 ₽
-                                      {moment().hour() > 16 && (
-                                        <p
-                                          style={{
-                                            color: "#747498",
-                                            fontSize: "14px",
-                                          }}
-                                        >
-                                          Доступно до 17:00
-                                        </p>
-                                      )}
-                                    </div>
-                                    <div
-                                      id="delivery"
-                                      onClick={(e) => {
-                                        document
-                                          .querySelectorAll("#delivery")
-                                          .forEach((elem) => {
-                                            elem.classList.remove("active");
-                                          });
-                                        $(e.currentTarget).addClass("active");
-                                        this.setState({
-                                          deliveryData: {
-                                            type: "express",
-                                            cost: 500,
-                                            time: 1,
-                                          },
-                                        });
-                                      }}
-                                    >
-                                      Завтра — 500 ₽
-                                    </div>
+                                    {delVarRender}
                                   </div>
-                                </div>
-                              )}
-
-                              <div
-                                className="cart-page__list-elem cart-page__list-elem_delivery"
-                                onClick={(e) => {
-                                  // this.choosePickUpPoint(e, st);
-                                }}
-                              >
-                                <div className="cart-page__store-info">
-                                  <p className="cart-page__store-name">
-                                    Курьерскими службами
-                                  </p>
-                                  <div className="cart-page__store-adress">
-                                    {/* <span className="old">152 ₽</span> 152 ₽{" "}
-                              <span className="disc_perc">-20%</span> */}
-                                    <p>
-                                      Боксберри, Стриж, СДЭК. Возможна проверка
-                                      заказа, частичный отказ <b>недоступен</b>.
-                                      Бесплатно при заказе от 1 000 ₽ по Москве.
-                                    </p>
-                                  </div>
-                                </div>
-                                <div className="cart-page__list-choose">
-                                  {delVarRender}
                                 </div>
                               </div>
                             </div>
-                          </div>
-                        </>
+                          </>
+                        )}
                       </Fade>
                     )}
                     {this.state.pickUpChoose && (
@@ -1196,7 +1297,7 @@ const CartPage = observer(
                                     <h5>Стоимость и сроки:</h5>
                                     <span>
                                       {localStorage.get("city").geoId === 213 &&
-                                      (this.totalPrice >= 1000 ||
+                                      (this.totalPrice >= 3000 ||
                                         (Object.keys(productInCart).length ===
                                           1 &&
                                           productInCart[
@@ -1296,6 +1397,17 @@ const CartPage = observer(
 
                 <div className="cart-page__data">
                   <h3 className="tilda">Данные</h3>
+                  <div className="alert-message alert-message_error">
+                    <p>Заполните все данные</p>
+                    <button
+                      className="ic i_close"
+                      onClick={(e) => {
+                        $(e.target)
+                          .parent()
+                          .removeClass("alert-message_active");
+                      }}
+                    ></button>
+                  </div>
                   {/* <p>Для получения потребуется паспорт с указанными данными</p> */}
                   {!this.props.store.auth && (
                     <p>
@@ -1365,6 +1477,9 @@ const CartPage = observer(
                                 "1px solid lightgreen"
                               );
                             }
+                            $(".cart-page__data")
+                              .find(".alert-message")
+                              .removeClass("alert-message_active");
                             this.setState({ name: e.target.value });
                           }}
                         />
@@ -1411,6 +1526,9 @@ const CartPage = observer(
                                 "1px solid lightgreen"
                               );
                             }
+                            $(".cart-page__data")
+                              .find(".alert-message")
+                              .removeClass("alert-message_active");
                             this.setState({ secondName: e.target.value });
                           }}
                         />
@@ -1456,6 +1574,9 @@ const CartPage = observer(
                                 "1px solid lightgreen"
                               );
                             }
+                            $(".cart-page__data")
+                              .find(".alert-message")
+                              .removeClass("alert-message_active");
                             this.setState({ email: e.target.value });
                           }}
                         />
@@ -1501,11 +1622,39 @@ const CartPage = observer(
                                 "1px solid lightgreen"
                               );
                             }
+                            $(".cart-page__data")
+                              .find(".alert-message")
+                              .removeClass("alert-message_active");
                             this.setState({ tel: e.target.value });
                           }}
                         />
                       </div>
                     </div>
+                    <label className="checkbox checkbox_margin">
+                      <input
+                        type="checkbox"
+                        name="acceptedTerms"
+                        id=""
+                        value={this.state.acceptedTerms}
+                        onChange={() => {
+                          $(".cart-page__data")
+                            .find(".alert-message")
+                            .removeClass("alert-message_active");
+                          this.setState({
+                            acceptedTerms: !this.state.acceptedTerms,
+                          });
+                        }}
+                        checked={this.state.acceptedTerms}
+                      />
+                      <span className="checkbox-btn"></span>
+                      <i>
+                        Согласен с условиями "
+                        <a className="underline" href="">
+                          Публичной оферты
+                        </a>
+                        "
+                      </i>
+                    </label>
                   </form>
                 </div>
                 {Object.keys(userData).length !== 0 &&
@@ -1628,7 +1777,7 @@ const CartPage = observer(
                                     deliveryData.cost + this.totalPrice
                                   ).toLocaleString()
                               : localStorage.get("city").geoId === 213 &&
-                                (this.totalPrice >= 1000 ||
+                                (this.totalPrice >= 3000 ||
                                   (Object.keys(productInCart).length === 1 &&
                                     productInCart[Object.keys(productInCart)[0]]
                                       .slug === 5637285331))
@@ -1691,7 +1840,7 @@ const CartPage = observer(
                               {deliveryData.type === "express"
                                 ? deliveryData.cost + " ₽ "
                                 : localStorage.get("city").geoId === 213 &&
-                                  (this.totalPrice >= 1000 ||
+                                  (this.totalPrice >= 3000 ||
                                     (Object.keys(productInCart).length === 1 &&
                                       productInCart[
                                         Object.keys(productInCart)[0]
@@ -1751,6 +1900,7 @@ const CartPage = observer(
                           coupsCont,
                           useBonus,
                         } = this.state;
+                        let inError = false;
                         if (payment === "") {
                           $("html, body").animate(
                             {
@@ -1760,23 +1910,27 @@ const CartPage = observer(
                             },
                             500
                           );
-                          document
-                            .querySelectorAll("#payment")
-                            .forEach((elem) => {
-                              elem.classList.add("cart-page__list-elem_red");
-                              setTimeout(() => {
-                                elem.classList.remove(
-                                  "cart-page__list-elem_red"
-                                );
-                              }, 1500);
-                            });
+                          // document
+                          //   .querySelectorAll("#payment")
+                          //   .forEach((elem) => {
+                          //     elem.classList.add("cart-page__list-elem_red");
+                          //     setTimeout(() => {
+                          //       elem.classList.remove(
+                          //         "cart-page__list-elem_red"
+                          //       );
+                          //     }, 1500);
+                          //   });
+
+                          $("#paymentMethod")
+                            .find(".alert-message")
+                            .addClass("alert-message_active");
                           // $("#payment").addClass("cart-page__list-elem_red");
                           // setTimeout(() => {
                           //   $("#payment").removeClass(
                           //     "cart-page__list-elem_red"
                           //   );
                           // }, 1500);
-                          return;
+                          inError = true;
                         }
                         if (
                           certInCart &&
@@ -1790,61 +1944,75 @@ const CartPage = observer(
                               house === "" ||
                               adress === ""
                             ) {
-                              $("html, body").animate(
-                                {
-                                  scrollTop:
-                                    $("#deliveryBlock").offset().top -
-                                    $(".navigation").height(),
-                                },
-                                500
-                              );
+                              if (!inError) {
+                                $("html, body").animate(
+                                  {
+                                    scrollTop:
+                                      $("#deliveryBlock").offset().top -
+                                      $(".navigation").height(),
+                                  },
+                                  500
+                                );
+                              }
                               if (
                                 Object.keys(this.state.deliveryData).length ===
                                 0
                               ) {
-                                document
-                                  .querySelectorAll("#delivery")
-                                  .forEach((elem) => {
-                                    elem.classList.add("red");
-                                    setTimeout(() => {
-                                      elem.classList.remove("red");
-                                    }, 1500);
-                                  });
-                              } else if (house === "" || adress === "") {
+                                // document
+                                //   .querySelectorAll("#delivery")
+                                //   .forEach((elem) => {
+                                //     elem.classList.add("red");
+                                //     setTimeout(() => {
+                                //       elem.classList.remove("red");
+                                //     }, 1500);
+                                //   });
+                                $(".cart-page__list-elem_delivery")
+                                  .find(".alert-message")
+                                  .addClass("alert-message_active");
                               }
-                              return;
+                              if (house === "" || adress === "") {
+                                $(".cart-page__list-elem_adress")
+                                  .find(".alert-message")
+                                  .addClass("alert-message_active");
+                              }
+                              inError = true;
                             }
                           } else if (pickUpChoose) {
                             if (
                               this.deliveryOrderData.deliveryOption ===
                               undefined
                             ) {
-                              $("html, body").animate(
-                                {
-                                  scrollTop:
-                                    $("#deliveryBlock").offset().top -
-                                    $(".navigation").height(),
-                                },
-                                500
-                              );
-                              // console.log("testtt :>> ");
-                              this.startYaDeliv(
-                                this.totalPrice,
-                                productInCartList
-                              );
-                              return;
+                              if (!inError) {
+                                $("html, body").animate(
+                                  {
+                                    scrollTop:
+                                      $("#deliveryBlock").offset().top -
+                                      $(".navigation").height(),
+                                  },
+                                  500
+                                );
+
+                                // console.log("testtt :>> ");
+                                this.startYaDeliv(
+                                  this.totalPrice,
+                                  productInCartList
+                                );
+                              }
+                              inError = true;
                             }
                           } else {
                             if (this.state.pickUpStore === "") {
-                              $("html, body").animate(
-                                {
-                                  scrollTop:
-                                    $("#deliveryBlock").offset().top -
-                                    $(".navigation").height(),
-                                },
-                                500
-                              );
-                              return;
+                              if (!inError) {
+                                $("html, body").animate(
+                                  {
+                                    scrollTop:
+                                      $("#deliveryBlock").offset().top -
+                                      $(".navigation").height(),
+                                  },
+                                  500
+                                );
+                              }
+                              inError = true;
                             }
                           }
                         }
@@ -1854,19 +2022,27 @@ const CartPage = observer(
                           email === "" ||
                           tel === "" ||
                           !regexEmail.test(email) ||
-                          tel.includes("_")
+                          tel.includes("_") ||
+                          !this.state.acceptedTerms
                         ) {
-                          $("html, body").animate(
-                            {
-                              scrollTop:
-                                $(".cart-page__data").offset().top -
-                                $(".navigation").height(),
-                            },
-                            500
-                          );
+                          if (!inError) {
+                            $("html, body").animate(
+                              {
+                                scrollTop:
+                                  $(".cart-page__data").offset().top -
+                                  $(".navigation").height(),
+                              },
+                              500
+                            );
+                          }
+                          $(".cart-page__data")
+                            .find(".alert-message")
+                            .addClass("alert-message_active");
+                          inError = true;
+                        }
+                        if (inError) {
                           return;
                         }
-
                         $(e.target).addClass("deactive");
                         $(e.target).text("Создаем заказ");
                         // console.log("productInCart", productInCart);
@@ -2170,7 +2346,7 @@ const CartPage = observer(
                               fullyPrepaid: this.state.payment === "PREPAID",
                               manualDeliveryForCustomer:
                                 localStorage.get("city").geoId === 213 &&
-                                (this.totalPrice >= 1000 ||
+                                (this.totalPrice >= 3000 ||
                                   (Object.keys(productInCart).length === 1 &&
                                     productInCart[Object.keys(productInCart)[0]]
                                       .slug === 5637285331))
@@ -2312,7 +2488,7 @@ const CartPage = observer(
                                       ...this.order,
                                       externalId: String(data.orderId),
                                     })
-                                    .then(() => {
+                                    .then((ok) => {
                                       window.location.href = data.return;
                                     })
                                     .catch((err) => {
@@ -2492,7 +2668,8 @@ const CartPage = observer(
                             avalRegistCert = true;
                           }
                         });
-
+                        console.log("thisCertAvalHere :>> ", thisCertAvalHere);
+                        console.log("avalRegistCert :>> ", avalRegistCert);
                         if (
                           $("#coup").val() !== "" &&
                           !thisCertAvalHere &&
@@ -2517,24 +2694,59 @@ const CartPage = observer(
                                   coupsCont: newCoupsCont,
                                 });
                               } else {
-                                $(".cart-page__promo").addClass("deactive");
-                                setTimeout(() => {
-                                  $(".cart-page__promo").removeClass(
-                                    "deactive"
-                                  );
-                                }, 4000);
+                                $(".cart-page__promo")
+                                  .find(".alert-message")
+                                  .removeClass("alert-message_warning");
+                                $(".cart-page__promo")
+                                  .find(".alert-message")
+                                  .addClass("alert-message_error");
+                                $(".cart-page__promo")
+                                  .find(".alert-message")
+                                  .find("p")
+                                  .text("Промокода не существует");
+                                $(".cart-page__promo")
+                                  .find(".alert-message")
+                                  .addClass("alert-message_active");
                               }
                             });
                         } else {
-                          $(".cart-page__promo").addClass("deactive");
-                          setTimeout(() => {
-                            $(".cart-page__promo").removeClass("deactive");
-                          }, 4000);
+                          if ($("#coup").val() === "") {
+                            $(".cart-page__promo").addClass("deactive");
+                            setTimeout(() => {
+                              $(".cart-page__promo").removeClass("deactive");
+                            }, 4000);
+                          } else {
+                            console.log("object :>> ");
+                            $(".cart-page__promo")
+                              .find(".alert-message")
+                              .removeClass("alert-message_error");
+                            $(".cart-page__promo")
+                              .find(".alert-message")
+                              .addClass("alert-message_warning");
+                            $(".cart-page__promo")
+                              .find(".alert-message")
+                              .find("p")
+                              .text("Промокод уже использован");
+                            $(".cart-page__promo")
+                              .find(".alert-message")
+                              .addClass("alert-message_active");
+                          }
                         }
                       }}
                     >
                       Активировать
                     </button>
+                    <div className="alert-message alert-message_error">
+                      <p>Промокода не существует</p>
+                      <button
+                        className="ic i_close"
+                        onClick={(e) => {
+                          $(e.target)
+                            .parent()
+                            .removeClass("alert-message_active");
+                        }}
+                      ></button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -2680,12 +2892,14 @@ const CartPage = observer(
                 );
               } else if (coupsCont[coupon].type === "fixed_cart") {
                 if (couponC > 0) {
-                  if (el.price - couponC >= 1) {
-                    items[i].price -= couponC;
+                  if (el.price * el.count - couponC >= 1) {
+                    items[i].price = Math.floor(
+                      items[i].price - couponC / el.count
+                    );
                     couponC = 0;
                   } else {
                     items[i].price = 1;
-                    couponC -= items[i].price - 1;
+                    couponC -= items[i].price * el.count - 1;
                   }
                 }
               }
@@ -2701,11 +2915,13 @@ const CartPage = observer(
         while (totalDeff > 0) {
           if (i < items.length) {
             if (items[i].price > 1) {
-              if (items[i].price - totalDeff > 1) {
-                items[i].price = items[i].price - totalDeff;
+              if (items[i].price * items[i].count - totalDeff > 1) {
+                items[i].price = Math.floor(
+                  items[i].price - totalDeff / items[i].count
+                );
                 totalDeff = 0;
               } else {
-                totalDeff -= items[i].price;
+                totalDeff -= items[i].price * items[i].count;
                 items[i].price = 1;
                 i += 1;
               }

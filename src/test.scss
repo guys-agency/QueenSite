@@ -39,6 +39,7 @@
 @import "./blocks/dev-login/dev-login.scss";
 @import "./blocks/loader-page/loader-page.scss";
 @import "./blocks/bottom-fix/bottom-fix.scss";
+@import "./blocks/alert-message/alert-message.scss";
 
 //HOME ELEMENTS
 @import "./blocks/carousel/carousel.scss";
@@ -401,6 +402,7 @@ code {
   position: absolute;
   top: 0px;
   left: 0px;
+  z-index: 2;
   background-color: #fff;
   .vjs-poster {
     background-color: #fff;
@@ -413,8 +415,40 @@ code {
     margin-bottom: auto;
   }
 
+  .vjs-big-play-button {
+    border: none;
+    background-color: #efd27e;
+    width: 67px;
+    height: 67px;
+    margin-top: -33.5px;
+    margin-left: -33.5px;
+    border-radius: 50px;
+    line-height: normal;
+
+    .vjs-icon-placeholder {
+      &:before {
+        @include icon;
+        content: $i_play;
+        position: static;
+        color: #00094d;
+        font-size: 35x;
+        line-height: 1.5;
+      }
+    }
+  }
+
+  &:hover {
+    .vjs-big-play-button {
+      background-color: #efd27e;
+    }
+  }
+
   .vjs-control-bar {
     background-color: transparent;
+    bottom: 5px;
+    .PiPifierButton {
+      display: none;
+    }
     .vjs-progress-control {
       background-color: #fff;
       border-radius: 20px;
@@ -422,6 +456,7 @@ code {
       margin-top: auto;
       margin-bottom: auto;
       margin-right: 16px;
+
       .vjs-play-progress {
         background-color: #dab958;
       }
@@ -433,6 +468,35 @@ code {
     }
     .vjs-playback-rate {
       display: none;
+    }
+
+    .vjs-play-control {
+      background-color: #fff;
+      height: 25px;
+      width: 25px;
+      border-radius: 50px;
+      margin-left: 15px;
+      margin-right: 11px;
+      margin-top: auto;
+      margin-bottom: auto;
+      color: #dab958;
+      &.vjs-ended {
+        .vjs-icon-placeholder:before {
+          content: "\F116";
+        }
+      }
+      &.vjs-paused {
+        .vjs-icon-placeholder::before {
+          @include icon;
+          content: $i_play;
+          line-height: 1.43em;
+        }
+      }
+      .vjs-icon-placeholder:before {
+        @include icon;
+        content: $i_pause;
+        line-height: 1.43em;
+      }
     }
   }
 }

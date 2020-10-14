@@ -19,6 +19,12 @@ const Gallery = (props) => {
       nextEl: ".swiper-button-next",
       prevEl: ".swiper-button-prev",
     },
+    // preventClicksPropagation: false,
+    // preventClicks: false,
+    // allowSlideNext: typeDevice,
+    // allowSlidePrev: typeDevice,
+    // noSwiping: false,
+    allowTouchMove: typeDevice,
   };
   const thumbnailSwiperParams = {
     getSwiper: getThumbnailSwiper,
@@ -62,59 +68,136 @@ const Gallery = (props) => {
   let player = {};
 
   const onPlayerReady = (player1) => {
-    console.log("Player is ready: ", player1);
+    // console.log("Player is ready: ", player1);
+
     player = player1;
+    player.tech_.off("dblclick");
     player.muted(true);
+    player.playsinline(true);
+    // $(".vjs-progress-holder").on("click", (e) => {
+    //   console.log("e :>> ", e);
+    // });
+    // $(".vjs-control-bar").on("click", (e) => {
+    //   console.log("e2 :>> ", e);
+    // });
+    // $(".videoQB").on("click", () => {
+    //   player.pause();
+    // });
   };
 
   const onVideoPlay = (duration) => {
-    console.log("Video played at: ", duration);
+    // console.log("Video played at: ", duration);
+    if (!$(".videoQB").hasClass("vjs-has-started")) {
+      $(".videoQB").addClass("vjs-has-started");
+    }
+
+    // $(".vjs-progress-holder.vjs-slider.vjs-slider-horizontal").off("click");
+    // document
+    //   .querySelector(".vjs-progress-holder.vjs-slider.vjs-slider-horizontal")
+    //   .removeEventListener("click");
+    // console.log("object122 :>> ", $(".vjs-progress-holder"));
+    // $(".vjs-progress-holder").on("click", (e) => {
+    //   console.log("e :>> ", e);
+    // });
+    // $(".vjs-control-bar").on("click", (e) => {
+    //   console.log("e2 :>> ", e);
+    // });
+    // $(".videoQB").on("click", (e) => {
+    //   console.log("e3 :>> ", e);
+    // });
+    // $("body").on("click", (e) => {
+    //   console.log("e3 :>> ", e.target);
+    // });
   };
 
   const onVideoPause = (duration) => {
-    console.log("Video paused at: ", duration);
+    // console.log("Video paused at: ", duration);
   };
 
   const onVideoTimeUpdate = (duration) => {
-    console.log("Time updated: ", duration);
+    // console.log("Time updated: ", duration);
   };
 
   const onVideoSeeking = (duration) => {
-    console.log("Video seeking: ", duration);
+    // console.log("Video seeking: ", duration);
   };
 
   const onVideoSeeked = (from, to) => {
-    console.log(`Video seeked from ${from} to ${to}`);
+    // console.log(`Video seeked from ${from} to ${to}`);
   };
 
   const onVideoEnd = () => {
     // player.reset();
-    console.log("Video ended");
+    // console.log("player :>> ", player);
+    // player.currentTime(0).trigger("loadstart");
+    $(".videoQB").removeClass("vjs-has-started");
+    player.currentTime(0); // 2 minutes into the video
+    player.pause();
+    player.trigger("loadstart");
+    // player.posterImage.el.style.display = "block";
+    player.bigPlayButton.show();
+    // console.log("Video ended");
   };
 
   const main = [];
   const small = [];
-  main.push(
-    <div className="main-img" key={"12"}>
-      <VideoPlayer
-        controls={true}
-        src="/image/videos/IMG_6621.mov"
-        poster="/image/items/1000cert.png"
-        // width="100%"
-        // height="100%"
-        onReady={onPlayerReady}
-        onPlay={onVideoPlay}
-        onPause={onVideoPause}
-        onTimeUpdate={onVideoTimeUpdate}
-        onSeeking={onVideoSeeking}
-        onSeeked={onVideoSeeked}
-        onEnd={onVideoEnd}
-        className="videoQB"
-        hideControls={["volume", "timer", "fullscreen"]}
-      />
-    </div>
-  );
+  // main.push(
+  //   <div className="main-img" key={"12"}>
+  //     <VideoPlayer
+  //       controls={true}
+  //       src="/image/videos/IMG_3292.MOV"
+  //       poster="/image/items/1000cert.png"
+  //       // width="100%"
+  //       // height="100%"
+  //       onReady={onPlayerReady}
+  //       onPlay={onVideoPlay}
+  //       onPause={onVideoPause}
+  //       onTimeUpdate={onVideoTimeUpdate}
+  //       onSeeking={onVideoSeeking}
+  //       onSeeked={onVideoSeeked}
+  //       onEnd={onVideoEnd}
+  //       className="videoQB"
+  //       hideControls={["volume", "timer", "fullscreen"]}
+  //     />
+  //   </div>
+  // );
+  // small.push(
+  //   <div className="thumb-img video" key="12">
+  //     <img src="/image/items/1000cert.png" alt="" />
+  //   </div>
+  // );
   props.path.forEach((p, i) => {
+    if (i === 1) {
+      if (props.video !== undefined && props.video !== null) {
+        props.video.forEach((el, i) => {
+          main.push(
+            <div className="main-img" key={`v-${i}`}>
+              <VideoPlayer
+                controls={true}
+                src={`/image/videos/${el.src}`}
+                poster={`/image/videos/${el.prev}`}
+                // width="100%"
+                // height="100%"
+                onReady={onPlayerReady}
+                onPlay={onVideoPlay}
+                onPause={onVideoPause}
+                onTimeUpdate={onVideoTimeUpdate}
+                onSeeking={onVideoSeeking}
+                onSeeked={onVideoSeeked}
+                onEnd={onVideoEnd}
+                className="videoQB"
+                hideControls={["volume", "timer", "fullscreen"]}
+              />
+            </div>
+          );
+          small.push(
+            <div className="thumb-img video" key={`v_p-${i}`}>
+              <img src={`/image/videos/${el.prev}`} alt="" />
+            </div>
+          );
+        });
+      }
+    }
     main.push(
       <div className="main-img" key={i}>
         <img
@@ -167,3 +250,17 @@ const Gallery = (props) => {
   );
 };
 export default Gallery;
+
+// const video = [
+//   {
+//     src: "имя видео",
+//     prev: "имя превью",
+//   },
+//   {
+//     src: "имя видео",
+//     prev: "имя превью",
+//   },
+// ];
+
+// const position =
+//   "тут число от 0 до 10, 0 и отсутсвие поля равносильны, данное поле отражает позицию в выводе, если 10, то попадает в начало вывода";

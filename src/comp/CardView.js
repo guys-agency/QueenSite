@@ -398,6 +398,23 @@ const CardView = observer(
       //     this.props.store.seenProd.unshift(data);
       //   }
       // }
+      let lastSeenProdsRender;
+      if (Object.keys(lastSeenProdsData).length) {
+        lastSeenProdsRender = Object.keys(lastSeenProdsData).map((el, i) => {
+          if (lastSeenProdsData[el] !== undefined) {
+            return (
+              <div className="col col-3 col-t-4 col-s-6" key={el}>
+                <ProductCard
+                  key={el}
+                  data={lastSeenProdsData[el]}
+                  store={this.props.store}
+                />
+              </div>
+            );
+          }
+          return null;
+        });
+      }
 
       return (
         data.slug === +this.props.sku && (
@@ -459,7 +476,11 @@ const CardView = observer(
                   }
                 >
                   <div className="col col-6 col-t-5 col-s-12">
-                    <Gallery path={data.path_to_photo} key={data.slug} />
+                    <Gallery
+                      path={data.path_to_photo}
+                      key={data.slug}
+                      video={data.video}
+                    />
                   </div>
                   <div className="col col-6 col-t-7 col-s-12">
                     <div className="product-p__description">
@@ -897,7 +918,7 @@ const CardView = observer(
                 </div>
               </div>
             </div>
-            {withProds.length !== 0 && (
+            {withProds !== undefined && withProds.length !== 0 && (
               <div className="carousel carousel_product">
                 <div className="container">
                   <div className="title">
@@ -927,7 +948,7 @@ const CardView = observer(
               </div>
             )}
 
-            {likeProds.length !== 0 && (
+            {likeProds !== undefined && likeProds.length !== 0 && (
               <div className="carousel carousel_product">
                 <div className="container">
                   <div className="title">
@@ -956,35 +977,24 @@ const CardView = observer(
                 </div>
               </div>
             )}
-            {Object.keys(lastSeenProdsData).length !== 0 && (
-              <div className="carousel carousel_product">
-                <div className="container">
-                  <div className="title">
-                    <h3>Вы недавно просматривали</h3>
+            {lastSeenProdsRender !== undefined &&
+              lastSeenProdsRender !== null &&
+              lastSeenProdsRender.length !== 0 && (
+                <div className="carousel carousel_product">
+                  <div className="container">
+                    <div className="title">
+                      <h3>Вы недавно просматривали</h3>
+                    </div>
+                  </div>
+                  <div className="container container_s">
+                    <div className="slider-cont">
+                      <Swiper {...this.relativeCar}>
+                        {lastSeenProdsRender}
+                      </Swiper>
+                    </div>
                   </div>
                 </div>
-                <div className="container container_s">
-                  <div className="slider-cont">
-                    <Swiper {...this.relativeCar}>
-                      {lastSeenProds.map((el, i) => {
-                        if (lastSeenProdsData[el] !== undefined) {
-                          return (
-                            <div className="col col-3 col-t-4 col-s-6" key={el}>
-                              <ProductCard
-                                key={el}
-                                data={lastSeenProdsData[el]}
-                                store={this.props.store}
-                              />
-                            </div>
-                          );
-                        }
-                        return null;
-                      })}
-                    </Swiper>
-                  </div>
-                </div>
-              </div>
-            )}
+              )}
           </div>
         )
       );
@@ -999,7 +1009,6 @@ const CardView = observer(
         this.drafts.forEach((el) => {
           el.disable();
         });
-
         var driftImgs = document.querySelectorAll(".drift");
         var pane = document.querySelector(".product-p__description");
         driftImgs.forEach((img) => {

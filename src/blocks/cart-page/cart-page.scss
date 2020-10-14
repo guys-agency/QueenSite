@@ -57,6 +57,7 @@
     }
   }
   &__delivery {
+    position: relative;
     h5 {
       margin-left: 10px;
       & > span {
@@ -147,10 +148,26 @@
   }
 
   &__data {
+    position: relative;
     &-form {
       margin-top: 40px;
       .col {
         margin-bottom: 40px;
+      }
+    }
+
+    .alert-message {
+      top: auto;
+      bottom: -20px;
+
+      @include max($s) {
+        bottom: auto;
+        top: 0px;
+      }
+    }
+    .checkbox {
+      @include max($s) {
+        margin-bottom: 20px;
       }
     }
   }
@@ -200,6 +217,7 @@
     width: 100%;
     margin-top: 20px;
     position: relative;
+
     .def {
       padding-right: 140px;
     }
@@ -216,6 +234,21 @@
     &.green {
       input {
         border: 1px solid lightgreen;
+      }
+    }
+
+    .alert-message {
+      position: relative;
+      top: auto;
+      right: auto;
+      width: auto;
+      margin-top: 16px;
+      float: left;
+
+      button.i_close {
+        position: relative;
+        top: auto;
+        right: auto;
       }
     }
   }
@@ -336,6 +369,7 @@
 }
 
 .cart-page__list {
+  position: relative;
   #store {
     &.active {
       margin-bottom: 46px;

@@ -1,0 +1,117 @@
+.alert-message {
+  display: none;
+  position: absolute;
+  right: 0px;
+  top: -10px;
+  border-radius: 10px;
+
+  &_error {
+    background: #ffb2a6;
+    /* Red/Middle */
+
+    border: 1px solid #ba250d;
+    box-sizing: border-box;
+    /* main */
+
+    box-shadow: 0px 2px 16px rgba(0, 0, 0, 0.07);
+
+    z-index: 2;
+
+    color: #59160c;
+
+    font-family: Excentra Pro;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 24px;
+
+    p {
+      color: #59160c;
+
+      font-family: Excentra Pro;
+      font-style: normal;
+      font-weight: 500;
+      font-size: 16px;
+      line-height: 24px;
+    }
+
+    button {
+      color: #59160c;
+    }
+
+    &::after {
+      content: "!";
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 16px;
+      line-height: 24px;
+    }
+  }
+
+  &_warning {
+    background: #fff2ca;
+    /* Gold/light */
+
+    border: 1px solid #ffd65c;
+    box-sizing: border-box;
+    /* main */
+
+    box-shadow: 0px 2px 16px rgba(0, 0, 0, 0.07);
+
+    p {
+      font-family: Excentra Pro;
+      font-style: normal;
+      font-weight: 500;
+      font-size: 16px;
+      line-height: 24px;
+      /* identical to box height, or 150% */
+
+      display: flex;
+      align-items: center;
+
+      /* Gold/Black */
+
+      color: #675210;
+    }
+
+    button {
+      color: #675210;
+    }
+
+    &::after {
+      content: "!";
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 16px;
+      line-height: 24px;
+    }
+  }
+
+  p {
+    padding: 10px 12px 10px 25px;
+    margin: 0px;
+  }
+  button {
+    padding-right: 10px;
+    transition: opacity linear 0.3s;
+
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+
+  &::after {
+    content: "!";
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 16px;
+    line-height: 24px;
+  }
+
+  &_active {
+    display: flex;
+  }
+}
