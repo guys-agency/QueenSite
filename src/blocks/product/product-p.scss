@@ -93,9 +93,12 @@
     }
   }
   &__article {
-    font-size: 14px;
-    color: $a_dark;
-    margin-bottom: 15px;
+    display: flex;
+    p {
+      font-size: 14px;
+      color: $a_dark;
+      margin-bottom: 15px;
+    }
     .underline {
       margin-left: 10px;
     }

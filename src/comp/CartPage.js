@@ -390,6 +390,7 @@ const CartPage = observer(
         certInCart,
         userData,
         auth,
+        notSaleSum,
       } = this.props.store;
 
       const {
@@ -454,6 +455,8 @@ const CartPage = observer(
               : productInCart[el].regular_price;
         });
       }
+
+      this.totalNotSalePrice += notSaleSum;
 
       if (useBonus) {
         this.totalPrice -= useBonus;

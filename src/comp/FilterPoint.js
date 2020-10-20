@@ -124,6 +124,7 @@ const FilterPoint = observer(
 
       let act = false;
       const filterPoints = [];
+
       data.forEach((filterPoint) => {
         if (filterPoint !== "") {
           let number;
@@ -132,6 +133,8 @@ const FilterPoint = observer(
               number = activeFilters[objectName][name].includes(
                 String(filterPoint)
               );
+            } else {
+              number = false;
             }
           } else {
             number = activeFilters[objectName].includes(filterPoint);
@@ -139,6 +142,7 @@ const FilterPoint = observer(
           if (number) {
             activeFilt.push(filterPoint);
           }
+
           filterPoints.push(
             <span
               className={!number ? "filter__point" : "filter__point active"}

@@ -142,6 +142,8 @@ class Store {
 
   hitCont = [];
 
+  notSaleSum = 0;
+
   // seenProdAdd = autorun(() => {
   //   localStorage.set("seenProd", this.seenProd);
   // });
@@ -365,7 +367,7 @@ class Store {
           });
           // this.productInCart = timeCont;
           // console.log("object :>> ", this.productInCart);
-
+          this.notSaleSum = 0;
           const dontSaleProd = [];
 
           let dontSaleProdCount = 0;
@@ -396,12 +398,12 @@ class Store {
 
               // console.log("dont :>> ", dontSaleProd);
               minProdSlugs.push(minProdSlug);
-              let dontSaleProdCountIn = Math.floor(dontSaleProdCount / 3);
+              let toSaleProdCount = Math.floor(dontSaleProdCount / 3);
               // console.log("minProdSlugs :>> ", minProdSlugs);
               for (let index = 0; index < dontSaleProd.length; index++) {
                 if (
                   this.productInCartList[dontSaleProd[index].slug] ===
-                  dontSaleProdCountIn
+                  toSaleProdCount
                 ) {
                   timeCont[dontSaleProd[index].slug].sale_price = 0;
                   timeCont[dontSaleProd[index].slug].price = 0;
@@ -409,26 +411,31 @@ class Store {
                   break;
                 } else if (
                   this.productInCartList[dontSaleProd[index].slug] >
-                  dontSaleProdCountIn
+                  toSaleProdCount
                 ) {
                   timeCont[dontSaleProd[index].slug].sale_price = Math.floor(
                     timeCont[dontSaleProd[index].slug].regular_price *
                       (1 -
-                        dontSaleProdCountIn /
+                        toSaleProdCount /
                           this.productInCartList[dontSaleProd[index].slug])
                   );
                   timeCont[dontSaleProd[index].slug].sale = true;
                   timeCont[dontSaleProd[index].slug].price =
                     timeCont[dontSaleProd[index].slug].sale_price;
+
+                  this.notSaleSum =
+                    timeCont[dontSaleProd[index].slug].regular_price *
+                    (this.productInCartList[dontSaleProd[index].slug] -
+                      toSaleProdCount);
                   break;
                 } else if (
                   this.productInCartList[dontSaleProd[index].slug] <
-                  dontSaleProdCountIn
+                  toSaleProdCount
                 ) {
                   timeCont[dontSaleProd[index].slug].sale_price = 0;
                   timeCont[dontSaleProd[index].slug].price = 0;
                   timeCont[dontSaleProd[index].slug].sale = true;
-                  dontSaleProdCountIn -= this.productInCartList[
+                  toSaleProdCount -= this.productInCartList[
                     dontSaleProd[index].slug
                   ];
                 }

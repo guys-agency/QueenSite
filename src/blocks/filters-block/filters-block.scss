@@ -214,10 +214,13 @@
     display: flex;
     // justify-content: space-between;
 
+    transition: all 0.3s;
+
     .ic {
       position: absolute;
       right: 0px;
       top: -2px;
+      transition: all 0.3s;
     }
 
     @include max($t) {
@@ -253,6 +256,7 @@
     overflow: hidden;
     display: flex;
     flex-wrap: wrap;
+    transition: all 0.3s;
 
     @include max($t) {
       margin-bottom: 0px;

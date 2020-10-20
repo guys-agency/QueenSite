@@ -50,10 +50,10 @@ const CardView = observer(
       : -1;
 
     clickHandler = (e) => {
+      this.props.store.productInCartList = localStorage.get("productInCart");
       const { store } = this.props;
       // e.target.textContent = "Добавлено в корзину";
       e.target.classList.toggle("active");
-      const data = store.cardContainer;
 
       const { productInCartList, addtoCart, certInCart } = store;
 
@@ -73,7 +73,7 @@ const CardView = observer(
 
       if (this.inCart !== -1) {
         $(".tooltip_cart").addClass("visible");
-        $(".tooltip_cart").find(".text").text(data.name);
+        $(".tooltip_cart").find(".text").text(this.data.name);
 
         $(".tooltip_cart").find(".ic").removeClass("i_fav");
         $(".tooltip_cart").find(".ic").removeClass("i_plus");
@@ -82,10 +82,10 @@ const CardView = observer(
         setTimeout(() => {
           $(".tooltip_cart").removeClass("visible");
         }, 2000);
-        if (data.name === "Электронный подарочный сертификат") {
+        if (this.data.name === "Электронный подарочный сертификат") {
           delete productInCartList[certInCart];
         } else {
-          delete productInCartList[data.slug];
+          delete productInCartList[this.data.slug];
         }
 
         window.dataLayer.push({
@@ -93,10 +93,10 @@ const CardView = observer(
             remove: {
               products: [
                 {
-                  id: data.slug,
-                  name: data.name,
-                  price: data.price,
-                  brand: data.brand,
+                  id: this.data.slug,
+                  name: this.data.name,
+                  price: this.data.price,
+                  brand: this.data.brand,
                 },
               ],
             },
@@ -108,25 +108,25 @@ const CardView = observer(
         $(".tooltip_cart").find(".ic").addClass("i_plus");
 
         $(".tooltip_cart").addClass("visible");
-        $(".tooltip_cart").find(".text").text(data.name);
+        $(".tooltip_cart").find(".text").text(this.data.name);
         setTimeout(() => {
           $(".tooltip_cart").removeClass("visible");
         }, 2000);
-        if (data.name === "Электронный подарочный сертификат") {
-          productInCartList[data.slug] = $("#mess").val();
+        if (this.data.name === "Электронный подарочный сертификат") {
+          productInCartList[this.data.slug] = $("#mess").val();
         } else {
-          productInCartList[data.slug] = store.countInProdPage;
+          productInCartList[this.data.slug] = store.countInProdPage;
         }
-        api.updateCountStats(data._id, "cart");
+        api.updateCountStats(this.data._id, "cart");
         window.dataLayer.push({
           ecommerce: {
             add: {
               products: [
                 {
-                  id: data.slug,
-                  name: data.name,
-                  price: data.price,
-                  brand: data.brand,
+                  id: this.data.slug,
+                  name: this.data.name,
+                  price: this.data.price,
+                  brand: this.data.brand,
                   quantity: store.countInProdPage,
                 },
               ],
@@ -172,7 +172,6 @@ const CardView = observer(
 
     clickFav = (e) => {
       const { store } = this.props;
-      const data = store.cardContainer;
 
       const { likeContainer, addToLike } = store;
       this.inLike = this.props.store.likeContainer.length
@@ -186,7 +185,7 @@ const CardView = observer(
         likeContainer.splice(this.inLike, 1);
 
         $(".tooltip_cart").addClass("visible");
-        $(".tooltip_cart").find(".text").text(data.name);
+        $(".tooltip_cart").find(".text").text(this.data.name);
 
         $(".tooltip_cart").find(".ic").removeClass("i_fav-f");
         $(".tooltip_cart").find(".ic").removeClass("i_plus");
@@ -195,10 +194,10 @@ const CardView = observer(
           $(".tooltip_cart").removeClass("visible");
         }, 2000);
       } else {
-        likeContainer.unshift(String(data.slug));
+        likeContainer.unshift(String(this.data.slug));
 
         $(".tooltip_cart").addClass("visible");
-        $(".tooltip_cart").find(".text").text(data.name);
+        $(".tooltip_cart").find(".text").text(this.data.name);
 
         $(".tooltip_cart").find(".ic").removeClass("i_plus");
         $(".tooltip_cart").find(".ic").removeClass("i_minus");
@@ -206,7 +205,7 @@ const CardView = observer(
         setTimeout(() => {
           $(".tooltip_cart").removeClass("visible");
         }, 2000);
-        api.updateCountStats(data._id, "like");
+        api.updateCountStats(this.data._id, "like");
       }
       addToLike();
     };
@@ -217,10 +216,9 @@ const CardView = observer(
     };
 
     clickPlus = () => {
-      const data = this.props.store.cardContainer;
-      if (this.props.store.countInProdPage < data.stock_quantity) {
+      if (this.props.store.countInProdPage < this.data.stock_quantity) {
         if (this.inCart !== -1) {
-          this.props.store.productInCartList[data.slug] += 1;
+          this.props.store.productInCartList[this.data.slug] += 1;
           this.props.store.addtoCart(false);
         }
         this.props.store.countInProdPage += 1;
@@ -228,10 +226,9 @@ const CardView = observer(
     };
 
     clickMinus = () => {
-      const data = this.props.store.cardContainer;
       if (this.props.store.countInProdPage > 1) {
         if (this.inCart !== -1) {
-          this.props.store.productInCartList[data.slug] -= 1;
+          this.props.store.productInCartList[this.data.slug] -= 1;
           this.props.store.addtoCart(false);
         }
         this.props.store.countInProdPage -= 1;
@@ -267,6 +264,8 @@ const CardView = observer(
       },
     };
 
+    data = "";
+
     render() {
       if (
         this.props.store.productInCartList[this.props.sku] !== undefined &&
@@ -277,9 +276,15 @@ const CardView = observer(
           this.props.sku
         ];
       }
-      const data = this.props.store.cardContainer;
 
-      const itsSert = data.name === "Электронный подарочный сертификат";
+      if (
+        this.data === "" ||
+        +this.props.sku === this.props.store.cardContainer.slug
+      ) {
+        this.data = this.props.store.cardContainer;
+      }
+
+      const itsSert = this.data.name === "Электронный подарочный сертификат";
 
       const { timeDelivery } = this.state;
 
@@ -293,7 +298,7 @@ const CardView = observer(
         brandSlugs,
       } = this.props.store;
 
-      if (data.slug === +this.props.sku && this.count) {
+      if (this.data.slug === +this.props.sku && this.count) {
         if (
           timeDelivery === "" &&
           localStorage.get("city") !== null &&
@@ -311,10 +316,10 @@ const CardView = observer(
               geoId: localStorage.get("city").geoId,
             },
             dimensions: {
-              length: +data.dimensions.length,
-              width: +data.dimensions.width,
-              height: +data.dimensions.height,
-              weight: +data.weight,
+              length: +this.data.dimensions.length,
+              width: +this.data.dimensions.width,
+              height: +this.data.dimensions.height,
+              weight: +this.data.weight,
             },
             deliveryType: "COURIER",
           };
@@ -345,7 +350,7 @@ const CardView = observer(
         }
       }
 
-      if (data.slug !== +this.props.sku) {
+      if (this.data.slug !== +this.props.sku) {
         this.fetchReady = false;
       } else {
         this.fetchReady = true;
@@ -353,9 +358,9 @@ const CardView = observer(
 
       const storesAvali = [];
 
-      if (data.slug === +this.props.sku) {
-        if (data.stores !== undefined) {
-          data.stores.forEach((el) => {
+      if (this.data.slug === +this.props.sku) {
+        if (this.data.stores !== undefined) {
+          this.data.stores.forEach((el) => {
             if (+el.count > 0) {
               storesAvali.push(
                 <div className="drop_shop-list" key={el.name}>
@@ -371,22 +376,23 @@ const CardView = observer(
             }
           });
         }
+
+        this.inLike = this.props.store.likeContainer.length
+          ? this.props.store.likeContainer.indexOf(String(this.data.slug))
+          : -1;
+
+        this.inCart = Object.keys(this.props.store.productInCartList).length
+          ? Object.keys(this.props.store.productInCartList).indexOf(
+              String(this.data.slug)
+            )
+          : -1;
       }
 
-      this.inLike = this.props.store.likeContainer.length
-        ? this.props.store.likeContainer.indexOf(
-            String(this.props.store.cardContainer.slug)
-          )
-        : -1;
-
-      this.inCart = Object.keys(this.props.store.productInCartList).length
-        ? Object.keys(this.props.store.productInCartList).indexOf(
-            String(this.props.store.cardContainer.slug)
-          )
-        : -1;
-
       if (Object.keys(this.props.store.productInCartList).length) {
-        if (data.name === "Электронный подарочный сертификат" && certInCart) {
+        if (
+          this.data.name === "Электронный подарочный сертификат" &&
+          certInCart
+        ) {
           this.inCart = Object.keys(this.props.store.productInCartList).indexOf(
             certInCart
           );
@@ -417,7 +423,7 @@ const CardView = observer(
       }
 
       return (
-        data.slug === +this.props.sku && (
+        this.data.slug === +this.props.sku && (
           <div
             className="card-view-container"
             onClick={(e) => {
@@ -438,12 +444,12 @@ const CardView = observer(
             }}
           >
             <Helmet
-              title={data.name + " - Queen of Bohemia"}
+              title={this.data.name + " - Queen of Bohemia"}
               meta={[
-                { name: "description", content: data.description },
+                { name: "description", content: this.data.description },
                 {
                   property: "og:image",
-                  content: `https://queenbohemia.ru/image/items/${data.path_to_photo[0]}`,
+                  content: `https://queenbohemia.ru/image/items/${this.data.path_to_photo[0]}`,
                 },
               ]}
             />
@@ -452,18 +458,18 @@ const CardView = observer(
                 <Breadcrumbs
                   name={
                     this.props.store.firstBread === ""
-                      ? data.categories[0].slugName
+                      ? this.data.categories[0].slugName
                       : this.props.store.firstBread
                   }
                   child={
                     this.props.store.firstBread === "ideas"
                       ? ""
                       : this.props.store.secondBread === ""
-                      ? data.categories[0].childsSlug[0]
+                      ? this.data.categories[0].childsSlug[0]
                       : this.props.store.secondBread
                   }
-                  prod={data.name}
-                  prodSlug={data.slug}
+                  prod={this.data.name}
+                  prodSlug={this.data.slug}
                   store={this.props.store}
                 />
 
@@ -472,44 +478,48 @@ const CardView = observer(
                 </button>
                 <div
                   className={
-                    "row product-p " + (data.description ? "" : "no-desc")
+                    "row product-p " + (this.data.description ? "" : "no-desc")
                   }
                 >
                   <div className="col col-6 col-t-5 col-s-12">
                     <Gallery
-                      path={data.path_to_photo}
-                      key={data.slug}
-                      video={data.video}
+                      path={this.data.path_to_photo}
+                      key={this.data.slug}
+                      video={this.data.video}
                     />
                   </div>
                   <div className="col col-6 col-t-7 col-s-12">
                     <div className="product-p__description">
                       <div className="product-p__head">
-                        <h4 className="product-p__name">{data.name}</h4>
+                        <h4 className="product-p__name">{this.data.name}</h4>
                         {!itsSert && (
                           <div className="product-p__article">
-                            {"Артикул: " + data.slug}
+                            <p>{"Артикул: " + this.data.slug}</p>
                             <Link
                               className="underline"
                               to={
-                                Object.keys(brandSlugs).includes(data.brand)
-                                  ? `/brand/${brandSlugs[data.brand]}`
-                                  : `/catalog?brand=${data.brand}`
+                                Object.keys(brandSlugs).includes(
+                                  this.data.brand
+                                )
+                                  ? `/brand/${brandSlugs[this.data.brand]}`
+                                  : `/catalog?brand=${this.data.brand}`
                               }
                             >
-                              {data.brand}
+                              {this.data.brand}
                             </Link>
                           </div>
                         )}
-                        {data.sale ? (
+                        {this.data.sale ? (
                           <div className={"product__price product__price_disc"}>
                             <span className="old">
-                              {data.regular_price.toLocaleString()} ₽
+                              {this.data.regular_price.toLocaleString()} ₽
                             </span>{" "}
-                            {data.sale_price.toLocaleString()} ₽{" "}
+                            {this.data.sale_price.toLocaleString()} ₽{" "}
                             <span className="disc_perc">
                               {(
-                                (data.sale_price / data.regular_price - 1) *
+                                (this.data.sale_price /
+                                  this.data.regular_price -
+                                  1) *
                                 100
                               ).toFixed(0)}
                               %
@@ -517,7 +527,7 @@ const CardView = observer(
                           </div>
                         ) : (
                           <div className={"product__price"}>
-                            {data.regular_price.toLocaleString()} ₽{" "}
+                            {this.data.regular_price.toLocaleString()} ₽{" "}
                             <div
                               className="product__bonus"
                               onClick={() => {
@@ -528,13 +538,16 @@ const CardView = observer(
                               <p>
                                 +{" "}
                                 {Math.round(
-                                  data.regular_price * 0.1
+                                  this.data.regular_price * 0.1
                                 ).toLocaleString()}{" "}
-                                {num2str(Math.round(data.regular_price * 0.1), [
-                                  "бонусный балл",
-                                  "бонусных баллов",
-                                  "бонусных баллов",
-                                ])}{" "}
+                                {num2str(
+                                  Math.round(this.data.regular_price * 0.1),
+                                  [
+                                    "бонусный балл",
+                                    "бонусных баллов",
+                                    "бонусных баллов",
+                                  ]
+                                )}{" "}
                               </p>
                             </div>
                           </div>
@@ -575,55 +588,58 @@ const CardView = observer(
                           </div>
                         </>
                       ) : (
-                        data.description && (
-                          <p className="product-p__info">{data.description}</p>
+                        this.data.description && (
+                          <p className="product-p__info">
+                            {this.data.description}
+                          </p>
                         )
                       )}
 
-                      {data.kit !== undefined && data.kit.length !== 0 && (
-                        <>
-                          <button
-                            className="link dotted drop_kit-btn"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              e.target.classList.toggle("active");
-                              var drop = document.querySelector(".drop_kit");
-                              $(".drop_kit").offset({
-                                top:
-                                  $(".drop_kit-btn").offset().top +
-                                  $(".drop_kit-btn").height() +
-                                  12,
-                                left: $(".drop_kit-btn").offset().left,
-                              });
-                              // $(".drop_shop").width(
-                              //   $(".drop_kit-btn").width()
-                              // );
+                      {this.data.kit !== undefined &&
+                        this.data.kit.length !== 0 && (
+                          <>
+                            <button
+                              className="link dotted drop_kit-btn"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                e.target.classList.toggle("active");
+                                var drop = document.querySelector(".drop_kit");
+                                $(".drop_kit").offset({
+                                  top:
+                                    $(".drop_kit-btn").offset().top +
+                                    $(".drop_kit-btn").height() +
+                                    12,
+                                  left: $(".drop_kit-btn").offset().left,
+                                });
+                                // $(".drop_shop").width(
+                                //   $(".drop_kit-btn").width()
+                                // );
 
-                              drop.classList.toggle("visible");
-                            }}
-                          >
-                            Комплектация
-                            <span className="ic i_drop"></span>
-                          </button>
-                          <div className="drop drop_kit">
-                            {data.kit.map((el) => {
-                              return (
-                                <div className="drop_shop-list" key={el}>
-                                  <p>
-                                    {el.substr(0, 1).toUpperCase() +
-                                      el.substr(1)}
-                                  </p>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        </>
-                      )}
+                                drop.classList.toggle("visible");
+                              }}
+                            >
+                              Комплектация
+                              <span className="ic i_drop"></span>
+                            </button>
+                            <div className="drop drop_kit">
+                              {this.data.kit.map((el) => {
+                                return (
+                                  <div className="drop_shop-list" key={el}>
+                                    <p>
+                                      {el.substr(0, 1).toUpperCase() +
+                                        el.substr(1)}
+                                    </p>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </>
+                        )}
 
                       {!itsSert &&
                       dontSaleProdCount !== 0 &&
                       dontSaleProdCount % 3 !== 0 &&
-                      !data.sale ? (
+                      !this.data.sale ? (
                         <Link to="/main/1+13" className="one-plus-one">
                           Добавьте еще{" "}
                           {3 * (Math.floor(dontSaleProdCount / 3) + 1) -
@@ -646,7 +662,7 @@ const CardView = observer(
                           <button
                             className={
                               "btn btn_yellow btn_primary " +
-                              (data.stock_quantity ? "" : " btn_dis")
+                              (this.data.stock_quantity ? "" : " btn_dis")
                             }
                             onClick={this.clickHandler}
                           >
@@ -700,8 +716,8 @@ const CardView = observer(
                                 }}
                               >
                                 <p>
-                                  Номинал {data.regular_price.toLocaleString()}{" "}
-                                  ₽
+                                  Номинал{" "}
+                                  {this.data.regular_price.toLocaleString()} ₽
                                 </p>
                                 <img src="/image/>.svg"></img>
                               </div>
@@ -746,16 +762,16 @@ const CardView = observer(
                           <div className="product-p__available">
                             <span
                               className={
-                                data.stock_quantity
+                                this.data.stock_quantity
                                   ? "product-p__stock "
                                   : "product-p__un-stock"
                               }
                             >
-                              {data.stock_quantity
+                              {this.data.stock_quantity
                                 ? "Есть на складе"
                                 : "Нет на складе"}
                             </span>
-                            {data.stock_quantity ? (
+                            {this.data.stock_quantity ? (
                               <span className="product-p__delivery">
                                 Доставка от{" "}
                                 <b>
@@ -847,26 +863,30 @@ const CardView = observer(
                             <h5>Детали:</h5>
                             <div className="product-p__spec-detail">
                               <ul>
-                                <li>{data.weight + "кг."}</li>
-                                {data.color !== undefined &&
-                                  data.color !== "" && <li>{data.color}</li>}
-                                {data.material && <li>{data.material}</li>}
+                                <li>{this.data.weight + "кг."}</li>
+                                {this.data.color !== undefined &&
+                                  this.data.color !== "" && (
+                                    <li>{this.data.color}</li>
+                                  )}
+                                {this.data.material && (
+                                  <li>{this.data.material}</li>
+                                )}
                                 {$(window).width() <= 760 && (
                                   <>
                                     <li>
-                                      {data.dimensions.length.toLocaleString() +
+                                      {this.data.dimensions.length.toLocaleString() +
                                         " x " +
-                                        data.dimensions.width.toLocaleString() +
+                                        this.data.dimensions.width.toLocaleString() +
                                         " x " +
-                                        data.dimensions.height.toLocaleString() +
+                                        this.data.dimensions.height.toLocaleString() +
                                         "см"}
                                     </li>
-                                    <li>{data.country}</li>
-                                    {data.attributes.length !== 0 && (
+                                    <li>{this.data.country}</li>
+                                    {this.data.attributes.length !== 0 && (
                                       <li>
-                                        {data.attributes[0].name}:{" "}
-                                        {data.attributes[0].value +
-                                          data.attributes[0].unit}
+                                        {this.data.attributes[0].name}:{" "}
+                                        {this.data.attributes[0].value +
+                                          this.data.attributes[0].unit}
                                       </li>
                                     )}
                                   </>
@@ -875,22 +895,22 @@ const CardView = observer(
                               {$(window).width() >= 760 && (
                                 <ul>
                                   <li>
-                                    {data.dimensions.length.toLocaleString() +
+                                    {this.data.dimensions.length.toLocaleString() +
                                       " x " +
-                                      data.dimensions.width.toLocaleString() +
+                                      this.data.dimensions.width.toLocaleString() +
                                       " x " +
-                                      data.dimensions.height.toLocaleString() +
+                                      this.data.dimensions.height.toLocaleString() +
                                       "см"}
                                   </li>
-                                  <li>{data.country}</li>
-                                  {data.attributes.length !== 0 && (
+                                  <li>{this.data.country}</li>
+                                  {this.data.attributes.length !== 0 && (
                                     <li>
-                                      {data.attributes[0].name}:{" "}
-                                      {data.attributes[0].value +
-                                        data.attributes[0].unit}
+                                      {this.data.attributes[0].name}:{" "}
+                                      {this.data.attributes[0].value +
+                                        this.data.attributes[0].unit}
                                     </li>
                                   )}
-                                  {/* <li>{data.brand}</li> */}
+                                  {/* <li>{this.data.brand}</li> */}
                                 </ul>
                               )}
                             </div>
@@ -899,16 +919,18 @@ const CardView = observer(
                             <h5>Можно использовать:</h5>
                             <ul>
                               <li>
-                                <span className={data.microwave ? "" : "lth"}>
+                                <span
+                                  className={this.data.microwave ? "" : "lth"}
+                                >
                                   в микроволновке
                                 </span>
                               </li>
                               <li>
-                                <span className={data.pm ? "" : "lth"}>
+                                <span className={this.data.pm ? "" : "lth"}>
                                   в посудомойке
                                 </span>
                               </li>
-                              {/* {data.microwave && } */}
+                              {/* {this.data.microwave && } */}
                             </ul>
                           </div>
                         </div>

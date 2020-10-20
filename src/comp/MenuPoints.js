@@ -333,7 +333,7 @@ const MenuPoints = observer(
         //   this.props.store.loaderPercent
         // );
         if (this.props.store.loaderPercent <= this.props.store.loaderInc + 1) {
-          this.props.store.loaderPercent += 2;
+          this.props.store.loaderPercent += 3;
         }
         if (this.props.store.loaderPercent >= 100) {
           $(".loader-page").addClass("deact");
