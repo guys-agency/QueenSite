@@ -140,6 +140,8 @@ class Store {
   loaderPercent = 0;
   loaderInc = 0;
 
+  hitCont = [];
+
   // seenProdAdd = autorun(() => {
   //   localStorage.set("seenProd", this.seenProd);
   // });
@@ -920,7 +922,7 @@ class Store {
         return res.json();
       })
       .then((data) => {
-        console.log("data", data);
+        // console.log("data", data);
         const TEnd = new Date();
         // console.log("TTTTTT", TEnd - t);
         //продукты
@@ -1225,7 +1227,9 @@ class Store {
       })
       .catch((err) => {
         console.log("err", err);
-        window.location.replace("/");
+        if (!window.location.pathname.includes("search")) {
+          window.location.replace("/");
+        }
       });
 
     // fetch(SERVER_URL + "/sort-names", {
@@ -1849,6 +1853,8 @@ decorate(Store, {
   coupDisc: observable,
   certDisc: observable,
   loaderPercent: observable,
+  hitCont: observable,
+  searchText: observable,
 });
 
 const store = new Store();

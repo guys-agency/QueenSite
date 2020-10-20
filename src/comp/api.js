@@ -353,6 +353,17 @@ class Api {
       return res.json();
     });
   }
+
+  getHits() {
+    return fetch(SERVER_URL + "/hits", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((res) => {
+      return res.json();
+    });
+  }
 }
 
 const api = new Api();

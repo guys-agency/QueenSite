@@ -55,10 +55,21 @@ const ProductCardContainer = observer(
       });
 
       e.target.classList.toggle("active");
+      let page = this.props.store.startPag / 42;
       this.props.store.startPag = 0;
       this.props.store.stopPag = 42;
       this.props.store.sortInProd = e.target.textContent;
-      this.props.store.resetPage = true;
+
+      let decodSearch = decodeURIComponent(window.location.href.split("?")[1]);
+
+      if (decodSearch.includes("&&page=")) {
+        decodSearch = decodSearch.split(`&&page=${page}`).join("");
+        this.props.history.replace({ search: decodSearch });
+      } else if (decodSearch.includes("page=")) {
+        decodSearch = decodSearch.split(`page=${page}`).join("");
+        this.props.history.replace({ search: decodSearch });
+      }
+
       this.props.store.filtration();
       this.setState({ sortLabel: e.target.textContent });
 
@@ -68,6 +79,7 @@ const ProductCardContainer = observer(
 
     render() {
       const { searchQ } = this.props.store;
+      this.searchValue = "";
       // console.log(
       //   "decodeURIComponent :>> ",
       //   decodeURIComponent(this.props.history.location.search),

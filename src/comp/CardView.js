@@ -3,7 +3,7 @@ import React from "react";
 import { createBrowserHistory } from "history";
 import localStorage from "mobx-localstorage";
 import Swiper from "react-id-swiper";
-import Drift from "drift-zoom";
+
 import ProductCard from "./ProductCard";
 import Gallery from "./Gallery";
 import { SERVER_URL } from "../constants";
@@ -1002,24 +1002,6 @@ const CardView = observer(
 
     componentDidUpdate() {
       // console.log("$(window).width :>> ", $(window).width());
-      if (
-        document.querySelector(".drift") !== null &&
-        $(window).width() > 425
-      ) {
-        this.drafts.forEach((el) => {
-          el.disable();
-        });
-        var driftImgs = document.querySelectorAll(".drift");
-        var pane = document.querySelector(".product-p__description");
-        driftImgs.forEach((img) => {
-          const d = new Drift(img, {
-            paneContainer: pane,
-            inlinePane: true,
-            hoverDelay: 200,
-          });
-          this.drafts.push(d);
-        });
-      }
     }
   }
 );

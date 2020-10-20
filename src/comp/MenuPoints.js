@@ -985,6 +985,7 @@ const MenuPoints = observer(
                       className="ic i_search"
                       onClick={(e) => {
                         this.props.store.searchText = this.searchValue;
+
                         this.props.history.push("/search");
 
                         e.preventDefault();

@@ -174,7 +174,7 @@ const MainPage = observer(
           );
         });
 
-        bannersData.brand.forEach((elem) => {
+        bannersData.brand.forEach((elem, i) => {
           brandCon.push(
             <Link
               onClick={() => {
@@ -182,6 +182,7 @@ const MainPage = observer(
               }}
               to={"/brand/" + elem.slug}
               className="slider-brand"
+              key={i}
             >
               <img src={"/image/brends/" + elem["image-mob-large"]} />
             </Link>

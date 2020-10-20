@@ -498,7 +498,7 @@ const AuthSidebar = observer(
                     <span className="checkbox-btn"></span>
                     <i>
                       Согласен с условиями "
-                      <a className="underline" href="">
+                      <a className="underline" href="/help/offer">
                         Публичной оферты
                       </a>
                       "

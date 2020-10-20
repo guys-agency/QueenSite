@@ -269,7 +269,6 @@ const CartPage = observer(
           },
         })
         .then((d) => {
-          console.log("d :>> ", d);
           if (d.length) {
             this.setState({ payment: type, delVar: d });
           } else {
@@ -1161,9 +1160,6 @@ const CartPage = observer(
                                     <div className="cart-page__list-choose">
                                       <div
                                         id="delivery"
-                                        className={
-                                          moment().hour() > 16 ? "deactive" : ""
-                                        }
                                         onClick={(e) => {
                                           document
                                             .querySelectorAll("#delivery")
@@ -1176,17 +1172,30 @@ const CartPage = observer(
                                             .removeClass(
                                               "alert-message_active"
                                             );
-                                          this.setState({
-                                            deliveryData: {
-                                              type: "express",
-                                              cost: 1000,
-                                              time: 0,
-                                            },
-                                          });
+                                          if (moment().hour() <= 16) {
+                                            this.setState({
+                                              deliveryData: {
+                                                type: "express",
+                                                cost: 1000,
+                                                time: 0,
+                                              },
+                                            });
+                                          } else {
+                                            this.setState({
+                                              deliveryData: {
+                                                type: "express",
+                                                cost: 1000,
+                                                time: 1,
+                                              },
+                                            });
+                                          }
                                         }}
                                       >
-                                        Сегодня — 1 000 ₽
-                                        {moment().hour() > 16 && (
+                                        {moment().hour() <= 16
+                                          ? "Сегодня"
+                                          : "Завтра"}{" "}
+                                        — 1 000 ₽
+                                        {/* {moment().hour() > 16 && (
                                           <p
                                             style={{
                                               color: "#747498",
@@ -1195,7 +1204,7 @@ const CartPage = observer(
                                           >
                                             Доступно до 17:00
                                           </p>
-                                        )}
+                                        )} */}
                                       </div>
                                       <div
                                         id="delivery"
@@ -1211,16 +1220,29 @@ const CartPage = observer(
                                             .removeClass(
                                               "alert-message_active"
                                             );
-                                          this.setState({
-                                            deliveryData: {
-                                              type: "express",
-                                              cost: 500,
-                                              time: 1,
-                                            },
-                                          });
+                                          if (moment().hour() <= 16) {
+                                            this.setState({
+                                              deliveryData: {
+                                                type: "express",
+                                                cost: 500,
+                                                time: 1,
+                                              },
+                                            });
+                                          } else {
+                                            this.setState({
+                                              deliveryData: {
+                                                type: "express",
+                                                cost: 500,
+                                                time: 2,
+                                              },
+                                            });
+                                          }
                                         }}
                                       >
-                                        Завтра — 500 ₽
+                                        {moment().hour() <= 16
+                                          ? "Завтра"
+                                          : "Послезавтра"}{" "}
+                                        — 500 ₽
                                       </div>
                                     </div>
                                   </div>
@@ -1649,7 +1671,7 @@ const CartPage = observer(
                       <span className="checkbox-btn"></span>
                       <i>
                         Согласен с условиями "
-                        <a className="underline" href="">
+                        <a className="underline" href="/help/offer">
                           Публичной оферты
                         </a>
                         "
@@ -1858,6 +1880,8 @@ const CartPage = observer(
                                   ? "сегодня"
                                   : deliveryData.time === 1
                                   ? "завтра"
+                                  : deliveryData.time === 2
+                                  ? "Послезавтра"
                                   : deliveryData.time +
                                     " " +
                                     num2str(deliveryData.time, [

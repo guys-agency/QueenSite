@@ -10,6 +10,7 @@ import { SERVER_URL } from "./constants";
 import MenuPoints from "./comp/MenuPoints";
 import Filters from "./comp/Filters";
 import ProductCardContainer from "./comp/ProductCardContainer";
+import Search from "./comp/Search";
 
 import CardView from "./comp/CardView";
 import MainPage from "./comp/MainPage";
@@ -25,6 +26,7 @@ import Footer from "./comp/Footer";
 import Shops from "./comp/Shops";
 import ShopsMap from "./comp/ShopsMap";
 import StartLoader from "./comp/Loader";
+import PageNotFound from "./comp/404";
 import { Link } from "react-router-dom";
 
 import Breadcrumbs from "./comp/breadcrumbs";
@@ -781,29 +783,11 @@ const MainScreen = observer(
                 this.props.store.filtration(),
                 (document.title = "Поиск - Queen of Bohemia"),
                 (
-                  <div className="main-screen">
-                    <div className="container">
-                      <div className="row">
-                        <div className="col col-12">
-                          <h3 className="catalog-title">Поиск</h3>
-                        </div>
-                      </div>
-                      <div className="row catalog">
-                        <div className="col col-3">
-                          <Filters
-                            store={this.props.store}
-                            parentName={routProps.match.params.parentName}
-                            childName={routProps.match.params.childName}
-                          />
-                        </div>
-                        <ProductCardContainer
-                          store={this.props.store}
-                          parentName={routProps.match.params.parentName}
-                          childName={routProps.match.params.childName}
-                        />
-                      </div>
-                    </div>
-                  </div>
+                  <Search
+                    store={this.props.store}
+                    parentName={routProps.match.params.parentName}
+                    childName={routProps.match.params.childName}
+                  />
                 )
               )}
             />
@@ -919,7 +903,16 @@ const MainScreen = observer(
               }}
             />
 
-            <Redirect from="*" to="/" />
+            <Route
+              path="*"
+              render={(routProps) => (
+                (this.props.store.nameMainCat = ""),
+                (this.props.store.nameSecondCat = ""),
+                $("html, body").animate({ scrollTop: 0 }, 500),
+                (document.title = "Страница не найдена - Queen of Bohemia"),
+                (<PageNotFound store={this.props.store} />)
+              )}
+            />
             <Route onEnter={() => window.location.reload()} />
           </Switch>
           {/* {(this.props.store.productPage && this.props.store.cardContainer) ||

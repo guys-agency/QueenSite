@@ -15,7 +15,7 @@ const FilterPoint = observer(
     clickHandler = (filterPoint) => {
       const { objectName, name } = this.props;
       const { activeFilters } = this.props.store;
-      const start = new Date();
+
       let searchQt = "";
       if (objectName === "measure") {
         const number = Object.keys(activeFilters[objectName]).indexOf(name);

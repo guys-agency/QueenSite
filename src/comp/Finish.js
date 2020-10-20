@@ -394,7 +394,9 @@ const Finish = observer(
                                   /{" "}
                                   {data.delivery.time === 0
                                     ? "Сегодня"
-                                    : "Завтра"}
+                                    : data.delivery.time === 1
+                                    ? "Завтра"
+                                    : "Послезавтра"}
                                 </span>
                               ) : null}
                             </span>

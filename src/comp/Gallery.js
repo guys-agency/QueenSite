@@ -2,7 +2,10 @@ import React, { useState, useEffect } from "react";
 import Swiper from "react-id-swiper";
 import PinchZoom from "pinch-zoom-js";
 import VideoPlayer from "react-video-js-player";
+import Drift from "drift-zoom";
 import $ from "jquery";
+
+let d = "";
 
 const Gallery = (props) => {
   const [gallerySwiper, getGallerySwiper] = useState(null);
@@ -64,6 +67,45 @@ const Gallery = (props) => {
       });
     }
   }, [props.path, typeDevice]);
+
+  const zoomInit = () => {
+    if (
+      document.querySelector(".swiper-slide-active .drift") !== null &&
+      $(window).width() > 425
+    ) {
+      if (d !== "") {
+        d.destroy();
+      }
+
+      const driftImg = document.querySelector(".swiper-slide-active .drift");
+      const pane = document.querySelector(".product-p__description");
+
+      d = new Drift(driftImg, {
+        paneContainer: pane,
+        inlinePane: true,
+        hoverDelay: 200,
+      });
+    }
+  };
+
+  useEffect(() => {
+    zoomInit();
+    $(".swiper-button-next").on("click", () => {
+      zoomInit();
+    });
+    $(".swiper-button-prev").on("click", () => {
+      zoomInit();
+    });
+
+    return () => {
+      if (d !== "") {
+        d.destroy();
+      }
+
+      $(".swiper-button-next").off("click");
+      $(".swiper-button-prev").off("click");
+    };
+  }, [gallerySwiper, thumbnailSwiper]);
 
   let player = {};
 
@@ -220,6 +262,21 @@ const Gallery = (props) => {
   //     var indexSlide = thumbnailSwiper.clickedIndex;
   //     // imgCarousel.slideTo(indexSlide, 300, true);
   //     console.log(indexSlide);
+  // }
+  // if (document.querySelector(".drift") !== null && $(window).width() > 425) {
+  //   this.drafts.forEach((el) => {
+  //     el.disable();
+  //   });
+  //   var driftImgs = document.querySelectorAll(".drift");
+  //   var pane = document.querySelector(".product-p__description");
+  //   driftImgs.forEach((img) => {
+  //     const d = new Drift(img, {
+  //       paneContainer: pane,
+  //       inlinePane: true,
+  //       hoverDelay: 200,
+  //     });
+  //     this.drafts.push(d);
+  //   });
   // }
   return (
     <div>
