@@ -12,6 +12,8 @@ import num2str from "../ulits/nm2wrd";
 import Inputmask from "inputmask";
 import Fade from "react-reveal/Fade";
 import "../blocks/dadata.scss";
+import { object } from "yup";
+import store from "../MobxStore";
 
 const { Component } = React;
 const momLoc = moment();
@@ -44,7 +46,7 @@ const CartPage = observer(
       delChoose: true,
       pickUpChoose: false,
       pickUpStoreChoose: false,
-      payment: "",
+      payment: "PREPAID",
       pickUpStore: "",
       coupon: { count: 0, type: "", code: "", id: "" },
       delVar: [],
@@ -246,6 +248,7 @@ const CartPage = observer(
       };
       // console.log("moment :>> ", moment().hour());
       // console.log("object :>> ", moment().add(1, "days").format("YYYY-MM-DD"));
+      // this.props.store.createOrderData(type)
 
       api
         .deliveryVar({
@@ -406,7 +409,9 @@ const CartPage = observer(
         deliveryData,
         coupon,
         delVar,
+        payment
       } = this.state;
+      this.props.store.useBonus = useBonus
 
       const regexEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -417,9 +422,15 @@ const CartPage = observer(
       let totalFullprice = 0;
       let address = "";
       let coupDisc = 0;
+      const typeIsPREPAID = payment==='PREPAID'
 
       const delVarRender = [];
       const htmlStore = [];
+
+
+      if(typeof delVar==='object'&& !delVar.length&&Object.keys(productInCart).length){
+        this.choosePaymentType(undefined, 'PREPAID')
+      }
 
       if (Object.keys(productInCart).length) {
         Object.keys(productInCart).forEach((el) => {
@@ -434,27 +445,42 @@ const CartPage = observer(
             />
           );
 
+          const salePrice = productInCart[el].sale? typeIsPREPAID ? Math.floor(productInCart[el].sale_price*0.98):productInCart[el].sale_price:0
+          const regPrice = typeIsPREPAID ? Math.floor(productInCart[el].regular_price*0.98):productInCart[el].regular_price
           this.totalPrice += productInCart[el].sale
-            ? productInCartList[el] * productInCart[el].sale_price
+            ? productInCartList[el] * salePrice
             : el !== certInCart
-            ? productInCartList[el] * productInCart[el].regular_price
-            : productInCart[el].regular_price;
+            ? productInCartList[el] * regPrice
+            : regPrice;
 
           this.totalNotSalePrice +=
             productInCart[el].sale || el === certInCart
               ? 0
               : productInCartList[el] * productInCart[el].regular_price;
 
-          totalSale += productInCart[el].sale
-            ? (productInCart[el].regular_price - productInCart[el].sale_price) *
-              productInCartList[el]
-            : 0;
+          // totalSale += productInCart[el].sale
+          //   ? (regPrice - salePrice) *
+          //     productInCartList[el]
+          //   : 0;
+
+          //   console.log('Math.ceil(productInCart[el].sale_price*0.02) :>> ', Math.ceil(productInCart[el].sale_price*0.02)*productInCartList[el]);
+
+          // if(typeIsPREPAID){
+          //   totalSale+=productInCart[el].sale
+          //   ? Math.ceil(productInCart[el].sale_price*0.02)*
+          //   productInCartList[el]
+          //   : Math.ceil(productInCart[el].regular_price*0.02)*
+          //   productInCartList[el];
+          // }
+
           totalFullprice +=
             el !== certInCart
               ? productInCartList[el] * productInCart[el].regular_price
               : productInCart[el].regular_price;
         });
       }
+
+      totalSale = totalFullprice -  this.totalPrice
 
       this.totalNotSalePrice += notSaleSum;
 
@@ -707,14 +733,16 @@ const CartPage = observer(
                         ></button>
                       </div>
                       <div
-                        className="cart-page__list-elem"
+                        className="cart-page__list-elem active"
                         id="payment"
                         onClick={(e) => {
                           this.choosePaymentType(e, "PREPAID");
                         }}
                       >
                         <div className="cart-page__store-info">
-                          <p className="cart-page__store-name">Онлайн</p>
+                          <p className="cart-page__store-name">Онлайн<span className="disc_perc">
+            -2%
+          </span></p>
                           <div className="cart-page__store-adress">
                             <p>
                               Банковскими картами Visa, Mastercard, Maestro,
@@ -1760,6 +1788,7 @@ const CartPage = observer(
                                 </div>
                                 <button
                                   onClick={() => {
+                                    
                                     this.setState({
                                       useBonus: this.state.bonus,
                                     });
@@ -2072,258 +2101,259 @@ const CartPage = observer(
                         }
                         $(e.target).addClass("deactive");
                         $(e.target).text("Создаем заказ");
+                        this.props.store.createOrderData(this.state.payment)
                         // console.log("productInCart", productInCart);
                         const senderId = 500001936;
                         const cityLoc = localStorage.get("city");
                         // console.log("cityLoc", cityLoc);
 
                         const dataToSend = {
-                          prod: {},
+                          ...this.props.store.dataToSend
                         };
-                        const ecomProd = [];
-                        const productForYA = [];
-                        let totalProductSum = 0;
-                        let bonusDisc;
+                        const ecomProd = [...this.props.store.ecomProd];
+                        const productForYA = [...this.props.store.productForYA];
+                        // let totalProductSum = 0;
+                        // let bonusDisc;
 
-                        if (useBonus) {
-                          bonusDisc =
-                            1 - useBonus / (this.totalPrice + useBonus);
-                        }
+                        // if (useBonus) {
+                        //   bonusDisc =
+                        //     1 - useBonus / (this.totalPrice + useBonus);
+                        // }
 
-                        const payItems = [];
+                        const payItems = [...this.props.store.payItems];
 
                         // console.log("bonusDisc :>> ", bonusDisc);
 
-                        Object.keys(productInCart).forEach((el) => {
-                          ecomProd.push({
-                            id: productInCart[el].sale,
-                            name: productInCart[el].name,
-                            price: productInCart[el].price,
-                            brand: productInCart[el].brand,
+                        // Object.keys(productInCart).forEach((el) => {
+                        //   ecomProd.push({
+                        //     id: productInCart[el].sale,
+                        //     name: productInCart[el].name,
+                        //     price: productInCart[el].price,
+                        //     brand: productInCart[el].brand,
 
-                            quantity: productInCartList[el],
-                          });
-                          dataToSend.prod[el] = {
-                            countIn: productInCartList[el],
-                            sale: productInCart[el].sale,
-                            slug: productInCart[el].slug,
-                            regular_price: useBonus
-                              ? productInCart[el].regular_price * bonusDisc
-                              : productInCart[el].regular_price,
-                            dbid: productInCart[el].dbid,
-                            name: productInCart[el].name,
-                            priceForWoo: useBonus
-                              ? productInCart[el].regular_price * bonusDisc
-                              : productInCart[el].regular_price,
-                          };
-                          if (productInCart[el].sale) {
-                            dataToSend.prod[el].sale_price = useBonus
-                              ? productInCart[el].sale_price * bonusDisc
-                              : productInCart[el].sale_price;
-                            dataToSend.prod[el].priceForWoo = useBonus
-                              ? productInCart[el].sale_price * bonusDisc
-                              : productInCart[el].sale_price;
-                          }
+                        //     quantity: productInCartList[el],
+                        //   });
+                        //   dataToSend.prod[el] = {
+                        //     countIn: productInCartList[el],
+                        //     sale: productInCart[el].sale,
+                        //     slug: productInCart[el].slug,
+                        //     regular_price: useBonus
+                        //       ? productInCart[el].regular_price * bonusDisc
+                        //       : productInCart[el].regular_price,
+                        //     dbid: productInCart[el].dbid,
+                        //     name: productInCart[el].name,
+                        //     priceForWoo: useBonus
+                        //       ? productInCart[el].regular_price * bonusDisc
+                        //       : productInCart[el].regular_price,
+                        //   };
+                        //   if (productInCart[el].sale) {
+                        //     dataToSend.prod[el].sale_price = useBonus
+                        //       ? productInCart[el].sale_price * bonusDisc
+                        //       : productInCart[el].sale_price;
+                        //     dataToSend.prod[el].priceForWoo = useBonus
+                        //       ? productInCart[el].sale_price * bonusDisc
+                        //       : productInCart[el].sale_price;
+                        //   }
 
-                          productForYA.push({
-                            externalId: String(productInCart[el].slug),
-                            name: productInCart[el].name,
-                            count:
-                              el === certInCart ? 1 : productInCartList[el],
-                            price: Math.floor(
-                              productInCart[el].sale
-                                ? productInCart[el].sale_price === 0
-                                  ? 1
-                                  : productInCart[el].sale_price
-                                : productInCart[el].regular_price
-                            ),
-                            assessedValue: Math.floor(
-                              productInCart[el].sale
-                                ? productInCart[el].sale_price === 0
-                                  ? productInCart[el].regular_price
-                                  : productInCart[el].sale_price
-                                : productInCart[el].regular_price
-                            ),
-                            tax: "NO_VAT",
-                            dimensions: {
-                              length: +productInCart[el].dimensions.length,
-                              height: +productInCart[el].dimensions.height,
-                              width: +productInCart[el].dimensions.width,
-                              weight: productInCart[el].weight,
-                            },
-                          });
-                          totalProductSum +=
-                            Math.floor(
-                              productForYA[productForYA.length - 1].price
-                            ) * productForYA[productForYA.length - 1].count;
-                        });
+                        //   productForYA.push({
+                        //     externalId: String(productInCart[el].slug),
+                        //     name: productInCart[el].name,
+                        //     count:
+                        //       el === certInCart ? 1 : productInCartList[el],
+                        //     price: Math.floor(
+                        //       productInCart[el].sale
+                        //         ? productInCart[el].sale_price === 0
+                        //           ? 1
+                        //           : productInCart[el].sale_price
+                        //         : productInCart[el].regular_price
+                        //     ),
+                        //     assessedValue: Math.floor(
+                        //       productInCart[el].sale
+                        //         ? productInCart[el].sale_price === 0
+                        //           ? productInCart[el].regular_price
+                        //           : productInCart[el].sale_price
+                        //         : productInCart[el].regular_price
+                        //     ),
+                        //     tax: "NO_VAT",
+                        //     dimensions: {
+                        //       length: +productInCart[el].dimensions.length,
+                        //       height: +productInCart[el].dimensions.height,
+                        //       width: +productInCart[el].dimensions.width,
+                        //       weight: productInCart[el].weight,
+                        //     },
+                        //   });
+                        //   totalProductSum +=
+                        //     Math.floor(
+                        //       productForYA[productForYA.length - 1].price
+                        //     ) * productForYA[productForYA.length - 1].count;
+                        // });
 
-                        if (Object.keys(coupsCont).length) {
-                          totalProductSum = 0;
+                        // if (Object.keys(coupsCont).length) {
+                        //   totalProductSum = 0;
 
-                          Object.keys(coupsCont).forEach((coupon) => {
-                            let couponC = coupsCont[coupon].count;
-                            productForYA.forEach((el, i) => {
-                              if (el.price > 1) {
-                                if (coupsCont[coupon].type === "percent") {
-                                  productForYA[i].price = Math.floor(
-                                    productForYA[i].price *
-                                      (1 - +coupsCont[coupon].count / 100)
-                                  );
-                                } else if (
-                                  coupsCont[coupon].type === "fixed_cart"
-                                ) {
-                                  if (couponC > 0) {
-                                    if (el.price - couponC >= 1) {
-                                      productForYA[i].price -= couponC;
+                        //   Object.keys(coupsCont).forEach((coupon) => {
+                        //     let couponC = coupsCont[coupon].count;
+                        //     productForYA.forEach((el, i) => {
+                        //       if (el.price > 1) {
+                        //         if (coupsCont[coupon].type === "percent") {
+                        //           productForYA[i].price = Math.floor(
+                        //             productForYA[i].price *
+                        //               (1 - +coupsCont[coupon].count / 100)
+                        //           );
+                        //         } else if (
+                        //           coupsCont[coupon].type === "fixed_cart"
+                        //         ) {
+                        //           if (couponC > 0) {
+                        //             if (el.price - couponC >= 1) {
+                        //               productForYA[i].price -= couponC;
 
-                                      couponC = 0;
-                                    } else {
-                                      productForYA[i].price = 1;
+                        //               couponC = 0;
+                        //             } else {
+                        //               productForYA[i].price = 1;
 
-                                      couponC -= productForYA[i].price - 1;
-                                    }
-                                  }
-                                }
-                              }
-                              totalProductSum +=
-                                productForYA[i].price * productForYA[i].count;
-                            });
-                            Object.keys(dataToSend.prod).forEach((el) => {
-                              if (dataToSend.prod[el].sale_price !== 0) {
-                                if (coupsCont[coupon].type === "percent") {
-                                  if (dataToSend.prod[el].sale) {
-                                    dataToSend.prod[el].sale_price = Math.floor(
-                                      dataToSend.prod[el].sale_price *
-                                        (1 - +coupsCont[coupon].count / 100)
-                                    );
-                                  } else {
-                                    dataToSend.prod[
-                                      el
-                                    ].regular_price = Math.floor(
-                                      dataToSend.prod[el].regular_price *
-                                        (1 - +coupsCont[coupon].count / 100)
-                                    );
-                                  }
-                                } else if (
-                                  coupsCont[coupon].type === "fixed_cart"
-                                ) {
-                                  if (couponC > 0) {
-                                    if (dataToSend.prod[el].sale) {
-                                      if (
-                                        dataToSend.prod[el].sale_price *
-                                          productInCartList[el] -
-                                          couponC >=
-                                        0
-                                      ) {
-                                        dataToSend.prod[
-                                          el
-                                        ].sale_price -= Math.round(
-                                          couponC / productInCartList[el]
-                                        );
+                        //               couponC -= productForYA[i].price - 1;
+                        //             }
+                        //           }
+                        //         }
+                        //       }
+                        //       totalProductSum +=
+                        //         productForYA[i].price * productForYA[i].count;
+                        //     });
+                        //     Object.keys(dataToSend.prod).forEach((el) => {
+                        //       if (dataToSend.prod[el].sale_price !== 0) {
+                        //         if (coupsCont[coupon].type === "percent") {
+                        //           if (dataToSend.prod[el].sale) {
+                        //             dataToSend.prod[el].sale_price = Math.floor(
+                        //               dataToSend.prod[el].sale_price *
+                        //                 (1 - +coupsCont[coupon].count / 100)
+                        //             );
+                        //           } else {
+                        //             dataToSend.prod[
+                        //               el
+                        //             ].regular_price = Math.floor(
+                        //               dataToSend.prod[el].regular_price *
+                        //                 (1 - +coupsCont[coupon].count / 100)
+                        //             );
+                        //           }
+                        //         } else if (
+                        //           coupsCont[coupon].type === "fixed_cart"
+                        //         ) {
+                        //           if (couponC > 0) {
+                        //             if (dataToSend.prod[el].sale) {
+                        //               if (
+                        //                 dataToSend.prod[el].sale_price *
+                        //                   productInCartList[el] -
+                        //                   couponC >=
+                        //                 0
+                        //               ) {
+                        //                 dataToSend.prod[
+                        //                   el
+                        //                 ].sale_price -= Math.round(
+                        //                   couponC / productInCartList[el]
+                        //                 );
 
-                                        couponC = 0;
-                                      } else {
-                                        couponC -=
-                                          dataToSend.prod[el].sale_price *
-                                          productInCartList[el];
-                                        dataToSend.prod[el].sale_price = 0;
-                                      }
-                                    } else {
-                                      if (
-                                        dataToSend.prod[el].regular_price *
-                                          productInCartList[el] -
-                                          couponC >=
-                                        0
-                                      ) {
-                                        dataToSend.prod[
-                                          el
-                                        ].regular_price -= Math.round(
-                                          couponC / productInCartList[el]
-                                        );
+                        //                 couponC = 0;
+                        //               } else {
+                        //                 couponC -=
+                        //                   dataToSend.prod[el].sale_price *
+                        //                   productInCartList[el];
+                        //                 dataToSend.prod[el].sale_price = 0;
+                        //               }
+                        //             } else {
+                        //               if (
+                        //                 dataToSend.prod[el].regular_price *
+                        //                   productInCartList[el] -
+                        //                   couponC >=
+                        //                 0
+                        //               ) {
+                        //                 dataToSend.prod[
+                        //                   el
+                        //                 ].regular_price -= Math.round(
+                        //                   couponC / productInCartList[el]
+                        //                 );
 
-                                        couponC = 0;
-                                      } else {
-                                        couponC -=
-                                          dataToSend.prod[el].regular_price *
-                                          productInCartList[el];
-                                        dataToSend.prod[el].regular_price = 0;
-                                      }
-                                    }
-                                  }
-                                }
-                              }
-                            });
-                          });
-                        }
+                        //                 couponC = 0;
+                        //               } else {
+                        //                 couponC -=
+                        //                   dataToSend.prod[el].regular_price *
+                        //                   productInCartList[el];
+                        //                 dataToSend.prod[el].regular_price = 0;
+                        //               }
+                        //             }
+                        //           }
+                        //         }
+                        //       }
+                        //     });
+                        //   });
+                        // }
 
-                        let noPriceCount = 1;
-                        // console.log("totalProductSum :>> ", totalProductSum);
-                        // console.log("this.totalPrice :>> ", this.totalPrice);
+                        // let noPriceCount = 1;
+                        // // console.log("totalProductSum :>> ", totalProductSum);
+                        // // console.log("this.totalPrice :>> ", this.totalPrice);
 
-                        if (totalProductSum !== this.totalPrice) {
-                          let totalDeff = totalProductSum - this.totalPrice;
-                          let i = 0;
-                          // console.log("totalDeff :>> ", totalDeff);
-                          while (totalDeff > 0) {
-                            if (i < productForYA.length) {
-                              if (productForYA[i].price > 1) {
-                                if (
-                                  productForYA[i].price -
-                                    totalDeff / productForYA[i].count >
-                                  1
-                                ) {
-                                  productForYA[i].price = Math.floor(
-                                    productForYA[i].price -
-                                      totalDeff / productForYA[i].count
-                                  );
-                                  noPriceCount = productForYA[i].count;
-                                  totalDeff = 0;
-                                } else {
-                                  totalDeff -=
-                                    productForYA[i].price *
-                                      productForYA[i].count -
-                                    1;
-                                  productForYA[i].price = 1;
+                        // if (totalProductSum !== this.totalPrice) {
+                        //   let totalDeff = totalProductSum - this.totalPrice;
+                        //   let i = 0;
+                        //   // console.log("totalDeff :>> ", totalDeff);
+                        //   while (totalDeff > 0) {
+                        //     if (i < productForYA.length) {
+                        //       if (productForYA[i].price > 1) {
+                        //         if (
+                        //           productForYA[i].price -
+                        //             totalDeff / productForYA[i].count >
+                        //           1
+                        //         ) {
+                        //           productForYA[i].price = Math.floor(
+                        //             productForYA[i].price -
+                        //               totalDeff / productForYA[i].count
+                        //           );
+                        //           noPriceCount = productForYA[i].count;
+                        //           totalDeff = 0;
+                        //         } else {
+                        //           totalDeff -=
+                        //             productForYA[i].price *
+                        //               productForYA[i].count -
+                        //             1;
+                        //           productForYA[i].price = 1;
 
-                                  i += 1;
-                                }
-                              } else {
-                                i += 1;
-                              }
-                            } else {
-                              break;
-                            }
-                          }
-                        }
+                        //           i += 1;
+                        //         }
+                        //       } else {
+                        //         i += 1;
+                        //       }
+                        //     } else {
+                        //       break;
+                        //     }
+                        //   }
+                        // }
 
-                        productForYA.forEach((el, i) => {
-                          if (el.price > 1) {
-                            payItems.push({
-                              description: el.name,
-                              quantity: el.count,
-                              amount: {
-                                value: String(el.price),
-                                currency: "RUB",
-                              },
-                              vat_code: 1,
-                            });
-                          } else {
-                            productForYA[i].price *= noPriceCount / el.count;
-                            payItems.push({
-                              description: el.name,
-                              quantity: el.count,
-                              amount: {
-                                value: String(el.price),
-                                currency: "RUB",
-                              },
-                              vat_code: 1,
-                            });
-                            productForYA[i].price = Math.floor(
-                              productForYA[i].price
-                            );
-                          }
-                        });
+                        // productForYA.forEach((el, i) => {
+                        //   if (el.price > 1) {
+                        //     payItems.push({
+                        //       description: el.name,
+                        //       quantity: el.count,
+                        //       amount: {
+                        //         value: String(el.price),
+                        //         currency: "RUB",
+                        //       },
+                        //       vat_code: 1,
+                        //     });
+                        //   } else {
+                        //     productForYA[i].price *= noPriceCount / el.count;
+                        //     payItems.push({
+                        //       description: el.name,
+                        //       quantity: el.count,
+                        //       amount: {
+                        //         value: String(el.price),
+                        //         currency: "RUB",
+                        //       },
+                        //       vat_code: 1,
+                        //     });
+                        //     productForYA[i].price = Math.floor(
+                        //       productForYA[i].price
+                        //     );
+                        //   }
+                        // });
 
                         dataToSend.sum = this.totalPrice;
                         dataToSend.email = this.state.email.toLowerCase();
@@ -2695,8 +2725,7 @@ const CartPage = observer(
                             avalRegistCert = true;
                           }
                         });
-                        console.log("thisCertAvalHere :>> ", thisCertAvalHere);
-                        console.log("avalRegistCert :>> ", avalRegistCert);
+                        
                         if (
                           $("#coup").val() !== "" &&
                           !thisCertAvalHere &&
@@ -2717,6 +2746,7 @@ const CartPage = observer(
 
                                 localStorage.set("coupsCont", newCoupsCont);
                                 $("#coup").val("");
+                                // this.props.store.createOrderData(this.state.payment)
                                 this.setState({
                                   coupsCont: newCoupsCont,
                                 });
@@ -2784,6 +2814,7 @@ const CartPage = observer(
     }
 
     componentDidMount() {
+      
       const tel = new Inputmask({
         mask: "+7 (999) 999 99 99",
         showMaskOnHover: false,

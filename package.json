@@ -61,6 +61,13 @@
     "compress-images": "^1.7.8",
     "gifsicle": "^5.1.0",
     "gzipper": "^3.7.0",
-    "pngquant-bin": "^6.0.0"
+    "pngquant-bin": "^6.0.0",
+    "prettier": "2.1.2"
+  },
+  "prettier": {
+    "trailingComma": "es5",
+    "tabWidth": 4,
+    "semi": false,
+    "singleQuote": true
   }
 }
