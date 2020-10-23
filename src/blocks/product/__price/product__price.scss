@@ -1,69 +1,80 @@
 .product__price {
-  font-style: normal;
-  font-weight: normal;
-  font-size: 20px;
-  line-height: 20px;
-  color: $b_middle;
-  margin-right: auto;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 20px;
+    line-height: 20px;
+    color: $b_middle;
+    margin-right: auto;
 
-  display: flex;
-  align-items: center;
-  @include max($s) {
-    font-size: 18px;
-    flex-wrap: wrap;
-  }
-  .product__bonus {
     display: flex;
-    justify-content: center;
     align-items: center;
-    padding: 9.5px 7px;
-    padding-right: 16px;
-    margin-left: 12px;
-    background: radial-gradient(
-      242.18% 175.14% at 50% 11.86%,
-      #c4dcf3 0%,
-      #93bae0 100%
-    );
-    border-radius: 20px;
-    cursor: pointer;
-
-    /* identical to box height */
-
-    /* Blue/Dark */
-
-    color: #00094d;
-
-    .i_coin {
-      font-size: 24px;
-      margin-right: 10px;
-    }
-    p {
-      margin: 0px;
-
-      font-family: Excentra Pro;
-      font-style: normal;
-      font-weight: 500;
-      font-size: 14px;
-      line-height: 14px;
-
-      text-align: center;
-    }
-  }
-  &_disc {
-    color: $red;
-  }
-  .old {
-    text-decoration: line-through;
-    font-size: 15px;
-    color: $b_gray;
-    margin-right: 8px;
     @include max($s) {
-      font-size: 13px;
-      width: 100%;
-      order: 1;
+        font-size: 18px;
+        flex-wrap: wrap;
     }
-  }
-  .disc_perc {
+    .product__bonus {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 9.5px 7px;
+        padding-right: 16px;
+        margin-left: 12px;
+        background: radial-gradient(
+            242.18% 175.14% at 50% 11.86%,
+            #c4dcf3 0%,
+            #93bae0 100%
+        );
+        border-radius: 20px;
+        cursor: pointer;
+
+        /* identical to box height */
+
+        /* Blue/Dark */
+
+        color: #00094d;
+
+        .i_coin {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+        p {
+            margin: 0px;
+
+            font-family: Excentra Pro;
+            font-style: normal;
+            font-weight: 500;
+            font-size: 14px;
+            line-height: 14px;
+
+            text-align: center;
+        }
+    }
+    &_disc {
+        color: $red;
+    }
+    .old {
+        text-decoration: line-through;
+        font-size: 15px;
+        color: $b_gray;
+        margin-right: 8px;
+        @include max($s) {
+            font-size: 13px;
+            width: 100%;
+            order: 1;
+        }
+    }
+
+    &_text {
+        font-size: 15px;
+        color: #ba250d;
+
+        @include max($s) {
+            font-size: 13px;
+        }
+    }
+}
+
+.disc_perc {
     background-color: $red;
     color: white;
     font-weight: 500;
@@ -73,22 +84,12 @@
     position: relative;
     top: -2px;
     padding: {
-      top: 2px;
-      bottom: 0px;
-      left: 10px;
-      right: 10px;
+        top: 2px;
+        bottom: 0px;
+        left: 10px;
+        right: 10px;
     }
     @include max($s) {
-      font-size: 12px;
+        font-size: 12px;
     }
-  }
-
-  &_text {
-    font-size: 15px;
-    color: #ba250d;
-
-    @include max($s) {
-      font-size: 13px;
-    }
-  }
 }

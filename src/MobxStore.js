@@ -142,6 +142,20 @@ class Store {
 
   hitCont = [];
 
+  notSaleSum = 0;
+
+  //для формирования заказа на сервер
+  dataToSend = {
+    prod: {},
+  };
+  ecomProd = [];
+  productForYA = [];
+  totalProductSum = 0;
+  bonusDisc;
+  payItems = []
+  useBonus = 0
+  //END
+
   // seenProdAdd = autorun(() => {
   //   localStorage.set("seenProd", this.seenProd);
   // });
@@ -365,7 +379,7 @@ class Store {
           });
           // this.productInCart = timeCont;
           // console.log("object :>> ", this.productInCart);
-
+          this.notSaleSum = 0;
           const dontSaleProd = [];
 
           let dontSaleProdCount = 0;
@@ -396,12 +410,12 @@ class Store {
 
               // console.log("dont :>> ", dontSaleProd);
               minProdSlugs.push(minProdSlug);
-              let dontSaleProdCountIn = Math.floor(dontSaleProdCount / 3);
+              let toSaleProdCount = Math.floor(dontSaleProdCount / 3);
               // console.log("minProdSlugs :>> ", minProdSlugs);
               for (let index = 0; index < dontSaleProd.length; index++) {
                 if (
                   this.productInCartList[dontSaleProd[index].slug] ===
-                  dontSaleProdCountIn
+                  toSaleProdCount
                 ) {
                   timeCont[dontSaleProd[index].slug].sale_price = 0;
                   timeCont[dontSaleProd[index].slug].price = 0;
@@ -409,209 +423,313 @@ class Store {
                   break;
                 } else if (
                   this.productInCartList[dontSaleProd[index].slug] >
-                  dontSaleProdCountIn
+                  toSaleProdCount
                 ) {
                   timeCont[dontSaleProd[index].slug].sale_price = Math.floor(
                     timeCont[dontSaleProd[index].slug].regular_price *
                       (1 -
-                        dontSaleProdCountIn /
+                        toSaleProdCount /
                           this.productInCartList[dontSaleProd[index].slug])
                   );
                   timeCont[dontSaleProd[index].slug].sale = true;
                   timeCont[dontSaleProd[index].slug].price =
                     timeCont[dontSaleProd[index].slug].sale_price;
+
+                  this.notSaleSum =
+                    timeCont[dontSaleProd[index].slug].regular_price *
+                    (this.productInCartList[dontSaleProd[index].slug] -
+                      toSaleProdCount);
                   break;
                 } else if (
                   this.productInCartList[dontSaleProd[index].slug] <
-                  dontSaleProdCountIn
+                  toSaleProdCount
                 ) {
                   timeCont[dontSaleProd[index].slug].sale_price = 0;
                   timeCont[dontSaleProd[index].slug].price = 0;
                   timeCont[dontSaleProd[index].slug].sale = true;
-                  dontSaleProdCountIn -= this.productInCartList[
+                  toSaleProdCount -= this.productInCartList[
                     dontSaleProd[index].slug
                   ];
                 }
               }
             }
-            // let totalProductSum = 0;
-            // let totalSum = 0;
+            
+            
 
-            // Object.keys(timeCont).forEach((prod) => {
-            //   timeCont[prod].yaPrice = Math.floor(
-            //     timeCont[prod].sale
-            //       ? timeCont[prod].sale_price === 0
-            //         ? 1
-            //         : timeCont[prod].sale_price
-            //       : timeCont[prod].regular_price
-            //   );
-
-            //   totalProductSum +=
-            //     Math.floor(timeCont[prod].yaPrice) * timeCont[prod].count;
-
-            //   totalSum =
-            //     Math.floor(
-            //       timeCont[prod].sale
-            //         ? timeCont[prod].sale_price
-            //         : timeCont[prod].regular_price
-            //     ) * timeCont[prod].count;
-            // });
-            // const coupsCont =
-            //   localStorage.get("coupsCont") === undefined ||
-            //   localStorage.get("coupsCont") === null ||
-            //   localStorage.getItem("coupsCont") === "undefined"
-            //     ? {}
-            //     : localStorage.get("coupsCont");
-
-            // if (Object.keys(coupsCont).length) {
-            //   totalProductSum = 0;
-            //   this.coupDisc = 0;
-            //   this.certDisc = 0;
-
-            //   Object.keys(coupsCont).forEach((coupon) => {
-            //     let couponC = coupsCont[coupon].count;
-            //     Object.keys(timeCont).forEach((el, i) => {
-            //       if (timeCont[el].yaPrice > 1) {
-            //         if (coupsCont[coupon].type === "percent") {
-            //           if (el !== this.certInCart) {
-            //             this.coupDisc +=
-            //               Math.round(
-            //                 timeCont[el].yaPrice *
-            //                   (+coupsCont[coupon].count / 100)
-            //               ) * this.productInCartList[el];
-            //             timeCont[el].yaPrice = Math.floor(
-            //               timeCont[el].yaPrice *
-            //                 (1 - +coupsCont[coupon].count / 100)
-            //             );
-            //           }
-            //         } else if (coupsCont[coupon].type === "fixed_cart") {
-            //           if (el !== this.certInCart) {
-            //             if (couponC > 0) {
-            //               if (timeCont[el].yaPrice - couponC >= 1) {
-            //                 timeCont[el].yaPrice -= couponC;
-            //                 couponC = 0;
-            //               } else {
-            //                 timeCont[el].yaPrice = 1;
-            //                 couponC -= timeCont[el].yaPrice - 1;
-            //               }
-            //             }
-            //             this.certDisc += Math.round(+coupsCont[coupon].count);
-            //           }
-            //         }
-            //       }
-            //       totalProductSum += timeCont[el].yaPrice;
-            //     });
-            //   });
-            // }
-
-            // if (totalProductSum !== totalSum) {
-            //   let totalDeff = totalProductSum - this.totalPrice;
-            //   const timeContArray = Object.keys(timeCont);
-            //   let i = 0;
-            //   while (totalDeff > 0) {
-            //     if (i < timeContArray.length) {
-            //       if (timeCont[timeContArray[i]].yaPrice > 1) {
-            //         if (
-            //           timeCont[timeContArray[i]].yaPrice -
-            //             totalDeff / timeCont[timeContArray[i]].count >
-            //           1
-            //         ) {
-            //           timeCont[timeContArray[i]].yaPrice = Math.floor(
-            //             timeCont[timeContArray[i]].yaPrice -
-            //               totalDeff / timeCont[timeContArray[i]].count
-            //           );
-            //           totalDeff = 0;
-            //         } else {
-            //           totalDeff -=
-            //             timeCont[timeContArray[i]].yaPrice *
-            //             timeCont[timeContArray[i]].count;
-            //           timeCont[timeContArray[i]].yaPrice = 1;
-            //           i += 1;
-            //         }
-            //       } else {
-            //         i += 1;
-            //       }
-            //     } else {
-            //       break;
-            //     }
-            //   }
-            // }
           } else {
             this.dontSaleProd = [];
             this.dontSaleProdCount = 0;
           }
           this.productInCart = timeCont;
+          this.createOrderData()
         })
         .catch((err) => {
           console.log("err :>> ", err);
           this.productInCartList = productInCartListOld;
           localStorage.set("productInCart", this.productInCartList);
         });
-      // } else {
-      //   const dontSaleProd = [];
-      //   let dontSaleProdCount = 0;
-      //   if (Object.keys(this.productInCart).length) {
-      //     Object.keys(this.productInCart).forEach((el) => {
-      //       if (!this.productInCart[el].sale) {
-      //         dontSaleProdCount += +this.productInCartList[el];
-      //         dontSaleProd.push(this.productInCart[el]);
-      //       }
-      //     });
-
-      //     if (dontSaleProdCount > 0 && dontSaleProdCount % 3 === 0) {
-      //       let minProdSlug = 0;
-      //       const minProdSlugs = [];
-
-      //       dontSaleProd.sort((a, b) => {
-      //         if (a < b) return -1;
-      //         if (a > b) return 1;
-      //         return 0;
-      //       });
-      //       console.log("dont :>> ", dontSaleProd);
-      //       minProdSlugs.push(minProdSlug);
-      //       let dontSaleProdCountIn = dontSaleProdCount / 3;
-      //       console.log("minProdSlugs :>> ", minProdSlugs);
-      //       for (let index = 0; index < dontSaleProd.length; index++) {
-      //         if (
-      //           this.productInCartList[dontSaleProd[index].slug] ===
-      //           dontSaleProdCountIn
-      //         ) {
-      //           this.productInCart[dontSaleProd[index].slug].regular_price = 0;
-      //           break;
-      //         } else if (
-      //           this.productInCartList[dontSaleProd[index].slug] >
-      //           dontSaleProdCountIn
-      //         ) {
-      //           this.productInCart[dontSaleProd[index].slug].sale_price =
-      //             (this.productInCart[dontSaleProd[index].slug].regular_price *
-      //               dontSaleProdCountIn) /
-      //             this.productInCartList[dontSaleProd[index].slug];
-      //           this.productInCart[dontSaleProd[index].slug].sale = true;
-      //           break;
-      //         } else if (
-      //           this.productInCartList[dontSaleProd[index].slug] <
-      //           dontSaleProdCountIn
-      //         ) {
-      //           this.productInCart[dontSaleProd[index].slug].regular_price = 0;
-      //           dontSaleProdCountIn -= this.productInCartList[
-      //             dontSaleProd[index].slug
-      //           ];
-      //         }
-      //       }
-      //     }
-      //   }
-      // }
-      // else {
-      //   Object.keys(this.productInCartList).forEach((el) => {
-      //     this.productInCart[el].countInCart = this.productInCartList[el];
-      //   });
-      // }
+      
     } else {
       this.productInCart = {};
       this.dontSaleProd = [];
       this.dontSaleProdCount = 0;
     }
   };
+
+  createOrderData = (typePayment)=>{
+    this.dataToSend = {
+      prod: {},
+    };
+    this.productForYA = [];
+    this.ecomProd = [];
+    this.totalProductSum = 0;
+    this.bonusDisc = null
+    this.payItems = []
+    const typeIsPREPAID = typePayment==='PREPAID'
+    
+    const coupsCont=
+        localStorage.get("coupsCont") === undefined ||
+        localStorage.get("coupsCont") === null ||
+        localStorage.getItem("coupsCont") === "undefined"
+          ? {}
+          : localStorage.get("coupsCont")
+    if (this.useBonus) {
+      this.bonusDisc =
+        1 - this.useBonus / (this.totalPrice + this.useBonus);
+    }
+
+    
+
+    Object.keys(this.productInCart).forEach((el) => {
+      const regPrice = typeIsPREPAID?Math.floor(this.productInCart[el].regular_price*0.98):this.productInCart[el].regular_price
+      const salePrice = this.productInCart[el].sale?typeIsPREPAID?Math.floor(this.productInCart[el].sale_price*0.98):this.productInCart[el].sale_price:0
+      this.ecomProd.push({
+        id: this.productInCart[el].sale,
+        name: this.productInCart[el].name,
+        price: typeIsPREPAID?Math.floor(this.productInCart[el].price*0.98):this.productInCart[el].price,
+        brand: this.productInCart[el].brand,
+
+        quantity: this.productInCartList[el],
+      });
+      this.dataToSend.prod[el] = {
+        countIn: this.productInCartList[el],
+        sale: this.productInCart[el].sale,
+        slug: this.productInCart[el].slug,
+        regular_price: this.useBonus
+          ? regPrice * this.bonusDisc
+          : regPrice,
+        dbid: this.productInCart[el].dbid,
+        name: this.productInCart[el].name,
+        priceForWoo: this.useBonus
+          ? regPrice * this.bonusDisc
+          : regPrice,
+      };
+      if (this.productInCart[el].sale) {
+        this.dataToSend.prod[el].sale_price = this.useBonus
+          ? salePrice * this.bonusDisc
+          : salePrice;
+        this.dataToSend.prod[el].priceForWoo = this.useBonus
+          ? salePrice * this.bonusDisc
+          : salePrice;
+      }
+
+      this.productForYA.push({
+        externalId: String(this.productInCart[el].slug),
+        name: this.productInCart[el].name,
+        count:
+          el === this.certInCart ? 1 : this.productInCartList[el],
+        price: Math.floor(
+          this.productInCart[el].sale
+            ? salePrice === 0
+              ? 1
+              : salePrice
+            : regPrice
+        ),
+        assessedValue: Math.floor(
+          this.productInCart[el].sale
+            ? salePrice === 0
+              ? regPrice
+              : salePrice
+            : regPrice
+        ),
+        tax: "NO_VAT",
+        dimensions: {
+          length: +this.productInCart[el].dimensions.length,
+          height: +this.productInCart[el].dimensions.height,
+          width: +this.productInCart[el].dimensions.width,
+          weight: this.productInCart[el].weight,
+        },
+      });
+      this.totalProductSum +=
+        Math.floor(
+          this.productForYA[this.productForYA.length - 1].price
+        ) * this.productForYA[this.productForYA.length - 1].count;
+    });
+    if (Object.keys(coupsCont).length) {
+      this.totalProductSum = 0;
+
+      Object.keys(coupsCont).forEach((coupon) => {
+        let couponC = coupsCont[coupon].count;
+        this.productForYA.forEach((el, i) => {
+          if (el.price > 1) {
+            if (coupsCont[coupon].type === "percent") {
+              this.productForYA[i].price = Math.floor(
+                this.productForYA[i].price *
+                  (1 - +coupsCont[coupon].count / 100)
+              );
+            } else if (
+              coupsCont[coupon].type === "fixed_cart"
+            ) {
+              if (couponC > 0) {
+                if (el.price - couponC >= 1) {
+                  this.productForYA[i].price -= couponC;
+
+                  couponC = 0;
+                } else {
+                  this.productForYA[i].price = 1;
+
+                  couponC -= this.productForYA[i].price - 1;
+                }
+              }
+            }
+          }
+          this.totalProductSum +=
+            this.productForYA[i].price * this.productForYA[i].count;
+        });
+        Object.keys(this.dataToSend.prod).forEach((el) => {
+          if (this.dataToSend.prod[el].sale_price !== 0) {
+            if (coupsCont[coupon].type === "percent") {
+              if (this.dataToSend.prod[el].sale) {
+                this.dataToSend.prod[el].sale_price = Math.floor(
+                  this.dataToSend.prod[el].sale_price *
+                    (1 - +coupsCont[coupon].count / 100)
+                );
+              } else {
+                this.dataToSend.prod[
+                  el
+                ].regular_price = Math.floor(
+                  this.dataToSend.prod[el].regular_price *
+                    (1 - +coupsCont[coupon].count / 100)
+                );
+              }
+            } else if (
+              coupsCont[coupon].type === "fixed_cart"
+            ) {
+              if (couponC > 0) {
+                if (this.dataToSend.prod[el].sale) {
+                  if (
+                    this.dataToSend.prod[el].sale_price *
+                      this.productInCartList[el] -
+                      couponC >=
+                    0
+                  ) {
+                    this.dataToSend.prod[
+                      el
+                    ].sale_price -= Math.round(
+                      couponC / this.productInCartList[el]
+                    );
+
+                    couponC = 0;
+                  } else {
+                    couponC -=
+                      this.dataToSend.prod[el].sale_price *
+                      this.productInCartList[el];
+                    this.dataToSend.prod[el].sale_price = 0;
+                  }
+                } else {
+                  if (
+                    this.dataToSend.prod[el].regular_price *
+                      this.productInCartList[el] -
+                      couponC >=
+                    0
+                  ) {
+                    this.dataToSend.prod[
+                      el
+                    ].regular_price -= Math.round(
+                      couponC / this.productInCartList[el]
+                    );
+
+                    couponC = 0;
+                  } else {
+                    couponC -=
+                      this.dataToSend.prod[el].regular_price *
+                      this.productInCartList[el];
+                    this.dataToSend.prod[el].regular_price = 0;
+                  }
+                }
+              }
+            }
+          }
+        });
+      });
+    }
+    let noPriceCount = 1;
+                        
+
+    if (this.totalProductSum !== this.totalPrice) {
+      let totalDeff = this.totalProductSum - this.totalPrice;
+      let i = 0;
+      // console.log("totalDeff :>> ", totalDeff);
+      while (totalDeff > 0) {
+        if (i < this.productForYA.length) {
+          if (this.productForYA[i].price > 1) {
+            if (
+              this.productForYA[i].price -
+                totalDeff / this.productForYA[i].count >
+              1
+            ) {
+              this.productForYA[i].price = Math.floor(
+                this.productForYA[i].price -
+                  totalDeff / this.productForYA[i].count
+              );
+              noPriceCount = this.productForYA[i].count;
+              totalDeff = 0;
+            } else {
+              totalDeff -=
+                this.productForYA[i].price *
+                  this.productForYA[i].count -
+                1;
+              this.productForYA[i].price = 1;
+
+              i += 1;
+            }
+          } else {
+            i += 1;
+          }
+        } else {
+          break;
+        }
+      }
+    }
+
+    this.productForYA.forEach((el, i) => {
+      if (el.price > 1) {
+        this.payItems.push({
+          description: el.name,
+          quantity: el.count,
+          amount: {
+            value: String(el.price),
+            currency: "RUB",
+          },
+          vat_code: 1,
+        });
+      } else {
+        this.productForYA[i].price *= noPriceCount / el.count;
+        this.payItems.push({
+          description: el.name,
+          quantity: el.count,
+          amount: {
+            value: String(el.price),
+            currency: "RUB",
+          },
+          vat_code: 1,
+        });
+        this.productForYA[i].price = Math.floor(
+          this.productForYA[i].price
+        );
+      }
+    });
+  }
 
   cityCheck = autorun(() => {
     // console.log('localStorage.get("city") :>> ', localStorage.get("city"));
@@ -1333,6 +1451,7 @@ class Store {
     this.stopPag = 42;
     this.firstBread = "";
     this.secondBread = "";
+    this.sortInProd = "";
 
     // console.log("clean :>> 11111111111222222222222");
   };
