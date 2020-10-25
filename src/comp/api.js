@@ -187,6 +187,22 @@ class Api {
     });
   }
 
+  cancelOrder(data) {
+    return fetch(SERVER_URL + "/cancel-order", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }).then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      Promise.reject(res.json());
+    });
+  }
+
   getAllCollections() {
     return fetch(SERVER_URL + "/collections", {
       method: "GET",
