@@ -9,6 +9,7 @@ import localStorage from "mobx-localstorage";
 import getCookie from "./ulits/getCookie";
 import { SERVER_URL } from "./constants";
 import api from "./comp/api";
+import moment from "moment";
 import { useHistory } from "react-router-dom";
 
 //1http://134.122.81.119/api
@@ -206,6 +207,142 @@ class Store {
     }
   });
 
+  addtoCart = (give) => {
+    // console.log(
+    //   'localStorage.get("productInCart") :>> ',
+    //   this.productInCartList
+    // );
+    // console.log(
+    //   'localStorage.get("productInCart") :>> ',
+    //   localStorage.get("productInCart")
+    // );
+    const productInCartListOld = localStorage.get("productInCart");
+    localStorage.set("productInCart", this.productInCartList);
+    this.cartCount = Object.keys(this.productInCartList).length;
+
+    if (this.auth) {
+      api
+        .updateCart(this.productInCartList)
+        .then((ok) => {
+          // console.log("ok", ok);
+        })
+        .catch((err) => {
+          console.log("err", err);
+        });
+    }
+    if (this.cartCount) {
+      // if (give) {
+      api
+        .getAnyProd({ slugs: Object.keys(this.productInCartList) })
+        .then((data) => {
+          const timeCont = {};
+          this.certInCart = 0;
+          // console.log("prodCart :>> ", data);
+          Object.keys(data).forEach((prod) => {
+            timeCont[data[prod].slug] = {
+              ...data[prod],
+              countInCart: this.productInCartList[data[prod].slug],
+            };
+          });
+          // this.productInCart = timeCont;
+          // console.log("object :>> ", this.productInCart);
+          this.notSaleSum = 0;
+
+          console.log("object :>> ", moment().format("MM"));
+
+          const dontSaleProd = [];
+
+          let dontSaleProdCount = 0;
+          if (Object.keys(timeCont).length) {
+            Object.keys(timeCont).forEach((el) => {
+              if (typeof this.productInCartList[el] === "number") {
+                if (!timeCont[el].sale) {
+                  dontSaleProdCount += +this.productInCartList[el];
+                  dontSaleProd.push(timeCont[el]);
+                }
+              } else {
+                this.certInCart = el;
+              }
+            });
+            this.dontSaleProdCount = dontSaleProdCount;
+            if (
+              dontSaleProdCount > 0 &&
+              Math.floor(dontSaleProdCount / 3) > 0 &&
+              moment().format("MM") === "10"
+            ) {
+              let minProdSlug = 0;
+              const minProdSlugs = [];
+
+              dontSaleProd.sort((a, b) => {
+                if (a.regular_price < b.regular_price) return -1;
+                if (a.regular_price > b.regular_price) return 1;
+                return 0;
+              });
+
+              // console.log("dont :>> ", dontSaleProd);
+              minProdSlugs.push(minProdSlug);
+              let toSaleProdCount = Math.floor(dontSaleProdCount / 3);
+              // console.log("minProdSlugs :>> ", minProdSlugs);
+              for (let index = 0; index < dontSaleProd.length; index++) {
+                if (
+                  this.productInCartList[dontSaleProd[index].slug] ===
+                  toSaleProdCount
+                ) {
+                  timeCont[dontSaleProd[index].slug].sale_price = 0;
+                  timeCont[dontSaleProd[index].slug].price = 0;
+                  timeCont[dontSaleProd[index].slug].sale = true;
+                  break;
+                } else if (
+                  this.productInCartList[dontSaleProd[index].slug] >
+                  toSaleProdCount
+                ) {
+                  timeCont[dontSaleProd[index].slug].sale_price = Math.floor(
+                    timeCont[dontSaleProd[index].slug].regular_price *
+                      (1 -
+                        toSaleProdCount /
+                          this.productInCartList[dontSaleProd[index].slug])
+                  );
+                  timeCont[dontSaleProd[index].slug].sale = true;
+                  timeCont[dontSaleProd[index].slug].price =
+                    timeCont[dontSaleProd[index].slug].sale_price;
+
+                  this.notSaleSum =
+                    timeCont[dontSaleProd[index].slug].regular_price *
+                    (this.productInCartList[dontSaleProd[index].slug] -
+                      toSaleProdCount);
+                  break;
+                } else if (
+                  this.productInCartList[dontSaleProd[index].slug] <
+                  toSaleProdCount
+                ) {
+                  timeCont[dontSaleProd[index].slug].sale_price = 0;
+                  timeCont[dontSaleProd[index].slug].price = 0;
+                  timeCont[dontSaleProd[index].slug].sale = true;
+                  toSaleProdCount -= this.productInCartList[
+                    dontSaleProd[index].slug
+                  ];
+                }
+              }
+            }
+          } else {
+            this.dontSaleProd = [];
+            this.dontSaleProdCount = 0;
+          }
+          this.productInCart = timeCont;
+          this.createOrderData();
+        })
+        .catch((err) => {
+          console.log("err :>> ", err);
+          this.productInCartList = productInCartListOld;
+          localStorage.set("productInCart", this.productInCartList);
+        });
+    } else {
+      this.productInCart = {};
+      this.dontSaleProd = [];
+      this.dontSaleProdCount = 0;
+    }
+  };
+
   lastSeenProdsGetData = autorun(() => {
     localStorage.set("lastSeenProds", this.lastSeenProds);
     if (this.lastSeenProds.length > 0) {
@@ -338,138 +475,6 @@ class Store {
         });
     } else {
       this.likeData = [];
-    }
-  };
-
-  addtoCart = (give) => {
-    // console.log(
-    //   'localStorage.get("productInCart") :>> ',
-    //   this.productInCartList
-    // );
-    // console.log(
-    //   'localStorage.get("productInCart") :>> ',
-    //   localStorage.get("productInCart")
-    // );
-    const productInCartListOld = localStorage.get("productInCart");
-    localStorage.set("productInCart", this.productInCartList);
-    this.cartCount = Object.keys(this.productInCartList).length;
-
-    if (this.auth) {
-      api
-        .updateCart(this.productInCartList)
-        .then((ok) => {
-          // console.log("ok", ok);
-        })
-        .catch((err) => {
-          console.log("err", err);
-        });
-    }
-    if (this.cartCount) {
-      // if (give) {
-      api
-        .getAnyProd({ slugs: Object.keys(this.productInCartList) })
-        .then((data) => {
-          const timeCont = {};
-          this.certInCart = 0;
-          // console.log("prodCart :>> ", data);
-          Object.keys(data).forEach((prod) => {
-            timeCont[data[prod].slug] = {
-              ...data[prod],
-              countInCart: this.productInCartList[data[prod].slug],
-            };
-          });
-          // this.productInCart = timeCont;
-          // console.log("object :>> ", this.productInCart);
-          this.notSaleSum = 0;
-          const dontSaleProd = [];
-
-          let dontSaleProdCount = 0;
-          if (Object.keys(timeCont).length) {
-            Object.keys(timeCont).forEach((el) => {
-              if (typeof this.productInCartList[el] === "number") {
-                if (!timeCont[el].sale) {
-                  dontSaleProdCount += +this.productInCartList[el];
-                  dontSaleProd.push(timeCont[el]);
-                }
-              } else {
-                this.certInCart = el;
-              }
-            });
-            this.dontSaleProdCount = dontSaleProdCount;
-            if (
-              dontSaleProdCount > 0 &&
-              Math.floor(dontSaleProdCount / 3) > 0
-            ) {
-              let minProdSlug = 0;
-              const minProdSlugs = [];
-
-              dontSaleProd.sort((a, b) => {
-                if (a.regular_price < b.regular_price) return -1;
-                if (a.regular_price > b.regular_price) return 1;
-                return 0;
-              });
-
-              // console.log("dont :>> ", dontSaleProd);
-              minProdSlugs.push(minProdSlug);
-              let toSaleProdCount = Math.floor(dontSaleProdCount / 3);
-              // console.log("minProdSlugs :>> ", minProdSlugs);
-              for (let index = 0; index < dontSaleProd.length; index++) {
-                if (
-                  this.productInCartList[dontSaleProd[index].slug] ===
-                  toSaleProdCount
-                ) {
-                  timeCont[dontSaleProd[index].slug].sale_price = 0;
-                  timeCont[dontSaleProd[index].slug].price = 0;
-                  timeCont[dontSaleProd[index].slug].sale = true;
-                  break;
-                } else if (
-                  this.productInCartList[dontSaleProd[index].slug] >
-                  toSaleProdCount
-                ) {
-                  timeCont[dontSaleProd[index].slug].sale_price = Math.floor(
-                    timeCont[dontSaleProd[index].slug].regular_price *
-                      (1 -
-                        toSaleProdCount /
-                          this.productInCartList[dontSaleProd[index].slug])
-                  );
-                  timeCont[dontSaleProd[index].slug].sale = true;
-                  timeCont[dontSaleProd[index].slug].price =
-                    timeCont[dontSaleProd[index].slug].sale_price;
-
-                  this.notSaleSum =
-                    timeCont[dontSaleProd[index].slug].regular_price *
-                    (this.productInCartList[dontSaleProd[index].slug] -
-                      toSaleProdCount);
-                  break;
-                } else if (
-                  this.productInCartList[dontSaleProd[index].slug] <
-                  toSaleProdCount
-                ) {
-                  timeCont[dontSaleProd[index].slug].sale_price = 0;
-                  timeCont[dontSaleProd[index].slug].price = 0;
-                  timeCont[dontSaleProd[index].slug].sale = true;
-                  toSaleProdCount -= this.productInCartList[
-                    dontSaleProd[index].slug
-                  ];
-                }
-              }
-            }
-          } else {
-            this.dontSaleProd = [];
-            this.dontSaleProdCount = 0;
-          }
-          this.productInCart = timeCont;
-          this.createOrderData();
-        })
-        .catch((err) => {
-          console.log("err :>> ", err);
-          this.productInCartList = productInCartListOld;
-          localStorage.set("productInCart", this.productInCartList);
-        });
-    } else {
-      this.productInCart = {};
-      this.dontSaleProd = [];
-      this.dontSaleProdCount = 0;
     }
   };
 
