@@ -49,7 +49,7 @@ const CartPage = observer(
       payment: "PREPAID",
       pickUpStore: "",
       coupon: { count: 0, type: "", code: "", id: "" },
-      delVar: [],
+      delVar: {},
       coupsCont:
         localStorage.get("coupsCont") === undefined ||
         localStorage.get("coupsCont") === null ||
@@ -433,7 +433,12 @@ const CartPage = observer(
       if (
         typeof delVar === "object" &&
         !delVar.length &&
-        Object.keys(productInCart).length
+        Object.keys(productInCart).length &&
+        !(
+          Object.keys(productInCart).length === 1 &&
+          certInCart &&
+          productInCart[certInCart] !== undefined
+        )
       ) {
         this.choosePaymentType(undefined, "PREPAID");
       }
@@ -456,9 +461,12 @@ const CartPage = observer(
               ? Math.floor(productInCart[el].sale_price * 0.98)
               : productInCart[el].sale_price
             : 0;
-          const regPrice = typeIsPREPAID
-            ? Math.floor(productInCart[el].regular_price * 0.98)
-            : productInCart[el].regular_price;
+
+          const regPrice =
+            typeIsPREPAID && certInCart !== el
+              ? Math.floor(productInCart[el].regular_price * 0.98)
+              : productInCart[el].regular_price;
+
           this.totalPrice += productInCart[el].sale
             ? productInCartList[el] * salePrice
             : el !== certInCart
@@ -584,9 +592,10 @@ const CartPage = observer(
                     ? Math.floor(productInCart[el].sale_price * 0.98)
                     : productInCart[el].sale_price
                   : 0;
-                const regPrice = typeIsPREPAID
-                  ? Math.floor(productInCart[el].regular_price * 0.98)
-                  : productInCart[el].regular_price;
+                const regPrice =
+                  typeIsPREPAID && certInCart !== el
+                    ? Math.floor(productInCart[el].regular_price * 0.98)
+                    : productInCart[el].regular_price;
                 coupDisc +=
                   Math.ceil(
                     el === certInCart

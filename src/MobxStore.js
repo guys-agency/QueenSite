@@ -500,9 +500,10 @@ class Store {
     }
 
     Object.keys(this.productInCart).forEach((el) => {
-      const regPrice = typeIsPREPAID
-        ? Math.floor(this.productInCart[el].regular_price * 0.98)
-        : this.productInCart[el].regular_price;
+      const regPrice =
+        typeIsPREPAID && this.certInCart !== el
+          ? Math.floor(this.productInCart[el].regular_price * 0.98)
+          : this.productInCart[el].regular_price;
       const salePrice = this.productInCart[el].sale
         ? typeIsPREPAID
           ? Math.floor(this.productInCart[el].sale_price * 0.98)
@@ -511,9 +512,10 @@ class Store {
       this.ecomProd.push({
         id: this.productInCart[el].sale,
         name: this.productInCart[el].name,
-        price: typeIsPREPAID
-          ? Math.floor(this.productInCart[el].price * 0.98)
-          : this.productInCart[el].price,
+        price:
+          typeIsPREPAID && this.certInCart !== el
+            ? Math.floor(this.productInCart[el].price * 0.98)
+            : this.productInCart[el].price,
         brand: this.productInCart[el].brand,
 
         quantity: this.productInCartList[el],
