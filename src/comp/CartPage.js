@@ -437,7 +437,7 @@ const CartPage = observer(
         !(
           Object.keys(productInCart).length === 1 &&
           certInCart &&
-          productInCart[certInCart] !== undefined
+          typeof productInCartList[Object.keys(productInCart)[0]] !== "number"
         )
       ) {
         this.choosePaymentType(undefined, "PREPAID");
