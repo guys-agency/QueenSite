@@ -7,6 +7,7 @@ import localStorage from "mobx-localstorage";
 import moment from "moment";
 import "moment/locale/ru";
 import ProductList from "./ProductList";
+import MapDel from "./MapForDelivery.js";
 import api from "./api";
 import num2str from "../ulits/nm2wrd";
 import Inputmask from "inputmask";
@@ -58,6 +59,7 @@ const CartPage = observer(
           : localStorage.get("coupsCont"),
       bonus: 0,
       useBonus: 0,
+      pvzDataCont: [],
     };
 
     deliveryOrderData = {};
@@ -69,9 +71,51 @@ const CartPage = observer(
 
     orderCancelID = {};
 
+    pvzCompCont = [];
+    pvzDataCont = [];
+
+    mapCoor = [];
+
     // pickUpStore = "";
 
     order = {};
+
+    translite = {
+      DS: "Dalli-Service",
+      SDEK: "СДЭК",
+    };
+
+    // BalloonContentLayout = window.ymaps.templateLayoutFactory.createClass(
+    //   '<div style="margin: 10px;">' +
+    //     "<b>{{properties.name}}</b><br />" +
+    //     '<i id="count"></i> ' +
+    //     '<button id="counter-button"> +1 </button>' +
+    //     "</div>",
+    //   {
+    //     // Переопределяем функцию build, чтобы при создании макета начинать
+    //     // слушать событие click на кнопке-счетчике.
+
+    //     build: function () {
+    //       // Сначала вызываем метод build родительского класса.
+    //       this.BalloonContentLayout.superclass.build.call(this);
+    //       // А затем выполняем дополнительные действия.
+    //       $("#counter-button").on("click", this.onCounterClick);
+    //     },
+
+    //     // Аналогично переопределяем функцию clear, чтобы снять
+    //     // прослушивание клика при удалении макета с карты.
+    //     clear: function () {
+    //       // Выполняем действия в обратном порядке - сначала снимаем слушателя,
+    //       // а потом вызываем метод clear родительского класса.
+    //       $("#counter-button").off("click", this.onCounterClick);
+    //       this.BalloonContentLayout.superclass.clear.call(this);
+    //     },
+
+    //     onCounterClick: function () {
+    //       console.log("1 :>> ", 1);
+    //     },
+    //   }
+    // );
 
     stores = {
       "ТРЦ Орджоникидзе 11": {
@@ -121,7 +165,7 @@ const CartPage = observer(
       // this.pickUpStore = name;
     };
 
-    setDeliveryData = (e, data) => {
+    setDeliveryData = (e, data, time) => {
       $(".cart-page__list-elem_delivery")
         .find(".alert-message")
         .removeClass("alert-message_active");
@@ -131,28 +175,12 @@ const CartPage = observer(
         });
         $(e.currentTarget).addClass("active");
       }
+      console.log("data :>> ", data);
 
       this.setState({
         deliveryData: {
           ...data,
-          time:
-            data.delivery.calculatedDeliveryDateMax ===
-            data.delivery.calculatedDeliveryDateMin
-              ? moment(data.delivery.calculatedDeliveryDateMax).diff(
-                  moment(),
-                  "days"
-                ) + 2
-              : moment(data.delivery.calculatedDeliveryDateMin).diff(
-                  moment(),
-                  "days"
-                ) +
-                2 +
-                "-" +
-                (moment(data.delivery.calculatedDeliveryDateMax).diff(
-                  moment(),
-                  "days"
-                ) +
-                  2),
+          time,
         },
       });
     };
@@ -232,16 +260,6 @@ const CartPage = observer(
 
       weightSumm = Math.ceil(weightSumm);
 
-      const order = {
-        cost: {
-          paymentMethod: type,
-          assessedValue: Math.floor(sum),
-          fullyPrepaid: type === "PREPAID",
-          itemsSum: Math.floor(sum),
-          // manualDeliveryForCustomer: 0,
-        },
-      };
-
       this.dimensionsApi = {
         length: lengthMax,
         width: widthMax,
@@ -252,30 +270,68 @@ const CartPage = observer(
       // console.log("object :>> ", moment().add(1, "days").format("YYYY-MM-DD"));
       // this.props.store.createOrderData(type)
 
+      //старые данные
+      // {
+      //   senderId: 500001936,
+      //   from: {
+      //     geoId: 213,
+      //   },
+      //   to: {
+      //     geoId: localStorage.get("city").geoId,
+      //   },
+      //   dimensions: this.dimensionsApi,
+      //   deliveryType: "COURIER",
+      //   cost: order.cost,
+      //   shipment: {
+      //     date:
+      //       moment().hour() > 10
+      //         ? moment().add(1, "days").format("YYYY-MM-DD")
+      //         : moment().format("YYYY-MM-DD"),
+      //     type: "WITHDRAW",
+      //     includeNonDefault: false,
+      //   },
+      // }
+
       api
         .deliveryVar({
-          senderId: 500001936,
-          from: {
-            geoId: 213,
-          },
           to: {
-            geoId: localStorage.get("city").geoId,
+            name: localStorage.get("city").name,
+            region: localStorage.get("city").region,
           },
           dimensions: this.dimensionsApi,
-          deliveryType: "COURIER",
-          cost: order.cost,
-          shipment: {
-            date:
-              moment().hour() > 10
-                ? moment().add(1, "days").format("YYYY-MM-DD")
-                : moment().format("YYYY-MM-DD"),
-            type: "WITHDRAW",
-            includeNonDefault: false,
-          },
+
+          cost: Math.floor(sum),
+          payment: type,
         })
         .then((d) => {
-          if (d.length) {
-            this.setState({ payment: type, delVar: d });
+          console.log("d :>> ", d);
+          if (Object.keys(d).length) {
+            if (
+              (localStorage.get("city").geoId === 213 &&
+                this.totalPrice >= 3000) ||
+              this.totalPrice === 0 ||
+              (localStorage.get("city").geoId !== 213 &&
+                this.totalPrice >= 20000)
+            ) {
+              Object.keys(d).forEach((parent) => {
+                d[parent].price = 0;
+              });
+            }
+
+            if (Object.keys(d).length > 1) {
+              this.setState({ payment: type, delVar: d });
+            } else {
+              const data = d[Object.keys(d)[0]];
+              let time = +data.delivery_period;
+              if (data.msg.match(/\d/) !== null) {
+                time += +data.msg.match(/\d/)[0];
+              }
+              this.setState({
+                payment: type,
+                deliveryData: { ...data, time },
+                delVar: { [Object.keys(d)[0]]: { ...data, time } },
+              });
+            }
           } else {
             this.setState({ payment: type, delVar: false });
           }
@@ -283,6 +339,118 @@ const CartPage = observer(
         .catch((err) => {
           console.log("err :>> ", err);
         });
+
+      if (localStorage.get("city").name !== undefined) {
+        api
+          .getPVZ({
+            city: localStorage.get("city").name,
+            region: localStorage.get("city").region,
+
+            dimensions: this.dimensionsApi,
+            cost: Math.floor(sum),
+            payment: type,
+          })
+          .then((pvz) => {
+            console.log("pvz :>> ", pvz);
+            this.pvzDataCont = [];
+
+            if (
+              (localStorage.get("city").geoId === 213 &&
+                this.totalPrice >= 3000) ||
+              this.totalPrice === 0 ||
+              (localStorage.get("city").geoId !== 213 &&
+                this.totalPrice >= 20000)
+            ) {
+              Object.keys(pvz.extra).forEach((parent) => {
+                pvz.extra[parent].price = 0;
+              });
+            }
+
+            pvz.data.forEach((p, i) => {
+              if (!this.mapCoor.length) {
+                this.mapCoor = p["GPS"].split(",");
+              }
+              if (
+                pvz.extra[p.partner] !== undefined &&
+                pvz.extra[p.partner].delivery_period !== "-" &&
+                +p.weightLimit > this.dimensionsApi.weight
+              ) {
+                let time = +pvz.extra[p.partner].delivery_period;
+                if (pvz.extra[p.partner].msg.match(/\d/) !== null) {
+                  time += +pvz.extra[p.partner].msg.match(/\d/)[0];
+                }
+                const timeString = moment().add(time, "days");
+                timeString.locale("ru");
+                // console.log("delVar[el].msg. :>> ", delVar[el].msg.match(/\d/));
+
+                this.pvzDataCont.push({
+                  type: "Feature",
+                  id: p.partner + " " + i,
+                  geometry: {
+                    type: "Point",
+                    coordinates: p["GPS"].split(","),
+                  },
+                  properties: {
+                    iconContent:
+                      (+pvz.extra[p.partner].price).toLocaleString() + " ₽",
+                    balloonContentHeader:
+                      this.translite[p.partner] !== undefined
+                        ? this.translite[p.partner]
+                        : p.partner,
+                    balloonHeader:
+                      this.translite[p.partner] !== undefined
+                        ? this.translite[p.partner]
+                        : p.partner + "<button class='ic i_close'></button>",
+                    balloonContent: `<p class='popover-content__adress'>${
+                      p.town + ", " + p.address
+                    }</p> 
+                    <div class='popover-content__extra'><p>${
+                      (+pvz.extra[p.partner].price).toLocaleString() + " ₽"
+                    }</p><p class='popover-content__date'>${
+                      timeString.format("DD") +
+                      "-" +
+                      timeString.add(1, "days").format("DD MMMM")
+                    }</p></div> 
+                    <p class='popover-content__time-name'>Время работы:</p> 
+                    <p class='popover-content__time'>${p.workShedule}</p>
+                    <button id=${
+                      p.id
+                    } class='popover-content__btn'>Выбрать</button>
+                  `,
+                    data: {
+                      ...p,
+                      price: pvz.extra[p.partner].price,
+                      time,
+                      msg: pvz.extra[p.partner].msg,
+                    },
+                  },
+                });
+              }
+
+              // this.pvzCompCont.push(
+              //   <Placemark
+              //     geometry={{
+              //       type: "Point",
+              //       coordinates: el["GPS"]["_text"].split(","),
+              //     }}
+              //     properties={{
+              //       balloonContentHeader: name,
+              //       balloonContentBody: `<strong>Адрес:</strong> ${el.address["_text"]}<br/>
+              //       <strong>Описание:</strong> ${el.description["_text"]}<br/>
+              //       <strong>Время работы:</strong> ${el.worktime["_text"]}<br/>
+              //       <button id=${el["_attributes"].code}>Выбрать</button>
+              //     `,
+              //     }}
+              //   ></Placemark>
+              // );
+            });
+
+            this.setState({
+              pvzDataCont: this.pvzDataCont.length ? this.pvzDataCont : false,
+            });
+          })
+          .catch((err) => console.log("err", err));
+      }
     };
 
     closeCart = () => {
@@ -307,6 +475,10 @@ const CartPage = observer(
       });
       this.choosePaymentType(undefined, this.state.payment);
       this.setState({ deliveryData: {}, delVar: [] });
+    };
+
+    setPVZChooseData = (data) => {
+      this.setState({ deliveryData: data });
     };
 
     dadataInit = false;
@@ -429,14 +601,6 @@ const CartPage = observer(
 
       const delVarRender = [];
       const htmlStore = [];
-
-      if (
-        typeof delVar === "object" &&
-        !delVar.length &&
-        Object.keys(productInCart).length
-      ) {
-        this.choosePaymentType(undefined, "PREPAID");
-      }
 
       if (Object.keys(productInCart).length) {
         Object.keys(productInCart).forEach((el) => {
@@ -636,33 +800,43 @@ const CartPage = observer(
         this.choosePaymentType(undefined, "PREPAID");
       }
 
-      if (delVar.length) {
-        delVar.forEach((el) => {
-          const time = moment(
-            el.delivery.calculatedDeliveryDateMax,
-            "YYYY-MM-DD"
-          );
-          time.locale("ru");
-          delVarRender.push(
-            <div
-              id="delivery"
-              onClick={(e) => {
-                this.setDeliveryData(e, el);
-              }}
-            >
-              <b>{el.delivery.partner.name}</b> <br />{" "}
-              {el.cost.deliveryForCustomer === 0 || this.totalPrice === 0
-                ? "Бесплатно"
-                : `${Math.ceil(el.cost.deliveryForCustomer)} ₽`}{" "}
-              <br />
-              <p style={{ color: "#747498", fontSize: "14px" }}>
-                {time.format("DD") +
-                  "-" +
-                  time.add(1, "days").format("DD MMMM")}
-              </p>
-            </div>
-          );
-        });
+      if (Object.keys(delVar).length) {
+        if (Object.keys(delVar).length > 1) {
+          Object.keys(delVar).forEach((el) => {
+            // console.log("delVar[el].msg. :>> ", delVar[el].msg.match(/\d/));
+            let time = +delVar[el].delivery_period;
+            if (delVar[el].msg.match(/\d/) !== null) {
+              time += +delVar[el].msg.match(/\d/)[0];
+            }
+
+            const timeString = moment().add(time, "days");
+            timeString.locale("ru");
+            delVarRender.push(
+              <div
+                id="delivery"
+                onClick={(e) => {
+                  this.setDeliveryData(e, delVar[el], time);
+                }}
+              >
+                <b>
+                  {this.translite[delVar[el].partner] !== undefined
+                    ? this.translite[delVar[el].partner]
+                    : delVar[el].partner}
+                </b>{" "}
+                <br />{" "}
+                {delVar[el].price === 0
+                  ? "Бесплатно"
+                  : `${Math.ceil(+delVar[el].price)} ₽`}{" "}
+                <br />
+                <p style={{ color: "#747498", fontSize: "14px" }}>
+                  {timeString.format("DD") +
+                    "-" +
+                    timeString.add(1, "days").format("DD MMMM")}
+                </p>
+              </div>
+            );
+          });
+        }
       } else {
         delVarRender.push(
           <div
@@ -878,6 +1052,14 @@ const CartPage = observer(
                                                     $(
                                                       ".header__drop"
                                                     ).removeClass("visible");
+
+                                                    this.mapCoor = [];
+
+                                                    this.setState({
+                                                      deliveryData: {},
+                                                      pvzDataCont: [],
+                                                    });
+
                                                     localStorage.set("city", {
                                                       name:
                                                         one.addressComponents[
@@ -915,13 +1097,11 @@ const CartPage = observer(
                                                       ).removeClass("active");
                                                     }
                                                     this.dadataInit = false;
+
                                                     this.choosePaymentType(
                                                       undefined,
                                                       this.state.payment
                                                     );
-                                                    this.setState({
-                                                      deliveryData: {},
-                                                    });
                                                   }}
                                                 >
                                                   {one.addressComponents[
@@ -974,12 +1154,25 @@ const CartPage = observer(
                           }
                           onClick={() => {
                             if (!this.state.delChoose)
-                              this.setState({
-                                delChoose: true,
-                                pickUpChoose: false,
-                                pickUpStoreChoose: false,
-                                deliveryData: {},
-                              });
+                              if (Object.keys(this.state.delVar).length > 1) {
+                                this.setState({
+                                  delChoose: true,
+                                  pickUpChoose: false,
+                                  pickUpStoreChoose: false,
+                                  deliveryData: {},
+                                });
+                              } else if (
+                                Object.keys(this.state.delVar).length === 1
+                              ) {
+                                this.setState({
+                                  delChoose: true,
+                                  pickUpChoose: false,
+                                  pickUpStoreChoose: false,
+                                  deliveryData: this.state.delVar[
+                                    Object.keys(this.state.delVar)[0]
+                                  ],
+                                });
+                              }
                           }}
                         >
                           Курьером
@@ -989,13 +1182,15 @@ const CartPage = observer(
                             "tumb " + (this.state.pickUpChoose ? "active" : "")
                           }
                           onClick={() => {
-                            if (!this.state.pickUpChoose)
+                            if (!this.state.pickUpChoose) {
                               this.setState({
                                 delChoose: false,
                                 pickUpChoose: true,
                                 pickUpStoreChoose: false,
                                 deliveryData: {},
                               });
+                              // this.createMap();
+                            }
                           }}
                         >
                           Пункт выдачи
@@ -1232,7 +1427,12 @@ const CartPage = observer(
                                             this.setState({
                                               deliveryData: {
                                                 type: "express",
-                                                cost: 1000,
+                                                price:
+                                                  localStorage.get("city")
+                                                    .geoId === 213 &&
+                                                  this.totalPrice >= 20000
+                                                    ? 0
+                                                    : 1000,
                                                 time: 0,
                                               },
                                             });
@@ -1240,7 +1440,12 @@ const CartPage = observer(
                                             this.setState({
                                               deliveryData: {
                                                 type: "express",
-                                                cost: 1000,
+                                                price:
+                                                  localStorage.get("city")
+                                                    .geoId === 213 &&
+                                                  this.totalPrice >= 20000
+                                                    ? 0
+                                                    : 1000,
                                                 time: 1,
                                               },
                                             });
@@ -1250,7 +1455,11 @@ const CartPage = observer(
                                         {moment().hour() <= 16
                                           ? "Сегодня"
                                           : "Завтра"}{" "}
-                                        — 1 000 ₽
+                                        —{" "}
+                                        {localStorage.get("city").geoId ===
+                                          213 && this.totalPrice >= 20000
+                                          ? "бесплатно"
+                                          : "1 000 ₽"}{" "}
                                         {/* {moment().hour() > 16 && (
                                           <p
                                             style={{
@@ -1280,7 +1489,12 @@ const CartPage = observer(
                                             this.setState({
                                               deliveryData: {
                                                 type: "express",
-                                                cost: 500,
+                                                price:
+                                                  localStorage.get("city")
+                                                    .geoId === 213 &&
+                                                  this.totalPrice >= 20000
+                                                    ? 0
+                                                    : 500,
                                                 time: 1,
                                               },
                                             });
@@ -1288,7 +1502,12 @@ const CartPage = observer(
                                             this.setState({
                                               deliveryData: {
                                                 type: "express",
-                                                cost: 500,
+                                                price:
+                                                  localStorage.get("city")
+                                                    .geoId === 213 &&
+                                                  this.totalPrice >= 20000
+                                                    ? 0
+                                                    : 500,
                                                 time: 2,
                                               },
                                             });
@@ -1298,7 +1517,11 @@ const CartPage = observer(
                                         {moment().hour() <= 16
                                           ? "Завтра"
                                           : "Послезавтра"}{" "}
-                                        — 500 ₽
+                                        —{" "}
+                                        {localStorage.get("city").geoId ===
+                                          213 && this.totalPrice >= 20000
+                                          ? "бесплатно"
+                                          : "500 ₽"}{" "}
                                       </div>
                                     </div>
                                   </div>
@@ -1321,24 +1544,95 @@ const CartPage = observer(
                                       }}
                                     ></button>
                                   </div>
-                                  <div className="cart-page__store-info">
-                                    <p className="cart-page__store-name">
-                                      Курьерскими службами
-                                    </p>
-                                    <div className="cart-page__store-adress">
-                                      {/* <span className="old">152 ₽</span> 152 ₽{" "}
-                              <span className="disc_perc">-20%</span> */}
-                                      <p>
-                                        Боксберри, Стриж, СДЭК. Возможна
-                                        проверка заказа, частичный отказ{" "}
-                                        <b>недоступен</b>. Бесплатно при заказе
-                                        от 3 000 ₽ по Москве.
+                                  {Object.keys(delVar).length > 1 ? (
+                                    <div className="cart-page__store-info">
+                                      <p className="cart-page__store-name">
+                                        Курьерскими службами
                                       </p>
+                                      <div className="cart-page__store-adress">
+                                        <p>
+                                          Dalli-Service или СДЭК. Возможна
+                                          проверка заказа, доступен частичный
+                                          отказ . <b>Бесплатно</b> при заказе от{" "}
+                                          <b>3 000 ₽</b> по <b>Москве</b>.
+                                        </p>
+                                      </div>
                                     </div>
-                                  </div>
-                                  <div className="cart-page__list-choose">
-                                    {delVarRender}
-                                  </div>
+                                  ) : (
+                                    Object.keys(delVar).length !== 0 && (
+                                      <div className="cart-page__list-choose ">
+                                        <div
+                                          className="cart-page__store-info active"
+                                          id="delivery"
+                                          onClick={(e) => {
+                                            this.setDeliveryData(
+                                              e,
+                                              delVar[Object.keys(delVar)[0]],
+                                              delVar[Object.keys(delVar)[0]]
+                                                .time
+                                            );
+                                          }}
+                                        >
+                                          <p className="cart-page__store-name">
+                                            <p className="cart-page__s-name">
+                                              Курьерскими службами
+                                            </p>
+                                            <div>
+                                              <p>
+                                                {localStorage.get("city")
+                                                  .geoId === 213 &&
+                                                (this.totalPrice >= 3000 ||
+                                                  (Object.keys(productInCart)
+                                                    .length === 1 &&
+                                                    productInCart[
+                                                      Object.keys(
+                                                        productInCart
+                                                      )[0]
+                                                    ].slug === 5637285331))
+                                                  ? "Бесплатно"
+                                                  : (+delVar[
+                                                      Object.keys(delVar)[0]
+                                                    ].price).toLocaleString() +
+                                                    " ₽ "}{" "}
+                                              </p>
+                                              <p>
+                                                {moment()
+                                                  .add(
+                                                    delVar[
+                                                      Object.keys(delVar)[0]
+                                                    ].time,
+                                                    "days"
+                                                  )
+                                                  .locale("ru")
+                                                  .format("DD")}{" "}
+                                                -{" "}
+                                                {moment()
+                                                  .add(
+                                                    delVar[
+                                                      Object.keys(delVar)[0]
+                                                    ].time + 1,
+                                                    "days"
+                                                  )
+                                                  .locale("ru")
+                                                  .format("DD MMMM")}
+                                              </p>
+                                            </div>
+                                          </p>
+                                          <div className="cart-page__store-adress">
+                                            <p>
+                                              Возможна проверка заказа и
+                                              частичный отказ.
+                                            </p>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    )
+                                  )}
+                                  {Object.keys(delVar).length > 1 && (
+                                    <div className="cart-page__list-choose">
+                                      {delVarRender}
+                                    </div>
+                                  )}
                                 </div>
                               </div>
                             </div>
@@ -1348,107 +1642,145 @@ const CartPage = observer(
                     )}
                     {this.state.pickUpChoose && (
                       <Fade distance="50px" duration={500}>
-                        <>
-                          {Object.keys(deliveryData).length !== 0 && (
-                            <div className="cart-page__delivery-details">
-                              <div className="row">
-                                <div className="items col col-12">
-                                  <div className="item">
-                                    <h5>Тип доставки:</h5>
-                                    <span>
-                                      "Пункт выдачи"
-                                      {deliveryData.deliveryService !==
-                                      undefined
-                                        ? " (" +
-                                          deliveryData.deliveryService.name +
-                                          ")"
-                                        : deliveryData.deliveryOption.name !==
-                                          null
-                                        ? "( " +
-                                          deliveryData.deliveryOption.name +
-                                          ")"
-                                        : null}
-                                    </span>
-                                  </div>
-
-                                  <div className="item">
-                                    <h5>Стоимость и сроки:</h5>
-                                    <span>
-                                      {localStorage.get("city").geoId === 213 &&
-                                      (this.totalPrice >= 3000 ||
-                                        (Object.keys(productInCart).length ===
-                                          1 &&
-                                          productInCart[
-                                            Object.keys(productInCart)[0]
-                                          ].slug === 5637285331))
-                                        ? "Бесплатно"
-                                        : deliveryData.deliveryOption.cost
-                                            .deliveryForCustomer + " ₽ "}
-                                      /{" "}
-                                      <span className="b_gray">
-                                        {deliveryData.time}{" "}
-                                        {num2str(deliveryData.time, [
-                                          "день",
-                                          "дня",
-                                          "дней",
-                                        ])}
-                                      </span>
-                                    </span>
-                                  </div>
-
-                                  {deliveryData.deliveryType !== "COURIER" && (
-                                    <div className="item">
-                                      <h5>Адрес выдачи:</h5>
-                                      <span>
-                                        {
-                                          deliveryData.pickupPoint.address
-                                            .addressString
-                                        }
-                                      </span>
-                                    </div>
-                                  )}
+                        {this.state.pvzDataCont === false ? (
+                          <div
+                            className="alert-message alert-message_error alert-message_active"
+                            style={{
+                              position: "relative",
+                            }}
+                          >
+                            <p>
+                              Доставка выбранным способом в данный населенный
+                              пункт невозможна
+                            </p>
+                          </div>
+                        ) : (
+                          <>
+                            <div className="row">
+                              <div className="col col-12">
+                                <div key={this.props.store.city}>
+                                  <MapDel
+                                    store={this.props.store}
+                                    pointsData={this.state.pvzDataCont}
+                                    mapCoor={this.mapCoor}
+                                    setPVZChooseData={this.setPVZChooseData}
+                                  ></MapDel>
                                 </div>
                               </div>
                             </div>
-                          )}
+                            {Object.keys(deliveryData).length !== 0 &&
+                              deliveryData.pvz === true && (
+                                <div className="cart-page__delivery-details">
+                                  <div className="row">
+                                    <div className="col col-12">
+                                      <div className="pvz">
+                                        <div className="pvz__head">
+                                          <h6>
+                                            {this.translite[
+                                              deliveryData.partner
+                                            ] !== undefined
+                                              ? this.translite[
+                                                  deliveryData.partner
+                                                ]
+                                              : deliveryData.partner}
+                                          </h6>
+                                          <div>
+                                            {deliveryData.price === 0
+                                              ? "Бесплатно"
+                                              : (+deliveryData.price).toLocaleString() +
+                                                " ₽ "}
+                                            <span className="b_gray">
+                                              {moment()
+                                                .add(deliveryData.time, "days")
+                                                .format("DD") +
+                                                "-" +
+                                                moment()
+                                                  .add(
+                                                    deliveryData.time + 1,
+                                                    "days"
+                                                  )
+                                                  .format("DD MMMM")}
+                                            </span>
+                                          </div>
+                                        </div>
+                                        <p className="pvz__address">
+                                          {deliveryData.town +
+                                            ", " +
+                                            deliveryData.address}
+                                        </p>
 
-                          {this.state.pickUpChoose &&
+                                        {deliveryData.description !==
+                                          undefined && (
+                                          <div className="pvz__description">
+                                            <span className="b_gray">
+                                              Описание
+                                            </span>
+                                            <p>{deliveryData.description}</p>
+                                          </div>
+                                        )}
+
+                                        <div className="pvz__time">
+                                          <span className="b_gray">
+                                            Время работы
+                                          </span>
+                                          <p>{deliveryData.workShedule}</p>
+                                        </div>
+                                        <div
+                                          className="btn"
+                                          onClick={() => {
+                                            const {
+                                              geoMap,
+                                              revertMap,
+                                            } = window;
+                                            this.setState({ deliveryData: {} });
+                                            $("#map").removeClass("choose");
+
+                                            setTimeout(() => {
+                                              // geoMap.removeControl(ymaps.Zoom());
+                                              //   geoMap.controls.remove("zoomControl");
+                                              // geoMap.container.fitToViewport(); // объект класса ymaps.Map
+                                              geoMap.geoObjects.removeAll();
+                                              revertMap();
+                                            }, 350);
+                                          }}
+                                        >
+                                          Изменить
+                                        </div>
+
+                                        {/* <div className="item">
+                                    <h5>Стоимость и сроки:</h5>
+                                    <span>
+                                      
+                                      /{" "}
+                                      
+                                    </span>
+                                  </div> */}
+
+                                        {/* {deliveryData.pvz === undefined && (
+                                    <div className="item">
+                                      <h5>Адрес выдачи:</h5>
+                                      <span>{deliveryData.address}</span>
+                                    </div>
+                                  )} */}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+
+                            {/* {this.state.pickUpChoose &&
                             Object.keys(this.state.deliveryData).length ===
                               0 && (
-                              <div
-                                className="btn btn_primary"
-                                onClick={() => {
-                                  if (this.state.payment === "") {
-                                    $("html, body").animate(
-                                      {
-                                        scrollTop:
-                                          $("#paymentMethod").offset().top -
-                                          $(".navigation").height(),
-                                      },
-                                      500
-                                    );
-                                    $("#paymentTumbler").addClass(
-                                      "tumbler_red"
-                                    );
-                                    setTimeout(() => {
-                                      $("#paymentTumbler").removeClass(
-                                        "tumbler_red"
-                                      );
-                                    }, 1500);
-                                  } else {
-                                    this.startYaDeliv(
-                                      this.totalPrice,
-                                      productInCartList
-                                    );
-                                  }
-                                }}
-                              >
-                                {this.state.payment === ""
-                                  ? "Выберите способ оплаты"
-                                  : "Выбрать доставку"}
+                              <div key={this.props.store.city}>
+                                <MapDel
+                                  store={this.props.store}
+                                  pointsData={this.state.pvzDataCont}
+                                  mapCoor={this.mapCoor}
+                                  setPVZChooseData={this.setPVZChooseData}
+                                ></MapDel>
                               </div>
-                            )}
-                          {Object.keys(deliveryData).length !== 0 && (
+                            )} */}
+                            {/* {Object.keys(deliveryData).length !== 0 && (
                             <div
                               className="btn"
                               onClick={() => {
@@ -1461,8 +1793,9 @@ const CartPage = observer(
                               Изменить способ доставки
                             </div>
                           )}
-                          <div className="Ya-block" id="yaDeliveryWidget"></div>
-                        </>
+                          <div className="Ya-block" id="yaDeliveryWidget"></div> */}
+                          </>
+                        )}
                       </Fade>
                     )}
                     {this.state.pickUpStoreChoose && (
@@ -1870,7 +2203,7 @@ const CartPage = observer(
                               ? this.totalPrice > 20000
                                 ? this.totalPrice.toLocaleString()
                                 : (
-                                    deliveryData.cost + this.totalPrice
+                                    deliveryData.price + this.totalPrice
                                   ).toLocaleString()
                               : localStorage.get("city").geoId === 213 &&
                                 (this.totalPrice >= 3000 ||
@@ -1880,12 +2213,10 @@ const CartPage = observer(
                               ? this.totalPrice.toLocaleString()
                               : deliveryData.deliveryOption === undefined
                               ? (
-                                  deliveryData.cost.deliveryForCustomer +
-                                  this.totalPrice
+                                  +deliveryData.price + this.totalPrice
                                 ).toLocaleString()
                               : (
-                                  deliveryData.deliveryOption.cost
-                                    .deliveryForCustomer + this.totalPrice
+                                  +deliveryData.price + this.totalPrice
                                 ).toLocaleString()}{" "}
                             ₽
                           </span>
@@ -1933,19 +2264,9 @@ const CartPage = observer(
                           <div>
                             <span>Доставка</span>{" "}
                             <span>
-                              {deliveryData.type === "express"
-                                ? deliveryData.cost + " ₽ "
-                                : localStorage.get("city").geoId === 213 &&
-                                  (this.totalPrice >= 3000 ||
-                                    (Object.keys(productInCart).length === 1 &&
-                                      productInCart[
-                                        Object.keys(productInCart)[0]
-                                      ].slug === 5637285331))
+                              {deliveryData.price === 0
                                 ? "Бесплатно"
-                                : deliveryData.deliveryOption === undefined
-                                ? deliveryData.cost.deliveryForCustomer.toLocaleString() +
-                                  " ₽ "
-                                : deliveryData.deliveryOption.cost.deliveryForCustomer.toLocaleString() +
+                                : (+deliveryData.price).toLocaleString() +
                                   " ₽ "}{" "}
                               /{" "}
                               <span className="b_gray">
@@ -2076,10 +2397,7 @@ const CartPage = observer(
                               inError = true;
                             }
                           } else if (pickUpChoose) {
-                            if (
-                              this.deliveryOrderData.deliveryOption ===
-                              undefined
-                            ) {
+                            if (!Object.keys(deliveryData).length) {
                               if (!inError) {
                                 $("html, body").animate(
                                   {
@@ -2091,10 +2409,6 @@ const CartPage = observer(
                                 );
 
                                 // console.log("testtt :>> ");
-                                this.startYaDeliv(
-                                  this.totalPrice,
-                                  productInCartList
-                                );
                               }
                               inError = true;
                             }
@@ -2410,13 +2724,6 @@ const CartPage = observer(
                         dataToSend.coupon = this.state.coupsCont;
 
                         if (delChoose || pickUpChoose) {
-                          const recipient = {
-                            firstName: name,
-
-                            lastName: secondName,
-                            email: email.toLowerCase(),
-                          };
-
                           const addressData = {
                             geoId: localStorage.get("city").geoId,
                             country: "Россия",
@@ -2427,85 +2734,27 @@ const CartPage = observer(
 
                             apartment: flat,
                           };
-                          const contacts = [
-                            {
-                              type: "RECIPIENT",
-                              phone: String(tel),
+                          const contacts = {
+                            email: email.toLowerCase(),
+                            phone: String(tel),
 
-                              firstName: name,
+                            firstName: name,
 
-                              lastName: secondName,
-                            },
-                          ];
+                            lastName: secondName,
+                          };
 
                           // window.widget.setOrderInfo(this.order);
                           // window.widget.createOrder();
-                          let deliveryOrderData;
-
-                          if (deliveryData.deliveryOption !== undefined) {
-                            const cost = {
-                              paymentMethod: this.state.payment,
-                              assessedValue: +this.totalPrice,
-                              fullyPrepaid: this.state.payment === "PREPAID",
-                              manualDeliveryForCustomer:
-                                localStorage.get("city").geoId === 213 &&
-                                (this.totalPrice >= 3000 ||
-                                  (Object.keys(productInCart).length === 1 &&
-                                    productInCart[Object.keys(productInCart)[0]]
-                                      .slug === 5637285331))
-                                  ? 0
-                                  : deliveryData.deliveryOption.cost
-                                      .deliveryForCustomer,
-                            };
-
-                            this.order = {
-                              recipient: recipient,
-                              address: addressData,
-                              cost: cost,
-                              contacts: contacts,
-                            };
-
-                            deliveryOrderData = Object.assign(
-                              {
-                                ...this.deliveryOrderData.deliveryOption.cost,
-                              },
-                              this.deliveryOrderData
-                            );
-                            deliveryOrderData.deliveryOption.partnerId = this.deliveryOrderData.deliveryOption.partner;
-                            deliveryOrderData.deliveryOption.delivery = this.deliveryOrderData.deliveryOption.cost.delivery;
-                            deliveryOrderData.deliveryOption.deliveryForCustomer =
-                              cost.manualDeliveryForCustomer;
-                            deliveryOrderData.deliveryOption.deliveryForSender =
-                              deliveryOrderData.deliveryOption.cost.deliveryForSender;
-                            deliveryOrderData.shipment = {
-                              date:
-                                deliveryOrderData.deliveryOption.shipments[0]
-                                  .date,
-                              type: "WITHDRAW",
-                              fromWarehouseId: 10001568252,
-                              toPartnerId:
-                                deliveryOrderData.deliveryOption.shipments[0]
-                                  .partner.id,
-                            };
-                            this.deliverySend.cost.fullyPrepaid =
-                              dataToSend.payment === "PREPAID";
-                          } else {
-                            this.deliverySend = {
-                              ...deliveryData,
-                              dimensions: this.dimensionsApi,
-                            };
-                          }
-                          this.deliverySend.productForYA = productForYA;
-                          this.deliverySend.payItems = payItems;
 
                           // this.deliverySend.cost.fullyPrepaid = dataToSend.payment === "PREPAID";
                           const delivery = {
-                            ...this.deliverySend,
+                            ...deliveryData,
                             address: addressData,
-                            recipient,
+                            dimensions: this.dimensionsApi,
                             contacts,
                             senderId,
-                            ...deliveryOrderData,
+                            productForYA,
+                            payItems,
                           };
 
                           if (certInCart) {
@@ -2523,24 +2772,6 @@ const CartPage = observer(
                             window.ym(65097901, "reachGoal", "Checkout");
                           }
 
-                          // api
-                          //   .createDeliveryOrder({ delivery, dataToSend })
-                          //   .then((ok) => {
-                          //     console.log("ok :>> ", ok);
-                          //   })
-                          //   .catch((err) => {
-                          //     console.log("err :>> ", err);
-                          //   });
-                          // console.log("productInCart :>> ", productInCart);
-                          // console.log(
-                          //     'delivery :>> ',
-                          //     delivery
-                          // )
-                          // console.log(
-                          //     'dataToSend :>> ',
-                          //     dataToSend
-                          // )
-                          // return
                           api
                             .setOrderData({
                               delivery,
@@ -2580,36 +2811,36 @@ const CartPage = observer(
                                 $(".sidebar-cart").addClass("visible");
 
                                 $("body").addClass("no-scroll");
-                                if (
-                                  deliveryData.deliveryOption !== undefined &&
-                                  deliveryData.type === undefined
-                                ) {
-                                  localStorage.set("sendDeliveryPickUp", true);
-                                  window.widget.setOrderInfo({
-                                    ...this.order,
-                                    externalId: String(data.orderId),
-                                  });
-                                }
+                                // if (
+                                //   deliveryData.deliveryOption !== undefined &&
+                                //   deliveryData.type === undefined
+                                // ) {
+                                //   localStorage.set("sendDeliveryPickUp", true);
+                                //   window.widget.setOrderInfo({
+                                //     ...this.order,
+                                //     externalId: String(data.orderId),
+                                //   });
+                                // }
                               } else {
-                                if (
-                                  deliveryData.deliveryOption !== undefined &&
-                                  deliveryData.type === undefined
-                                ) {
-                                  localStorage.set("sendDeliveryPickUp", true);
-                                  window.widget
-                                    .setOrderInfo({
-                                      ...this.order,
-                                      externalId: String(data.orderId),
-                                    })
-                                    .then((ok) => {
-                                      window.location.href = data.return;
-                                    })
-                                    .catch((err) => {
-                                      console.log("err", err);
-                                    });
-                                } else {
-                                  window.location.href = data.return;
-                                }
+                                // if (
+                                //   deliveryData.deliveryOption !== undefined &&
+                                //   deliveryData.type === undefined
+                                // ) {
+                                //   localStorage.set("sendDeliveryPickUp", true);
+                                //   window.widget
+                                //     .setOrderInfo({
+                                //       ...this.order,
+                                //       externalId: String(data.orderId),
+                                //     })
+                                //     .then((ok) => {
+                                //       window.location.href = data.return;
+                                //     })
+                                //     .catch((err) => {
+                                //       console.log("err", err);
+                                //     });
+                                // } else {
+                                window.location.href = data.return;
+                                // }
                               }
 
                               // window.widget
@@ -2741,8 +2972,7 @@ const CartPage = observer(
                           ? "Указать контактные данные"
                           : "Заказать"
                         : this.state.delChoose &&
-                          ((this.state.deliveryData.delivery === undefined &&
-                            this.state.deliveryData.type === undefined) ||
+                          (Object.keys(this.state.deliveryData) === 0 ||
                             adress.length === 0 ||
                             house.length === 0)
                         ? "Выбрать доставку"
@@ -2878,6 +3108,28 @@ const CartPage = observer(
     }
 
     componentDidMount() {
+      fetch(
+        "https://catalogapi.site.yandex.net/v1.0?apikey=922e6949-7c49-4c5d-8481-abdc594a394c&text=кружка&searchid=2422209&page=0&avaliable=true",
+        {
+          method: "GET",
+
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+        .then((res) => {
+          console.log("res :>> ", res);
+          if (res.ok) {
+            return res.json();
+          }
+          Promise.reject(res.json());
+        })
+        .then((ok) => {
+          console.log("ok :>> ", ok);
+        })
+        .catch((err) => console.log("err", err));
+
       const tel = new Inputmask({
         mask: "+7 (999) 999 99 99",
         showMaskOnHover: false,
@@ -2910,370 +3162,9 @@ const CartPage = observer(
           });
         });
       }
-
-      // if (this.props.store.auth) {
-      //   api
-      //     .getUserData()
-      //     .then((data) => {
-      //       console.log("data :>> ", data);
-      //       // this.props.store.addToLike(true);
-      //       this.setState({
-      //         name: data.user.name,
-      //         email: data.user.email,
-      //         tel: data.user.tel !== undefined ? data.user.tel.substr(1) : "",
-      //       });
-      //       // this.props.store.userData = data;
-      //       // console.log(
-      //       //   "this.props.store.userData :>> ",
-      //       //   this.props.store.userData
-      //       // );
-      //     })
-      //     .catch((err) => {
-      //       console.log("err :>> ", err);
-      //     });
-      // }
+      this.choosePaymentType(undefined, "PREPAID");
     }
-
-    startYaDeliv = (fullPrice, array) => {
-      // получение максимального элемента массива
-      function getMaxValue(array) {
-        var max = array[0]; // берем первый элемент массива
-        for (var i = 0; i < array.length; i++) {
-          // переберем весь массив
-          // если элемент больше, чем в переменной, то присваиваем его значение переменной
-          if (max < array[i]) max = array[i];
-        }
-        // возвращаем максимальное значение
-        return max;
-      }
-
-      // получение минимального элемента массива
-      function getMinValue(array) {
-        var min = array[0];
-        for (var i = 0; i < array.length; i++) {
-          if (min > array[i]) min = array[i];
-        }
-        return min;
-      }
-      const {
-        productInCart,
-        city,
-        productInCartList,
-        certInCart,
-      } = this.props.store;
-      const items = [];
-      let sum = fullPrice;
-
-      let prodSumm = 0;
-
-      Object.keys(productInCart).forEach((el, i) => {
-        if (el !== certInCart) {
-          items.push({
-            externalId: `${productInCart[el].slug}`,
-            name: productInCart[el].name,
-            count: array[el],
-            price: Math.floor(
-              productInCart[el].sale
-                ? productInCart[el].sale_price === 0
-                  ? 1
-                  : productInCart[el].sale_price
-                : productInCart[el].regular_price
-            ),
-            assessedValue: Math.floor(
-              productInCart[el].sale
-                ? productInCart[el].sale_price !== 0
-                  ? productInCart[el].sale_price
-                  : productInCart[el].regular_price
-                : productInCart[el].regular_price
-            ),
-            tax: "NO_VAT",
-            dimensions: {
-              weight: +productInCart[el].weight,
-              length: parseInt(productInCart[el].dimensions.length, 10),
-              width: parseInt(productInCart[el].dimensions.width, 10),
-              height: parseInt(productInCart[el].dimensions.height, 10),
-            },
-          });
-          prodSumm +=
-            Math.floor(items[items.length - 1].price) *
-            items[items.length - 1].count;
-        }
-      });
-
-      const { coupsCont } = this.state;
-      if (Object.keys(coupsCont).length) {
-        prodSumm = 0;
-        Object.keys(coupsCont).forEach((coupon) => {
-          let couponC = +coupsCont[coupon].count;
-          items.forEach((el, i) => {
-            if (el.price > 1) {
-              if (coupsCont[coupon].type === "percent") {
-                items[i].price = Math.floor(
-                  items[i].price * (1 - +coupsCont[coupon].count / 100)
-                );
-              } else if (coupsCont[coupon].type === "fixed_cart") {
-                if (couponC > 0) {
-                  if (el.price * el.count - couponC >= 1) {
-                    items[i].price = Math.floor(
-                      items[i].price - couponC / el.count
-                    );
-                    couponC = 0;
-                  } else {
-                    items[i].price = 1;
-                    couponC -= items[i].price * el.count - 1;
-                  }
-                }
-              }
-            }
-            prodSumm += items[i].price;
-          });
-        });
-      }
-
-      if (prodSumm !== this.totalPrice) {
-        let totalDeff = prodSumm - this.totalPrice;
-        let i = 0;
-        while (totalDeff > 0) {
-          if (i < items.length) {
-            if (items[i].price > 1) {
-              if (items[i].price * items[i].count - totalDeff > 1) {
-                items[i].price = Math.floor(
-                  items[i].price - totalDeff / items[i].count
-                );
-                totalDeff = 0;
-              } else {
-                totalDeff -= items[i].price * items[i].count;
-                items[i].price = 1;
-                i += 1;
-              }
-            } else {
-              i += 1;
-            }
-          } else {
-            break;
-          }
-        }
-      }
-
-      const cart = {
-        places: [
-          {
-            dimensions: this.dimensionsApi,
-            items: items,
-          },
-        ],
-        shipment: {
-          fromWarehouseId: 10001568252,
-        },
-        cost: {
-          itemsSum: Math.floor(sum), // сумма стоимости товаров в корзине
-          assessedValue: Math.floor(sum), // объявленная ценность
-          fullyPrepaid: this.state.payment === "PREPAID",
-          paymentMethod: this.state.payment,
-        },
-        deliveryTypes: ["PICKUP"],
-      };
-      const order = {
-        cost: {
-          paymentMethod: this.state.payment,
-          assessedValue: Math.floor(sum),
-          fullyPrepaid: this.state.payment === "PREPAID",
-          manualDeliveryForCustomer: 0,
-        },
-        contacts: [
-          {
-            type: "RECIPIENT",
-          },
-        ],
-      };
-
-      // api
-      //   .deliveryVar({
-      //     senderId: 500001936,
-      //     from: {
-      //       geoId: 213,
-      //     },
-      //     to: {
-      //       geoId: localStorage.get("city").geoId,
-      //     },
-      //     dimensions: this.dimensionsApi,
-      //     deliveryType: "COURIER",
-      //     cost: order.cost,
-      //   })
-      //   .then((d) => {
-      //     // console.log("d :>> ", d);
-      //   })
-      //   .catch((err) => {
-      //     console.log("err :>> ", err);
-      //   });
-
-      this.deliverySend = { ...cart, ...order };
-      this.YaDeliveryFunc(window, cart, order, city);
-    };
-
-    YaDeliveryFunc = (w, cart, order, city) => {
-      const start = () => {
-        w.removeEventListener("YaDeliveryLoad", start);
-        // console.log("object", document.getElementById("yaDeliveryWidget"));
-
-        const successCallback = (widget) => {
-          // После инициализации виджета автоматически определяется регион пользователя.
-          // Перед отображением виджета этот регион можно получить методом getRegion...
-
-          // widget.getRegionsByName(city).then((regions) => {
-          widget.setRegion({ id: localStorage.get("city").geoId });
-          // });
-
-          // ...или изменить, передав идентификатор в аргументе метода setRegion. Узнать
-          // идентификатор региона по его названию можно с помощью метода
-          // getRegionsByName; он возвращает массив регионов, соответствующих названию.
-
-          // Чтобы виджет отобразился, нужно вызвать метод showDeliveryOptions и передать
-          // в его аргументе информацию о товарах в корзине покупателя.
-          // Подробнее об объекте cart.
-          widget.showDeliveryOptions(cart);
-
-          // console.log("widget :>> ", widget);
-
-          // Чтобы привязать обработчик к событию submitDeliveryOption (пользователь
-          // выбрал вариант доставки), нужно вызвать метод on с двумя аргументами:
-          // названием события и функцией-обработчиком.
-          widget.on("submitDeliveryOption", (deliveryOption) => {
-            // Обработка выбранного пользователем варианта доставки. В параметре deliveryOption
-            // содержится информация о способе доставки, сроках, стоимости и т. д.
-            const time =
-              deliveryOption.deliveryOption.calculatedDeliveryDateMax ===
-              deliveryOption.deliveryOption.calculatedDeliveryDateMin
-                ? moment(
-                    deliveryOption.deliveryOption.calculatedDeliveryDateMax
-                  ).diff(moment(), "days") + 2
-                : moment(
-                    deliveryOption.deliveryOption.calculatedDeliveryDateMin
-                  ).diff(moment(), "days") +
-                  2 +
-                  "-" +
-                  (moment(
-                    deliveryOption.deliveryOption.calculatedDeliveryDateMax
-                  ).diff(moment(), "days") +
-                    2);
-
-            this.deliveryOrderData = deliveryOption;
-            this.setState({
-              deliveryData: { ...deliveryOption, time },
-            });
-          });
-
-          // Когда пользователь отправит форму выбора условий доставки, нужно сохранить
-          // их в куки с помощью метода setOrderInfo, чтобы после оформления заказа вы могли
-          // отправить их в Доставку. В аргументе метода нужно передать объект с информацией
-          // о заказе. Подробнее об объекте order.
-          // const form = document.getElementById("checkout");
-          window.widget = widget;
-          // $("#createOrder").addEventListener("submit", () =>
-          //   setTimeout(() => {
-          //     widget.setOrderInfo(this.order);
-          //     widget.createOrder();
-          //   }, 1000)
-          // );
-        };
-
-        const failureCallback = (error) => {
-          // Эта функция будет вызвана, если при создании виджета произошли ошибки.
-          console.log("error", error);
-        };
-
-        // Создание виджета
-        w.YaDelivery.createWidget({
-          // Обязательные параметры
-          containerId: "yaDeliveryWidget", // Идентификатор HTML-элемента (контейнера),
-          // в котором будет отображаться виджет
-          type: "deliveryCart", // Тип виджета - всегда deliveryCart
-
-          params: {
-            // Обязательные параметры
-            apiKey: process.env.REACT_APP_SECRET_CODE_YA_WID, // Авторизационный ключ
-            senderId: 500001936, // Идентификатор магазина
-          },
-        })
-          // Функция createWidget возвращает объект типа Promise. С ним можно
-          // продолжить работу с помощью функций-коллбэков, передаваемых в аргументах
-          // методов then (при успешном создании виджета) и catch (для обработки ошибок).
-          .then(successCallback)
-          .catch(failureCallback);
-
-        const callback = (mutation) => {
-          console.log("mu :>> ", mutation.attributeName);
-        };
-      };
-      w.YaDelivery ? start() : w.addEventListener("YaDeliveryLoad", start);
-    };
   }
 );
-
-// function YaDeliveryFunc(w, cart, order, city) {
-//   function start() {
-//     w.removeEventListener("YaDeliveryLoad", start);
-//     // console.log("object", document.getElementById("yaDeliveryWidget"));
-
-//     // Создание виджета
-//     w.YaDelivery.createWidget({
-//       // Обязательные параметры
-//       containerId: "yaDeliveryWidget", // Идентификатор HTML-элемента (контейнера),
-//       // в котором будет отображаться виджет
-//       type: "deliveryCart", // Тип виджета - всегда deliveryCart
-
-//       params: {
-//         // Обязательные параметры
-//         apiKey: "f16336a6-8d98-4f0e-b07f-3969b2384006", // Авторизационный ключ
-//         senderId: 500001936, // Идентификатор магазина
-//       },
-//     })
-//       // Функция createWidget возвращает объект типа Promise. С ним можно
-//       // продолжить работу с помощью функций-коллбэков, передаваемых в аргументах
-//       // методов then (при успешном создании виджета) и catch (для обработки ошибок).
-//       .then(successCallback)
-//       .catch(failureCallback);
-
-//     function successCallback(widget) {
-//       // После инициализации виджета автоматически определяется регион пользователя.
-//       // Перед отображением виджета этот регион можно получить методом getRegion...
-
-//       widget.getRegionsByName(city).then((regions) => {
-//         widget.setRegion({ id: regions[0].id });
-//       });
-
-//       // ...или изменить, передав идентификатор в аргументе метода setRegion. Узнать
-//       // идентификатор региона по его названию можно с помощью метода
-//       // getRegionsByName; он возвращает массив регионов, соответствующих названию.
-
-//       // Чтобы виджет отобразился, нужно вызвать метод showDeliveryOptions и передать
-//       // в его аргументе информацию о товарах в корзине покупателя.
-//       // Подробнее об объекте cart.
-//       widget.showDeliveryOptions(cart);
-
-//       // Чтобы привязать обработчик к событию submitDeliveryOption (пользователь
-//       // выбрал вариант доставки), нужно вызвать метод on с двумя аргументами:
-//       // названием события и функцией-обработчиком.
-//       widget.on("submitDeliveryOption", (deliveryOption) => {
-//         // Обработка выбранного пользователем варианта доставки. В параметре deliveryOption
-//         // содержится информация о способе доставки, сроках, стоимости и т. д.
-//         console.log("deliveryOption", deliveryOption);
-//       });
-
-//       // Когда пользователь отправит форму выбора условий доставки, нужно сохранить
-//       // их в куки с помощью метода setOrderInfo, чтобы после оформления заказа вы могли
-//       // отправить их в Доставку. В аргументе метода нужно передать объект с информацией
-//       // о заказе. Подробнее об объекте order.
-//       // const form = document.getElementById("checkout");
-//       // form.addEventListener("submit", () => widget.setOrderInfo(order));
-//     }
-
-//     function failureCallback(error) {
-//       // Эта функция будет вызвана, если при создании виджета произошли ошибки.
-//       console.log("error", error);
-//     }
-//   }
-//   w.YaDelivery ? start() : w.addEventListener("YaDeliveryLoad", start);
-// }
 
 export default withRouter(CartPage);

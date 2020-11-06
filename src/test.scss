@@ -40,6 +40,8 @@
 @import "./blocks/loader-page/loader-page.scss";
 @import "./blocks/bottom-fix/bottom-fix.scss";
 @import "./blocks/alert-message/alert-message.scss";
+@import "./blocks/popover/popover.scss";
+@import "./blocks/pvz/pvz.scss";
 
 //HOME ELEMENTS
 @import "./blocks/carousel/carousel.scss";
@@ -518,6 +520,45 @@ code {
     border-radius: 3px;
 
     margin-bottom: 30px;
+  }
+}
+
+#map {
+  height: 416px;
+  width: 100%;
+  transition: all 0.3s linear;
+  filter: drop-shadow(0px 2px 16px rgba(0, 0, 0, 0.07));
+  border-radius: 10px;
+  overflow: hidden;
+
+  .msg {
+    display: none;
+  }
+
+  &.choose {
+    height: 218px;
+    margin-bottom: 20px;
+  }
+
+  &.loading {
+    display: flex;
+    justify-content: center;
+    .msg {
+      display: inline;
+      &::after {
+        content: ".";
+        animation: loading 1s ease alternate infinite;
+      }
+    }
+  }
+
+  @keyframes loading {
+    60% {
+      text-shadow: 0.35em 0 0 currentColor;
+    }
+    100% {
+      text-shadow: 0.35em 0 0 currentColor, 0.75em 0 0 currentColor;
+    }
   }
 }
 

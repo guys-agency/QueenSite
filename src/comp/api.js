@@ -203,6 +203,22 @@ class Api {
     });
   }
 
+  getPVZ(data) {
+    return fetch(SERVER_URL + "/pvz-data", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }).then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      Promise.reject(res.json());
+    });
+  }
+
   getAllCollections() {
     return fetch(SERVER_URL + "/collections", {
       method: "GET",

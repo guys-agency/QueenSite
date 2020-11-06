@@ -446,7 +446,7 @@
       display: flex;
       width: 100%;
 
-      div {
+      #delivery {
         width: 100%;
         border: 1px solid #e3e2e3;
         border-left: none;
@@ -478,9 +478,61 @@
           border-right: none;
         }
       }
+
+      .cart-page__store-info#delivery {
+        border: none;
+        border-radius: 10px;
+
+        &.active {
+          color: #fff;
+          .cart-page__store-name {
+            p {
+              color: #fff;
+            }
+          }
+        }
+
+        .cart-page__store-name {
+          display: flex;
+          margin: 0px;
+          margin-right: 10px;
+          @include max($s) {
+            flex-direction: column;
+          }
+          div {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+          }
+
+          p {
+            margin: 0px;
+            display: flex;
+            margin-right: 10px;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 16px;
+            text-align: center;
+            vertical-align: middle;
+            height: auto;
+          }
+
+          .cart-page__s-name {
+            font-weight: 500;
+            font-size: 18px;
+            margin-bottom: 10px;
+          }
+        }
+      }
     }
 
     .cart-page__store-info {
+      &.cart-page__list-choose {
+        flex-direction: column;
+        div {
+          border: none;
+        }
+      }
       .cart-page__store-name {
         font-family: Excentra Pro;
         font-style: normal;

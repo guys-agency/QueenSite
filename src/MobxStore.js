@@ -10,6 +10,7 @@ import getCookie from "./ulits/getCookie";
 import { SERVER_URL } from "./constants";
 import api from "./comp/api";
 import { useHistory } from "react-router-dom";
+import moment from "moment";
 
 //1http://134.122.81.119/api
 //127.0.0.1:3010
@@ -398,7 +399,8 @@ class Store {
             this.dontSaleProdCount = dontSaleProdCount;
             if (
               dontSaleProdCount > 0 &&
-              Math.floor(dontSaleProdCount / 3) > 0
+              Math.floor(dontSaleProdCount / 3) > 0 &&
+              moment().format("MM") === "10"
             ) {
               let minProdSlug = 0;
               const minProdSlugs = [];

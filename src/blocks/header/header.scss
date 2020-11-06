@@ -1,209 +1,210 @@
-@import './__left/header__left.scss';
-@import './__right/header__right.scss';
-@import './__drop/header__drop.scss';
+@import "./__left/header__left.scss";
+@import "./__right/header__right.scss";
+@import "./__drop/header__drop.scss";
 
 .header {
-    width: 100%;
-    z-index: 99;
-    padding: {
-        top: 5px;
-        bottom: 5px;
-    }
-    transition: all 0.3s;
-    position: relative;
+  width: 100%;
+  z-index: 99;
+  padding: {
+    top: 5px;
+    bottom: 5px;
+  }
+  transition: all 0.3s;
+  position: relative;
+  height: 50px;
+  align-items: center;
+  transition: border-bottom 0.4s linear;
+  @include min($s) {
+    border-bottom: 1px solid #adc9e3;
+  }
+
+  @include max($t) {
+    padding-top: 10px;
+    z-index: 98;
     height: 50px;
-    align-items: center;
-    @include min($s) {
-        border-bottom: 1px solid #adc9e3;
+  }
+  @include max($s) {
+    position: sticky;
+    position: -webkit-sticky;
+    top: 0;
+    height: initial;
+
+    .cart {
+      width: 36px;
+      height: 36px;
+      border-radius: 50px;
+
+      background: #ffffff;
+      /* Gold/Middle */
+
+      border: 1px solid #dab958;
+      box-sizing: border-box;
+      /* btn */
+
+      box-shadow: 0px 5px 18px rgba(5, 18, 120, 0.11);
+
+      position: relative;
+    }
+  }
+  .header__left {
+    margin-right: auto;
+    @include max($s) {
+      display: none;
     }
 
-    @include max($t) {
-        padding-top: 10px;
-        z-index: 98;
-        height: 50px;
+    &::before {
+      @include icon;
+      content: $i_line-v;
+      margin-left: 12px;
+      font-size: 20px;
+      position: relative;
+      // top: 6px;
+      opacity: 0.3;
+      color: $b_dark !important;
+      margin-right: 12px;
+    }
+  }
+  .container {
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .logo {
+    display: flex;
+
+    // position: absolute;
+    // @include c(x);
+    @include max(1115px) {
+      .i_qd {
+        display: none;
+      }
     }
     @include max($s) {
-        position: sticky;
-        position: -webkit-sticky;
-        top: 0;
-        height: initial;
-
-        .cart {
-            width: 36px;
-            height: 36px;
-            border-radius: 50px;
-
-            background: #ffffff;
-            /* Gold/Middle */
-
-            border: 1px solid #dab958;
-            box-sizing: border-box;
-            /* btn */
-
-            box-shadow: 0px 5px 18px rgba(5, 18, 120, 0.11);
-
-            position: relative;
-        }
+      left: 0;
+      position: relative;
+      transform: scale(0.8);
     }
-    .header__left {
-        margin-right: auto;
-        @include max($s) {
-            display: none;
-        }
+  }
 
-        &::before {
-            @include icon;
-            content: $i_line-v;
-            margin-left: 12px;
-            font-size: 20px;
-            position: relative;
-            // top: 6px;
-            opacity: 0.3;
-            color: $b_dark !important;
-            margin-right: 12px;
-        }
-    }
-    .container {
-        align-items: center;
-        justify-content: space-between;
-    }
+  &_scroll {
+    background-color: #fff;
 
-    .logo {
-        display: flex;
+    @include max($s) {
+      box-shadow: $sh_main;
 
-        // position: absolute;
-        // @include c(x);
-        @include max(1115px) {
-            .i_qd {
-                display: none;
-            }
-        }
-        @include max($s) {
-            left: 0;
-            position: relative;
-            transform: scale(0.8);
-        }
+      .cart {
+        background: $g_gradient_btn;
+        border: 1px solid #fff;
+        box-shadow: none;
+      }
     }
+  }
 
-    &_scroll {
-        background-color: #fff;
+  .i_menu {
+    display: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 100px;
+    border: 1px solid #e3e2e3;
+    background: #f7f6f7;
+    box-shadow: 0px 5px 18px rgba(5, 18, 120, 0.11);
+    @include max($s) {
+      display: inline-block;
+    }
+    font-size: 15px;
+    margin-left: 5px;
+    &:hover {
+      color: $g_middle;
+    }
+  }
+  .i_bag {
+    display: none;
+    @include max($s) {
+      display: inline-block;
+    }
+    font-size: 21px;
+    margin-right: 5px;
+    &:hover {
+      color: $g_middle;
+    }
+  }
+  .tooltip {
+    display: none;
+    @include max($s) {
+      display: block;
+    }
+  }
+  .i_filter {
+    font-size: 21px;
+    margin-right: 15px;
+    margin-left: -36px;
+    &:hover {
+      color: $g_middle;
+    }
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0s;
+    &.visible {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+  &__btn-city {
+    overflow: hidden;
+    max-width: 176px;
+    height: 16px;
+    font-size: 12px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    margin-left: 50px;
+    @include max(1045px) {
+      max-width: 90px;
+    }
+    @include max($s) {
+      max-width: 100px;
+      height: 20px;
+      margin-left: 0px;
+    }
+  }
 
-        @include max($s) {
-            box-shadow: $sh_main;
-
-            .cart {
-                background: $g_gradient_btn;
-                border: 1px solid #fff;
-                box-shadow: none;
-            }
-        }
+  .logo_vl {
+    color: $b_dark;
+    .i_of {
+      color: $b_dark;
     }
-
-    .i_menu {
-        display: none;
-        width: 36px;
-        height: 36px;
-        border-radius: 100px;
-        border: 1px solid #e3e2e3;
-        background: #f7f6f7;
-        box-shadow: 0px 5px 18px rgba(5, 18, 120, 0.11);
-        @include max($s) {
-            display: inline-block;
-        }
-        font-size: 15px;
-        margin-left: 5px;
-        &:hover {
-            color: $g_middle;
-        }
+    &:hover {
+      color: $b_light;
+      .i_of {
+        color: $b_light;
+      }
     }
-    .i_bag {
-        display: none;
-        @include max($s) {
-            display: inline-block;
-        }
-        font-size: 21px;
-        margin-right: 5px;
-        &:hover {
-            color: $g_middle;
-        }
+  }
+  &_w {
+    @include min($s) {
+      border-bottom: 1px solid #f7f6f7;
     }
-    .tooltip {
-        display: none;
-        @include max($s) {
-            display: block;
-        }
-    }
-    .i_filter {
-        font-size: 21px;
-        margin-right: 15px;
-        margin-left: -36px;
-        &:hover {
-            color: $g_middle;
-        }
-        opacity: 0;
-        visibility: hidden;
-        transition: all 0s;
-        &.visible {
-            visibility: visible;
-            opacity: 1;
-        }
-    }
-    &__btn-city {
-        overflow: hidden;
-        max-width: 176px;
-        height: 16px;
-        font-size: 12px;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        margin-left: 50px;
-        @include max(1045px) {
-            max-width: 90px;
-        }
-        @include max($s) {
-            max-width: 100px;
-            height: 20px;
-            margin-left: 0px;
-        }
-    }
-
     .logo_vl {
-        color: $b_dark;
+      color: $b_dark;
+      .i_of {
+        color: $g_middle;
+      }
+      &:hover {
+        opacity: 1;
+        color: $g_middle;
         .i_of {
-            color: $b_dark;
+          color: $g_middle;
         }
-        &:hover {
-            color: $b_light;
-            .i_of {
-                color: $b_light;
-            }
-        }
+      }
     }
-    &_w {
-        @include min($s) {
-            border-bottom: 1px solid #f7f6f7;
-        }
-        .logo_vl {
-            color: $b_dark;
-            .i_of {
-                color: $g_middle;
-            }
-            &:hover {
-                opacity: 1;
-                color: $g_middle;
-                .i_of {
-                    color: $g_middle;
-                }
-            }
-        }
-        @include max($s) {
-            .cart {
-                background: $g_gradient_btn;
-                border: 1px solid #dab958;
-                box-shadow: none;
-            }
-        }
+    @include max($s) {
+      .cart {
+        background: $g_gradient_btn;
+        border: 1px solid #dab958;
+        box-shadow: none;
+      }
     }
-    &_dn {
-        display: none;
-    }
+  }
+  &_dn {
+    display: none;
+  }
 }
