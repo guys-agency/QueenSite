@@ -3108,28 +3108,6 @@ const CartPage = observer(
     }
 
     componentDidMount() {
-      fetch(
-        "https://catalogapi.site.yandex.net/v1.0?apikey=922e6949-7c49-4c5d-8481-abdc594a394c&text=кружка&searchid=2422209&page=0&avaliable=true",
-        {
-          method: "GET",
-
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      )
-        .then((res) => {
-          console.log("res :>> ", res);
-          if (res.ok) {
-            return res.json();
-          }
-          Promise.reject(res.json());
-        })
-        .then((ok) => {
-          console.log("ok :>> ", ok);
-        })
-        .catch((err) => console.log("err", err));
-
       const tel = new Inputmask({
         mask: "+7 (999) 999 99 99",
         showMaskOnHover: false,
