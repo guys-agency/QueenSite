@@ -485,7 +485,7 @@ class Store {
     this.productForYA = [];
     this.ecomProd = [];
     this.totalProductSum = 0;
-    this.bonusDisc = null;
+    this.bonusDisc = 1;
     this.payItems = [];
     const typeIsPREPAID = typePayment === "PREPAID";
 
@@ -496,19 +496,42 @@ class Store {
         ? {}
         : localStorage.get("coupsCont");
     if (this.useBonus) {
-      this.bonusDisc = 1 - this.useBonus / (this.totalPrice + this.useBonus);
+      this.bonusDisc = this.useBonus / (this.totalPrice + this.useBonus);
     }
 
-    Object.keys(this.productInCart).forEach((el) => {
-      const regPrice =
-        typeIsPREPAID && this.certInCart !== el
+    let timeBonus = this.useBonus;
+
+    Object.keys(this.productInCart).forEach((el, i) => {
+      let regPrice =
+        this.certInCart !== el && typeIsPREPAID
           ? Math.floor(this.productInCart[el].regular_price * 0.98)
           : this.productInCart[el].regular_price;
-      const salePrice = this.productInCart[el].sale
+
+      let salePrice = this.productInCart[el].sale
         ? typeIsPREPAID
           ? Math.floor(this.productInCart[el].sale_price * 0.98)
           : this.productInCart[el].sale_price
         : 0;
+
+      if (this.useBonus && this.certInCart !== el) {
+        if (i !== Object.keys(this.productInCart).length - 1) {
+          timeBonus -= this.productInCart[el].sale
+            ? Math.ceil(salePrice * this.bonusDisc) * this.productInCartList[el]
+            : Math.ceil(regPrice * this.bonusDisc) * this.productInCartList[el];
+
+          regPrice = Math.floor(regPrice * (1 - this.bonusDisc));
+          salePrice = Math.floor(salePrice * (1 - this.bonusDisc));
+        } else {
+          console.log("timeBonus :>> ", timeBonus);
+          regPrice =
+            regPrice - Math.floor(timeBonus / this.productInCartList[el]);
+          salePrice = salePrice
+            ? salePrice - Math.floor(timeBonus / this.productInCartList[el])
+            : salePrice;
+          timeBonus = 0;
+        }
+      }
+
       this.ecomProd.push({
         id: this.productInCart[el].sale,
         name: this.productInCart[el].name,
@@ -524,18 +547,14 @@ class Store {
         countIn: this.productInCartList[el],
         sale: this.productInCart[el].sale,
         slug: this.productInCart[el].slug,
-        regular_price: this.useBonus ? regPrice * this.bonusDisc : regPrice,
+        regular_price: regPrice,
         dbid: this.productInCart[el].dbid,
         name: this.productInCart[el].name,
-        priceForWoo: this.useBonus ? regPrice * this.bonusDisc : regPrice,
+        priceForWoo: regPrice,
       };
       if (this.productInCart[el].sale) {
-        this.dataToSend.prod[el].sale_price = this.useBonus
-          ? salePrice * this.bonusDisc
-          : salePrice;
-        this.dataToSend.prod[el].priceForWoo = this.useBonus
-          ? salePrice * this.bonusDisc
-          : salePrice;
+        this.dataToSend.prod[el].sale_price = salePrice;
+        this.dataToSend.prod[el].priceForWoo = salePrice;
       }
 
       this.productForYA.push({
@@ -568,9 +587,10 @@ class Store {
         Math.floor(this.productForYA[this.productForYA.length - 1].price) *
         this.productForYA[this.productForYA.length - 1].count;
     });
-    if (Object.keys(coupsCont).length) {
-      this.totalProductSum = 0;
 
+    this.totalProductSum = 0;
+
+    if (Object.keys(coupsCont).length) {
       Object.keys(coupsCont).forEach((coupon) => {
         let couponC = coupsCont[coupon].count;
         this.productForYA.forEach((el, i) => {
@@ -594,8 +614,6 @@ class Store {
               }
             }
           }
-          this.totalProductSum +=
-            this.productForYA[i].price * this.productForYA[i].count;
         });
         Object.keys(this.dataToSend.prod).forEach((el) => {
           if (this.dataToSend.prod[el].sale_price !== 0) {
@@ -657,6 +675,11 @@ class Store {
       });
     }
     let noPriceCount = 1;
+
+    this.productForYA.forEach((el, i) => {
+      this.totalProductSum +=
+        this.productForYA[i].price * this.productForYA[i].count;
+    });
 
     if (this.totalProductSum !== this.totalPrice) {
       let totalDeff = this.totalProductSum - this.totalPrice;

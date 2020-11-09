@@ -371,7 +371,9 @@ const CartPage = observer(
         e.target.className.includes("sidebar-overlay") ||
         e.target.className.includes("btn")
       ) {
-        api.cancelOrder({ id: this.orderCancelID });
+        api
+          .cancelOrder({ id: this.orderCancelID })
+          .catch((err) => console.log("err", err));
         $(".sidebar-overlay").removeClass("active");
         $(".sidebar-cart").removeClass("visible");
         $("body").removeClass("no-scroll");
