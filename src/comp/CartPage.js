@@ -291,6 +291,9 @@ const CartPage = observer(
       //     includeNonDefault: false,
       //   },
       // }
+      const { geoMap, revertMap, checkData, addObject } = window;
+      // this.setState({ deliveryData: {} });
+      // $("#map").removeClass("choose");
 
       api
         .deliveryVar({
@@ -448,6 +451,14 @@ const CartPage = observer(
             this.setState({
               pvzDataCont: this.pvzDataCont.length ? this.pvzDataCont : false,
             });
+            if (geoMap !== undefined) {
+              // geoMap.destroy();
+              // checkData();
+              geoMap.geoObjects.removeAll();
+
+              addObject();
+              revertMap();
+            }
           })
           .catch((err) => console.log("err", err));
       }
@@ -473,8 +484,12 @@ const CartPage = observer(
       document.querySelectorAll("#delivery").forEach((elem) => {
         elem.classList.remove("active");
       });
+      this.setState({
+        deliveryData: {},
+        pvzDataCont: [],
+        delVar: [],
+      });
       this.choosePaymentType(undefined, this.state.payment);
-      this.setState({ deliveryData: {}, delVar: [] });
     };
 
     setPVZChooseData = (data) => {
@@ -484,10 +499,6 @@ const CartPage = observer(
     dadataInit = false;
     tokenDa = "bb2ff0528fa21286110aa5d28409ab10c5a2f287";
     typeDa = "ADDRESS";
-    // componentDidUpdate() {
-    //   $(".city__btn").off("click", this.toggleCity);
-    //   $(".city__btn").on("click", this.toggleCity);
-    // };
 
     componentDidUpdate(prevProps, prevState) {
       if (this.state.deliveryData.deliveryType === "COURIER") {
@@ -586,6 +597,7 @@ const CartPage = observer(
         delVar,
         payment,
       } = this.state;
+
       this.props.store.useBonus = useBonus;
 
       const regexEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -936,7 +948,7 @@ const CartPage = observer(
                         <div className="cart-page__store-info">
                           <p className="cart-page__store-name">
                             Онлайн
-                            <span className="disc_perc">-2%</span>
+                            <span className="disc_perc">скидка 2%</span>
                           </p>
                           <div className="cart-page__store-adress">
                             <p>
@@ -1039,9 +1051,10 @@ const CartPage = observer(
                                     api
                                       .getCity(e.target.value)
                                       .then((c) => {
+                                        console.log("c :>> ", c);
                                         c.forEach((one) => {
                                           if (
-                                            one.addressComponents.length < 6
+                                            one.addressComponents.length <= 6
                                           ) {
                                             renderCities.push(
                                               <li key={one.geoId}>
@@ -1660,7 +1673,6 @@ const CartPage = observer(
                               <div className="col col-12">
                                 <div key={this.props.store.city}>
                                   <MapDel
-                                    store={this.props.store}
                                     pointsData={this.state.pvzDataCont}
                                     mapCoor={this.mapCoor}
                                     setPVZChooseData={this.setPVZChooseData}
@@ -2271,13 +2283,28 @@ const CartPage = observer(
                               /{" "}
                               <span className="b_gray">
                                 {" "}
-                                {deliveryData.time === 0
+                                {moment().utcOffset("+03:00").format("HH") < 15
+                                  ? deliveryData.time === 0
+                                    ? "сегодня"
+                                    : deliveryData.time === 1
+                                    ? "завтра"
+                                    : deliveryData.time === 2
+                                    ? "Послезавтра"
+                                    : deliveryData.time +
+                                      " " +
+                                      num2str(deliveryData.time, [
+                                        "день",
+                                        "дня",
+                                        "дней",
+                                      ])
+                                  : deliveryData.time + 1 === 0
                                   ? "сегодня"
-                                  : deliveryData.time === 1
+                                  : deliveryData.time + 1 === 1
                                   ? "завтра"
-                                  : deliveryData.time === 2
+                                  : deliveryData.time + 1 === 2
                                   ? "Послезавтра"
                                   : deliveryData.time +
+                                    1 +
                                     " " +
                                     num2str(deliveryData.time, [
                                       "день",

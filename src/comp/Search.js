@@ -137,6 +137,7 @@ const Search = observer(
                             type="text"
                             className="search"
                             placeholder="Поиск"
+                            key={this.props.store.searchText}
                             defaultValue={this.props.store.searchText}
                             onChange={(e) => {
                               this.searchValue = e.target.value;

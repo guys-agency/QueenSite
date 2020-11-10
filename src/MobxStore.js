@@ -1252,7 +1252,11 @@ class Store {
           this.createFilterPointsContainers(sortData);
 
           //КАТЕГОРИИ БАННЕРА
-          if (data[0].cats !== undefined && !this.prodCats.length) {
+          if (
+            data[0].cats !== undefined &&
+            (!this.prodCats.length ||
+              window.location.pathname.includes("/search"))
+          ) {
             const cats = {};
             data[0].cats[0].cats.forEach((elemMain) => {
               elemMain.forEach((elem) => {

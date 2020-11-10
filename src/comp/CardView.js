@@ -1,23 +1,23 @@
-import { observer } from "mobx-react"
-import React from "react"
-import { createBrowserHistory } from "history"
-import localStorage from "mobx-localstorage"
-import Swiper from "react-id-swiper"
+import { observer } from "mobx-react";
+import React from "react";
+import { createBrowserHistory } from "history";
+import localStorage from "mobx-localstorage";
+import Swiper from "react-id-swiper";
 
-import ProductCard from "./ProductCard"
-import Gallery from "./Gallery"
-import { SERVER_URL } from "../constants"
-import api from "./api"
-import moment from "moment"
-import num2str from "../ulits/nm2wrd"
-import { Link, NavLink } from "react-router-dom"
-import Breadcrumbs from "./breadcrumbs"
-import $ from "jquery"
-import Helmet from "react-helmet"
-import { withRouter } from "react-router"
+import ProductCard from "./ProductCard";
+import Gallery from "./Gallery";
+import { SERVER_URL } from "../constants";
+import api from "./api";
+import moment from "moment";
+import num2str from "../ulits/nm2wrd";
+import { Link, NavLink } from "react-router-dom";
+import Breadcrumbs from "./breadcrumbs";
+import $ from "jquery";
+import Helmet from "react-helmet";
+import { withRouter } from "react-router";
 
-const { Component } = React
-const historyAll = createBrowserHistory()
+const { Component } = React;
+const historyAll = createBrowserHistory();
 
 //TODO: исправить вывод стоимости во время скидки
 const CardView = observer(
@@ -25,37 +25,37 @@ const CardView = observer(
     state = {
       countInCart: 1,
       timeDelivery: "",
-    }
+    };
 
-    fetchReady = false
+    fetchReady = false;
 
-    inCart = false
-    inFav = false
+    inCart = false;
+    inFav = false;
 
-    with = []
-    like = []
-    count = true
-    drafts = []
+    with = [];
+    like = [];
+    count = true;
+    drafts = [];
 
     inLike = this.props.store.likeContainer.length
       ? this.props.store.likeContainer.indexOf(
           String(this.props.store.cardContainer.slug)
         )
-      : -1
+      : -1;
 
     inCart = Object.keys(this.props.store.productInCartList).length
       ? Object.keys(this.props.store.productInCartList).indexOf(
           String(this.props.store.cardContainer.slug)
         )
-      : -1
+      : -1;
 
     clickHandler = (e) => {
-      this.props.store.productInCartList = localStorage.get("productInCart")
-      const { store } = this.props
+      this.props.store.productInCartList = localStorage.get("productInCart");
+      const { store } = this.props;
       // e.target.textContent = "Добавлено в корзину";
-      e.target.classList.toggle("active")
+      e.target.classList.toggle("active");
 
-      const { productInCartList, addtoCart, certInCart } = store
+      const { productInCartList, addtoCart, certInCart } = store;
 
       // this.inCart = Object.keys(this.props.store.productInCartList).length
       //   ? Object.keys(this.props.store.productInCartList).indexOf(
@@ -72,20 +72,20 @@ const CardView = observer(
       // }
 
       if (this.inCart !== -1) {
-        $(".tooltip_cart").addClass("visible")
-        $(".tooltip_cart").find(".text").text(this.data.name)
+        $(".tooltip_cart").addClass("visible");
+        $(".tooltip_cart").find(".text").text(this.data.name);
 
-        $(".tooltip_cart").find(".ic").removeClass("i_fav")
-        $(".tooltip_cart").find(".ic").removeClass("i_plus")
-        $(".tooltip_cart").find(".ic").addClass("i_minus")
+        $(".tooltip_cart").find(".ic").removeClass("i_fav");
+        $(".tooltip_cart").find(".ic").removeClass("i_plus");
+        $(".tooltip_cart").find(".ic").addClass("i_minus");
 
         setTimeout(() => {
-          $(".tooltip_cart").removeClass("visible")
-        }, 2000)
+          $(".tooltip_cart").removeClass("visible");
+        }, 2000);
         if (this.data.name === "Электронный подарочный сертификат") {
-          delete productInCartList[certInCart]
+          delete productInCartList[certInCart];
         } else {
-          delete productInCartList[this.data.slug]
+          delete productInCartList[this.data.slug];
         }
 
         window.dataLayer.push({
@@ -101,23 +101,23 @@ const CardView = observer(
               ],
             },
           },
-        })
+        });
       } else {
-        $(".tooltip_cart").find(".ic").removeClass("i_fav-f")
-        $(".tooltip_cart").find(".ic").removeClass("i_minus")
-        $(".tooltip_cart").find(".ic").addClass("i_plus")
+        $(".tooltip_cart").find(".ic").removeClass("i_fav-f");
+        $(".tooltip_cart").find(".ic").removeClass("i_minus");
+        $(".tooltip_cart").find(".ic").addClass("i_plus");
 
-        $(".tooltip_cart").addClass("visible")
-        $(".tooltip_cart").find(".text").text(this.data.name)
+        $(".tooltip_cart").addClass("visible");
+        $(".tooltip_cart").find(".text").text(this.data.name);
         setTimeout(() => {
-          $(".tooltip_cart").removeClass("visible")
-        }, 2000)
+          $(".tooltip_cart").removeClass("visible");
+        }, 2000);
         if (this.data.name === "Электронный подарочный сертификат") {
-          productInCartList[this.data.slug] = $("#mess").val()
+          productInCartList[this.data.slug] = $("#mess").val();
         } else {
-          productInCartList[this.data.slug] = store.countInProdPage
+          productInCartList[this.data.slug] = store.countInProdPage;
         }
-        api.updateCountStats(this.data._id, "cart")
+        api.updateCountStats(this.data._id, "cart");
         window.dataLayer.push({
           ecommerce: {
             add: {
@@ -132,9 +132,9 @@ const CardView = observer(
               ],
             },
           },
-        })
+        });
       }
-      addtoCart(true)
+      addtoCart(true);
 
       // const cardData = Object.assign(this.props.data, {
       //   countInCart: this.props.store.countInProdPage,
@@ -168,72 +168,72 @@ const CardView = observer(
       //   this.cardData.countInCart += 1;
       // }
       // store.cartCount += 1;
-    }
+    };
 
     clickFav = (e) => {
-      const { store } = this.props
+      const { store } = this.props;
 
-      const { likeContainer, addToLike } = store
+      const { likeContainer, addToLike } = store;
       this.inLike = this.props.store.likeContainer.length
         ? this.props.store.likeContainer.indexOf(
             String(this.props.store.cardContainer.slug)
           )
-        : -1
+        : -1;
 
-      e.target.classList.toggle("active")
+      e.target.classList.toggle("active");
       if (this.inLike !== -1) {
-        likeContainer.splice(this.inLike, 1)
+        likeContainer.splice(this.inLike, 1);
 
-        $(".tooltip_cart").addClass("visible")
-        $(".tooltip_cart").find(".text").text(this.data.name)
+        $(".tooltip_cart").addClass("visible");
+        $(".tooltip_cart").find(".text").text(this.data.name);
 
-        $(".tooltip_cart").find(".ic").removeClass("i_fav-f")
-        $(".tooltip_cart").find(".ic").removeClass("i_plus")
-        $(".tooltip_cart").find(".ic").addClass("i_minus")
+        $(".tooltip_cart").find(".ic").removeClass("i_fav-f");
+        $(".tooltip_cart").find(".ic").removeClass("i_plus");
+        $(".tooltip_cart").find(".ic").addClass("i_minus");
         setTimeout(() => {
-          $(".tooltip_cart").removeClass("visible")
-        }, 2000)
+          $(".tooltip_cart").removeClass("visible");
+        }, 2000);
       } else {
-        likeContainer.unshift(String(this.data.slug))
+        likeContainer.unshift(String(this.data.slug));
 
-        $(".tooltip_cart").addClass("visible")
-        $(".tooltip_cart").find(".text").text(this.data.name)
+        $(".tooltip_cart").addClass("visible");
+        $(".tooltip_cart").find(".text").text(this.data.name);
 
-        $(".tooltip_cart").find(".ic").removeClass("i_plus")
-        $(".tooltip_cart").find(".ic").removeClass("i_minus")
-        $(".tooltip_cart").find(".ic").addClass("i_fav-f")
+        $(".tooltip_cart").find(".ic").removeClass("i_plus");
+        $(".tooltip_cart").find(".ic").removeClass("i_minus");
+        $(".tooltip_cart").find(".ic").addClass("i_fav-f");
         setTimeout(() => {
-          $(".tooltip_cart").removeClass("visible")
-        }, 2000)
-        api.updateCountStats(this.data._id, "like")
+          $(".tooltip_cart").removeClass("visible");
+        }, 2000);
+        api.updateCountStats(this.data._id, "like");
       }
-      addToLike()
-    }
+      addToLike();
+    };
 
     close = () => {
-      historyAll.goBack()
-      this.props.store.productPage = false
-    }
+      historyAll.goBack();
+      this.props.store.productPage = false;
+    };
 
     clickPlus = () => {
       if (this.props.store.countInProdPage < this.data.stock_quantity) {
         if (this.inCart !== -1) {
-          this.props.store.productInCartList[this.data.slug] += 1
-          this.props.store.addtoCart(false)
+          this.props.store.productInCartList[this.data.slug] += 1;
+          this.props.store.addtoCart(false);
         }
-        this.props.store.countInProdPage += 1
+        this.props.store.countInProdPage += 1;
       }
-    }
+    };
 
     clickMinus = () => {
       if (this.props.store.countInProdPage > 1) {
         if (this.inCart !== -1) {
-          this.props.store.productInCartList[this.data.slug] -= 1
-          this.props.store.addtoCart(false)
+          this.props.store.productInCartList[this.data.slug] -= 1;
+          this.props.store.addtoCart(false);
         }
-        this.props.store.countInProdPage -= 1
+        this.props.store.countInProdPage -= 1;
       }
-    }
+    };
 
     relativeCar = {
       slidesPerView: "auto",
@@ -262,9 +262,9 @@ const CardView = observer(
           slidesPerGroup: 4,
         },
       },
-    }
+    };
 
-    data = ""
+    data = "";
 
     render() {
       if (
@@ -274,19 +274,19 @@ const CardView = observer(
       ) {
         this.props.store.countInProdPage = this.props.store.productInCartList[
           this.props.sku
-        ]
+        ];
       }
 
       if (
         this.data === "" ||
         +this.props.sku === this.props.store.cardContainer.slug
       ) {
-        this.data = this.props.store.cardContainer
+        this.data = this.props.store.cardContainer;
       }
 
-      const itsSert = this.data.name === "Электронный подарочный сертификат"
+      const itsSert = this.data.name === "Электронный подарочный сертификат";
 
-      const { timeDelivery } = this.state
+      const { timeDelivery } = this.state;
 
       const {
         dontSaleProdCount,
@@ -296,7 +296,7 @@ const CardView = observer(
         likeProds,
         certInCart,
         brandSlugs,
-      } = this.props.store
+      } = this.props.store;
 
       if (this.data.slug === +this.props.sku && this.count) {
         if (
@@ -305,7 +305,7 @@ const CardView = observer(
           localStorage.get("city") !== undefined
         ) {
           // console.log("11 :>> ", 11);
-          this.count = false
+          this.count = false;
 
           const dataDeliv = {
             senderId: 500001936,
@@ -322,7 +322,7 @@ const CardView = observer(
               weight: +this.data.weight,
             },
             deliveryType: "COURIER",
-          }
+          };
 
           api
             .timeDelivery({ data: dataDeliv })
@@ -332,31 +332,31 @@ const CardView = observer(
                 if (del.tags.includes("FASTEST")) {
                   const time = moment(
                     del.delivery.calculatedDeliveryDateMin
-                  ).diff(moment(), "days")
-                  this.setState({ timeDelivery: time + 1 })
-                  return
+                  ).diff(moment(), "days");
+                  this.setState({ timeDelivery: time + 1 });
+                  return;
                 }
-              })
+              });
               if (this.state.timeDelivery === "") {
                 const time = moment(
                   ok[0].delivery.calculatedDeliveryDateMin
-                ).diff(moment(), "days")
-                this.setState({ timeDelivery: time + 1 })
+                ).diff(moment(), "days");
+                this.setState({ timeDelivery: time + 1 });
               }
             })
             .catch((err) => {
-              console.log("err :>> ", err)
-            })
+              console.log("err :>> ", err);
+            });
         }
       }
 
       if (this.data.slug !== +this.props.sku) {
-        this.fetchReady = false
+        this.fetchReady = false;
       } else {
-        this.fetchReady = true
+        this.fetchReady = true;
       }
 
-      const storesAvali = []
+      const storesAvali = [];
 
       if (this.data.slug === +this.props.sku) {
         if (this.data.stores !== undefined) {
@@ -372,20 +372,20 @@ const CardView = observer(
                     {el.email}
                   </a>
                 </div>
-              )
+              );
             }
-          })
+          });
         }
 
         this.inLike = this.props.store.likeContainer.length
           ? this.props.store.likeContainer.indexOf(String(this.data.slug))
-          : -1
+          : -1;
 
         this.inCart = Object.keys(this.props.store.productInCartList).length
           ? Object.keys(this.props.store.productInCartList).indexOf(
               String(this.data.slug)
             )
-          : -1
+          : -1;
       }
 
       if (Object.keys(this.props.store.productInCartList).length) {
@@ -395,7 +395,7 @@ const CardView = observer(
         ) {
           this.inCart = Object.keys(this.props.store.productInCartList).indexOf(
             certInCart
-          )
+          );
         }
       }
 
@@ -404,7 +404,7 @@ const CardView = observer(
       //     this.props.store.seenProd.unshift(data);
       //   }
       // }
-      let lastSeenProdsRender
+      let lastSeenProdsRender;
       if (Object.keys(lastSeenProdsData).length) {
         lastSeenProdsRender = Object.keys(lastSeenProdsData).map((el, i) => {
           if (lastSeenProdsData[el] !== undefined) {
@@ -416,10 +416,10 @@ const CardView = observer(
                   store={this.props.store}
                 />
               </div>
-            )
+            );
           }
-          return null
-        })
+          return null;
+        });
       }
 
       return (
@@ -427,9 +427,9 @@ const CardView = observer(
           <div
             className="card-view-container"
             onClick={(e) => {
-              e.stopPropagation()
+              e.stopPropagation();
 
-              var container = document.querySelector(".drop")
+              var container = document.querySelector(".drop");
               if (container !== null) {
                 if (
                   !container.contains(e.target) &&
@@ -437,8 +437,8 @@ const CardView = observer(
                 ) {
                   document
                     .querySelector(".drop_shop-btn")
-                    .classList.remove("active")
-                  document.querySelector(".drop").classList.remove("visible")
+                    .classList.remove("active");
+                  document.querySelector(".drop").classList.remove("visible");
                 }
               }
             }}
@@ -531,7 +531,7 @@ const CardView = observer(
                             <div
                               className="product__bonus"
                               onClick={() => {
-                                this.props.history.push("/help/bonus")
+                                this.props.history.push("/help/bonus");
                               }}
                             >
                               <p className="i_coin"></p>
@@ -582,7 +582,7 @@ const CardView = observer(
                                 $(e.target)
                                   .parent()
                                   .find("label")
-                                  .addClass("active")
+                                  .addClass("active");
                               }}
                             ></textarea>
                           </div>
@@ -601,21 +601,21 @@ const CardView = observer(
                             <button
                               className="link dotted drop_kit-btn"
                               onClick={(e) => {
-                                e.stopPropagation()
-                                e.target.classList.toggle("active")
-                                var drop = document.querySelector(".drop_kit")
+                                e.stopPropagation();
+                                e.target.classList.toggle("active");
+                                var drop = document.querySelector(".drop_kit");
                                 $(".drop_kit").offset({
                                   top:
                                     $(".drop_kit-btn").offset().top +
                                     $(".drop_kit-btn").height() +
                                     12,
                                   left: $(".drop_kit-btn").offset().left,
-                                })
+                                });
                                 // $(".drop_shop").width(
                                 //   $(".drop_kit-btn").width()
                                 // );
 
-                                drop.classList.toggle("visible")
+                                drop.classList.toggle("visible");
                               }}
                             >
                               Комплектация
@@ -630,13 +630,13 @@ const CardView = observer(
                                         el.substr(1)}
                                     </p>
                                   </div>
-                                )
+                                );
                               })}
                             </div>
                           </>
                         )}
 
-                      {!itsSert &&
+                      {/* {!itsSert &&
                       dontSaleProdCount !== 0 &&
                       dontSaleProdCount % 3 !== 0 &&
                       !this.data.sale ? (
@@ -651,7 +651,7 @@ const CardView = observer(
                           )}{" "}
                           из акции <p className="disc_perc">1 + 1 = 3</p>
                         </Link>
-                      ) : null}
+                      ) : null} */}
                       <div className="product-p__control">
                         <div
                           className={
@@ -696,11 +696,11 @@ const CardView = observer(
                               <div
                                 className="product__counter gift__drop-btn"
                                 onClick={(e) => {
-                                  e.stopPropagation()
-                                  e.target.classList.toggle("active")
+                                  e.stopPropagation();
+                                  e.target.classList.toggle("active");
                                   var drop = document.querySelector(
                                     ".drop_shop"
-                                  )
+                                  );
 
                                   $(".drop_shop").offset({
                                     top:
@@ -708,11 +708,11 @@ const CardView = observer(
                                       $(".gift__drop-btn").height() +
                                       12,
                                     left: $(".gift__drop-btn").offset().left,
-                                  })
+                                  });
                                   $(".drop_shop").width(
                                     $(".gift__drop-btn").width()
-                                  )
-                                  drop.classList.toggle("visible")
+                                  );
+                                  drop.classList.toggle("visible");
                                 }}
                               >
                                 <p>
@@ -789,12 +789,12 @@ const CardView = observer(
                                 <button
                                   className="link dotted drop_shop-btn"
                                   onClick={(e) => {
-                                    e.stopPropagation()
-                                    e.target.classList.toggle("active")
+                                    e.stopPropagation();
+                                    e.target.classList.toggle("active");
                                     var drop = document.querySelector(
                                       ".drop_shop"
-                                    )
-                                    drop.classList.toggle("visible")
+                                    );
+                                    drop.classList.toggle("visible");
                                   }}
                                 >
                                   Есть в {storesAvali.length}{" "}
@@ -962,7 +962,7 @@ const CardView = observer(
                               store={this.props.store}
                             />
                           </div>
-                        )
+                        );
                       })}
                     </Swiper>
                   </div>
@@ -992,7 +992,7 @@ const CardView = observer(
                               store={this.props.store}
                             />
                           </div>
-                        )
+                        );
                       })}
                     </Swiper>
                   </div>
@@ -1019,13 +1019,13 @@ const CardView = observer(
               )}
           </div>
         )
-      )
+      );
     }
 
     componentDidUpdate() {
       // console.log("$(window).width :>> ", $(window).width());
     }
   }
-)
+);
 
-export default withRouter(CardView)
+export default withRouter(CardView);

@@ -15,7 +15,7 @@ const ProductCardContainer = observer(
           : this.props.store.sortInProd,
     };
 
-    searchValue = "";
+    searchValue = this.props.store.searchText;
 
     testContainer = [];
 
@@ -79,7 +79,7 @@ const ProductCardContainer = observer(
 
     render() {
       const { searchQ } = this.props.store;
-      this.searchValue = "";
+
       // console.log(
       //   "decodeURIComponent :>> ",
       //   decodeURIComponent(this.props.history.location.search),
@@ -101,6 +101,7 @@ const ProductCardContainer = observer(
                 <div className="search-pos search-pos_mob">
                   <form className="search-wrp">
                     <input
+                      key={this.props.store.searchText}
                       type="text"
                       className="search"
                       placeholder="Поиск"

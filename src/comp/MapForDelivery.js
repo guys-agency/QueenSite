@@ -258,35 +258,38 @@ const MapDel = observer(
         if (window.mapClusterer !== undefined) {
           window.mapClusterer.removeAll();
         }
+        let geoObjects = [];
+        const addObject = () => {
+          geoObjects = [];
 
-        const geoObjects = [];
+          that.props.pointsData.forEach((element) => {
+            geoObjects.push(
+              new ymaps.Placemark(
+                element.geometry.coordinates,
+                element.properties,
+                {
+                  balloonShadow: false,
+                  balloonLayout: MyBalloonLayout,
+                  balloonContentLayout: MyBalloonContentLayout,
+                  balloonPanelMaxMapArea: 0,
+                  preset: "islands#nightStretchyIcon",
 
-        that.props.pointsData.forEach((element) => {
-          geoObjects.push(
-            new ymaps.Placemark(
-              element.geometry.coordinates,
-              element.properties,
-              {
-                balloonShadow: false,
-                balloonLayout: MyBalloonLayout,
-                balloonContentLayout: MyBalloonContentLayout,
-                balloonPanelMaxMapArea: 0,
-                preset: "islands#nightStretchyIcon",
-
-                // Не скрываем иконку при открытом балуне.
-                // hideIconOnBalloonOpen: false,
-                // И дополнительно смещаем балун, для открытия над иконкой.
-                // balloonOffset: [3, -40],
-              }
-            )
-          );
-        });
-
+                  // Не скрываем иконку при открытом балуне.
+                  // hideIconOnBalloonOpen: false,
+                  // И дополнительно смещаем балун, для открытия над иконкой.
+                  // balloonOffset: [3, -40],
+                }
+              )
+            );
+          });
+        };
+        addObject();
         clusterer.options.set({
           gridSize: 80,
         });
 
         const revertMap = () => {
+          clusterer.removeAll();
           clusterer.add(geoObjects);
 
           geoMap.geoObjects.add(clusterer);
@@ -295,14 +298,11 @@ const MapDel = observer(
         revertMap();
 
         window.revertMap = revertMap;
+        window.addObject = addObject;
       });
     };
 
     render() {
-      const { store } = this.props;
-
-      console.log("object :>> ", this.props.mapCoor[0]);
-
       return (
         <div id="map" className="loading">
           <p className="msg">Загрузка данных</p>

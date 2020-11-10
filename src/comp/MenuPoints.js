@@ -995,11 +995,11 @@ const MenuPoints = observer(
                                 Акции
                               </NavLink>
                             </li>
-                            <li>
+                            {/* <li>
                               <NavLink to="/main/1+13" onClick={this.closeNav}>
                                 1 + 1 = 3
                               </NavLink>
-                            </li>
+                            </li> */}
                           </ul>
                         </div>
                       </div>
@@ -1341,7 +1341,7 @@ const MenuPoints = observer(
                               .getCity(e.target.value)
                               .then((c) => {
                                 c.forEach((one) => {
-                                  if (one.addressComponents.length < 6) {
+                                  if (one.addressComponents.length <= 6) {
                                     renderCities.push(
                                       <li key={one.geoId}>
                                         <button
