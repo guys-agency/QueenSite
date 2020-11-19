@@ -95,8 +95,8 @@ const Footer = observer(
                       <Link to="/help/offer">Публичная оферта</Link>
                     </li>
                     <li>
-                      <Link to="/help/certificate" onClick={this.closeNav}>
-                        Сертификат
+                      <Link to="/help/policy" onClick={this.closeNav}>
+                        Политика конфиденциальности
                       </Link>
                     </li>
                     <li>

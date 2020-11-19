@@ -6,6 +6,7 @@ import RegistrationSchema from "../schemas/registrationSchema";
 import $ from "jquery";
 import LoginSchema from "../schemas/loginSchema";
 import RestoreSchema from "../schemas/restoreSchema";
+import { Link } from "react-router-dom";
 
 const { Component } = React;
 
@@ -497,11 +498,14 @@ const AuthSidebar = observer(
                     />
                     <span className="checkbox-btn"></span>
                     <i>
-                      Согласен с условиями "
-                      <a className="underline" href="/help/offer">
-                        Публичной оферты
-                      </a>
-                      "
+                      Согласен с{" "}
+                      <Link className="underline" to="/help/offer">
+                        "Публичной офертой"
+                      </Link>{" "}
+                      и{" "}
+                      <Link className="underline" to="/help/cppd">
+                        "Обработкой персональных данных"
+                      </Link>
                     </i>
                   </label>
                 </form>

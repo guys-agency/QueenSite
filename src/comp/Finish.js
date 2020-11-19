@@ -381,14 +381,7 @@ const Finish = observer(
                           <div className="item">
                             <span className="name">Доставка</span>
                             <span className="price">
-                              {data.delivery.type === "express"
-                                ? +data.delivery.cost
-                                : data.delivery.pickUpChoose
-                                ? data.delivery.deliveryForCustomer.toLocaleString()
-                                : data.delivery.deliveryOption === undefined
-                                ? data.delivery.cost.deliveryForCustomer.toLocaleString()
-                                : data.delivery.deliveryForCustomer.toLocaleString()}
-                              ₽
+                              {data.delivery.price.toLocaleString()}₽
                               {data.delivery.type === "express" ? (
                                 <span className="b_gray">
                                   /{" "}
@@ -406,20 +399,11 @@ const Finish = observer(
                       <div className="item">
                         <b className="name">Итого</b>
                         <b className="price">
-                          {(data.certInCart &&
-                          Object.keys(data.products).length === 1
+                          {((data.certInCart &&
+                            Object.keys(data.products).length === 1) ||
+                          data.delivery.pickUpChoose
                             ? data.sum
-                            : data.delivery.type === "express"
-                            ? +data.sum + +data.delivery.cost
-                            : data.delivery.pickUpChoose
-                            ? data.sum
-                            : data.delivery.deliveryForCustomer !== undefined ||
-                              data.delivery.deliveryOption === undefined
-                            ? data.delivery.deliveryOption === undefined
-                              ? data.sum +
-                                data.delivery.cost.deliveryForCustomer
-                              : data.sum + data.delivery.deliveryForCustomer
-                            : data.sum
+                            : data.sum + +data.delivery.price
                           ).toLocaleString()}
                           ₽
                         </b>
@@ -442,8 +426,8 @@ const Finish = observer(
                         {data.delivery.pickUpChoose === true
                           ? `Магазин:${data.delivery.store}, 
                         по адресу: ${data.delivery.address.locality}`
-                          : data.delivery.deliveryType === "PICKUP"
-                          ? `Адрес выдачи: ${data.delivery.pickupPoint.address.addressString}`
+                          : data.delivery.pvz !== undefined
+                          ? `Адрес выдачи: ${data.delivery.address}`
                           : `г. ${data.delivery.address.locality}, ${data.delivery.address.street}, д. ${data.delivery.address.house}, кв. ${data.delivery.address.apartment}`}
                       </div>
                     )}

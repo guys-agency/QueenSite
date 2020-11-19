@@ -12,6 +12,8 @@ import { Formik } from "formik";
 import api from "./api";
 import RestoreSchema from "../schemas/restoreSchema";
 import { withRouter } from "react-router";
+import SuscribeSchema from "../schemas/suscribeSchema";
+import moment from "moment";
 
 const { Component } = React;
 
@@ -23,6 +25,10 @@ const MainPage = observer(
       allCont: [],
       certificate: "",
       ready: false,
+      days: "",
+      h: "",
+      m: "",
+      s: "",
     };
 
     getData = () => {
@@ -129,9 +135,22 @@ const MainPage = observer(
         this.props.store.sideLogin = true;
       }
     };
+    checkTimer = () => {
+      const time = moment("20.11.2020", "DD.MM.YYYY")
+        .diff(moment())
+        .toPrecision();
+      const dur = moment.duration(time, "milliseconds");
+
+      this.setState({
+        days: dur.days(),
+        h: dur.hours(),
+        m: dur.minutes(),
+        s: dur.seconds() + 1,
+      });
+    };
 
     render() {
-      const { hitCont, newCont, allCont } = this.state;
+      const { hitCont, newCont, allCont, days, h, m, s } = this.state;
       const { bannersData } = this.props.store;
       const typeDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
         navigator.userAgent
@@ -154,6 +173,18 @@ const MainPage = observer(
         //     }}
         //   ></Link>
         // );
+        mainBanners.push(
+          <Link
+            key="0"
+            className="head-banner"
+            to={"/black-friday"}
+            style={{
+              backgroundImage: `url(/image/BF/${
+                this.typeDevice ? "BF-pl-m" : "BF-pl"
+              }.jpg)`,
+            }}
+          ></Link>
+        );
         bannersData.main.forEach((elem) => {
           mainBanners.push(
             <Link
@@ -531,6 +562,177 @@ const MainPage = observer(
               </div>
             </div>
           )}
+
+          <div
+            className="container"
+            style={{
+              paddingTop: typeDevice ? "10px" : "105px",
+              borderRadius: "5px",
+            }}
+          >
+            <div className="subscribe subscribe_bf-main">
+              <div className="container">
+                <div className="row">
+                  <div className="col col-6 col-s-12 col-middle subscribe__form">
+                    <h3>Доступ в закрытый раздел</h3>
+                    <p>
+                      Закрытый раздел на <b>286 товаров</b> со{" "}
+                      <b>скидками до 78%</b>
+                      <br /> для наших подписчиков!
+                    </p>
+                    <Formik
+                      //инициализируем значения input-ов
+                      initialValues={{
+                        email: "",
+                        acceptedTerms: true,
+                      }}
+                      //подключаем схему валидации, которую описали выше
+                      validationSchema={SuscribeSchema}
+                      //определяем, что будет происходить при вызове onsubmit
+                      onSubmit={(values, { setSubmitting }) => {
+                        $("#subscription").addClass("deactive");
+                        $("#subscription").text("Загрузка");
+                        api
+                          .addSubs({
+                            email: values.email.toLowerCase(),
+                          })
+                          .then((data) => {
+                            $("#subscription").removeClass("deactive");
+                            $("#subscription").text(data.message);
+                            if (data.status === 200) {
+                              $("#subscription").addClass("success");
+                            } else {
+                              $("#subscription").addClass("error");
+                            }
+                            setTimeout(() => {
+                              $("#subscription").removeClass("success");
+                              $("#subscription").removeClass("error");
+                              $("#subscription").text("Подписаться");
+                            }, 3000);
+                          });
+                      }}
+                      //свойство, где описывыем нашу форму
+                      //errors-ошибки валидации формы
+                      //touched-поля формы, которые мы "затронули",
+                      //то есть, в которых что-то ввели
+                    >
+                      {({
+                        errors,
+                        touched,
+                        handleSubmit,
+                        isSubmitting,
+                        values,
+                        handleChange,
+                      }) => (
+                        <form
+                          className="row row_inner col-bottom"
+                          onSubmit={handleSubmit}
+                        >
+                          <div className="col col-12 col-s-12">
+                            <div className="row row_inner">
+                              <div className="col col-6 col-s-12">
+                                <div className="input-field">
+                                  <label
+                                    className="required"
+                                    htmlFor="emailSubs"
+                                  >
+                                    E-mail
+                                  </label>
+                                  <input
+                                    id="emailSubs"
+                                    name="email"
+                                    type="text"
+                                    value={values.email}
+                                    onFocus={(e) => {
+                                      $(e.target)
+                                        .parent()
+                                        .find("label")
+                                        .addClass("active");
+                                    }}
+                                    onBlur={(e) => {
+                                      if (e.target.value === "") {
+                                        $(e.target)
+                                          .parent()
+                                          .find("label")
+                                          .removeClass("active");
+                                      }
+                                    }}
+                                    onChange={handleChange}
+                                  />
+                                </div>
+                                <div className="field-error">
+                                  {errors.email}
+                                </div>
+                              </div>
+
+                              <div className="col col-4 col-s-12">
+                                <button
+                                  className="btn btn_primary btn_wide"
+                                  type="submit"
+                                  id="subscription"
+                                >
+                                  Получить доступ
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="col col-12 col-s-12">
+                            <label className="checkbox checkbox_margin">
+                              <input
+                                type="checkbox"
+                                name="acceptedTerms"
+                                id=""
+                                value={values.acceptedTerms}
+                                onChange={handleChange}
+                                checked={values.acceptedTerms}
+                              />
+                              <span className="checkbox-btn"></span>
+                              <i>
+                                Согласен с{" "}
+                                <Link className="underline" to="/help/offer">
+                                  "Публичной офертой"
+                                </Link>{" "}
+                                и{" "}
+                                <Link className="underline" to="/help/cppd">
+                                  "Обработкой персональных данных"
+                                </Link>
+                              </i>
+                            </label>
+                          </div>
+                        </form>
+                      )}
+                    </Formik>
+                  </div>
+                </div>
+              </div>
+              <div
+                className="subscribe__img"
+                // style={{
+                //   backgroundImage: "url(" + "/image/plate.png" + ")",
+                // }}
+              >
+                <h3>До начала акции</h3>
+                <div className="black-friday__timer">
+                  <div className="days">
+                    <p className="num">{days}</p>
+                    <p className="str">дней</p>
+                  </div>
+                  <div className="hours">
+                    <p className="num">{h}</p>
+                    <p className="str">часов</p>
+                  </div>
+                  <div className="minuts">
+                    <p className="num">{m}</p>
+                    <p className="str">минут</p>
+                  </div>
+                  <div className="sec">
+                    <p className="num">{s}</p>
+                    <p className="str">секунд</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
           <div className="carousel carousel_product">
             <div className="container">
@@ -935,6 +1137,14 @@ const MainPage = observer(
       if (this.props.location.hash.includes("profile")) {
         this.openLogSide();
       }
+      this.checkTimer();
+      window.timerInt = setInterval(() => {
+        this.checkTimer();
+      }, 1000);
+    }
+
+    componentWillUnmount() {
+      clearInterval(window.timerInt);
     }
   }
 );

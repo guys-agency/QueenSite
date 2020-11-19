@@ -27,12 +27,14 @@ import Shops from "./comp/Shops";
 import ShopsMap from "./comp/ShopsMap";
 import StartLoader from "./comp/Loader";
 import PageNotFound from "./comp/404";
+import BlackFriday from "./comp/BlackFriday";
 import { Link } from "react-router-dom";
 
 import Breadcrumbs from "./comp/breadcrumbs";
 import localStorage from "mobx-localstorage";
 import $ from "jquery";
 import { withRouter } from "react-router";
+import getCookie from "./ulits/getCookie";
 const CartPage = React.lazy(() => import("./comp/CartPage"));
 const Finish = React.lazy(() => import("./comp/Finish"));
 const Profile = React.lazy(() => import("./comp/Profile"));
@@ -134,14 +136,14 @@ const MainScreen = observer(
       //     console.log("err", err);
       //   });
     };
-    addToLastSeenProd = (slug) => {
+    addToLastSeenProd = (slug, k) => {
       const { lastSeenProds } = this.props.store;
 
-      fetch(SERVER_URL + "/product/" + slug, {
+      fetch(SERVER_URL + "/product/" + slug + "#" + k, {
         method: "GET",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
-          credentials: "include",
         },
       })
         .then((res) => {
@@ -249,6 +251,7 @@ const MainScreen = observer(
     };
 
     render() {
+      console.log("bfcheck :>> ", getCookie("BFclose"));
       return (
         <>
           {!this.itsDev && <StartLoader store={this.props.store} />}
@@ -421,10 +424,58 @@ const MainScreen = observer(
               )}
             />
             <Route
-              path="/product/:id"
+              path="/black-friday"
+              render={() => (
+                $("html, body").animate({ scrollTop: 0 }, 500),
+                $("#root").addClass("black-friday"),
+                (document.title = "Черная пятница - Queen of Bohemia"),
+                (
+                  <div className="main-screen">
+                    <BlackFriday store={this.props.store} />
+                  </div>
+                )
+              )}
+            />
+
+            {getCookie("BFcheck") !== undefined && (
+              <Route
+                path="/close-sale"
+                render={(propsRout) => (
+                  (this.props.store.nameMainCat = ""),
+                  (this.props.store.nameSecondCat = ""),
+                  this.props.store.bannerFilter.slug !==
+                  propsRout.match.params.slug
+                    ? this.props.store.cleaningActiveFilters()
+                    : null,
+                  this.props.store.bannerFilter.slug !==
+                  propsRout.match.params.slug
+                    ? $("html, body").animate({ scrollTop: 0 }, 500)
+                    : null,
+                  (this.props.store.bannerFilter = {
+                    type: "closeBanner",
+                    slug: "chernaya_pyatnica_2020",
+                  }),
+                  this.props.store.filtration(),
+                  (
+                    <div className="main-screen">
+                      <Collection
+                        store={this.props.store}
+                        slug={propsRout.match.params.slug}
+                      />
+                    </div>
+                  )
+                )}
+              />
+            )}
+            <Route
+              path={["/product/:id&:t", "/product/:id"]}
               render={(propsRout) => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
-                (this.addToLastSeenProd(propsRout.match.params.id),
+                console.log("object", propsRout.match.params.t),
+                (this.addToLastSeenProd(
+                  propsRout.match.params.id,
+                  propsRout.match.params.t
+                ),
                 (
                   <div className="main-screen">
                     <CardView

@@ -42,6 +42,7 @@
 @import "./blocks/alert-message/alert-message.scss";
 @import "./blocks/popover/popover.scss";
 @import "./blocks/pvz/pvz.scss";
+@import "./blocks/black-friday/black-friday.scss";
 
 //HOME ELEMENTS
 @import "./blocks/carousel/carousel.scss";
@@ -70,6 +71,65 @@ body {
   color: $b_dark;
   &.no-scroll {
     overflow-y: hidden;
+  }
+}
+
+#root {
+  &.black-friday {
+    background-color: #00010d;
+    .head {
+      background: linear-gradient(90.22deg, #dab958 -140.48%, #efd27e 99.78%);
+    }
+    .header {
+      border-color: rgba(0, 9, 77, 0.1);
+    }
+    .search-wrp {
+      input {
+        border-color: #000166;
+        color: #00094d;
+        &::placeholder {
+          color: #00094d;
+        }
+      }
+    }
+    .cart {
+      background: linear-gradient(90.09deg, #fadf90 0.08%, #efd27e 99.9%);
+    }
+    .container {
+      .title {
+        color: #fff;
+        h2 {
+          color: #fff;
+        }
+        button {
+          margin-top: 0px;
+          padding: 5px 12px;
+          margin-left: 25px;
+        }
+        .subtitle {
+          color: #fff;
+        }
+      }
+    }
+
+    .subscribe {
+      // background: linear-gradient(90.22deg, #dab958 -140.48%, #efd27e 99.78%);
+    }
+
+    .footer {
+      background-color: #000215;
+      .footer__bottom {
+        background-color: #000215;
+      }
+    }
+    .product {
+      .product__name {
+        color: #fff;
+      }
+    }
+    .product__price {
+      color: #fff;
+    }
   }
 }
 

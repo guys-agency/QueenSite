@@ -1514,10 +1514,10 @@ class Store {
       this.activeFilters.attr.push("hit");
       this.activeFilters.count += 1;
     }
-    if (pathname.includes("sale")) {
-      this.activeFilters.attr.push("sale");
-      this.activeFilters.count += 1;
-    }
+    // if (pathname.includes("sale")) {
+    //   this.activeFilters.attr.push("sale");
+    //   this.activeFilters.count += 1;
+    // }
     if (pathname.includes("new")) {
       this.activeFilters.attr.push("new");
       this.activeFilters.count += 1;

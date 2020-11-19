@@ -40,6 +40,9 @@ const ProductList = observer(
         delete productInCart[el];
         delete productInCartList[el];
         addtoCart(true);
+        if (this.props.clearDeliveryData) {
+          this.props.clearDeliveryData();
+        }
       }, 500);
       this.setState({ show: false });
       if (process.env.REACT_APP_TYPE === "prod") {

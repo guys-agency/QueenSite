@@ -13,6 +13,7 @@ import ChangeSidebar from "./ChangeProfileData";
 import CityCh from "./CityCh";
 import api from "./api";
 import localStorage from "mobx-localstorage";
+import getCookie from "../ulits/getCookie";
 
 const { Component } = React;
 
@@ -113,6 +114,16 @@ const MenuPoints = observer(
               Публичная оферта
             </Link>
           </li>
+          <li>
+            <Link to="/help/policy" onClick={this.closeNav}>
+              Политика конфиденциальности
+            </Link>
+          </li>
+          {/* <li>
+            <Link to="/help/cppd" onClick={this.closeNav}>
+              Согласие на обработку персональных данных
+            </Link>
+          </li> */}
           <li>
             <Link to="/help/certificate" onClick={this.closeNav}>
               Сертификат
@@ -374,11 +385,44 @@ const MenuPoints = observer(
       this.props.store.loaderInc = 50;
       if (
         window.location.pathname.includes("/cart") ||
-        window.location.pathname.includes("/finish/") ||
-        window.location.pathname.includes("/product/")
+        window.location.pathname.includes("/finish/")
+        // ||
+        // window.location.pathname.includes("/product/")
       ) {
         this.props.store.loaderPercent = 100;
       }
+
+      //http://127.0.0.1:3000/product/5637281928
+
+      // if (
+      //   window.location.pathname.includes("/product/") &&
+      //   window.location.pathname.includes("&")
+      // ) {
+      //   console.log("12312 :>> ", 12312);
+      //   fetch(
+      //     SERVER_URL + "/prodbfcheck/" + window.location.pathname.split("&")[1],
+      //     {
+      //       method: "GET",
+      //       credentials: "include",
+      //       headers: {
+      //         "Content-Type": "application/json",
+      //       },
+      //     }
+      //   )
+      //     .then((res) => {
+      //       return res.json();
+      //     })
+      //     .then((s) => {
+      //       console.log("s :>> ", s);
+      //       if (s.stasus === 201) {
+      //         this.props.history.push(
+      //           "/product/" +
+      //             window.location.pathname.split("&")[0].split("/product/")[1]
+      //         );
+      //       }
+      //     })
+      //     .catch((err) => console.log("err", err));
+      // }
 
       this.loaderIncPlus();
       fetch(SERVER_URL + "/categories", {
@@ -582,7 +626,9 @@ const MenuPoints = observer(
               </div>
             );
           }
+
           this.props.store.loaderInc = 100;
+
           // this.loaderIncPlus();
           this.setState({ ready: true });
         })
@@ -961,17 +1007,28 @@ const MenuPoints = observer(
                     </div>
                   </span>
 
-                  <span className="menu__drop">
-                    <Link to="/new" className="menu-point menu-point_news">
-                      Новинки
-                    </Link>
-                  </span>
+                  {$(window).width() > 840 && (
+                    <span className="menu__drop">
+                      <Link to="/new" className="menu-point menu-point_news">
+                        Новинки
+                      </Link>
+                    </span>
+                  )}
 
                   <span className="menu__drop">
-                    <Link to="/actions" className="menu-point sale-point">
-                      Акции
-                    </Link>
-                    <div className="menu menu_sub">
+                    {getCookie("BFcheck") !== undefined ? (
+                      <Link to="/close-sale" className="menu-point sale-point">
+                        Закрытая распродажа
+                      </Link>
+                    ) : (
+                      <Link
+                        to="/black-friday"
+                        className="menu-point sale-point"
+                      >
+                        Черная пятница
+                      </Link>
+                    )}
+                    {/* <div className="menu menu_sub">
                       <div className="container container_f">
                         <button
                           className="btn btn_prev"
@@ -995,15 +1052,15 @@ const MenuPoints = observer(
                                 Акции
                               </NavLink>
                             </li>
-                            {/* <li>
+                            <li>
                               <NavLink to="/main/1+13" onClick={this.closeNav}>
                                 1 + 1 = 3
                               </NavLink>
-                            </li> */}
+                            </li>
                           </ul>
                         </div>
                       </div>
-                    </div>
+                    </div> */}
                   </span>
                 </div>
                 <div className="search-pos">

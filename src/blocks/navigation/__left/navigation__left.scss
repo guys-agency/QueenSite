@@ -24,6 +24,7 @@
   }
   > .btn-menu {
     margin-right: 20px;
+    margin-top: 0px;
     @include max($t) {
       margin-right: 15px;
       font-size: 0;

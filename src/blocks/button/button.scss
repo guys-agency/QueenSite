@@ -113,12 +113,29 @@ button {
     top: 1px;
   }
 
+  &.deactive {
+    pointer-events: none;
+
+    &::after {
+      content: ".";
+      animation: loading 1s ease alternate infinite;
+    }
+
+    &:hover {
+      box-shadow: none;
+      transform: none;
+      opacity: 1;
+    }
+  }
+
   &.error {
+    pointer-events: none;
     color: white;
     background-color: $red;
     border-color: $red;
   }
   &.success {
+    pointer-events: none;
     color: white;
     background-color: $green;
     border-color: $green;

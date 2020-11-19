@@ -10,9 +10,9 @@
   }
   .container {
     align-items: center;
-    @include max($s) {
-      flex-wrap: wrap;
-    }
+    flex-wrap: wrap;
+    // @include max($m) {
+    // }
   }
   li {
     margin-right: 20px;

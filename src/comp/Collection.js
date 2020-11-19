@@ -50,6 +50,37 @@ const Collection = observer(
               </div>
             </React.Fragment>
           );
+        } else if (dataColl[0].type === "closeBanner") {
+          collRender.push(
+            <React.Fragment key={dataColl[0].slug}>
+              <div className="head head_big">
+                <div className="head-cont">
+                  <div
+                    className="head-banner"
+                    style={{
+                      backgroundImage: `url(/image/BF/${
+                        typeDevice ? "BF-pl-m.jpg" : "BF-pl.jpg"
+                      })`,
+                    }}
+                  ></div>
+                </div>
+              </div>
+              {dataColl[0].description !== "" &&
+                dataColl[0].description !== undefined && (
+                  <div className="container">
+                    <div className="row">
+                      <div className="col col-3 col-s-1"></div>
+                      <div className="col col-8 col-s-10">
+                        <div className="collections__desc">
+                          {dataColl[0].description}
+                        </div>
+                      </div>
+                      <div className="col col-s-1"></div>
+                    </div>
+                  </div>
+                )}
+            </React.Fragment>
+          );
         } else if (dataColl[0].type !== "sale") {
           collRender.push(
             <React.Fragment key={dataColl[0].slug}>

@@ -389,9 +389,23 @@ class Api {
   getHits() {
     return fetch(SERVER_URL + "/hits", {
       method: "GET",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
+    }).then((res) => {
+      return res.json();
+    });
+  }
+
+  addSubs(email) {
+    return fetch(SERVER_URL + "/add-subs", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(email),
     }).then((res) => {
       return res.json();
     });

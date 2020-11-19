@@ -13,8 +13,7 @@ import num2str from "../ulits/nm2wrd";
 import Inputmask from "inputmask";
 import Fade from "react-reveal/Fade";
 import "../blocks/dadata.scss";
-import { object } from "yup";
-import store from "../MobxStore";
+import { Link } from "react-router-dom";
 
 const { Component } = React;
 const momLoc = moment();
@@ -175,7 +174,7 @@ const CartPage = observer(
         });
         $(e.currentTarget).addClass("active");
       }
-      console.log("data :>> ", data);
+      // console.log("data :>> ", data);
 
       this.setState({
         deliveryData: {
@@ -295,172 +294,191 @@ const CartPage = observer(
       // this.setState({ deliveryData: {} });
       // $("#map").removeClass("choose");
 
-      api
-        .deliveryVar({
-          to: {
-            name: localStorage.get("city").name,
-            region: localStorage.get("city").region,
-          },
-          dimensions: this.dimensionsApi,
-
-          cost: Math.floor(sum),
-          payment: type,
-        })
-        .then((d) => {
-          console.log("d :>> ", d);
-          if (Object.keys(d).length) {
-            if (
-              (localStorage.get("city").geoId === 213 &&
-                this.totalPrice >= 3000) ||
-              this.totalPrice === 0 ||
-              (localStorage.get("city").geoId !== 213 &&
-                this.totalPrice >= 20000)
-            ) {
-              Object.keys(d).forEach((parent) => {
-                d[parent].price = 0;
-              });
-            }
-
-            if (Object.keys(d).length > 1) {
-              this.setState({ payment: type, delVar: d });
-            } else {
-              const data = d[Object.keys(d)[0]];
-              let time = +data.delivery_period;
-              if (data.msg.match(/\d/) !== null) {
-                time += +data.msg.match(/\d/)[0];
-              }
-              this.setState({
-                payment: type,
-                deliveryData: { ...data, time },
-                delVar: { [Object.keys(d)[0]]: { ...data, time } },
-              });
-            }
-          } else {
-            this.setState({ payment: type, delVar: false });
-          }
-        })
-        .catch((err) => {
-          console.log("err :>> ", err);
-        });
-
-      if (localStorage.get("city").name !== undefined) {
+      if (e === undefined) {
         api
-          .getPVZ({
-            city: localStorage.get("city").name,
-            region: localStorage.get("city").region,
-
+          .deliveryVar({
+            to: {
+              name: localStorage.get("city").name,
+              region: localStorage.get("city").region,
+            },
             dimensions: this.dimensionsApi,
+
             cost: Math.floor(sum),
             payment: type,
           })
-          .then((pvz) => {
-            console.log("pvz :>> ", pvz);
-            this.pvzDataCont = [];
-
-            if (
-              (localStorage.get("city").geoId === 213 &&
-                this.totalPrice >= 3000) ||
-              this.totalPrice === 0 ||
-              (localStorage.get("city").geoId !== 213 &&
-                this.totalPrice >= 20000)
-            ) {
-              Object.keys(pvz.extra).forEach((parent) => {
-                pvz.extra[parent].price = 0;
-              });
-            }
-
-            pvz.data.forEach((p, i) => {
-              if (!this.mapCoor.length) {
-                this.mapCoor = p["GPS"].split(",");
-              }
+          .then((d) => {
+            // console.log("d :>> ", d);
+            if (Object.keys(d).length) {
               if (
-                pvz.extra[p.partner] !== undefined &&
-                pvz.extra[p.partner].delivery_period !== "-" &&
-                +p.weightLimit > this.dimensionsApi.weight
+                (localStorage.get("city").geoId === 213 &&
+                  this.totalPrice >= 3000) ||
+                this.totalPrice === 0 ||
+                (localStorage.get("city").geoId !== 213 &&
+                  this.totalPrice >= 20000)
               ) {
-                let time = +pvz.extra[p.partner].delivery_period;
-                if (pvz.extra[p.partner].msg.match(/\d/) !== null) {
-                  time += +pvz.extra[p.partner].msg.match(/\d/)[0];
-                }
-                const timeString = moment().add(time, "days");
-                timeString.locale("ru");
-                // console.log("delVar[el].msg. :>> ", delVar[el].msg.match(/\d/));
+                Object.keys(d).forEach((parent) => {
+                  d[parent].price = 0;
+                });
+              }
 
-                this.pvzDataCont.push({
-                  type: "Feature",
-                  id: p.partner + " " + i,
-                  geometry: {
-                    type: "Point",
-                    coordinates: p["GPS"].split(","),
-                  },
-                  properties: {
-                    iconContent:
-                      (+pvz.extra[p.partner].price).toLocaleString() + " ₽",
-                    balloonContentHeader:
-                      this.translite[p.partner] !== undefined
-                        ? this.translite[p.partner]
-                        : p.partner,
-                    balloonHeader:
-                      this.translite[p.partner] !== undefined
-                        ? this.translite[p.partner]
-                        : p.partner + "<button class='ic i_close'></button>",
-                    balloonContent: `<p class='popover-content__adress'>${
-                      p.town + ", " + p.address
-                    }</p> 
+              if (Object.keys(d).length > 1) {
+                this.setState({ payment: type, delVar: d });
+              } else {
+                const data = d[Object.keys(d)[0]];
+                let time = data.delivery_period;
+                if (time.includes("-")) {
+                  time = +time.split("-")[0];
+                } else {
+                  time = +time;
+                }
+                if (data.msg.match(/\d/) !== null) {
+                  time += +data.msg.match(/\d/)[0];
+                }
+                this.setState({
+                  payment: type,
+                  deliveryData: this.state.delChoose ? { ...data, time } : {},
+                  delVar: { [Object.keys(d)[0]]: { ...data, time } },
+                });
+              }
+            } else {
+              this.setState({ payment: type, delVar: false });
+            }
+          })
+          .catch((err) => {
+            console.log("err :>> ", err);
+          });
+
+        if (localStorage.get("city").name !== undefined) {
+          api
+            .getPVZ({
+              city: localStorage.get("city").name,
+              region: localStorage.get("city").region,
+
+              dimensions: this.dimensionsApi,
+              cost: Math.floor(sum),
+              payment: type,
+            })
+            .then((pvz) => {
+              // console.log("pvz :>> ", pvz);
+              this.pvzDataCont = [];
+
+              if (
+                (localStorage.get("city").geoId === 213 &&
+                  this.totalPrice >= 3000) ||
+                this.totalPrice === 0 ||
+                (localStorage.get("city").geoId !== 213 &&
+                  this.totalPrice >= 20000)
+              ) {
+                Object.keys(pvz.extra).forEach((parent) => {
+                  pvz.extra[parent].price = 0;
+                });
+              }
+
+              pvz.data.forEach((p, i) => {
+                if (!this.mapCoor.length) {
+                  this.mapCoor = p["GPS"].split(",");
+                }
+                if (
+                  pvz.extra[p.partner] !== undefined &&
+                  pvz.extra[p.partner].delivery_period !== "-" &&
+                  +p.weightLimit > this.dimensionsApi.weight
+                ) {
+                  let time = pvz.extra[p.partner].delivery_period;
+                  if (time.includes("-")) {
+                    time = +time.split("-")[0];
+                  } else {
+                    time = +time;
+                  }
+                  if (pvz.extra[p.partner].msg.match(/\d/) !== null) {
+                    time += +pvz.extra[p.partner].msg.match(/\d/)[0];
+                  }
+                  const timeString = moment().add(time, "days");
+                  timeString.locale("ru");
+                  // console.log("delVar[el].msg. :>> ", delVar[el].msg.match(/\d/));
+
+                  this.pvzDataCont.push({
+                    type: "Feature",
+                    id: p.partner + " " + i,
+                    geometry: {
+                      type: "Point",
+                      coordinates: p["GPS"].split(","),
+                    },
+                    properties: {
+                      iconContent:
+                        (+pvz.extra[p.partner].price).toLocaleString() + " ₽",
+                      balloonContentHeader:
+                        this.translite[p.partner] !== undefined
+                          ? this.translite[p.partner]
+                          : p.partner,
+                      balloonHeader:
+                        this.translite[p.partner] !== undefined
+                          ? this.translite[p.partner]
+                          : p.partner + "<button class='ic i_close'></button>",
+                      balloonContent: `<p class='popover-content__adress'>${
+                        p.town + ", " + p.addressReduce
+                      }</p> 
                     <div class='popover-content__extra'><p>${
                       (+pvz.extra[p.partner].price).toLocaleString() + " ₽"
                     }</p><p class='popover-content__date'>${
-                      timeString.format("DD") +
-                      "-" +
-                      timeString.add(1, "days").format("DD MMMM")
-                    }</p></div> 
+                        timeString.format("DD") +
+                        "-" +
+                        timeString.add(1, "days").format("DD MMMM")
+                      }</p></div> 
                     <p class='popover-content__time-name'>Время работы:</p> 
                     <p class='popover-content__time'>${p.workShedule}</p>
                     <button id=${
                       p.id
                     } class='popover-content__btn'>Выбрать</button>
                   `,
-                    data: {
-                      ...p,
-                      price: pvz.extra[p.partner].price,
-                      time,
-                      msg: pvz.extra[p.partner].msg,
+                      data: {
+                        ...p,
+                        price: pvz.extra[p.partner].price,
+                        time,
+                        msg: pvz.extra[p.partner].msg,
+                      },
                     },
-                  },
-                });
+                  });
+                }
+
+                // this.pvzCompCont.push(
+                //   <Placemark
+                //     geometry={{
+                //       type: "Point",
+                //       coordinates: el["GPS"]["_text"].split(","),
+                //     }}
+                //     properties={{
+                //       balloonContentHeader: name,
+                //       balloonContentBody: `<strong>Адрес:</strong> ${el.address["_text"]}<br/>
+                //       <strong>Описание:</strong> ${el.description["_text"]}<br/>
+                //       <strong>Время работы:</strong> ${el.worktime["_text"]}<br/>
+                //       <button id=${el["_attributes"].code}>Выбрать</button>
+                //     `,
+                //     }}
+                //   ></Placemark>
+                // );
+              });
+
+              this.setState({
+                pvzDataCont: this.pvzDataCont.length ? this.pvzDataCont : false,
+              });
+
+              if (geoMap !== undefined) {
+                // geoMap.destroy();
+                // checkData();
+                try {
+                  geoMap.geoObjects.removeAll();
+
+                  addObject();
+                  revertMap();
+                } catch {}
               }
-
-              // this.pvzCompCont.push(
-              //   <Placemark
-              //     geometry={{
-              //       type: "Point",
-              //       coordinates: el["GPS"]["_text"].split(","),
-              //     }}
-              //     properties={{
-              //       balloonContentHeader: name,
-              //       balloonContentBody: `<strong>Адрес:</strong> ${el.address["_text"]}<br/>
-              //       <strong>Описание:</strong> ${el.description["_text"]}<br/>
-              //       <strong>Время работы:</strong> ${el.worktime["_text"]}<br/>
-              //       <button id=${el["_attributes"].code}>Выбрать</button>
-              //     `,
-              //     }}
-              //   ></Placemark>
-              // );
-            });
-
-            this.setState({
-              pvzDataCont: this.pvzDataCont.length ? this.pvzDataCont : false,
-            });
-            if (geoMap !== undefined) {
-              // geoMap.destroy();
-              // checkData();
-              geoMap.geoObjects.removeAll();
-
-              addObject();
-              revertMap();
-            }
-          })
-          .catch((err) => console.log("err", err));
+            })
+            .catch((err) => console.log("err", err));
+        }
+      } else {
+        this.setState({
+          payment: type,
+        });
       }
     };
 
@@ -489,6 +507,7 @@ const CartPage = observer(
         pvzDataCont: [],
         delVar: [],
       });
+      $("#map").removeClass("choose");
       this.choosePaymentType(undefined, this.state.payment);
     };
 
@@ -1051,7 +1070,7 @@ const CartPage = observer(
                                     api
                                       .getCity(e.target.value)
                                       .then((c) => {
-                                        console.log("c :>> ", c);
+                                        // console.log("c :>> ", c);
                                         c.forEach((one) => {
                                           if (
                                             one.addressComponents.length <= 6
@@ -1718,7 +1737,7 @@ const CartPage = observer(
                                         <p className="pvz__address">
                                           {deliveryData.town +
                                             ", " +
-                                            deliveryData.address}
+                                            deliveryData.addressReduce}
                                         </p>
 
                                         {deliveryData.description !==
@@ -2079,11 +2098,14 @@ const CartPage = observer(
                       />
                       <span className="checkbox-btn"></span>
                       <i>
-                        Согласен с условиями "
-                        <a className="underline" href="/help/offer">
-                          Публичной оферты
-                        </a>
-                        "
+                        Согласен с{" "}
+                        <Link className="underline" to="/help/offer">
+                          "Публичной офертой"
+                        </Link>{" "}
+                        и{" "}
+                        <Link className="underline" to="/help/cppd">
+                          "Обработкой персональных данных"
+                        </Link>
                       </i>
                     </label>
                   </form>
@@ -2756,11 +2778,20 @@ const CartPage = observer(
                             country: "Россия",
                             region: cityLoc.region,
                             locality: cityLoc.name,
-                            street: adress,
-                            house: house,
-
-                            apartment: flat,
+                            street:
+                              deliveryData.pvz !== undefined
+                                ? deliveryData.Street
+                                : adress,
+                            house:
+                              deliveryData.pvz !== undefined
+                                ? deliveryData.House
+                                : house,
+                            apartment:
+                              deliveryData.pvz !== undefined
+                                ? deliveryData.Apartment
+                                : flat,
                           };
+
                           const contacts = {
                             email: email.toLowerCase(),
                             phone: String(tel),
