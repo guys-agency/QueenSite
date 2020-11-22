@@ -13,7 +13,6 @@ import ChangeSidebar from "./ChangeProfileData";
 import CityCh from "./CityCh";
 import api from "./api";
 import localStorage from "mobx-localstorage";
-import getCookie from "../ulits/getCookie";
 
 const { Component } = React;
 
@@ -318,6 +317,8 @@ const MenuPoints = observer(
             $(".menu-point_collections").on("click", self.closeNav);
             $(".menu-point_gifts").off("click", self.toggleDrop);
             $(".menu-point_gifts").on("click", self.closeNav);
+            $(".sale-point").off("click", self.toggleDrop);
+            $(".sale-point").on("click", self.closeNav);
             $(".menu_sub").off("click", self.toggleDrop);
             if (
               document.body.clientWidth < 760 &&
@@ -1016,7 +1017,8 @@ const MenuPoints = observer(
                   )}
 
                   <span className="menu__drop">
-                    {getCookie("BFcheck") !== undefined ? (
+                    {localStorage.get("BFcheck") === true ||
+                    localStorage.get("BFcheck") === "true" ? (
                       <Link to="/close-sale" className="menu-point sale-point">
                         Закрытая распродажа
                       </Link>

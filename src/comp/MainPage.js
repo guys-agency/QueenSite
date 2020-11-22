@@ -14,6 +14,7 @@ import RestoreSchema from "../schemas/restoreSchema";
 import { withRouter } from "react-router";
 import SuscribeSchema from "../schemas/suscribeSchema";
 import moment from "moment";
+import localStorage from "mobx-localstorage";
 
 const { Component } = React;
 
@@ -71,19 +72,19 @@ const MainPage = observer(
               </div>
             );
           });
-          Object.keys(data[0].all).forEach((element) => {
-            allContTime.push(
-              <div
-                className="col col-3 col-t-4 col-s-6"
-                key={data[0].all[element].slug}
-              >
-                <ProductCard
-                  data={data[0].all[element]}
-                  store={this.props.store}
-                />
-              </div>
-            );
-          });
+          // Object.keys(data[0].all).forEach((element) => {
+          //   allContTime.push(
+          //     <div
+          //       className="col col-3 col-t-4 col-s-6"
+          //       key={data[0].all[element].slug}
+          //     >
+          //       <ProductCard
+          //         data={data[0].all[element]}
+          //         store={this.props.store}
+          //       />
+          //     </div>
+          //   );
+          // });
           // console.log("cert :>> ", this.props.gift);
           if (this.props.gift === undefined) {
             this.setState({
@@ -136,7 +137,7 @@ const MainPage = observer(
       }
     };
     checkTimer = () => {
-      const time = moment("20.11.2020", "DD.MM.YYYY")
+      const time = moment("01.12.2020", "DD.MM.YYYY")
         .diff(moment())
         .toPrecision();
       const dur = moment.duration(time, "milliseconds");
@@ -177,7 +178,12 @@ const MainPage = observer(
           <Link
             key="0"
             className="head-banner"
-            to={"/black-friday"}
+            to={`${
+              localStorage.get("BFcheck") === true ||
+              localStorage.get("BFcheck") === "true"
+                ? "/close-sale"
+                : "/black-friday"
+            }`}
             style={{
               backgroundImage: `url(/image/BF/${
                 this.typeDevice ? "BF-pl-m" : "BF-pl"
@@ -289,121 +295,121 @@ const MainPage = observer(
           </div>
         );
 
-        saleCont.push(
-          <div className="actions" key={bannersData.sale[0].slug}>
-            <div className="action">
-              <div className="head head_sm head_list">
-                <Link
-                  onClick={() => {
-                    this.props.store.dataColl = [bannersData.sale[0]];
-                  }}
-                  to={"/actions/" + bannersData.sale[0].slug}
-                  className="head-banner head-banner_action"
-                  style={{
-                    backgroundImage: `url(/image/banners/${
-                      typeDevice
-                        ? bannersData.sale[0]["image-mob-large"]
-                        : bannersData.sale[0]["image-desc-large"]
-                    })`,
-                  }}
-                >
-                  <div className="text">
-                    <div className="label">Акция</div>
-                    <h1>
-                      {bannersData.sale[0].name}{" "}
-                      <span className="ic i_right"></span>
-                    </h1>
-                    <p>{bannersData.sale[0].description}</p>
-                  </div>
-                </Link>
-              </div>
-              <div className="container container_f">
-                <div className="row">{allCont}</div>
-                <Link
-                  to={"/actions/" + bannersData.sale[0].slug}
-                  className="btn btn_primary"
-                >
-                  Посмотреть еще
-                </Link>
-              </div>
-            </div>
-          </div>
-        );
+        // saleCont.push(
+        //   <div className="actions" key={bannersData.sale[0].slug}>
+        //     <div className="action">
+        //       <div className="head head_sm head_list">
+        //         <Link
+        //           onClick={() => {
+        //             this.props.store.dataColl = [bannersData.sale[0]];
+        //           }}
+        //           to={"/actions/" + bannersData.sale[0].slug}
+        //           className="head-banner head-banner_action"
+        //           style={{
+        //             backgroundImage: `url(/image/banners/${
+        //               typeDevice
+        //                 ? bannersData.sale[0]["image-mob-large"]
+        //                 : bannersData.sale[0]["image-desc-large"]
+        //             })`,
+        //           }}
+        //         >
+        //           <div className="text">
+        //             <div className="label">Акция</div>
+        //             <h1>
+        //               {bannersData.sale[0].name}{" "}
+        //               <span className="ic i_right"></span>
+        //             </h1>
+        //             <p>{bannersData.sale[0].description}</p>
+        //           </div>
+        //         </Link>
+        //       </div>
+        //       <div className="container container_f">
+        //         <div className="row">{allCont}</div>
+        //         <Link
+        //           to={"/actions/" + bannersData.sale[0].slug}
+        //           className="btn btn_primary"
+        //         >
+        //           Посмотреть еще
+        //         </Link>
+        //       </div>
+        //     </div>
+        //   </div>
+        // );
 
-        ideasCon.push(
-          <div className="row ideas-block" key={bannersData.ideas[0].slug}>
-            <div className="col col-5 col-t-12">
-              <Link
-                to={"/ideas/" + bannersData.ideas[0].slug}
-                className="banner banner_overlay main-idea"
-                style={{
-                  backgroundImage: `url(/image/banners/${
-                    typeDevice
-                      ? bannersData.ideas[0]["image-mob-main"]
-                      : bannersData.ideas[0]["image-desc-main"]
-                  })`,
-                }}
-              >
-                <div className="banner__desc">{bannersData.ideas[0].name}</div>
-              </Link>
-            </div>
-            <div className="ideas col col-7 col-t-12">
-              <div className="row row_inner">
-                <div className="col col-6 col-s-12">
-                  <Link
-                    to={"/ideas/" + bannersData.ideas[1].slug}
-                    className="banner banner_overlay small"
-                    style={{
-                      backgroundImage: `url(/image/banners/${
-                        typeDevice
-                          ? bannersData.ideas[1]["image-mob-main"]
-                          : bannersData.ideas[1]["image-desc-main"]
-                      })`,
-                    }}
-                  >
-                    <div className="banner__desc">
-                      {bannersData.ideas[1].name}
-                    </div>
-                  </Link>
-                </div>
-                <div className="col col-6 col-s-12">
-                  <Link
-                    to={"/ideas/" + bannersData.ideas[2].slug}
-                    className="banner banner_overlay small"
-                    style={{
-                      backgroundImage: `url(/image/banners/${
-                        typeDevice
-                          ? bannersData.ideas[2]["image-mob-main"]
-                          : bannersData.ideas[2]["image-desc-main"]
-                      })`,
-                    }}
-                  >
-                    <div className="banner__desc">
-                      {bannersData.ideas[2].name}
-                    </div>
-                  </Link>
-                </div>
-                <div className="col col-12 col-s-12">
-                  <Link
-                    to={"/ideas/" + bannersData.ideas[3].slug}
-                    className="banner banner_overlay large"
-                    style={{
-                      backgroundImage: `url(/image/banners/${
-                        typeDevice
-                          ? bannersData.ideas[3]["image-mob-main"]
-                          : bannersData.ideas[3]["image-desc-main"]
-                      })`,
-                    }}
-                  >
-                    <div className="banner__desc">
-                      {bannersData.ideas[3].name}
-                    </div>
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
+        // ideasCon.push(
+        //   <div className="row ideas-block" key={bannersData.ideas[0].slug}>
+        //     <div className="col col-5 col-t-12">
+        //       <Link
+        //         to={"/ideas/" + bannersData.ideas[0].slug}
+        //         className="banner banner_overlay main-idea"
+        //         style={{
+        //           backgroundImage: `url(/image/banners/${
+        //             typeDevice
+        //               ? bannersData.ideas[0]["image-mob-main"]
+        //               : bannersData.ideas[0]["image-desc-main"]
+        //           })`,
+        //         }}
+        //       >
+        //         <div className="banner__desc">{bannersData.ideas[0].name}</div>
+        //       </Link>
+        //     </div>
+        //     <div className="ideas col col-7 col-t-12">
+        //       <div className="row row_inner">
+        //         <div className="col col-6 col-s-12">
+        //           <Link
+        //             to={"/ideas/" + bannersData.ideas[1].slug}
+        //             className="banner banner_overlay small"
+        //             style={{
+        //               backgroundImage: `url(/image/banners/${
+        //                 typeDevice
+        //                   ? bannersData.ideas[1]["image-mob-main"]
+        //                   : bannersData.ideas[1]["image-desc-main"]
+        //               })`,
+        //             }}
+        //           >
+        //             <div className="banner__desc">
+        //               {bannersData.ideas[1].name}
+        //             </div>
+        //           </Link>
+        //         </div>
+        //         <div className="col col-6 col-s-12">
+        //           <Link
+        //             to={"/ideas/" + bannersData.ideas[2].slug}
+        //             className="banner banner_overlay small"
+        //             style={{
+        //               backgroundImage: `url(/image/banners/${
+        //                 typeDevice
+        //                   ? bannersData.ideas[2]["image-mob-main"]
+        //                   : bannersData.ideas[2]["image-desc-main"]
+        //               })`,
+        //             }}
+        //           >
+        //             <div className="banner__desc">
+        //               {bannersData.ideas[2].name}
+        //             </div>
+        //           </Link>
+        //         </div>
+        //         <div className="col col-12 col-s-12">
+        //           <Link
+        //             to={"/ideas/" + bannersData.ideas[3].slug}
+        //             className="banner banner_overlay large"
+        //             style={{
+        //               backgroundImage: `url(/image/banners/${
+        //                 typeDevice
+        //                   ? bannersData.ideas[3]["image-mob-main"]
+        //                   : bannersData.ideas[3]["image-desc-main"]
+        //               })`,
+        //             }}
+        //           >
+        //             <div className="banner__desc">
+        //               {bannersData.ideas[3].name}
+        //             </div>
+        //           </Link>
+        //         </div>
+        //       </div>
+        //     </div>
+        //   </div>
+        // );
       }
 
       const headCar = {
@@ -563,176 +569,186 @@ const MainPage = observer(
             </div>
           )}
 
-          <div
-            className="container"
-            style={{
-              paddingTop: typeDevice ? "10px" : "105px",
-              borderRadius: "5px",
-            }}
-          >
-            <div className="subscribe subscribe_bf-main">
-              <div className="container">
-                <div className="row">
-                  <div className="col col-6 col-s-12 col-middle subscribe__form">
-                    <h3>Доступ в закрытый раздел</h3>
-                    <p>
-                      Закрытый раздел на <b>286 товаров</b> со{" "}
-                      <b>скидками до 78%</b>
-                      <br /> для наших подписчиков!
-                    </p>
-                    <Formik
-                      //инициализируем значения input-ов
-                      initialValues={{
-                        email: "",
-                        acceptedTerms: true,
-                      }}
-                      //подключаем схему валидации, которую описали выше
-                      validationSchema={SuscribeSchema}
-                      //определяем, что будет происходить при вызове onsubmit
-                      onSubmit={(values, { setSubmitting }) => {
-                        $("#subscription").addClass("deactive");
-                        $("#subscription").text("Загрузка");
-                        api
-                          .addSubs({
-                            email: values.email.toLowerCase(),
-                          })
-                          .then((data) => {
-                            $("#subscription").removeClass("deactive");
-                            $("#subscription").text(data.message);
-                            if (data.status === 200) {
-                              $("#subscription").addClass("success");
-                            } else {
-                              $("#subscription").addClass("error");
-                            }
-                            setTimeout(() => {
-                              $("#subscription").removeClass("success");
-                              $("#subscription").removeClass("error");
-                              $("#subscription").text("Подписаться");
-                            }, 3000);
-                          });
-                      }}
-                      //свойство, где описывыем нашу форму
-                      //errors-ошибки валидации формы
-                      //touched-поля формы, которые мы "затронули",
-                      //то есть, в которых что-то ввели
-                    >
-                      {({
-                        errors,
-                        touched,
-                        handleSubmit,
-                        isSubmitting,
-                        values,
-                        handleChange,
-                      }) => (
-                        <form
-                          className="row row_inner col-bottom"
-                          onSubmit={handleSubmit}
-                        >
-                          <div className="col col-12 col-s-12">
-                            <div className="row row_inner">
-                              <div className="col col-6 col-s-12">
-                                <div className="input-field">
-                                  <label
-                                    className="required"
-                                    htmlFor="emailSubs"
-                                  >
-                                    E-mail
-                                  </label>
-                                  <input
-                                    id="emailSubs"
-                                    name="email"
-                                    type="text"
-                                    value={values.email}
-                                    onFocus={(e) => {
-                                      $(e.target)
-                                        .parent()
-                                        .find("label")
-                                        .addClass("active");
-                                    }}
-                                    onBlur={(e) => {
-                                      if (e.target.value === "") {
-                                        $(e.target)
-                                          .parent()
-                                          .find("label")
-                                          .removeClass("active");
-                                      }
-                                    }}
-                                    onChange={handleChange}
-                                  />
-                                </div>
-                                <div className="field-error">
-                                  {errors.email}
-                                </div>
-                              </div>
-
-                              <div className="col col-4 col-s-12">
-                                <button
-                                  className="btn btn_primary btn_wide"
-                                  type="submit"
-                                  id="subscription"
-                                >
-                                  Получить доступ
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="col col-12 col-s-12">
-                            <label className="checkbox checkbox_margin">
-                              <input
-                                type="checkbox"
-                                name="acceptedTerms"
-                                id=""
-                                value={values.acceptedTerms}
-                                onChange={handleChange}
-                                checked={values.acceptedTerms}
-                              />
-                              <span className="checkbox-btn"></span>
-                              <i>
-                                Согласен с{" "}
-                                <Link className="underline" to="/help/offer">
-                                  "Публичной офертой"
-                                </Link>{" "}
-                                и{" "}
-                                <Link className="underline" to="/help/cppd">
-                                  "Обработкой персональных данных"
-                                </Link>
-                              </i>
-                            </label>
-                          </div>
-                        </form>
-                      )}
-                    </Formik>
-                  </div>
-                </div>
-              </div>
+          {localStorage.get("BFcheck") !== true &&
+            localStorage.get("BFcheck") !== "true" && (
               <div
-                className="subscribe__img"
-                // style={{
-                //   backgroundImage: "url(" + "/image/plate.png" + ")",
-                // }}
+                className="container"
+                style={{
+                  paddingTop: typeDevice ? "10px" : "105px",
+                  borderRadius: "5px",
+                }}
               >
-                <h3>До начала акции</h3>
-                <div className="black-friday__timer">
-                  <div className="days">
-                    <p className="num">{days}</p>
-                    <p className="str">дней</p>
+                <div className="subscribe subscribe_bf-main">
+                  <div className="container">
+                    <div className="row">
+                      <div className="col col-6 col-s-12 col-middle subscribe__form">
+                        <h3>Доступ в закрытый раздел</h3>
+                        <p>
+                          Закрытый раздел на <b>286 товаров</b> со{" "}
+                          <b>скидками до 78%</b>
+                          <br /> для наших подписчиков!
+                        </p>
+                        <Formik
+                          //инициализируем значения input-ов
+                          initialValues={{
+                            email: "",
+                            acceptedTerms: true,
+                          }}
+                          //подключаем схему валидации, которую описали выше
+                          validationSchema={SuscribeSchema}
+                          //определяем, что будет происходить при вызове onsubmit
+                          onSubmit={(values, { setSubmitting }) => {
+                            $("#subscription").addClass("deactive");
+                            $("#subscription").text("Загрузка");
+                            api
+                              .addSubs({
+                                email: values.email.toLowerCase(),
+                              })
+                              .then((data) => {
+                                $("#subscription").removeClass("deactive");
+                                $("#subscription").text(data.message);
+                                if (data.status === 200) {
+                                  $("#subscription").addClass("success");
+                                } else {
+                                  $("#subscription").addClass("error");
+                                }
+                                setTimeout(() => {
+                                  $("#subscription").removeClass("success");
+                                  $("#subscription").removeClass("error");
+                                  $("#subscription").text("Подписаться");
+                                  if (data.bfok !== undefined && data.bfok) {
+                                    localStorage.set("BFcheck", true);
+                                    window.location.replace("/close-sale");
+                                  }
+                                }, 3000);
+                              });
+                          }}
+                          //свойство, где описывыем нашу форму
+                          //errors-ошибки валидации формы
+                          //touched-поля формы, которые мы "затронули",
+                          //то есть, в которых что-то ввели
+                        >
+                          {({
+                            errors,
+                            touched,
+                            handleSubmit,
+                            isSubmitting,
+                            values,
+                            handleChange,
+                          }) => (
+                            <form
+                              className="row row_inner col-bottom"
+                              onSubmit={handleSubmit}
+                            >
+                              <div className="col col-12 col-s-12">
+                                <div className="row row_inner">
+                                  <div className="col col-6 col-s-12">
+                                    <div className="input-field">
+                                      <label
+                                        className="required"
+                                        htmlFor="emailSubs"
+                                      >
+                                        E-mail
+                                      </label>
+                                      <input
+                                        id="emailSubs"
+                                        name="email"
+                                        type="text"
+                                        value={values.email}
+                                        onFocus={(e) => {
+                                          $(e.target)
+                                            .parent()
+                                            .find("label")
+                                            .addClass("active");
+                                        }}
+                                        onBlur={(e) => {
+                                          if (e.target.value === "") {
+                                            $(e.target)
+                                              .parent()
+                                              .find("label")
+                                              .removeClass("active");
+                                          }
+                                        }}
+                                        onChange={handleChange}
+                                      />
+                                    </div>
+                                    <div className="field-error">
+                                      {errors.email}
+                                    </div>
+                                  </div>
+
+                                  <div className="col col-4 col-s-12">
+                                    <button
+                                      className="btn btn_primary btn_wide"
+                                      type="submit"
+                                      id="subscription"
+                                    >
+                                      Получить доступ
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="col col-12 col-s-12">
+                                <label className="checkbox checkbox_margin">
+                                  <input
+                                    type="checkbox"
+                                    name="acceptedTerms"
+                                    id=""
+                                    value={values.acceptedTerms}
+                                    onChange={handleChange}
+                                    checked={values.acceptedTerms}
+                                  />
+                                  <span className="checkbox-btn"></span>
+                                  <i>
+                                    Согласен с{" "}
+                                    <Link
+                                      className="underline"
+                                      to="/help/offer"
+                                    >
+                                      "Публичной офертой"
+                                    </Link>{" "}
+                                    и{" "}
+                                    <Link className="underline" to="/help/cppd">
+                                      "Обработкой персональных данных"
+                                    </Link>
+                                  </i>
+                                </label>
+                              </div>
+                            </form>
+                          )}
+                        </Formik>
+                      </div>
+                    </div>
                   </div>
-                  <div className="hours">
-                    <p className="num">{h}</p>
-                    <p className="str">часов</p>
-                  </div>
-                  <div className="minuts">
-                    <p className="num">{m}</p>
-                    <p className="str">минут</p>
-                  </div>
-                  <div className="sec">
-                    <p className="num">{s}</p>
-                    <p className="str">секунд</p>
+                  <div
+                    className="subscribe__img"
+                    // style={{
+                    //   backgroundImage: "url(" + "/image/plate.png" + ")",
+                    // }}
+                  >
+                    <h3>До завершения акции</h3>
+                    <div className="black-friday__timer">
+                      <div className="days">
+                        <p className="num">{days}</p>
+                        <p className="str">дней</p>
+                      </div>
+                      <div className="hours">
+                        <p className="num">{h}</p>
+                        <p className="str">часов</p>
+                      </div>
+                      <div className="minuts">
+                        <p className="num">{m}</p>
+                        <p className="str">минут</p>
+                      </div>
+                      <div className="sec">
+                        <p className="num">{s}</p>
+                        <p className="str">секунд</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
+            )}
 
           <div className="carousel carousel_product">
             <div className="container">
@@ -776,18 +792,20 @@ const MainPage = observer(
 
           <div className="main-background">
             <div className="container">
-              <div className="title">
-                {/* <h2 className="tilda">Идеи</h2> */}
-                <Link to="/ideas">
-                  <h2 className="tilda">
-                    Идеи{" "}
-                    <span className="link">
-                      <span className="hide-s">Все идеи</span>{" "}
-                      <span className="ic i_right"></span>
-                    </span>
-                  </h2>
-                </Link>
-              </div>
+              {ideasCon.length > 0 && (
+                <div className="title">
+                  {/* <h2 className="tilda">Идеи</h2> */}
+                  <Link to="/ideas">
+                    <h2 className="tilda">
+                      Идеи{" "}
+                      <span className="link">
+                        <span className="hide-s">Все идеи</span>{" "}
+                        <span className="ic i_right"></span>
+                      </span>
+                    </h2>
+                  </Link>
+                </div>
+              )}
               {ideasCon}
               {/* <div className="row ideas-block">
                 <div className="col col-5 col-t-12">
@@ -1058,7 +1076,7 @@ const MainPage = observer(
                             $("#subscription").removeClass("success");
                             $("#subscription").removeClass("error");
                             $("#subscription").text("Подписаться");
-                          }, 3000);
+                          }, 2000);
                         });
                     }}
                     //свойство, где описывыем нашу форму

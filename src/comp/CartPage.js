@@ -896,11 +896,12 @@ const CartPage = observer(
       const autnAndUserData = auth && Object.keys(userData).length;
       let maxBonusCount = 0;
       if (autnAndUserData) {
-        maxBonusCount =
+        maxBonusCount = Math.floor(
           userData.bonus.bonusSum - userData.bonus.useBonusValue >
-          this.totalPrice / 2
+            this.totalPrice / 2
             ? this.totalPrice / 2
-            : userData.bonus.bonusSum - userData.bonus.useBonusValue;
+            : userData.bonus.bonusSum - userData.bonus.useBonusValue
+        );
       }
 
       this.props.store.totalPrice = this.totalPrice;
@@ -1980,7 +1981,7 @@ const CartPage = observer(
                         />
                       </div>
                     </div>
-                    <div className="col col-6">
+                    <div className="col col-6" style={{ marginBottom: "20px" }}>
                       <div className="input-field">
                         <label
                           className={
@@ -2030,7 +2031,7 @@ const CartPage = observer(
                         />
                       </div>
                     </div>
-                    <div className="col col-6">
+                    <div className="col col-6" style={{ marginBottom: "20px" }}>
                       <div className="input-field">
                         <label
                           className={
@@ -2080,7 +2081,10 @@ const CartPage = observer(
                         />
                       </div>
                     </div>
-                    <label className="checkbox checkbox_margin">
+                    <label
+                      className="checkbox checkbox_margin"
+                      style={{ marginLeft: "10px" }}
+                    >
                       <input
                         type="checkbox"
                         name="acceptedTerms"
@@ -2096,8 +2100,11 @@ const CartPage = observer(
                         }}
                         checked={this.state.acceptedTerms}
                       />
-                      <span className="checkbox-btn"></span>
-                      <i>
+                      <span
+                        className="checkbox-btn"
+                        style={{ marginRight: "10px" }}
+                      ></span>
+                      <i style={{ maxWidth: "90%" }}>
                         Согласен с{" "}
                         <Link className="underline" to="/help/offer">
                           "Публичной офертой"
@@ -2113,7 +2120,11 @@ const CartPage = observer(
                 {Object.keys(userData).length !== 0 &&
                   userData.bonus.bonusSum - userData.bonus.useBonusValue >
                     0 && (
-                    <div className="cart-page__delivery" id="bonusCont">
+                    <div
+                      className="cart-page__delivery"
+                      id="bonusCont"
+                      style={{ marginTop: "45px" }}
+                    >
                       <div className="cart__list cart-page__list ">
                         <div
                           className={`cart-page__list-elem cart-page__list-elem_not-c ${
@@ -2165,8 +2176,10 @@ const CartPage = observer(
                                     <p>
                                       <b>
                                         {" "}
-                                        {userData.bonus.bonusSum -
-                                          userData.bonus.useBonusValue}
+                                        {Math.floor(
+                                          userData.bonus.bonusSum -
+                                            userData.bonus.useBonusValue
+                                        )}
                                       </b>
                                     </p>
                                     <p className="i_coin" />
@@ -2185,7 +2198,7 @@ const CartPage = observer(
                                           });
                                         } else {
                                           this.setState({
-                                            bonus: +e.target.value,
+                                            bonus: Math.floor(+e.target.value),
                                           });
                                         }
                                       }}
@@ -2826,6 +2839,7 @@ const CartPage = observer(
                           }
 
                           // console.log("object :>> ", delivery, dataToSend);
+                          // return;
                           if (process.env.REACT_APP_TYPE === "prod") {
                             window.ym(65097901, "reachGoal", "Checkout");
                           }

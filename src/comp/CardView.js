@@ -525,31 +525,46 @@ const CardView = observer(
                               %
                             </span>
                           </div>
-                        ) : (
+                        ) : itsSert ? (
                           <div className={"product__price"}>
                             {this.data.regular_price.toLocaleString()} ₽{" "}
-                            <div
-                              className="product__bonus"
-                              onClick={() => {
-                                this.props.history.push("/help/bonus");
-                              }}
-                            >
-                              <p className="i_coin"></p>
-                              <p>
-                                +{" "}
-                                {Math.round(
-                                  this.data.regular_price * 0.1
-                                ).toLocaleString()}{" "}
-                                {num2str(
-                                  Math.round(this.data.regular_price * 0.1),
-                                  [
-                                    "бонусный балл",
-                                    "бонусных баллов",
-                                    "бонусных баллов",
-                                  ]
-                                )}{" "}
-                              </p>
-                            </div>
+                            {!itsSert && (
+                              <div
+                                className="product__bonus"
+                                onClick={() => {
+                                  this.props.history.push("/help/bonus");
+                                }}
+                              >
+                                <p className="i_coin"></p>
+                                <p>
+                                  +{" "}
+                                  {Math.round(
+                                    this.data.regular_price * 0.1
+                                  ).toLocaleString()}{" "}
+                                  {num2str(
+                                    Math.round(this.data.regular_price * 0.1),
+                                    [
+                                      "бонусный балл",
+                                      "бонусных баллов",
+                                      "бонусных баллов",
+                                    ]
+                                  )}{" "}
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <div className={"product__price product__price_disc"}>
+                            <span className="old">
+                              {this.data.regular_price.toLocaleString()} ₽
+                            </span>{" "}
+                            {Math.floor(
+                              this.data.regular_price * 0.8
+                            ).toLocaleString()}{" "}
+                            ₽{" "}
+                            <span className="disc_perc disc_perc-bf">
+                              - 20 %
+                            </span>
                           </div>
                         )}
                       </div>

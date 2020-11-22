@@ -175,7 +175,11 @@ const ProductList = observer(
                         productInCartList[el] * data.sale_price
                       ).toLocaleString()}{" "}
                       ₽{" "}
-                      <span className="disc_perc">
+                      <span
+                        className={`disc_perc ${
+                          data.bfsale ? " disc_perc-bf" : ""
+                        }`}
+                      >
                         {(
                           (data.sale_price / data.regular_price - 1) *
                           100
@@ -189,7 +193,11 @@ const ProductList = observer(
                         {data.regular_price.toLocaleString()} ₽
                       </span>{" "}
                       {data.sale_price.toLocaleString()} ₽{" "}
-                      <span className="disc_perc">
+                      <span
+                        className={
+                          "disc_perc" + data.bfsale ? " disc_perc-bf" : ""
+                        }
+                      >
                         {(
                           (data.sale_price / data.regular_price - 1) *
                           100

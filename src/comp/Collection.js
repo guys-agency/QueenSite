@@ -65,20 +65,19 @@ const Collection = observer(
                   ></div>
                 </div>
               </div>
-              {dataColl[0].description !== "" &&
-                dataColl[0].description !== undefined && (
-                  <div className="container">
-                    <div className="row">
-                      <div className="col col-3 col-s-1"></div>
-                      <div className="col col-8 col-s-10">
-                        <div className="collections__desc">
-                          {dataColl[0].description}
-                        </div>
-                      </div>
-                      <div className="col col-s-1"></div>
+
+              <div className="container">
+                <div className="row">
+                  <div className="col col-3 col-s-1"></div>
+                  <div className="col col-8 col-s-10">
+                    <div className="collections__desc">
+                      Мы подготовили для вас закрытый раздел на 
+                      <b>286 товаров</b> со скидками <b>до 78%</b>.
                     </div>
                   </div>
-                )}
+                  <div className="col col-s-1"></div>
+                </div>
+              </div>
             </React.Fragment>
           );
         } else if (dataColl[0].type !== "sale") {

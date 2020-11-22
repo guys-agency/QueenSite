@@ -397,6 +397,17 @@ class Store {
               }
             });
             this.dontSaleProdCount = dontSaleProdCount;
+
+            if (dontSaleProd.length) {
+              dontSaleProd.forEach((el, i) => {
+                timeCont[el.slug].sale_price = Math.floor(
+                  el.regular_price * 0.8
+                );
+                timeCont[el.slug].sale = true;
+                timeCont[el.slug].bfsale = true;
+              });
+            }
+
             if (
               dontSaleProdCount > 0 &&
               Math.floor(dontSaleProdCount / 3) > 0 &&
@@ -686,6 +697,38 @@ class Store {
           break;
         }
       }
+    }
+    this.totalProductSum = 0;
+    this.productForYA.forEach((el, i) => {
+      this.totalProductSum +=
+        this.productForYA[i].price * this.productForYA[i].count;
+    });
+
+    if (this.totalProductSum !== this.totalPrice) {
+      let totalDeff = this.totalProductSum - this.totalPrice;
+      let magicProd = null;
+
+      console.log("totalDeff :>> ", totalDeff);
+
+      for (let i = 0; i < this.productForYA.length; i++) {
+        if (magicProd !== null) {
+          break;
+        }
+        if (this.productForYA[i].count > 1) {
+          console.log("this.productForYA[i] :>> ", this.productForYA[i]);
+          magicProd = Object.assign({}, this.productForYA[i]);
+          this.productForYA[i].count -= 1;
+          console.log("this.productForYA[i] 2 :>> ", this.productForYA[i]);
+          break;
+        }
+      }
+
+      if (magicProd !== null) {
+        magicProd.count = 1;
+        magicProd.price -= totalDeff;
+        this.productForYA.push(magicProd);
+      }
+      console.log("this.productForYA end :>> ", this.productForYA);
     }
 
     this.productForYA.forEach((el, i) => {
@@ -1014,9 +1057,9 @@ class Store {
 
     fetch(SERVER_URL, {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        credentials: "include",
       },
       body: JSON.stringify({ ...bodyJSON, clearJSON }),
     })
@@ -1439,7 +1482,7 @@ class Store {
     this.stopPag = 42;
     this.firstBread = "";
     this.secondBread = "";
-    this.sortInProd = "";
+    // this.sortInProd = "";
 
     // console.log("clean :>> 11111111111222222222222");
   };
@@ -1666,6 +1709,8 @@ class Store {
       bodyJSON.withCat = true;
       bodyJSON.search = this.searchText;
     } else if (pathname.includes("premium")) {
+      bodyJSON.withCat = true;
+    } else if (pathname.includes("podarki")) {
       bodyJSON.withCat = true;
     } else if (pathname.includes("podarki")) {
       bodyJSON.withCat = true;

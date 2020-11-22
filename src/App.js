@@ -34,7 +34,7 @@ import Breadcrumbs from "./comp/breadcrumbs";
 import localStorage from "mobx-localstorage";
 import $ from "jquery";
 import { withRouter } from "react-router";
-import getCookie from "./ulits/getCookie";
+
 const CartPage = React.lazy(() => import("./comp/CartPage"));
 const Finish = React.lazy(() => import("./comp/Finish"));
 const Profile = React.lazy(() => import("./comp/Profile"));
@@ -138,8 +138,12 @@ const MainScreen = observer(
     };
     addToLastSeenProd = (slug, k) => {
       const { lastSeenProds } = this.props.store;
+      let servURL = SERVER_URL + "/product/" + slug;
+      if (k !== undefined) {
+        servURL += "#" + k;
+      }
 
-      fetch(SERVER_URL + "/product/" + slug + "#" + k, {
+      fetch(servURL, {
         method: "GET",
         credentials: "include",
         headers: {
@@ -151,6 +155,9 @@ const MainScreen = observer(
           return res.json();
         })
         .then((data) => {
+          if (data.bfcheck === "ok") {
+            localStorage.set("BFcheck", true);
+          }
           if (+slug !== this.props.store.cardContainer.slug) {
             this.props.store.cardContainer = data.product[0];
           }
@@ -250,8 +257,17 @@ const MainScreen = observer(
       }
     };
 
+    checkBFregistration = (key) => {
+      api.checkBFreg(key).then((ok) => {
+        if (ok.status === 201) {
+          localStorage.set("BFcheck", true);
+          window.location.replace("/close-sale");
+        }
+      });
+    };
+
     render() {
-      console.log("bfcheck :>> ", getCookie("BFclose"));
+      console.log("bfcheck :>> ", localStorage.get("BFcheck"));
       return (
         <>
           {!this.itsDev && <StartLoader store={this.props.store} />}
@@ -424,6 +440,20 @@ const MainScreen = observer(
               )}
             />
             <Route
+              path="/black-friday/:id"
+              render={(propsRout) => (
+                this.checkBFregistration(propsRout.match.params.id),
+                $("html, body").animate({ scrollTop: 0 }, 500),
+                $("#root").addClass("black-friday"),
+                (document.title = "Черная пятница - Queen of Bohemia"),
+                (
+                  <div className="main-screen">
+                    <BlackFriday store={this.props.store} />
+                  </div>
+                )
+              )}
+            />
+            <Route
               path="/black-friday"
               render={() => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
@@ -437,7 +467,8 @@ const MainScreen = observer(
               )}
             />
 
-            {getCookie("BFcheck") !== undefined && (
+            {(localStorage.get("BFcheck") === true ||
+              localStorage.get("BFcheck") === "true") && (
               <Route
                 path="/close-sale"
                 render={(propsRout) => (
@@ -453,7 +484,7 @@ const MainScreen = observer(
                     : null,
                   (this.props.store.bannerFilter = {
                     type: "closeBanner",
-                    slug: "chernaya_pyatnica_2020",
+                    slug: "zakrytyj_razdel_-_chyornaya_pyatnica",
                   }),
                   this.props.store.filtration(),
                   (
@@ -471,7 +502,6 @@ const MainScreen = observer(
               path={["/product/:id&:t", "/product/:id"]}
               render={(propsRout) => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
-                console.log("object", propsRout.match.params.t),
                 (this.addToLastSeenProd(
                   propsRout.match.params.id,
                   propsRout.match.params.t
@@ -500,6 +530,16 @@ const MainScreen = observer(
                     </div>
                   </Suspense>
                 )
+              )}
+            />
+
+            <Route
+              path="/logoutbf"
+              render={() => (
+                $("html, body").animate({ scrollTop: 0 }, 500),
+                (document.title = "Профиль - Queen of Bohemia"),
+                api.logoutbf().then((ok) => localStorage.removeItem("BFcheck")),
+                (<div></div>)
               )}
             />
 
@@ -613,7 +653,7 @@ const MainScreen = observer(
               )}
             />
 
-            <Route
+            {/* <Route
               path="/ideas/:slug"
               render={(propsRout) => (
                 (this.props.store.nameMainCat = ""),
@@ -652,7 +692,7 @@ const MainScreen = observer(
                   </div>
                 )
               )}
-            />
+            /> */}
 
             <Route
               path="/hits"
@@ -735,7 +775,7 @@ const MainScreen = observer(
               )}
             />
 
-            <Route
+            {/* <Route
               path="/closeout"
               render={(routProps) => (
                 (this.props.store.nameMainCat = ""),
@@ -819,7 +859,7 @@ const MainScreen = observer(
                   </div>
                 )
               )}
-            />
+            /> */}
 
             <Route
               path="/search"

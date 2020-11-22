@@ -160,8 +160,23 @@ const ProductCard = observer(function ProductCard(props) {
         <div className="product__image-wrp">
           <LazyLoadImage effect="blur" src={imagePath} />
           <div className="product__attr-cont">
+            {data.BFclose && (
+              <div
+                className="product__sale"
+                style={{
+                  background:
+                    "linear-gradient(90.09deg, #fadf90 0.08%, #efd27e 99.9%)",
+                  color: "#000636",
+                }}
+              >
+                Закрытый раздел
+              </div>
+            )}
             {data.hit && <div className="product__hit">Хит</div>}
-            {data.sale && <div className="product__sale">Акция</div>}
+            {data.sale && !data.BFclose && (
+              <div className="product__sale">Акция</div>
+            )}
+
             {/* {!data.sale &&
               data.categories[0].childsSlug[0] !== "sertificats" && (
                 <div className="product__sale">1 + 1 = 3</div>
@@ -187,9 +202,15 @@ const ProductCard = observer(function ProductCard(props) {
             {((data.sale_price / data.regular_price - 1) * 100).toFixed(0)}%
           </span>
         </div>
-      ) : (
+      ) : data.name === "Электронный подарочный сертификат" ? (
         <div className={"product__price"}>
           {data.regular_price.toLocaleString()} ₽{" "}
+        </div>
+      ) : (
+        <div className={"product__price product__price_disc"}>
+          <span className="old">{data.regular_price.toLocaleString()} ₽</span>{" "}
+          {Math.floor(data.regular_price * 0.8).toLocaleString()} ₽{" "}
+          <span className="disc_perc disc_perc-bf">- 20%</span>
         </div>
       )}
       {/* <p className="product__brand">{data.brand}</p> */}

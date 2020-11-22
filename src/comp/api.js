@@ -410,6 +410,29 @@ class Api {
       return res.json();
     });
   }
+
+  checkBFreg(key) {
+    return fetch(SERVER_URL + "/bfcheck/" + key, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((res) => {
+      return res.json();
+    });
+  }
+  logoutbf() {
+    return fetch(SERVER_URL + "/logoutbf", {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((res) => {
+      return res.json();
+    });
+  }
 }
 
 const api = new Api();

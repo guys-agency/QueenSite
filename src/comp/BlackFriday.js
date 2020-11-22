@@ -64,7 +64,7 @@ const BlackFriday = observer(
     };
 
     checkTimer = () => {
-      const time = moment("20.11.2020", "DD.MM.YYYY")
+      const time = moment("01.12.2020", "DD.MM.YYYY")
         .diff(moment())
         .toPrecision();
       const dur = moment.duration(time, "milliseconds");
@@ -177,7 +177,7 @@ const BlackFriday = observer(
                 {/* <img className="gift__img" src={`/image/BF/BF-pl.jpg`}></img> */}
 
                 <div className="black-friday__timer-cont">
-                  <h3>До начала акции</h3>
+                  <h3>До завершения акции</h3>
                   <div className="black-friday__timer">
                     <div className="days">
                       <p className="num">{days}</p>
@@ -240,7 +240,11 @@ const BlackFriday = observer(
                               $("#subscription").removeClass("success");
                               $("#subscription").removeClass("error");
                               $("#subscription").text("Подписаться");
-                            }, 3000);
+                              if (data.bfok !== undefined && data.bfok) {
+                                localStorage.set("BFcheck", true);
+                                window.location.replace("/close-sale");
+                              }
+                            }, 2000);
                           });
                       }}
                       //свойство, где описывыем нашу форму
@@ -487,7 +491,11 @@ const BlackFriday = observer(
                             $("#subscription").removeClass("success");
                             $("#subscription").removeClass("error");
                             $("#subscription").text("Подписаться");
-                          }, 3000);
+                            if (data.bfok !== undefined && data.bfok) {
+                              localStorage.set("BFcheck", true);
+                              window.location.replace("/close-sale");
+                            }
+                          }, 2000);
                         });
                     }}
                     //свойство, где описывыем нашу форму
