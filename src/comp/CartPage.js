@@ -28,18 +28,11 @@ const CartPage = observer(
       adress: "",
       flat: "",
       house: "",
-      name:
-        this.props.store.userData.user !== undefined
-          ? this.props.store.userData.user.name
-          : "",
+      name: this.props.store.userData.user !== undefined ? this.props.store.userData.user.name : "",
       secondName: "",
-      email:
-        this.props.store.userData.user !== undefined
-          ? this.props.store.userData.user.email
-          : "",
+      email: this.props.store.userData.user !== undefined ? this.props.store.userData.user.email : "",
       tel:
-        this.props.store.userData.user !== undefined &&
-        this.props.store.userData.user.tel !== undefined
+        this.props.store.userData.user !== undefined && this.props.store.userData.user.tel !== undefined
           ? this.props.store.userData.user.tel.substr(1)
           : "",
       acceptedTerms: true,
@@ -51,11 +44,11 @@ const CartPage = observer(
       coupon: { count: 0, type: "", code: "", id: "" },
       delVar: [],
       coupsCont:
-        localStorage.get("coupsCont") === undefined ||
-        localStorage.get("coupsCont") === null ||
+        localStorage.getItem("coupsCont") === undefined ||
+        localStorage.getItem("coupsCont") === null ||
         localStorage.getItem("coupsCont") === "undefined"
           ? {}
-          : localStorage.get("coupsCont"),
+          : localStorage.getItem("coupsCont"),
       bonus: 0,
       useBonus: 0,
       pvzDataCont: [],
@@ -117,12 +110,12 @@ const CartPage = observer(
     // );
 
     stores = {
-      "ТРЦ Орджоникидзе 11": {
-        name: "ТЦ ОРДЖОНИКИДЗЕ 11",
-        address: "Москва, ул. Орджоникидзе 11, стр.1А, 4 линия",
-        coor: "55.707791,37.595806",
-        aval: true,
-      },
+      // "ТРЦ Орджоникидзе 11": {
+      //   name: "ТЦ ОРДЖОНИКИДЗЕ 11",
+      //   address: "Москва, ул. Орджоникидзе 11, стр.1А, 4 линия",
+      //   coor: "55.707791,37.595806",
+      //   aval: true,
+      // },
       // "OV БЕЛАЯ ДАЧА": {
       //   name: "OV БЕЛАЯ ДАЧА",
       //   address: "Московская область, Котельники, Новорязанское шоссе, 8",
@@ -165,9 +158,7 @@ const CartPage = observer(
     };
 
     setDeliveryData = (e, data, time) => {
-      $(".cart-page__list-elem_delivery")
-        .find(".alert-message")
-        .removeClass("alert-message_active");
+      $(".cart-page__list-elem_delivery").find(".alert-message").removeClass("alert-message_active");
       if (e !== undefined) {
         document.querySelectorAll("#delivery").forEach((elem) => {
           elem.classList.remove("active");
@@ -186,9 +177,8 @@ const CartPage = observer(
 
     choosePaymentType = (e, type) => {
       const { productInCart, productInCartList, certInCart } = this.props.store;
-      $("#paymentMethod")
-        .find(".alert-message")
-        .removeClass("alert-message_active");
+      const cityLocal = localStorage.getItem("city");
+      $("#paymentMethod").find(".alert-message").removeClass("alert-message_active");
       if (certInCart && Object.keys(productInCart).length === 1) {
         if (type === "PREPAID") {
           if (e !== undefined) {
@@ -231,9 +221,7 @@ const CartPage = observer(
         if (el !== certInCart) {
           lengths.push(parseInt(productInCart[el].dimensions.length, 10));
           widths.push(parseInt(productInCart[el].dimensions.width, 10));
-          heightSumm +=
-            parseInt(productInCart[el].dimensions.height, 10) *
-            productInCartList[el];
+          heightSumm += parseInt(productInCart[el].dimensions.height, 10) * productInCartList[el];
           weightSumm += +productInCart[el].weight * productInCartList[el];
           sum += productInCart[el].sale
             ? productInCart[el].sale_price * productInCartList[el]
@@ -291,6 +279,8 @@ const CartPage = observer(
       //   },
       // }
       const { geoMap, revertMap, checkData, addObject } = window;
+      const inMSC = cityLocal.geoId === 213;
+
       // this.setState({ deliveryData: {} });
       // $("#map").removeClass("choose");
 
@@ -298,8 +288,8 @@ const CartPage = observer(
         api
           .deliveryVar({
             to: {
-              name: localStorage.get("city").name,
-              region: localStorage.get("city").region,
+              name: cityLocal.name,
+              region: cityLocal.region,
             },
             dimensions: this.dimensionsApi,
 
@@ -309,13 +299,7 @@ const CartPage = observer(
           .then((d) => {
             // console.log("d :>> ", d);
             if (Object.keys(d).length) {
-              if (
-                (localStorage.get("city").geoId === 213 &&
-                  this.totalPrice >= 3000) ||
-                this.totalPrice === 0 ||
-                (localStorage.get("city").geoId !== 213 &&
-                  this.totalPrice >= 20000)
-              ) {
+              if ((inMSC && this.totalPrice >= 3000) || this.totalPrice === 0 || (!inMSC && this.totalPrice >= 20000)) {
                 Object.keys(d).forEach((parent) => {
                   d[parent].price = 0;
                 });
@@ -336,7 +320,7 @@ const CartPage = observer(
                 }
                 this.setState({
                   payment: type,
-                  deliveryData: this.state.delChoose ? { ...data, time } : {},
+                  deliveryData: this.state.delChoose && !inMSC ? { ...data, time } : {},
                   delVar: { [Object.keys(d)[0]]: { ...data, time } },
                 });
               }
@@ -348,11 +332,11 @@ const CartPage = observer(
             console.log("err :>> ", err);
           });
 
-        if (localStorage.get("city").name !== undefined) {
+        if (cityLocal.name !== undefined) {
           api
             .getPVZ({
-              city: localStorage.get("city").name,
-              region: localStorage.get("city").region,
+              city: cityLocal.name,
+              region: cityLocal.region,
 
               dimensions: this.dimensionsApi,
               cost: Math.floor(sum),
@@ -363,11 +347,9 @@ const CartPage = observer(
               this.pvzDataCont = [];
 
               if (
-                (localStorage.get("city").geoId === 213 &&
-                  this.totalPrice >= 3000) ||
+                (cityLocal.geoId === 213 && this.totalPrice >= 3000) ||
                 this.totalPrice === 0 ||
-                (localStorage.get("city").geoId !== 213 &&
-                  this.totalPrice >= 20000)
+                (cityLocal.geoId !== 213 && this.totalPrice >= 20000)
               ) {
                 Object.keys(pvz.extra).forEach((parent) => {
                   pvz.extra[parent].price = 0;
@@ -404,31 +386,18 @@ const CartPage = observer(
                       coordinates: p["GPS"].split(","),
                     },
                     properties: {
-                      iconContent:
-                        (+pvz.extra[p.partner].price).toLocaleString() + " ₽",
-                      balloonContentHeader:
-                        this.translite[p.partner] !== undefined
-                          ? this.translite[p.partner]
-                          : p.partner,
-                      balloonHeader:
-                        this.translite[p.partner] !== undefined
-                          ? this.translite[p.partner]
-                          : p.partner + "<button class='ic i_close'></button>",
-                      balloonContent: `<p class='popover-content__adress'>${
-                        p.town + ", " + p.addressReduce
-                      }</p> 
+                      iconContent: (+pvz.extra[p.partner].price).toLocaleString() + " ₽",
+                      balloonContentHeader: this.translite[p.partner] !== undefined ? this.translite[p.partner] : p.partner,
+                      balloonHeader: `${
+                        this.translite[p.partner] !== undefined ? this.translite[p.partner] : p.partner
+                      } <button class='ic i_close'></button>`,
+                      balloonContent: `<p class='popover-content__adress'>${p.town + ", " + p.addressReduce}</p> 
                     <div class='popover-content__extra'><p>${
                       (+pvz.extra[p.partner].price).toLocaleString() + " ₽"
-                    }</p><p class='popover-content__date'>${
-                        timeString.format("DD") +
-                        "-" +
-                        timeString.add(1, "days").format("DD MMMM")
-                      }</p></div> 
+                    }</p><p class='popover-content__date'>${timeString.format("DD") + "-" + timeString.add(1, "days").format("DD MMMM")}</p></div> 
                     <p class='popover-content__time-name'>Время работы:</p> 
                     <p class='popover-content__time'>${p.workShedule}</p>
-                    <button id=${
-                      p.id
-                    } class='popover-content__btn'>Выбрать</button>
+                    <button id=${p.id} class='popover-content__btn'>Выбрать</button>
                   `,
                       data: {
                         ...p,
@@ -569,10 +538,7 @@ const CartPage = observer(
     }
 
     cancelPay = (e) => {
-      if (
-        e.target.className.includes("sidebar-overlay") ||
-        e.target.className.includes("btn")
-      ) {
+      if (e.target.className.includes("sidebar-overlay") || e.target.className.includes("btn") || e === undefined) {
         api.cancelOrder({ id: this.orderCancelID });
         $(".sidebar-overlay").removeClass("active");
         $(".sidebar-cart").removeClass("visible");
@@ -588,34 +554,15 @@ const CartPage = observer(
     };
 
     render() {
-      if (!Object.keys(localStorage.get("productInCart")).length) {
+      if (!Object.keys(localStorage.getItem("productInCart")).length) {
         this.props.history.push("/");
       }
 
-      const {
-        productInCart,
-        productInCartList,
-        certInCart,
-        userData,
-        auth,
-        notSaleSum,
-      } = this.props.store;
+      const { productInCart, productInCartList, certInCart, userData, auth, notSaleSum } = this.props.store;
 
-      const {
-        adress,
-        flat,
-        house,
-        name,
-        secondName,
-        email,
-        tel,
-        coupsCont,
-        useBonus,
-        deliveryData,
-        coupon,
-        delVar,
-        payment,
-      } = this.state;
+      const { adress, flat, house, name, secondName, email, tel, coupsCont, useBonus, deliveryData, coupon, delVar, payment } = this.state;
+
+      const cityLocal = localStorage.getItem("city");
 
       this.props.store.useBonus = useBonus;
 
@@ -632,38 +579,149 @@ const CartPage = observer(
 
       const delVarRender = [];
       const htmlStore = [];
+      const inMSC = cityLocal.geoId === 213;
+
+      const chooseCityBtns = (
+        <div className="row city-choose_cart">
+          <div className="col col-12 col-s-12">
+            <p className="city-choose__title">Населенный пункт:</p>
+
+            <div
+              className="product__counter gift__drop-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                e.target.classList.toggle("active");
+                const drop = $(".drop_cart");
+                const dropBtn = $(".gift__drop-btn");
+
+                drop.offset({
+                  top: dropBtn.offset().top + dropBtn.height() + 20,
+                  left: dropBtn.offset().left,
+                });
+                drop.width(dropBtn.width());
+                drop.toggleClass("visible");
+
+                if (drop.hasClass("visible")) {
+                  setTimeout(() => {
+                    drop.find("#citySearch").trigger("focus");
+                  }, 250);
+                }
+              }}
+            >
+              <p>{cityLocal.name}</p>
+              <img src="/image/>.svg"></img>
+            </div>
+
+            <div className="drop drop_cart">
+              <form className="city__drop active">
+                <div className="input-field">
+                  <input
+                    id="citySearch"
+                    placeholder="Поиск"
+                    type="text"
+                    autoFocus
+                    onInput={(e) => {
+                      if (e.target.value.length >= 3) {
+                        const renderCities = [];
+                        api
+                          .getCity(e.target.value)
+                          .then((c) => {
+                            // console.log("c :>> ", c);
+                            c.forEach((one) => {
+                              if (one.addressComponents.length <= 6) {
+                                renderCities.push(
+                                  <li key={one.geoId}>
+                                    <button
+                                      type="submit"
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        $(".header__drop").removeClass("visible");
+
+                                        this.mapCoor = [];
+
+                                        const changeData = {
+                                          deliveryData: {},
+                                          pvzDataCont: [],
+                                        };
+
+                                        if (this.state.pickUpStoreChoose) {
+                                          changeData.pickUpStoreChoose = false;
+                                          changeData.delChoose = true;
+                                        }
+
+                                        this.setState(changeData);
+
+                                        localStorage.setItem("city", {
+                                          name: one.addressComponents[one.addressComponents.length - 1].name,
+                                          geoId: one.geoId,
+                                          region: one.addressComponents[2].name,
+                                          sourse: "U",
+                                        });
+
+                                        if ($(window).width() < 760) {
+                                          $(".sidebar-overlay").removeClass("active");
+                                        }
+                                        this.dadataInit = false;
+
+                                        $(".drop_cart.visible").toggleClass("visible");
+                                        // $(".categories-block__child").find(".active").removeClass("active");
+
+                                        this.choosePaymentType(undefined, this.state.payment);
+                                      }}
+                                    >
+                                      {one.addressComponents[one.addressComponents.length - 2].name +
+                                        ", " +
+                                        one.addressComponents[one.addressComponents.length - 1].name}
+                                    </button>
+                                  </li>
+                                );
+                              }
+                            });
+                            this.setState({
+                              cities: renderCities,
+                            });
+                          })
+                          .catch((err) => {
+                            console.log("err :>> ", err);
+                          });
+                      }
+                    }}
+                    onFocus={(e) => {
+                      $(e.target).parent().find("label").addClass("active");
+                    }}
+                    onBlur={(e) => {
+                      if (e.target.value === "") {
+                        // $(e.target).parent().find('label').removeClass('active');
+                      }
+                    }}
+                  />
+                </div>
+                <ul>{this.state.cities}</ul>
+              </form>
+            </div>
+          </div>
+        </div>
+      );
 
       if (Object.keys(productInCart).length) {
         Object.keys(productInCart).forEach((el) => {
           productList.push(
-            <ProductList
-              key={el}
-              data={productInCart[el]}
-              el={el}
-              store={this.props.store}
-              cart={true}
-              clearDeliveryData={this.clearDeliveryData}
-            />
+            <ProductList key={el} data={productInCart[el]} el={el} store={this.props.store} cart={true} clearDeliveryData={this.clearDeliveryData} />
           );
 
           const salePrice = productInCart[el].sale
-            ? typeIsPREPAID
+            ? typeIsPREPAID && certInCart !== el
               ? Math.floor(productInCart[el].sale_price * 0.98)
               : productInCart[el].sale_price
             : 0;
-          const regPrice = typeIsPREPAID
-            ? Math.floor(productInCart[el].regular_price * 0.98)
-            : productInCart[el].regular_price;
+          const regPrice = typeIsPREPAID && certInCart !== el ? Math.floor(productInCart[el].regular_price * 0.98) : productInCart[el].regular_price;
           this.totalPrice += productInCart[el].sale
             ? productInCartList[el] * salePrice
             : el !== certInCart
             ? productInCartList[el] * regPrice
             : regPrice;
 
-          this.totalNotSalePrice +=
-            productInCart[el].sale || el === certInCart
-              ? 0
-              : productInCartList[el] * productInCart[el].regular_price;
+          this.totalNotSalePrice += productInCart[el].sale || el === certInCart ? 0 : productInCartList[el] * productInCart[el].regular_price;
 
           // totalSale += productInCart[el].sale
           //   ? (regPrice - salePrice) *
@@ -680,10 +738,7 @@ const CartPage = observer(
           //   productInCartList[el];
           // }
 
-          totalFullprice +=
-            el !== certInCart
-              ? productInCartList[el] * productInCart[el].regular_price
-              : productInCart[el].regular_price;
+          totalFullprice += el !== certInCart ? productInCartList[el] * productInCart[el].regular_price : productInCart[el].regular_price;
         });
       }
 
@@ -698,10 +753,7 @@ const CartPage = observer(
       Object.keys(productInCart).forEach((slug) => {
         productInCart[slug].stores.forEach((str) => {
           // console.log("str.name :>> ", str.name);
-          if (
-            str.name !== "ТРЦ OUTLET Белая дача" &&
-            this.stores[str.name].aval
-          ) {
+          if (str.name !== "ТРЦ OUTLET Белая дача" && str.name !== "ТРЦ Орджоникидзе 11" && this.stores[str.name].aval) {
             if (+str.count > 0) {
               this.stores[str.name].aval = true;
             } else {
@@ -765,7 +817,7 @@ const CartPage = observer(
                 onClick={() => {
                   const newCoupsCont = coupsCont;
                   delete newCoupsCont[coupsCont[coupon].code];
-                  localStorage.set("coupsCont", newCoupsCont);
+                  localStorage.setItem("coupsCont", newCoupsCont);
                   this.setState({ coupsCont: newCoupsCont });
                 }}
               ></button>
@@ -775,13 +827,12 @@ const CartPage = observer(
             if (coupsCont[coupon].type === "percent") {
               Object.keys(productInCart).forEach((el) => {
                 const salePrice = productInCart[el].sale
-                  ? typeIsPREPAID
+                  ? typeIsPREPAID && certInCart !== el
                     ? Math.floor(productInCart[el].sale_price * 0.98)
                     : productInCart[el].sale_price
                   : 0;
-                const regPrice = typeIsPREPAID
-                  ? Math.floor(productInCart[el].regular_price * 0.98)
-                  : productInCart[el].regular_price;
+                const regPrice =
+                  typeIsPREPAID && certInCart !== el ? Math.floor(productInCart[el].regular_price * 0.98) : productInCart[el].regular_price;
                 coupDisc +=
                   Math.ceil(
                     el === certInCart
@@ -809,10 +860,7 @@ const CartPage = observer(
         });
 
         if (certInCart && productInCart[certInCart] !== undefined) {
-          if (
-            this.totalPrice - productInCart[certInCart].regular_price >
-            coupDisc + certDisc
-          ) {
+          if (this.totalPrice - productInCart[certInCart].regular_price > coupDisc + certDisc) {
             this.totalPrice -= coupDisc + certDisc;
           } else {
             this.totalPrice = productInCart[certInCart].regular_price;
@@ -849,21 +897,9 @@ const CartPage = observer(
                   this.setDeliveryData(e, delVar[el], time);
                 }}
               >
-                <b>
-                  {this.translite[delVar[el].partner] !== undefined
-                    ? this.translite[delVar[el].partner]
-                    : delVar[el].partner}
-                </b>{" "}
-                <br />{" "}
-                {delVar[el].price === 0
-                  ? "Бесплатно"
-                  : `${Math.ceil(+delVar[el].price)} ₽`}{" "}
-                <br />
-                <p style={{ color: "#747498", fontSize: "14px" }}>
-                  {timeString.format("DD") +
-                    "-" +
-                    timeString.add(1, "days").format("DD MMMM")}
-                </p>
+                <b>{this.translite[delVar[el].partner] !== undefined ? this.translite[delVar[el].partner] : delVar[el].partner}</b> <br />{" "}
+                {delVar[el].price === 0 ? "Бесплатно" : `${Math.ceil(+delVar[el].price)} ₽`} <br />
+                <p style={{ color: "#747498", fontSize: "14px" }}>{timeString.format("DD") + "-" + timeString.add(1, "days").format("DD MMMM")}</p>
               </div>
             );
           });
@@ -875,9 +911,7 @@ const CartPage = observer(
             onClick={(e) => {
               $("html, body").animate(
                 {
-                  scrollTop:
-                    $("#paymentMethod").offset().top -
-                    $(".navigation").height(),
+                  scrollTop: $("#paymentMethod").offset().top - $(".navigation").height(),
                 },
                 500
               );
@@ -897,8 +931,7 @@ const CartPage = observer(
       let maxBonusCount = 0;
       if (autnAndUserData) {
         maxBonusCount = Math.floor(
-          userData.bonus.bonusSum - userData.bonus.useBonusValue >
-            this.totalPrice / 2
+          userData.bonus.bonusSum - userData.bonus.useBonusValue > this.totalPrice / 2
             ? this.totalPrice / 2
             : userData.bonus.bonusSum - userData.bonus.useBonusValue
         );
@@ -952,9 +985,7 @@ const CartPage = observer(
                         <button
                           className="ic i_close"
                           onClick={(e) => {
-                            $(e.target)
-                              .parent()
-                              .removeClass("alert-message_active");
+                            $(e.target).parent().removeClass("alert-message_active");
                           }}
                         ></button>
                       </div>
@@ -971,53 +1002,35 @@ const CartPage = observer(
                             <span className="disc_perc">скидка 2%</span>
                           </p>
                           <div className="cart-page__store-adress">
-                            <p>
-                              Банковскими картами Visa, Mastercard, Maestro,
-                              Мир, JCB. Apple Pay и Google Pay. Картой рассрочки
-                              Халва.
-                            </p>
+                            <p>Банковскими картами Visa, Mastercard, Maestro, Мир, JCB. Apple Pay и Google Pay. Картой рассрочки Халва.</p>
                           </div>
                         </div>
                       </div>
                       <div
-                        className={`cart-page__list-elem ${
-                          certInCart ? "deactiv" : ""
-                        }`}
+                        className={`cart-page__list-elem ${certInCart ? "deactiv" : ""}`}
                         id="payment"
                         onClick={(e) => {
                           this.choosePaymentType(e, "CARD");
                         }}
                       >
                         <div className="cart-page__store-info">
-                          <p className="cart-page__store-name">
-                            Картой при получении
-                          </p>
+                          <p className="cart-page__store-name">Картой при получении</p>
                           <div className="cart-page__store-adress">
-                            <p>
-                              При оплате банковской картой, Вы получите
-                              квитанцию об оплате на указанный e-mail адрес.
-                            </p>
+                            <p>При оплате банковской картой, Вы получите квитанцию об оплате на указанный e-mail адрес.</p>
                           </div>
                         </div>
                       </div>
                       <div
-                        className={`cart-page__list-elem ${
-                          certInCart ? "deactiv" : ""
-                        }`}
+                        className={`cart-page__list-elem ${certInCart ? "deactiv" : ""}`}
                         id="payment"
                         onClick={(e) => {
                           this.choosePaymentType(e, "CASH");
                         }}
                       >
                         <div className="cart-page__store-info">
-                          <p className="cart-page__store-name">
-                            Наличными при получении
-                          </p>
+                          <p className="cart-page__store-name">Наличными при получении</p>
                           <div className="cart-page__store-adress">
-                            <p>
-                              Мы свяжемся с вами для уточнения понадобится ли
-                              курьеру сдача.
-                            </p>
+                            <p>Мы свяжемся с вами для уточнения понадобится ли курьеру сдача.</p>
                           </div>
                         </div>
                       </div>
@@ -1025,185 +1038,29 @@ const CartPage = observer(
                   </div>
                 )}
 
-                {Object.keys(productInCart).length === 1 &&
-                certInCart ? null : (
+                {Object.keys(productInCart).length === 1 && certInCart ? null : (
                   <div className="cart-page__delivery" id="deliveryBlock">
-                    <h3 className="tilda">
-                      Доставка
-                      <h5 className="dib">
-                        Населенный пункт:
-                        <span>
-                          <button
-                            className="link dotted city__btn"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              e.target.classList.toggle("active");
-                              document
-                                .querySelector(".city__drop")
-                                .classList.toggle("active");
+                    <h3 className="tilda">Доставка</h3>
 
-                              if ($(window).width() < 760) {
-                                $(".sidebar-overlay").addClass("active");
-                                $(".sidebar-overlay").click(() => {
-                                  $(".sidebar-overlay").removeClass("active");
-                                  document
-                                    .querySelector(".city__drop")
-                                    .classList.remove("active");
-                                });
-                              }
-                            }}
-                          >
-                            {this.props.store.city}{" "}
-                            <span className="ic i_drop"></span>
-                          </button>
-                          <form className="city__drop header__drop header__drop_city">
-                            <div className="input-field">
-                              <label className="active" htmlFor="citySearch">
-                                Населенный пункт
-                              </label>
-                              <input
-                                id="citySearch"
-                                placeholder="Поиск"
-                                type="text"
-                                onInput={(e) => {
-                                  if (e.target.value.length >= 3) {
-                                    const renderCities = [];
-                                    api
-                                      .getCity(e.target.value)
-                                      .then((c) => {
-                                        // console.log("c :>> ", c);
-                                        c.forEach((one) => {
-                                          if (
-                                            one.addressComponents.length <= 6
-                                          ) {
-                                            renderCities.push(
-                                              <li key={one.geoId}>
-                                                <button
-                                                  type="submit"
-                                                  onClick={(e) => {
-                                                    e.preventDefault();
-                                                    $(
-                                                      ".header__drop"
-                                                    ).removeClass("visible");
-
-                                                    this.mapCoor = [];
-
-                                                    this.setState({
-                                                      deliveryData: {},
-                                                      pvzDataCont: [],
-                                                    });
-
-                                                    localStorage.set("city", {
-                                                      name:
-                                                        one.addressComponents[
-                                                          one.addressComponents
-                                                            .length - 1
-                                                        ].name,
-                                                      geoId: one.geoId,
-                                                      region:
-                                                        one.addressComponents[2]
-                                                          .name,
-                                                      sourse: "U",
-                                                    });
-
-                                                    document
-                                                      .querySelector(
-                                                        ".city__btn"
-                                                      )
-                                                      .classList.remove(
-                                                        "active"
-                                                      );
-
-                                                    document
-                                                      .querySelector(
-                                                        ".city__drop"
-                                                      )
-                                                      .classList.remove(
-                                                        "active"
-                                                      );
-
-                                                    if (
-                                                      $(window).width() < 760
-                                                    ) {
-                                                      $(
-                                                        ".sidebar-overlay"
-                                                      ).removeClass("active");
-                                                    }
-                                                    this.dadataInit = false;
-
-                                                    this.choosePaymentType(
-                                                      undefined,
-                                                      this.state.payment
-                                                    );
-                                                  }}
-                                                >
-                                                  {one.addressComponents[
-                                                    one.addressComponents
-                                                      .length - 2
-                                                  ].name +
-                                                    ", " +
-                                                    one.addressComponents[
-                                                      one.addressComponents
-                                                        .length - 1
-                                                    ].name}
-                                                </button>
-                                              </li>
-                                            );
-                                          }
-                                        });
-                                        this.setState({
-                                          cities: renderCities,
-                                        });
-                                      })
-                                      .catch((err) => {
-                                        console.log("err :>> ", err);
-                                      });
-                                  }
-                                }}
-                                onFocus={(e) => {
-                                  $(e.target)
-                                    .parent()
-                                    .find("label")
-                                    .addClass("active");
-                                }}
-                                onBlur={(e) => {
-                                  if (e.target.value === "") {
-                                    // $(e.target).parent().find('label').removeClass('active');
-                                  }
-                                }}
-                              />
-                            </div>
-                            <ul>{this.state.cities}</ul>
-                          </form>
-                        </span>
-                      </h5>
-                    </h3>
-
-                    <div className="cart__tumbler">
+                    <div className="cart__tumbler" style={{ marginBottom: this.state.pickUpChoose ? "20px" : "40px" }}>
                       <div className="tumbler">
                         <button
-                          className={
-                            "tumb " + (this.state.delChoose ? "active" : "")
-                          }
+                          className={"tumb " + (this.state.delChoose ? "active" : "")}
                           onClick={() => {
                             if (!this.state.delChoose)
-                              if (Object.keys(this.state.delVar).length > 1) {
+                              if (Object.keys(this.state.delVar).length > 1 || inMSC) {
                                 this.setState({
                                   delChoose: true,
                                   pickUpChoose: false,
                                   pickUpStoreChoose: false,
                                   deliveryData: {},
                                 });
-                              } else if (
-                                Object.keys(this.state.delVar).length === 1
-                              ) {
+                              } else if (Object.keys(this.state.delVar).length === 1) {
                                 this.setState({
                                   delChoose: true,
                                   pickUpChoose: false,
                                   pickUpStoreChoose: false,
-                                  deliveryData: this.state.delVar[
-                                    Object.keys(this.state.delVar)[0]
-                                  ],
+                                  deliveryData: this.state.delVar[Object.keys(this.state.delVar)[0]],
                                 });
                               }
                           }}
@@ -1211,9 +1068,7 @@ const CartPage = observer(
                           Курьером
                         </button>
                         <button
-                          className={
-                            "tumb " + (this.state.pickUpChoose ? "active" : "")
-                          }
+                          className={"tumb " + (this.state.pickUpChoose ? "active" : "")}
                           onClick={() => {
                             if (!this.state.pickUpChoose) {
                               this.setState({
@@ -1228,14 +1083,9 @@ const CartPage = observer(
                         >
                           Пункт выдачи
                         </button>
-                        {(localStorage.get("city").geoId === 213 ||
-                          localStorage.get("city").region ===
-                            "Московская область") && (
+                        {(inMSC || cityLocal.region === "Московская область") && (
                           <button
-                            className={
-                              "tumb " +
-                              (this.state.pickUpStoreChoose ? "active" : "")
-                            }
+                            className={"tumb " + (this.state.pickUpStoreChoose ? "active" : "")}
                             onClick={() => {
                               if (!this.state.pickUpStoreChoose)
                                 this.setState({
@@ -1261,17 +1111,11 @@ const CartPage = observer(
                               position: "relative",
                             }}
                           >
-                            <p>
-                              Доставка выбранным способом в данный населенный
-                              пункт невозможна
-                            </p>
+                            <p>Доставка выбранным способом в данный населенный пункт невозможна</p>
                           </div>
                         ) : (
                           <>
-                            <div
-                              className="cart-page__delivery-details"
-                              id="addresLabels"
-                            >
+                            <div className="cart-page__delivery-details" id="addresLabels">
                               <div className="cart__list cart-page__list ">
                                 <div className="cart-page__list-elem cart-page__list-elem_adress">
                                   <div className="alert-message alert-message_error">
@@ -1279,24 +1123,18 @@ const CartPage = observer(
                                     <button
                                       className="ic i_close"
                                       onClick={(e) => {
-                                        $(e.target)
-                                          .parent()
-                                          .removeClass("alert-message_active");
+                                        $(e.target).parent().removeClass("alert-message_active");
                                       }}
                                     ></button>
                                   </div>
                                   <div className="cart-page__store-info">
-                                    <p className="cart-page__store-name">
-                                      Адрес доставки
-                                    </p>
+                                    <p className="cart-page__store-name">Адрес доставки</p>
                                   </div>
+                                  {chooseCityBtns}
                                   <form className="row" action="">
-                                    <div className="col col-6 col-s-12">
+                                    <div className="col col-8 col-s-12">
                                       <div className="input-field">
-                                        <label
-                                          className="required"
-                                          htmlFor="address"
-                                        >
+                                        <label className="required" htmlFor="address">
                                           Улица
                                         </label>
                                         <input
@@ -1304,25 +1142,15 @@ const CartPage = observer(
                                           type="text"
                                           value={adress}
                                           onFocus={(e) => {
-                                            $(e.target)
-                                              .parent()
-                                              .find("label")
-                                              .addClass("active");
+                                            $(e.target).parent().find("label").addClass("active");
                                           }}
                                           onBlur={(e) => {
                                             if (e.target.value === "") {
-                                              $(e.target)
-                                                .parent()
-                                                .find("label")
-                                                .removeClass("active");
+                                              $(e.target).parent().find("label").removeClass("active");
                                             }
                                           }}
                                           onInput={(e) => {
-                                            $(".cart-page__list-elem_adress")
-                                              .find(".alert-message")
-                                              .removeClass(
-                                                "alert-message_active"
-                                              );
+                                            $(".cart-page__list-elem_adress").find(".alert-message").removeClass("alert-message_active");
                                             this.setState({
                                               adress: e.target.value,
                                             });
@@ -1334,12 +1162,9 @@ const CartPage = observer(
                                       </div>
                                     </div>
 
-                                    <div className="col col-3 col-s-6">
+                                    <div className="col col-2 col-s-6">
                                       <div className="input-field">
-                                        <label
-                                          className="required"
-                                          htmlFor="flat"
-                                        >
+                                        <label className="required" htmlFor="flat">
                                           Дом
                                         </label>
                                         <input
@@ -1347,25 +1172,15 @@ const CartPage = observer(
                                           type="text"
                                           value={house}
                                           onFocus={(e) => {
-                                            $(e.target)
-                                              .parent()
-                                              .find("label")
-                                              .addClass("active");
+                                            $(e.target).parent().find("label").addClass("active");
                                           }}
                                           onBlur={(e) => {
                                             if (e.target.value === "") {
-                                              $(e.target)
-                                                .parent()
-                                                .find("label")
-                                                .removeClass("active");
+                                              $(e.target).parent().find("label").removeClass("active");
                                             }
                                           }}
                                           onInput={(e) => {
-                                            $(".cart-page__list-elem_adress")
-                                              .find(".alert-message")
-                                              .removeClass(
-                                                "alert-message_active"
-                                              );
+                                            $(".cart-page__list-elem_adress").find(".alert-message").removeClass("alert-message_active");
                                             this.setState({
                                               house: e.target.value,
                                             });
@@ -1374,7 +1189,7 @@ const CartPage = observer(
                                       </div>
                                     </div>
 
-                                    <div className="col col-3 col-s-6">
+                                    <div className="col col-2 col-s-6">
                                       <div className="input-field">
                                         <label htmlFor="porch">Кв/Офис</label>
                                         <input
@@ -1382,17 +1197,11 @@ const CartPage = observer(
                                           type="text"
                                           value={flat}
                                           onFocus={(e) => {
-                                            $(e.target)
-                                              .parent()
-                                              .find("label")
-                                              .addClass("active");
+                                            $(e.target).parent().find("label").addClass("active");
                                           }}
                                           onBlur={(e) => {
                                             if (e.target.value === "") {
-                                              $(e.target)
-                                                .parent()
-                                                .find("label")
-                                                .removeClass("active");
+                                              $(e.target).parent().find("label").removeClass("active");
                                             }
                                           }}
                                           onInput={(e) => {
@@ -1405,7 +1214,7 @@ const CartPage = observer(
                                     </div>
                                   </form>
                                 </div>
-                                {localStorage.get("city").geoId === 213 && (
+                                {inMSC && (
                                   <div
                                     className="cart-page__list-elem cart-page__list-elem_delivery"
                                     onClick={(e) => {
@@ -1417,27 +1226,19 @@ const CartPage = observer(
                                       <button
                                         className="ic i_close"
                                         onClick={(e) => {
-                                          $(e.target)
-                                            .parent()
-                                            .removeClass(
-                                              "alert-message_active"
-                                            );
+                                          $(e.target).parent().removeClass("alert-message_active");
                                         }}
                                       ></button>
                                     </div>
                                     <div className="cart-page__store-info">
-                                      <p className="cart-page__store-name">
-                                        Экспресс
-                                      </p>
+                                      <p className="cart-page__store-name">Экспресс</p>
                                       <div className="cart-page__store-adress">
                                         {/* <span className="old">152 ₽</span> 152 ₽{" "}
                               <span className="disc_perc">-20%</span> */}
                                         <p>
-                                          Возможна проверка заказа и частичный
-                                          отказ.
+                                          Возможна проверка заказа и частичный отказ.
                                           <br />
-                                          <b>Бесплатно</b> при заказе от{" "}
-                                          <b>20 000 ₽</b>.
+                                          <b>Бесплатно</b> при заказе от <b>20 000 ₽</b>.
                                         </p>
                                       </div>
                                     </div>
@@ -1445,27 +1246,16 @@ const CartPage = observer(
                                       <div
                                         id="delivery"
                                         onClick={(e) => {
-                                          document
-                                            .querySelectorAll("#delivery")
-                                            .forEach((elem) => {
-                                              elem.classList.remove("active");
-                                            });
+                                          document.querySelectorAll("#delivery").forEach((elem) => {
+                                            elem.classList.remove("active");
+                                          });
                                           $(e.currentTarget).addClass("active");
-                                          $(".cart-page__list-elem_delivery")
-                                            .find(".alert-message")
-                                            .removeClass(
-                                              "alert-message_active"
-                                            );
+                                          $(".cart-page__list-elem_delivery").find(".alert-message").removeClass("alert-message_active");
                                           if (moment().hour() <= 16) {
                                             this.setState({
                                               deliveryData: {
                                                 type: "express",
-                                                price:
-                                                  localStorage.get("city")
-                                                    .geoId === 213 &&
-                                                  this.totalPrice >= 20000
-                                                    ? 0
-                                                    : 1000,
+                                                price: inMSC && this.totalPrice >= 20000 ? 0 : 1000,
                                                 time: 0,
                                               },
                                             });
@@ -1473,26 +1263,14 @@ const CartPage = observer(
                                             this.setState({
                                               deliveryData: {
                                                 type: "express",
-                                                price:
-                                                  localStorage.get("city")
-                                                    .geoId === 213 &&
-                                                  this.totalPrice >= 20000
-                                                    ? 0
-                                                    : 1000,
+                                                price: inMSC && this.totalPrice >= 20000 ? 0 : 1000,
                                                 time: 1,
                                               },
                                             });
                                           }
                                         }}
                                       >
-                                        {moment().hour() <= 16
-                                          ? "Сегодня"
-                                          : "Завтра"}{" "}
-                                        —{" "}
-                                        {localStorage.get("city").geoId ===
-                                          213 && this.totalPrice >= 20000
-                                          ? "бесплатно"
-                                          : "1 000 ₽"}{" "}
+                                        {moment().hour() <= 16 ? "Сегодня" : "Завтра"} — {inMSC && this.totalPrice >= 20000 ? "бесплатно" : "1 000 ₽"}{" "}
                                         {/* {moment().hour() > 16 && (
                                           <p
                                             style={{
@@ -1507,27 +1285,16 @@ const CartPage = observer(
                                       <div
                                         id="delivery"
                                         onClick={(e) => {
-                                          document
-                                            .querySelectorAll("#delivery")
-                                            .forEach((elem) => {
-                                              elem.classList.remove("active");
-                                            });
+                                          document.querySelectorAll("#delivery").forEach((elem) => {
+                                            elem.classList.remove("active");
+                                          });
                                           $(e.currentTarget).addClass("active");
-                                          $(".cart-page__list-elem_delivery")
-                                            .find(".alert-message")
-                                            .removeClass(
-                                              "alert-message_active"
-                                            );
+                                          $(".cart-page__list-elem_delivery").find(".alert-message").removeClass("alert-message_active");
                                           if (moment().hour() <= 16) {
                                             this.setState({
                                               deliveryData: {
                                                 type: "express",
-                                                price:
-                                                  localStorage.get("city")
-                                                    .geoId === 213 &&
-                                                  this.totalPrice >= 20000
-                                                    ? 0
-                                                    : 500,
+                                                price: inMSC && this.totalPrice >= 20000 ? 0 : 500,
                                                 time: 1,
                                               },
                                             });
@@ -1535,26 +1302,15 @@ const CartPage = observer(
                                             this.setState({
                                               deliveryData: {
                                                 type: "express",
-                                                price:
-                                                  localStorage.get("city")
-                                                    .geoId === 213 &&
-                                                  this.totalPrice >= 20000
-                                                    ? 0
-                                                    : 500,
+                                                price: inMSC && this.totalPrice >= 20000 ? 0 : 500,
                                                 time: 2,
                                               },
                                             });
                                           }
                                         }}
                                       >
-                                        {moment().hour() <= 16
-                                          ? "Завтра"
-                                          : "Послезавтра"}{" "}
-                                        —{" "}
-                                        {localStorage.get("city").geoId ===
-                                          213 && this.totalPrice >= 20000
-                                          ? "бесплатно"
-                                          : "500 ₽"}{" "}
+                                        {moment().hour() <= 16 ? "Завтра" : "Послезавтра"} —{" "}
+                                        {inMSC && this.totalPrice >= 20000 ? "бесплатно" : "500 ₽"}{" "}
                                       </div>
                                     </div>
                                   </div>
@@ -1571,22 +1327,16 @@ const CartPage = observer(
                                     <button
                                       className="ic i_close"
                                       onClick={(e) => {
-                                        $(e.target)
-                                          .parent()
-                                          .removeClass("alert-message_active");
+                                        $(e.target).parent().removeClass("alert-message_active");
                                       }}
                                     ></button>
                                   </div>
                                   {Object.keys(delVar).length > 1 ? (
                                     <div className="cart-page__store-info">
-                                      <p className="cart-page__store-name">
-                                        Курьерскими службами
-                                      </p>
+                                      <p className="cart-page__store-name">Курьерскими службами</p>
                                       <div className="cart-page__store-adress">
                                         <p>
-                                          Dalli-Service или СДЭК. Возможна
-                                          проверка заказа, доступен частичный
-                                          отказ . <b>Бесплатно</b> при заказе от{" "}
+                                          Dalli-Service или СДЭК. Возможна проверка заказа, доступен частичный отказ . <b>Бесплатно</b> при заказе от{" "}
                                           <b>3 000 ₽</b> по <b>Москве</b>.
                                         </p>
                                       </div>
@@ -1595,77 +1345,47 @@ const CartPage = observer(
                                     Object.keys(delVar).length !== 0 && (
                                       <div className="cart-page__list-choose ">
                                         <div
-                                          className="cart-page__store-info active"
+                                          className={`cart-page__store-info ${inMSC ? "" : "active"}`}
                                           id="delivery"
                                           onClick={(e) => {
-                                            this.setDeliveryData(
-                                              e,
-                                              delVar[Object.keys(delVar)[0]],
-                                              delVar[Object.keys(delVar)[0]]
-                                                .time
-                                            );
+                                            this.setDeliveryData(e, delVar[Object.keys(delVar)[0]], delVar[Object.keys(delVar)[0]].time);
                                           }}
                                         >
-                                          <p className="cart-page__store-name">
-                                            <p className="cart-page__s-name">
-                                              Курьерскими службами
-                                            </p>
+                                          <div className="cart-page__store-name">
+                                            <p className="cart-page__s-name">Курьерскими службами</p>
                                             <div>
                                               <p>
-                                                {localStorage.get("city")
-                                                  .geoId === 213 &&
+                                                {inMSC &&
                                                 (this.totalPrice >= 3000 ||
-                                                  (Object.keys(productInCart)
-                                                    .length === 1 &&
-                                                    productInCart[
-                                                      Object.keys(
-                                                        productInCart
-                                                      )[0]
-                                                    ].slug === 5637285331))
+                                                  (Object.keys(productInCart).length === 1 &&
+                                                    productInCart[Object.keys(productInCart)[0]].slug === 5637285331))
                                                   ? "Бесплатно"
-                                                  : (+delVar[
-                                                      Object.keys(delVar)[0]
-                                                    ].price).toLocaleString() +
-                                                    " ₽ "}{" "}
+                                                  : (+delVar[Object.keys(delVar)[0]].price).toLocaleString() + " ₽ "}{" "}
                                               </p>
                                               <p>
+                                                {moment().add(delVar[Object.keys(delVar)[0]].time, "days").locale("ru").format("DD")} -{" "}
                                                 {moment()
-                                                  .add(
-                                                    delVar[
-                                                      Object.keys(delVar)[0]
-                                                    ].time,
-                                                    "days"
-                                                  )
-                                                  .locale("ru")
-                                                  .format("DD")}{" "}
-                                                -{" "}
-                                                {moment()
-                                                  .add(
-                                                    delVar[
-                                                      Object.keys(delVar)[0]
-                                                    ].time + 1,
-                                                    "days"
-                                                  )
+                                                  .add(delVar[Object.keys(delVar)[0]].time + 1, "days")
                                                   .locale("ru")
                                                   .format("DD MMMM")}
                                               </p>
                                             </div>
-                                          </p>
+                                          </div>
                                           <div className="cart-page__store-adress">
-                                            <p>
-                                              Возможна проверка заказа и
-                                              частичный отказ.
-                                            </p>
+                                            {inMSC ? (
+                                              <p>
+                                                Возможна проверка заказа и частичный отказ.
+                                                <br /> <b>Бесплатно</b> при заказе от <b>3 000 ₽</b> по <b>Москве</b>.
+                                              </p>
+                                            ) : (
+                                              <p>Возможна проверка заказа и частичный отказ.</p>
+                                            )}
                                           </div>
                                         </div>
                                       </div>
                                     )
                                   )}
-                                  {Object.keys(delVar).length > 1 && (
-                                    <div className="cart-page__list-choose">
-                                      {delVarRender}
-                                    </div>
-                                  )}
+                                  {Object.keys(delVar).length > 1 && <div className="cart-page__list-choose">{delVarRender}</div>}
                                 </div>
                               </div>
                             </div>
@@ -1682,15 +1402,13 @@ const CartPage = observer(
                               position: "relative",
                             }}
                           >
-                            <p>
-                              Доставка выбранным способом в данный населенный
-                              пункт невозможна
-                            </p>
+                            <p>Доставка выбранным способом в данный населенный пункт невозможна</p>
                           </div>
                         ) : (
                           <>
                             <div className="row">
                               <div className="col col-12">
+                                {chooseCityBtns}
                                 <div key={this.props.store.city}>
                                   <MapDel
                                     pointsData={this.state.pvzDataCont}
@@ -1700,86 +1418,61 @@ const CartPage = observer(
                                 </div>
                               </div>
                             </div>
-                            {Object.keys(deliveryData).length !== 0 &&
-                              deliveryData.pvz === true && (
-                                <div className="cart-page__delivery-details">
-                                  <div className="row">
-                                    <div className="col col-12">
-                                      <div className="pvz">
-                                        <div className="pvz__head">
-                                          <h6>
-                                            {this.translite[
-                                              deliveryData.partner
-                                            ] !== undefined
-                                              ? this.translite[
-                                                  deliveryData.partner
-                                                ]
-                                              : deliveryData.partner}
-                                          </h6>
-                                          <div>
-                                            {deliveryData.price === 0
-                                              ? "Бесплатно"
-                                              : (+deliveryData.price).toLocaleString() +
-                                                " ₽ "}
-                                            <span className="b_gray">
-                                              {moment()
-                                                .add(deliveryData.time, "days")
-                                                .format("DD") +
-                                                "-" +
-                                                moment()
-                                                  .add(
-                                                    deliveryData.time + 1,
-                                                    "days"
-                                                  )
-                                                  .format("DD MMMM")}
-                                            </span>
-                                          </div>
-                                        </div>
-                                        <p className="pvz__address">
-                                          {deliveryData.town +
-                                            ", " +
-                                            deliveryData.addressReduce}
-                                        </p>
-
-                                        {deliveryData.description !==
-                                          undefined && (
-                                          <div className="pvz__description">
-                                            <span className="b_gray">
-                                              Описание
-                                            </span>
-                                            <p>{deliveryData.description}</p>
-                                          </div>
-                                        )}
-
-                                        <div className="pvz__time">
+                            {Object.keys(deliveryData).length !== 0 && deliveryData.pvz === true && (
+                              <div className="cart-page__delivery-details">
+                                <div className="row">
+                                  <div className="col col-12">
+                                    <div className="pvz">
+                                      <div className="pvz__head">
+                                        <h6>
+                                          {this.translite[deliveryData.partner] !== undefined
+                                            ? this.translite[deliveryData.partner]
+                                            : deliveryData.partner}
+                                        </h6>
+                                        <div>
+                                          {deliveryData.price === 0 ? "Бесплатно" : (+deliveryData.price).toLocaleString() + " ₽ "}
                                           <span className="b_gray">
-                                            Время работы
+                                            {moment().add(deliveryData.time, "days").format("DD") +
+                                              "-" +
+                                              moment()
+                                                .add(deliveryData.time + 1, "days")
+                                                .format("DD MMMM")}
                                           </span>
-                                          <p>{deliveryData.workShedule}</p>
                                         </div>
-                                        <div
-                                          className="btn"
-                                          onClick={() => {
-                                            const {
-                                              geoMap,
-                                              revertMap,
-                                            } = window;
-                                            this.setState({ deliveryData: {} });
-                                            $("#map").removeClass("choose");
+                                      </div>
+                                      <p className="pvz__address">{deliveryData.town + ", " + deliveryData.addressReduce}</p>
 
-                                            setTimeout(() => {
-                                              // geoMap.removeControl(ymaps.Zoom());
-                                              //   geoMap.controls.remove("zoomControl");
-                                              // geoMap.container.fitToViewport(); // объект класса ymaps.Map
-                                              geoMap.geoObjects.removeAll();
-                                              revertMap();
-                                            }, 350);
-                                          }}
-                                        >
-                                          Изменить
+                                      {deliveryData.description !== undefined && (
+                                        <div className="pvz__description">
+                                          <span className="b_gray">Описание</span>
+                                          <p>{deliveryData.description}</p>
                                         </div>
+                                      )}
 
-                                        {/* <div className="item">
+                                      <div className="pvz__time">
+                                        <span className="b_gray">Время работы</span>
+                                        <p>{deliveryData.workShedule}</p>
+                                      </div>
+                                      <div
+                                        className="btn"
+                                        onClick={() => {
+                                          const { geoMap, revertMap } = window;
+                                          this.setState({ deliveryData: {} });
+                                          $("#map").removeClass("choose");
+
+                                          setTimeout(() => {
+                                            // geoMap.removeControl(ymaps.Zoom());
+                                            //   geoMap.controls.remove("zoomControl");
+                                            // geoMap.container.fitToViewport(); // объект класса ymaps.Map
+                                            geoMap.geoObjects.removeAll();
+                                            revertMap();
+                                          }, 350);
+                                        }}
+                                      >
+                                        Изменить
+                                      </div>
+
+                                      {/* <div className="item">
                                     <h5>Стоимость и сроки:</h5>
                                     <span>
                                       
@@ -1788,17 +1481,17 @@ const CartPage = observer(
                                     </span>
                                   </div> */}
 
-                                        {/* {deliveryData.pvz === undefined && (
+                                      {/* {deliveryData.pvz === undefined && (
                                     <div className="item">
                                       <h5>Адрес выдачи:</h5>
                                       <span>{deliveryData.address}</span>
                                     </div>
                                   )} */}
-                                      </div>
                                     </div>
                                   </div>
                                 </div>
-                              )}
+                              </div>
+                            )}
 
                             {/* {this.state.pickUpChoose &&
                             Object.keys(this.state.deliveryData).length ===
@@ -1832,6 +1525,7 @@ const CartPage = observer(
                     )}
                     {this.state.pickUpStoreChoose && (
                       <div className="cart__list cart-page__list">
+                        {chooseCityBtns}
                         {htmlStore}
                       </div>
                     )}
@@ -1845,9 +1539,7 @@ const CartPage = observer(
                     <button
                       className="ic i_close"
                       onClick={(e) => {
-                        $(e.target)
-                          .parent()
-                          .removeClass("alert-message_active");
+                        $(e.target).parent().removeClass("alert-message_active");
                       }}
                     ></button>
                   </div>
@@ -1857,36 +1549,24 @@ const CartPage = observer(
                       <a
                         className="link dotted"
                         onClick={(e) => {
-                          document
-                            .querySelector(".sidebar-overlay")
-                            .classList.add("active");
+                          document.querySelector(".sidebar-overlay").classList.add("active");
 
-                          document
-                            .querySelector("body")
-                            .classList.add("no-scroll");
+                          document.querySelector("body").classList.add("no-scroll");
 
                           this.props.store.sideLogin = true;
                           e.preventDefault();
                         }}
                       >
-                        <span className="ic i_user"></span>{" "}
-                        <span className="fw_m b_dark">Войдите</span>
+                        <span className="ic i_user"></span> <span className="fw_m b_dark">Войдите</span>
                       </a>{" "}
-                      <span className="b_gray">
-                        (данные подгрузятся автоматически)
-                      </span>
+                      <span className="b_gray">(данные подгрузятся автоматически)</span>
                     </p>
                   )}
 
                   <form className="cart-page__data-form row" action="">
                     <div className="col col-6">
                       <div className="input-field">
-                        <label
-                          className={
-                            name === "" ? "required" : "required active"
-                          }
-                          htmlFor="firstname"
-                        >
+                        <label className={name === "" ? "required" : "required active"} htmlFor="firstname">
                           Имя
                         </label>
                         <input
@@ -1895,34 +1575,20 @@ const CartPage = observer(
                           name="firstname"
                           value={name}
                           onFocus={(e) => {
-                            $(e.target)
-                              .parent()
-                              .find("label")
-                              .addClass("active");
+                            $(e.target).parent().find("label").addClass("active");
                           }}
                           onBlur={(e) => {
                             if (e.target.value === "") {
-                              $(e.target)
-                                .parent()
-                                .find("label")
-                                .removeClass("active");
+                              $(e.target).parent().find("label").removeClass("active");
                             }
                           }}
                           onInput={(e) => {
                             if (e.target.value === "") {
-                              $(e.target).css(
-                                "border-bottom",
-                                "1px solid #EB5757"
-                              );
+                              $(e.target).css("border-bottom", "1px solid #EB5757");
                             } else {
-                              $(e.target).css(
-                                "border-bottom",
-                                "1px solid lightgreen"
-                              );
+                              $(e.target).css("border-bottom", "1px solid lightgreen");
                             }
-                            $(".cart-page__data")
-                              .find(".alert-message")
-                              .removeClass("alert-message_active");
+                            $(".cart-page__data").find(".alert-message").removeClass("alert-message_active");
                             this.setState({
                               name: e.target.value,
                             });
@@ -1932,12 +1598,7 @@ const CartPage = observer(
                     </div>
                     <div className="col col-6">
                       <div className="input-field">
-                        <label
-                          className={
-                            secondName === "" ? "required" : "required active"
-                          }
-                          htmlFor="lastname"
-                        >
+                        <label className={secondName === "" ? "required" : "required active"} htmlFor="lastname">
                           Фамилия
                         </label>
                         <input
@@ -1946,34 +1607,20 @@ const CartPage = observer(
                           type="text"
                           value={secondName}
                           onFocus={(e) => {
-                            $(e.target)
-                              .parent()
-                              .find("label")
-                              .addClass("active");
+                            $(e.target).parent().find("label").addClass("active");
                           }}
                           onBlur={(e) => {
                             if (e.target.value === "") {
-                              $(e.target)
-                                .parent()
-                                .find("label")
-                                .removeClass("active");
+                              $(e.target).parent().find("label").removeClass("active");
                             }
                           }}
                           onInput={(e) => {
                             if (e.target.value === "") {
-                              $(e.target).css(
-                                "border-bottom",
-                                "1px solid #EB5757"
-                              );
+                              $(e.target).css("border-bottom", "1px solid #EB5757");
                             } else {
-                              $(e.target).css(
-                                "border-bottom",
-                                "1px solid lightgreen"
-                              );
+                              $(e.target).css("border-bottom", "1px solid lightgreen");
                             }
-                            $(".cart-page__data")
-                              .find(".alert-message")
-                              .removeClass("alert-message_active");
+                            $(".cart-page__data").find(".alert-message").removeClass("alert-message_active");
                             this.setState({
                               secondName: e.target.value,
                             });
@@ -1983,12 +1630,7 @@ const CartPage = observer(
                     </div>
                     <div className="col col-6" style={{ marginBottom: "20px" }}>
                       <div className="input-field">
-                        <label
-                          className={
-                            email === "" ? "required" : "required active"
-                          }
-                          htmlFor="email"
-                        >
+                        <label className={email === "" ? "required" : "required active"} htmlFor="email">
                           E-mail
                         </label>
                         <input
@@ -1996,34 +1638,20 @@ const CartPage = observer(
                           type="text"
                           value={email}
                           onFocus={(e) => {
-                            $(e.target)
-                              .parent()
-                              .find("label")
-                              .addClass("active");
+                            $(e.target).parent().find("label").addClass("active");
                           }}
                           onBlur={(e) => {
                             if (e.target.value === "") {
-                              $(e.target)
-                                .parent()
-                                .find("label")
-                                .removeClass("active");
+                              $(e.target).parent().find("label").removeClass("active");
                             }
                           }}
                           onInput={(e) => {
                             if (!regexEmail.test(e.target.value)) {
-                              $(e.target).css(
-                                "border-bottom",
-                                "1px solid #EB5757"
-                              );
+                              $(e.target).css("border-bottom", "1px solid #EB5757");
                             } else {
-                              $(e.target).css(
-                                "border-bottom",
-                                "1px solid lightgreen"
-                              );
+                              $(e.target).css("border-bottom", "1px solid lightgreen");
                             }
-                            $(".cart-page__data")
-                              .find(".alert-message")
-                              .removeClass("alert-message_active");
+                            $(".cart-page__data").find(".alert-message").removeClass("alert-message_active");
                             this.setState({
                               email: e.target.value,
                             });
@@ -2033,12 +1661,7 @@ const CartPage = observer(
                     </div>
                     <div className="col col-6" style={{ marginBottom: "20px" }}>
                       <div className="input-field">
-                        <label
-                          className={
-                            tel === "" ? "required" : "required active"
-                          }
-                          htmlFor="phone"
-                        >
+                        <label className={tel === "" ? "required" : "required active"} htmlFor="phone">
                           Телефон
                         </label>
                         <input
@@ -2046,34 +1669,20 @@ const CartPage = observer(
                           type="text"
                           value={tel}
                           onFocus={(e) => {
-                            $(e.target)
-                              .parent()
-                              .find("label")
-                              .addClass("active");
+                            $(e.target).parent().find("label").addClass("active");
                           }}
                           onBlur={(e) => {
                             if (e.target.value === "") {
-                              $(e.target)
-                                .parent()
-                                .find("label")
-                                .removeClass("active");
+                              $(e.target).parent().find("label").removeClass("active");
                             }
                           }}
                           onInput={(e) => {
                             if (e.target.value.includes("_")) {
-                              $(e.target).css(
-                                "border-bottom",
-                                "1px solid #EB5757"
-                              );
+                              $(e.target).css("border-bottom", "1px solid #EB5757");
                             } else {
-                              $(e.target).css(
-                                "border-bottom",
-                                "1px solid lightgreen"
-                              );
+                              $(e.target).css("border-bottom", "1px solid lightgreen");
                             }
-                            $(".cart-page__data")
-                              .find(".alert-message")
-                              .removeClass("alert-message_active");
+                            $(".cart-page__data").find(".alert-message").removeClass("alert-message_active");
                             this.setState({
                               tel: e.target.value,
                             });
@@ -2081,29 +1690,21 @@ const CartPage = observer(
                         />
                       </div>
                     </div>
-                    <label
-                      className="checkbox checkbox_margin"
-                      style={{ marginLeft: "10px" }}
-                    >
+                    <label className="checkbox checkbox_margin" style={{ marginLeft: "10px" }}>
                       <input
                         type="checkbox"
                         name="acceptedTerms"
                         id=""
                         value={this.state.acceptedTerms}
                         onChange={() => {
-                          $(".cart-page__data")
-                            .find(".alert-message")
-                            .removeClass("alert-message_active");
+                          $(".cart-page__data").find(".alert-message").removeClass("alert-message_active");
                           this.setState({
                             acceptedTerms: !this.state.acceptedTerms,
                           });
                         }}
                         checked={this.state.acceptedTerms}
                       />
-                      <span
-                        className="checkbox-btn"
-                        style={{ marginRight: "10px" }}
-                      ></span>
+                      <span className="checkbox-btn" style={{ marginRight: "10px" }}></span>
                       <i style={{ maxWidth: "90%" }}>
                         Согласен с{" "}
                         <Link className="underline" to="/help/offer">
@@ -2117,114 +1718,93 @@ const CartPage = observer(
                     </label>
                   </form>
                 </div>
-                {Object.keys(userData).length !== 0 &&
-                  userData.bonus.bonusSum - userData.bonus.useBonusValue >
-                    0 && (
-                    <div
-                      className="cart-page__delivery"
-                      id="bonusCont"
-                      style={{ marginTop: "45px" }}
-                    >
-                      <div className="cart__list cart-page__list ">
-                        <div
-                          className={`cart-page__list-elem cart-page__list-elem_not-c ${
-                            this.state.useBonus
-                              ? "cart-page__list-elem_use-bonus"
-                              : ""
-                          }`}
-                        >
-                          <div className="cart-page__store-info">
-                            <p className="cart-page__store-name">
-                              Бонусные баллы{" "}
-                              <span className="dib">
-                                (можно оплатить до 50% от покупки)
-                              </span>
-                            </p>
-                            {this.state.useBonus ? (
-                              <div className="cart-page__bonus">
-                                <div className="cart-page__bonus-block">
-                                  <p>Использованно: </p>
-                                  <div
-                                    style={{
-                                      marginLeft: "5px",
-                                    }}
-                                  >
-                                    <p>
-                                      <b> {this.state.useBonus}</b>
-                                    </p>
-                                    <p className="i_coin" />
-                                  </div>
-                                </div>
-                                <button
-                                  className="ic i_close"
-                                  onClick={() => {
-                                    this.setState({
-                                      useBonus: 0,
-                                    });
-                                  }}
-                                ></button>
-                              </div>
-                            ) : (
-                              <div className="cart-page__bonus">
-                                <div className="cart-page__bonus-block">
-                                  <p>Баланс: </p>
-                                  <div
-                                    style={{
-                                      marginLeft: "5px",
-                                    }}
-                                  >
-                                    <p>
-                                      <b>
-                                        {" "}
-                                        {Math.floor(
-                                          userData.bonus.bonusSum -
-                                            userData.bonus.useBonusValue
-                                        )}
-                                      </b>
-                                    </p>
-                                    <p className="i_coin" />
-                                  </div>
-                                </div>
-                                <div className="cart-page__bonus-block">
-                                  <p>Использовать: </p>
-                                  <div>
-                                    <input
-                                      type="number"
-                                      placeholder={maxBonusCount}
-                                      onChange={(e) => {
-                                        if (+e.target.value > maxBonusCount) {
-                                          this.setState({
-                                            bonus: maxBonusCount,
-                                          });
-                                        } else {
-                                          this.setState({
-                                            bonus: Math.floor(+e.target.value),
-                                          });
-                                        }
-                                      }}
-                                      value={
-                                        this.state.bonus ? this.state.bonus : ""
-                                      }
-                                    />
-                                    <p className="i_coin" />
-                                  </div>
-                                </div>
-                                <button
-                                  onClick={() => {
-                                    this.setState({
-                                      useBonus: this.state.bonus,
-                                    });
+                {Object.keys(userData).length !== 0 && userData.bonus.bonusSum - userData.bonus.useBonusValue > 0 && (
+                  <div className="cart-page__delivery" id="bonusCont" style={{ marginTop: "45px" }}>
+                    <div className="cart__list cart-page__list ">
+                      <div
+                        className={`cart-page__list-elem cart-page__list-elem_not-c ${this.state.useBonus ? "cart-page__list-elem_use-bonus" : ""}`}
+                      >
+                        <div className="cart-page__store-info">
+                          <p className="cart-page__store-name">
+                            Бонусные баллы <span className="dib">(можно оплатить до 50% от покупки)</span>
+                          </p>
+                          {this.state.useBonus ? (
+                            <div className="cart-page__bonus">
+                              <div className="cart-page__bonus-block">
+                                <p>Использованно: </p>
+                                <div
+                                  style={{
+                                    marginLeft: "5px",
                                   }}
                                 >
-                                  Активировать
-                                </button>
+                                  <p>
+                                    <b> {this.state.useBonus}</b>
+                                  </p>
+                                  <p className="i_coin" />
+                                </div>
                               </div>
-                            )}
-                          </div>
+                              <button
+                                className="ic i_close"
+                                onClick={() => {
+                                  this.setState({
+                                    useBonus: 0,
+                                  });
+                                }}
+                              ></button>
+                            </div>
+                          ) : (
+                            <div className="cart-page__bonus">
+                              <div className="cart-page__bonus-block">
+                                <p>Баланс: </p>
+                                <div
+                                  style={{
+                                    marginLeft: "5px",
+                                  }}
+                                >
+                                  <p>
+                                    <b> {Math.floor(userData.bonus.bonusSum - userData.bonus.useBonusValue)}</b>
+                                  </p>
+                                  <p className="i_coin" />
+                                </div>
+                              </div>
+                              <div className="cart-page__bonus-block">
+                                <p>Использовать: </p>
+                                <div>
+                                  <input
+                                    type="number"
+                                    placeholder={maxBonusCount}
+                                    onChange={(e) => {
+                                      if (+e.target.value > maxBonusCount) {
+                                        this.setState({
+                                          bonus: maxBonusCount,
+                                        });
+                                      } else {
+                                        this.setState({
+                                          bonus: Math.floor(+e.target.value),
+                                        });
+                                      }
+                                    }}
+                                    value={this.state.bonus ? this.state.bonus : ""}
+                                  />
+                                  <p className="i_coin" />
+                                </div>
+                              </div>
+                              <button
+                                onClick={() => {
+                                  this.setState({
+                                    useBonus: this.state.bonus,
+                                  });
+                                }}
+                              >
+                                Активировать
+                              </button>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
-                  )}
+                  </div>
+                )}
               </div>
               <div className="col col-1 hide-s"></div>
               <div className="col col-4 col-s-12">
@@ -2233,8 +1813,7 @@ const CartPage = observer(
                     <div className="cart-page__bonus-sum">
                       <p>Бонусные баллы через 14 дней:</p>
                       <div>
-                        + {Math.round(this.totalNotSalePrice * 0.1)}{" "}
-                        <p className="i_coin"></p>
+                        + {Math.round(this.totalNotSalePrice * 0.1)} <p className="i_coin"></p>
                       </div>
                     </div>
                   ) : null}
@@ -2249,61 +1828,38 @@ const CartPage = observer(
                               : deliveryData.type === "express"
                               ? this.totalPrice > 20000
                                 ? this.totalPrice.toLocaleString()
-                                : (
-                                    deliveryData.price + this.totalPrice
-                                  ).toLocaleString()
-                              : localStorage.get("city").geoId === 213 &&
+                                : (deliveryData.price + this.totalPrice).toLocaleString()
+                              : inMSC &&
                                 (this.totalPrice >= 3000 ||
-                                  (Object.keys(productInCart).length === 1 &&
-                                    productInCart[Object.keys(productInCart)[0]]
-                                      .slug === 5637285331))
+                                  (Object.keys(productInCart).length === 1 && productInCart[Object.keys(productInCart)[0]].slug === 5637285331))
                               ? this.totalPrice.toLocaleString()
                               : deliveryData.deliveryOption === undefined
-                              ? (
-                                  +deliveryData.price + this.totalPrice
-                                ).toLocaleString()
-                              : (
-                                  +deliveryData.price + this.totalPrice
-                                ).toLocaleString()}{" "}
+                              ? (+deliveryData.price + this.totalPrice).toLocaleString()
+                              : (+deliveryData.price + this.totalPrice).toLocaleString()}{" "}
                             ₽
                           </span>
                         </div>
                         <div>
-                          <span>Стоимость товаров</span>{" "}
-                          <span>{totalFullprice.toLocaleString()} ₽</span>
+                          <span>Стоимость товаров</span> <span>{totalFullprice.toLocaleString()} ₽</span>
                         </div>
                         <div>
                           <span>Скидка</span>{" "}
-                          <span className="red">
-                            {totalSale === 0
-                              ? totalSale.toLocaleString()
-                              : "- " + totalSale.toLocaleString()}{" "}
-                            ₽
-                          </span>
+                          <span className="red">{totalSale === 0 ? totalSale.toLocaleString() : "- " + totalSale.toLocaleString()} ₽</span>
                         </div>
 
                         {coupDisc > 0 && (
                           <div>
-                            <span>Промокод</span>{" "}
-                            <span className="red">
-                              - {coupDisc.toLocaleString()} ₽
-                            </span>
+                            <span>Промокод</span> <span className="red">- {coupDisc.toLocaleString()} ₽</span>
                           </div>
                         )}
                         {certDisc > 0 && (
                           <div>
-                            <span>Сертификат</span>{" "}
-                            <span className="red">
-                              - {certDisc.toLocaleString()} ₽
-                            </span>
+                            <span>Сертификат</span> <span className="red">- {certDisc.toLocaleString()} ₽</span>
                           </div>
                         )}
                         {useBonus > 0 && (
                           <div>
-                            <span>Бонусы</span>{" "}
-                            <span className="red">
-                              - {useBonus.toLocaleString()} ₽
-                            </span>
+                            <span>Бонусы</span> <span className="red">- {useBonus.toLocaleString()} ₽</span>
                           </div>
                         )}
 
@@ -2311,11 +1867,7 @@ const CartPage = observer(
                           <div>
                             <span>Доставка</span>{" "}
                             <span>
-                              {deliveryData.price === 0
-                                ? "Бесплатно"
-                                : (+deliveryData.price).toLocaleString() +
-                                  " ₽ "}{" "}
-                              /{" "}
+                              {deliveryData.price === 0 ? "Бесплатно" : (+deliveryData.price).toLocaleString() + " ₽ "} /{" "}
                               <span className="b_gray">
                                 {" "}
                                 {moment().utcOffset("+03:00").format("HH") < 15
@@ -2325,27 +1877,14 @@ const CartPage = observer(
                                     ? "завтра"
                                     : deliveryData.time === 2
                                     ? "Послезавтра"
-                                    : deliveryData.time +
-                                      " " +
-                                      num2str(deliveryData.time, [
-                                        "день",
-                                        "дня",
-                                        "дней",
-                                      ])
+                                    : deliveryData.time + " " + num2str(deliveryData.time, ["день", "дня", "дней"])
                                   : deliveryData.time + 1 === 0
                                   ? "сегодня"
                                   : deliveryData.time + 1 === 1
                                   ? "завтра"
                                   : deliveryData.time + 1 === 2
                                   ? "Послезавтра"
-                                  : deliveryData.time +
-                                    1 +
-                                    " " +
-                                    num2str(deliveryData.time, [
-                                      "день",
-                                      "дня",
-                                      "дней",
-                                    ])}
+                                  : deliveryData.time + 1 + " " + num2str(deliveryData.time, ["день", "дня", "дней"])}
                               </span>
                             </span>
                           </div>
@@ -2354,12 +1893,9 @@ const CartPage = observer(
                     </ul>
 
                     {Object.keys(deliveryData).length !== 0
-                      ? (deliveryData.delivery !== undefined ||
-                          address !== "") && (
+                      ? (deliveryData.delivery !== undefined || address !== "") && (
                           <div className="cart-page__result-address">
-                            {deliveryData.delivery === undefined
-                              ? deliveryData.pickupPoint.address.addressString
-                              : address}
+                            {deliveryData.delivery === undefined ? deliveryData.pickupPoint.address.addressString : address}
                           </div>
                         )
                       : null}
@@ -2370,24 +1906,12 @@ const CartPage = observer(
                       onClick={(e) => {
                         //NEN
 
-                        const {
-                          flat,
-                          house,
-                          adress,
-                          delChoose,
-                          pickUpChoose,
-                          pickUpStoreChoose,
-                          payment,
-                          coupsCont,
-                          useBonus,
-                        } = this.state;
+                        const { flat, house, adress, delChoose, pickUpChoose, pickUpStoreChoose, payment, coupsCont, useBonus } = this.state;
                         let inError = false;
                         if (payment === "") {
                           $("html, body").animate(
                             {
-                              scrollTop:
-                                $("#paymentMethod").offset().top -
-                                $(".navigation").height(),
+                              scrollTop: $("#paymentMethod").offset().top - $(".navigation").height(),
                             },
                             500
                           );
@@ -2402,9 +1926,7 @@ const CartPage = observer(
                           //     }, 1500);
                           //   });
 
-                          $("#paymentMethod")
-                            .find(".alert-message")
-                            .addClass("alert-message_active");
+                          $("#paymentMethod").find(".alert-message").addClass("alert-message_active");
                           // $("#payment").addClass("cart-page__list-elem_red");
                           // setTimeout(() => {
                           //   $("#payment").removeClass(
@@ -2413,32 +1935,19 @@ const CartPage = observer(
                           // }, 1500);
                           inError = true;
                         }
-                        if (
-                          certInCart &&
-                          Object.keys(productInCart).length === 1
-                        ) {
+                        if (certInCart && Object.keys(productInCart).length === 1) {
                         } else {
                           if (delChoose) {
-                            if (
-                              Object.keys(this.state.deliveryData).length ===
-                                0 ||
-                              house === "" ||
-                              adress === ""
-                            ) {
+                            if (Object.keys(this.state.deliveryData).length === 0 || house === "" || adress === "") {
                               if (!inError) {
                                 $("html, body").animate(
                                   {
-                                    scrollTop:
-                                      $("#deliveryBlock").offset().top -
-                                      $(".navigation").height(),
+                                    scrollTop: $("#deliveryBlock").offset().top - $(".navigation").height(),
                                   },
                                   500
                                 );
                               }
-                              if (
-                                Object.keys(this.state.deliveryData).length ===
-                                0
-                              ) {
+                              if (Object.keys(this.state.deliveryData).length === 0) {
                                 // document
                                 //   .querySelectorAll("#delivery")
                                 //   .forEach((elem) => {
@@ -2447,14 +1956,10 @@ const CartPage = observer(
                                 //       elem.classList.remove("red");
                                 //     }, 1500);
                                 //   });
-                                $(".cart-page__list-elem_delivery")
-                                  .find(".alert-message")
-                                  .addClass("alert-message_active");
+                                $(".cart-page__list-elem_delivery").find(".alert-message").addClass("alert-message_active");
                               }
                               if (house === "" || adress === "") {
-                                $(".cart-page__list-elem_adress")
-                                  .find(".alert-message")
-                                  .addClass("alert-message_active");
+                                $(".cart-page__list-elem_adress").find(".alert-message").addClass("alert-message_active");
                               }
                               inError = true;
                             }
@@ -2463,9 +1968,7 @@ const CartPage = observer(
                               if (!inError) {
                                 $("html, body").animate(
                                   {
-                                    scrollTop:
-                                      $("#deliveryBlock").offset().top -
-                                      $(".navigation").height(),
+                                    scrollTop: $("#deliveryBlock").offset().top - $(".navigation").height(),
                                   },
                                   500
                                 );
@@ -2479,9 +1982,7 @@ const CartPage = observer(
                               if (!inError) {
                                 $("html, body").animate(
                                   {
-                                    scrollTop:
-                                      $("#deliveryBlock").offset().top -
-                                      $(".navigation").height(),
+                                    scrollTop: $("#deliveryBlock").offset().top - $(".navigation").height(),
                                   },
                                   500
                                 );
@@ -2502,16 +2003,12 @@ const CartPage = observer(
                           if (!inError) {
                             $("html, body").animate(
                               {
-                                scrollTop:
-                                  $(".cart-page__data").offset().top -
-                                  $(".navigation").height(),
+                                scrollTop: $(".cart-page__data").offset().top - $(".navigation").height(),
                               },
                               500
                             );
                           }
-                          $(".cart-page__data")
-                            .find(".alert-message")
-                            .addClass("alert-message_active");
+                          $(".cart-page__data").find(".alert-message").addClass("alert-message_active");
                           inError = true;
                         }
                         if (inError) {
@@ -2526,7 +2023,7 @@ const CartPage = observer(
                         // );
                         // console.log("productInCart", productInCart);
                         const senderId = 500001936;
-                        const cityLoc = localStorage.get("city");
+                        const cityLoc = localStorage.getItem("city");
                         // console.log("cityLoc", cityLoc);
 
                         const dataToSend = {
@@ -2784,25 +2281,16 @@ const CartPage = observer(
                         dataToSend.phone = String(tel);
                         dataToSend.payment = this.state.payment;
                         dataToSend.coupon = this.state.coupsCont;
-
+                        const that = this;
                         if (delChoose || pickUpChoose) {
                           const addressData = {
-                            geoId: localStorage.get("city").geoId,
+                            geoId: localStorage.getItem("city").geoId,
                             country: "Россия",
                             region: cityLoc.region,
                             locality: cityLoc.name,
-                            street:
-                              deliveryData.pvz !== undefined
-                                ? deliveryData.Street
-                                : adress,
-                            house:
-                              deliveryData.pvz !== undefined
-                                ? deliveryData.House
-                                : house,
-                            apartment:
-                              deliveryData.pvz !== undefined
-                                ? deliveryData.Apartment
-                                : flat,
+                            street: deliveryData.pvz !== undefined ? deliveryData.Street : adress,
+                            house: deliveryData.pvz !== undefined ? deliveryData.House : house,
+                            apartment: deliveryData.pvz !== undefined ? deliveryData.Apartment : flat,
                           };
 
                           const contacts = {
@@ -2862,10 +2350,17 @@ const CartPage = observer(
                                     },
                                   },
                                 });
+
+                                // window._tmr.push({
+                                //   type: "itemView",
+                                //   productid: String(this.data.slug),
+                                //   pagetype: "cart",
+                                //   list: "VALUE",
+                                //   totalvalue: String(this.data.price),
+                                // });
                               }
 
-                              localStorage.removeItem("coupsCont");
-                              localStorage.set("deleteCart", true);
+                              localStorage.setItem("deleteCart", true);
 
                               if (dataToSend.payment === "PREPAID") {
                                 const checkout = new window.YandexCheckout({
@@ -2874,6 +2369,8 @@ const CartPage = observer(
                                   embedded_3ds: true, // Способ прохождения аутентификации 3-D Secure — во всплывающем окне
                                   error_callback(error) {
                                     console.log("error :>> ", error);
+                                    that.cancelPay();
+                                    $("#createOrder").removeClass("deactive");
                                   },
                                 });
 
@@ -2883,6 +2380,7 @@ const CartPage = observer(
                                 $(".sidebar-cart").addClass("visible");
 
                                 $("body").addClass("no-scroll");
+                                localStorage.removeItem("coupsCont");
                                 // if (
                                 //   deliveryData.deliveryOption !== undefined &&
                                 //   deliveryData.type === undefined
@@ -2911,6 +2409,7 @@ const CartPage = observer(
                                 //       console.log("err", err);
                                 //     });
                                 // } else {
+                                localStorage.removeItem("coupsCont");
                                 window.location.href = data.return;
                                 // }
                               }
@@ -2934,6 +2433,7 @@ const CartPage = observer(
                               setTimeout(() => {
                                 $("#createOrder").text("Заказать");
                               }, 3000);
+                              this.cancelPay();
                             })
                             .finally(() => {
                               $("#createOrder").removeClass("deactive");
@@ -2941,11 +2441,12 @@ const CartPage = observer(
                         } else if (pickUpStoreChoose) {
                           dataToSend.pickUpChoose = true;
 
-                          dataToSend.address = this.stores[
-                            this.state.pickUpStore
-                          ].address;
+                          dataToSend.address = this.stores[this.state.pickUpStore].address;
                           dataToSend.city = "Москва";
                           dataToSend.store = this.state.pickUpStore;
+
+                          // console.log("object :>> ", dataToSend);
+                          // return;
 
                           api
                             .setOrderData({
@@ -2955,8 +2456,7 @@ const CartPage = observer(
                                 store: this.state.pickUpStore,
                                 deliveryForCustomer: 0,
                                 address: {
-                                  locality: this.stores[this.state.pickUpStore]
-                                    .address,
+                                  locality: this.stores[this.state.pickUpStore].address,
                                 },
                                 productForYA,
                                 payItems,
@@ -2977,7 +2477,7 @@ const CartPage = observer(
                                 });
                               }
 
-                              localStorage.set("deleteCart", true);
+                              localStorage.setItem("deleteCart", true);
 
                               if (dataToSend.payment === "PREPAID") {
                                 const checkout = new window.YandexCheckout({
@@ -2986,23 +2486,27 @@ const CartPage = observer(
                                   embedded_3ds: true, // Способ прохождения аутентификации 3-D Secure — во всплывающем окне
                                   error_callback(error) {
                                     console.log("error :>> ", error);
+                                    that.cancelPay();
+                                    $("#createOrder").removeClass("deactive");
                                   },
                                 });
 
                                 checkout.render("payment-form");
 
-                                localStorage.set("deleteCart", true);
+                                localStorage.setItem("deleteCart", true);
 
                                 $(".sidebar-overlay").addClass("active");
                                 $(".sidebar-cart").addClass("visible");
 
                                 $("body").addClass("no-scroll");
+                                localStorage.removeItem("coupsCont");
 
                                 // window.widget.setOrderInfo({
                                 //   ...this.order,
                                 //   externalId: String(data.orderId),
                                 // });
                               } else {
+                                localStorage.removeItem("coupsCont");
                                 window.location.href = data.return;
                               }
 
@@ -3025,6 +2529,7 @@ const CartPage = observer(
                               setTimeout(() => {
                                 $("#createOrder").text("Заказать");
                               }, 3000);
+                              this.cancelPay();
                             })
                             .finally(() => {
                               $("#createOrder").removeClass("deactive");
@@ -3043,15 +2548,10 @@ const CartPage = observer(
                           tel.includes("_")
                           ? "Указать контактные данные"
                           : "Заказать"
-                        : this.state.delChoose &&
-                          (Object.keys(this.state.deliveryData) === 0 ||
-                            adress.length === 0 ||
-                            house.length === 0)
+                        : this.state.delChoose && (Object.keys(this.state.deliveryData).length === 0 || adress.length === 0 || house.length === 0)
                         ? "Выбрать доставку"
-                        : (this.state.pickUpChoose &&
-                            Object.keys(deliveryData).length === 0) ||
-                          (this.state.pickUpStoreChoose &&
-                            this.state.pickUpStore === "")
+                        : (this.state.pickUpChoose && Object.keys(deliveryData).length === 0) ||
+                          (this.state.pickUpStoreChoose && this.state.pickUpStore === "")
                         ? "Выбрать пункт самовывоза"
                         : name.length === 0 ||
                           secondName.length === 0 ||
@@ -3067,34 +2567,31 @@ const CartPage = observer(
                   </div>
                   <div className="cart-page__coups">{coupRender}</div>
                   <div className="cart-page__promo">
-                    <input
-                      className="def"
-                      id="coup"
-                      placeholder="Промокод"
-                      type="text"
-                    />{" "}
+                    <input className="def" id="coup" placeholder="Промокод" type="text" />{" "}
                     <button
                       onClick={() => {
-                        const thisCertAvalHere = Object.keys(
-                          this.state.coupsCont
-                        ).includes($("#coup").val().toLowerCase());
+                        const thisCertAvalHere = Object.keys(this.state.coupsCont).includes($("#coup").val().toLowerCase());
                         let avalRegistCert = false;
+                        let avalBlogersCert = false;
 
                         Object.keys(this.state.coupsCont).forEach((coup) => {
                           if (coup.includes("r-")) {
                             avalRegistCert = true;
                           }
+                          if (coup.includes("b-") || coup.includes("juliafir")) {
+                            avalBlogersCert = true;
+                          }
                         });
+
+                        const blogInLine = $("#coup").val().toLowerCase().includes("b-") || $("#coup").val().toLowerCase().includes("juliafir");
 
                         if (
                           $("#coup").val() !== "" &&
                           !thisCertAvalHere &&
-                          !avalRegistCert
+                          (!avalRegistCert || !$("#coup").val().toLowerCase().includes("r-")) &&
+                          (!avalBlogersCert || !blogInLine)
                         ) {
-                          const coupClear = $("#coup")
-                            .val()
-                            .match(/\S/gi)
-                            .join("");
+                          const coupClear = $("#coup").val().match(/\S/gi).join("");
                           api
                             .coupon({
                               code: coupClear.toLowerCase(),
@@ -3110,26 +2607,17 @@ const CartPage = observer(
                                   id: d.data.id,
                                 };
 
-                                localStorage.set("coupsCont", newCoupsCont);
+                                localStorage.setItem("coupsCont", newCoupsCont);
                                 $("#coup").val("");
                                 // this.props.store.createOrderData(this.state.payment)
                                 this.setState({
                                   coupsCont: newCoupsCont,
                                 });
                               } else {
-                                $(".cart-page__promo")
-                                  .find(".alert-message")
-                                  .removeClass("alert-message_warning");
-                                $(".cart-page__promo")
-                                  .find(".alert-message")
-                                  .addClass("alert-message_error");
-                                $(".cart-page__promo")
-                                  .find(".alert-message")
-                                  .find("p")
-                                  .text("Промокода не существует");
-                                $(".cart-page__promo")
-                                  .find(".alert-message")
-                                  .addClass("alert-message_active");
+                                $(".cart-page__promo").find(".alert-message").removeClass("alert-message_warning");
+                                $(".cart-page__promo").find(".alert-message").addClass("alert-message_error");
+                                $(".cart-page__promo").find(".alert-message").find("p").text("Промокода не существует");
+                                $(".cart-page__promo").find(".alert-message").addClass("alert-message_active");
                               }
                             });
                         } else {
@@ -3140,19 +2628,10 @@ const CartPage = observer(
                             }, 4000);
                           } else {
                             // console.log("object :>> ");
-                            $(".cart-page__promo")
-                              .find(".alert-message")
-                              .removeClass("alert-message_error");
-                            $(".cart-page__promo")
-                              .find(".alert-message")
-                              .addClass("alert-message_warning");
-                            $(".cart-page__promo")
-                              .find(".alert-message")
-                              .find("p")
-                              .text("Промокод уже использован");
-                            $(".cart-page__promo")
-                              .find(".alert-message")
-                              .addClass("alert-message_active");
+                            $(".cart-page__promo").find(".alert-message").removeClass("alert-message_error");
+                            $(".cart-page__promo").find(".alert-message").addClass("alert-message_warning");
+                            $(".cart-page__promo").find(".alert-message").find("p").text("Промокод уже использован");
+                            $(".cart-page__promo").find(".alert-message").addClass("alert-message_active");
                           }
                         }
                       }}
@@ -3164,9 +2643,7 @@ const CartPage = observer(
                       <button
                         className="ic i_close"
                         onClick={(e) => {
-                          $(e.target)
-                            .parent()
-                            .removeClass("alert-message_active");
+                          $(e.target).parent().removeClass("alert-message_active");
                         }}
                       ></button>
                     </div>
@@ -3179,7 +2656,20 @@ const CartPage = observer(
       );
     }
 
+    runLoadDelivCost = () => {
+      if (Object.keys(this.props.store.productInCart).length !== 0) {
+        this.choosePaymentType(undefined, "PREPAID");
+      } else {
+        setTimeout(() => {
+          this.runLoadDelivCost();
+        }, 1000);
+      }
+    };
+
     componentDidMount() {
+      setInterval(() => {
+        window.location.reload();
+      }, 1000 * 60 * 60 * 24);
       const tel = new Inputmask({
         mask: "+7 (999) 999 99 99",
         showMaskOnHover: false,
@@ -3191,11 +2681,7 @@ const CartPage = observer(
       const coupsCont = localStorage.getItem("coupsCont");
       // console.log("coupsCont :>> ", coupsCont);
 
-      if (
-        coupsCont !== undefined &&
-        coupsCont !== null &&
-        coupsCont !== "undefined"
-      ) {
+      if (coupsCont !== undefined && coupsCont !== null && coupsCont !== "undefined") {
         Object.keys(coupsCont).forEach((coup) => {
           api.coupon({ code: coup.toLowerCase() }).then((d) => {
             if (d.status === 400) {
@@ -3212,7 +2698,8 @@ const CartPage = observer(
           });
         });
       }
-      this.choosePaymentType(undefined, "PREPAID");
+
+      this.runLoadDelivCost();
     }
   }
 );

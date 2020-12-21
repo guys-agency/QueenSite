@@ -106,7 +106,60 @@
     .btn_primary {
       width: 100%;
     }
+
+    .city-choose_cart {
+      margin-bottom: 15px;
+      .col {
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      .city-choose__title {
+        // display: flex;
+        padding: 9px 0px;
+        font-size: 14px;
+        font-weight: 500;
+        color: #89a5bf;
+        // max-width: 140px;
+        @include max($s) {
+          width: 100%;
+          margin: 0px;
+        }
+      }
+      .gift__drop-btn {
+        height: 40px;
+        width: 295px;
+        margin-left: 20px;
+        @include max($s) {
+          width: 100%;
+          margin: 0px;
+        }
+      }
+    }
+
     &-details {
+      .cart-page__list .cart-page__list-elem_adress .cart-page__store-info {
+        margin-bottom: 0px;
+      }
+      .city-choose_cart {
+        margin-bottom: 30px;
+        // .city-choose__title {
+        //   padding: 9px 0px;
+        //   font-size: 16px;
+        //   font-weight: 500;
+        //   color: #89a5bf;
+
+        //   &::after {
+        //     content: " *";
+        //     color: #ba250d;
+        //   }
+        // }
+
+        // .gift__drop-btn {
+        //   height: 40px;
+        // }
+      }
+
       .items {
         margin-bottom: 20px;
       }

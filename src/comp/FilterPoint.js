@@ -7,16 +7,17 @@ const FilterPoint = observer(
   class FilterPoint extends Component {
     state = {
       inFilter: false,
-      classStyle: this.props.store.activeFilters.choosePoint.includes(
-        this.props.objectName
-      ),
+      classStyle: this.props.store.activeFilters.choosePoint.includes(this.props.objectName),
     };
 
     clickHandler = (filterPoint) => {
       const { objectName, name } = this.props;
-      const { activeFilters } = this.props.store;
+      const { activeFilters, searchText } = this.props.store;
 
       let searchQt = "";
+      if (searchText.length) {
+        searchQt = "search=" + encodeURIComponent(searchText);
+      }
       if (objectName === "measure") {
         const number = Object.keys(activeFilters[objectName]).indexOf(name);
         if (number === -1) {
@@ -26,9 +27,7 @@ const FilterPoint = observer(
           activeFilters.choosePoint.push(objectName);
           // console.log("number :>> ", number);
         } else {
-          const valueNumber = activeFilters[objectName][name].indexOf(
-            String(filterPoint)
-          );
+          const valueNumber = activeFilters[objectName][name].indexOf(String(filterPoint));
           // console.log("valueNumber :>> ", valueNumber);
           if (valueNumber === -1) {
             activeFilters[objectName][name].push(String(filterPoint));
@@ -48,16 +47,13 @@ const FilterPoint = observer(
         if (number === -1) {
           activeFilters[objectName].push(filterPoint);
           activeFilters.count += 1;
-          if (activeFilters.choosePoint.indexOf(objectName) === -1)
-            activeFilters.choosePoint.push(objectName);
+          if (activeFilters.choosePoint.indexOf(objectName) === -1) activeFilters.choosePoint.push(objectName);
         } else {
           activeFilters.count -= 1;
           activeFilters[objectName].splice(number, 1);
 
           if (!activeFilters[objectName].length) {
-            const numberInChoose = activeFilters.choosePoint.indexOf(
-              objectName
-            );
+            const numberInChoose = activeFilters.choosePoint.indexOf(objectName);
             activeFilters.choosePoint.splice(numberInChoose, 1);
           }
         }
@@ -69,11 +65,9 @@ const FilterPoint = observer(
             if (filterName !== "measure") {
               if (activeFilters[filterName].length) {
                 if (!searchQt.length) {
-                  searchQt =
-                    filterName + "=" + activeFilters[filterName].join();
+                  searchQt = filterName + "=" + activeFilters[filterName].join();
                 } else {
-                  searchQt +=
-                    "&&" + filterName + "=" + activeFilters[filterName].join();
+                  searchQt += "&&" + filterName + "=" + activeFilters[filterName].join();
                 }
               }
             } else {
@@ -82,20 +76,9 @@ const FilterPoint = observer(
                 Object.keys(activeFilters[filterName]).forEach((ind) => {
                   // console.log("ind :>> ", activeFilters[filterName][ind]);
                   if (!searchQt.length) {
-                    searchQt =
-                      filterName +
-                      "=" +
-                      ind +
-                      "!~" +
-                      activeFilters[filterName][ind].join(",");
+                    searchQt = filterName + "=" + ind + "!~" + activeFilters[filterName][ind].join(",");
                   } else {
-                    searchQt +=
-                      "&&" +
-                      filterName +
-                      "=" +
-                      ind +
-                      "!~" +
-                      activeFilters[filterName][ind].join(",");
+                    searchQt += "&&" + filterName + "=" + ind + "!~" + activeFilters[filterName][ind].join(",");
                   }
                 });
               }
@@ -130,9 +113,7 @@ const FilterPoint = observer(
           let number;
           if (objectName === "measure") {
             if (Object.keys(activeFilters[objectName]).includes(name)) {
-              number = activeFilters[objectName][name].includes(
-                String(filterPoint)
-              );
+              number = activeFilters[objectName][name].includes(String(filterPoint));
             } else {
               number = false;
             }
@@ -170,16 +151,11 @@ const FilterPoint = observer(
                 this.setState({ classStyle: !classStyle });
               }}
             >
-              {name}{" "}
-              <p className="filter__active-filt">{activeFilt.join(", ")}</p>
+              {name} <p className="filter__active-filt">{activeFilt.join(", ")}</p>
               <div className="ic i_drop"></div>
             </h3>
 
-            <div
-              className={"filter__container " + (classStyle ? "active" : "")}
-            >
-              {filterPoints}
-            </div>
+            <div className={"filter__container " + (classStyle ? "active" : "")}>{filterPoints}</div>
           </div>
         )
       );

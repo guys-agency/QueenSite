@@ -2,7 +2,6 @@ import { observer } from "mobx-react";
 import React from "react";
 import { Formik } from "formik";
 import $ from "jquery";
-import GiftSchema from "../schemas/giftSchema";
 
 const { Component } = React;
 

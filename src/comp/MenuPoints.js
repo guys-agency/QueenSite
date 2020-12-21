@@ -13,6 +13,8 @@ import ChangeSidebar from "./ChangeProfileData";
 import CityCh from "./CityCh";
 import api from "./api";
 import localStorage from "mobx-localstorage";
+import store from "../MobxStore";
+import moment from "moment";
 
 const { Component } = React;
 
@@ -24,7 +26,7 @@ const MenuPoints = observer(
       popreg: false,
 
       reg: false,
-      log: true,
+      log: false,
       login: "",
       password: "",
       name: "",
@@ -62,7 +64,7 @@ const MenuPoints = observer(
     );
 
     service = (
-      <div className="header__drop">
+      <div className="header__drop" style={{ width: "160px" }}>
         <button
           className="btn btn_wide vis-s"
           onClick={(e) => {
@@ -115,7 +117,7 @@ const MenuPoints = observer(
           </li>
           <li>
             <Link to="/help/policy" onClick={this.closeNav}>
-              Политика конфиденциальности
+              Конфиденциальность
             </Link>
           </li>
           {/* <li>
@@ -258,7 +260,12 @@ const MenuPoints = observer(
           .getUserData()
           .then((data) => {
             // this.props.store.addToLike(true);
-            this.props.store.userData = data;
+            if (data.status === 404) {
+              localStorage.removeItem("auth");
+            } else {
+              this.props.store.userData = data;
+            }
+
             // console.log(
             //   "this.props.store.userData :>> ",
             //   this.props.store.userData
@@ -266,6 +273,7 @@ const MenuPoints = observer(
           })
           .catch((err) => {
             console.log("err :>> ", err);
+            localStorage.removeItem("auth");
           });
       }
     }
@@ -322,14 +330,12 @@ const MenuPoints = observer(
             $(".menu_sub").off("click", self.toggleDrop);
             if (
               document.body.clientWidth < 760 &&
-              localStorage.get("city") !== null &&
-              localStorage.get("city") !== undefined &&
+              localStorage.getItem("city") !== null &&
+              localStorage.getItem("city") !== undefined &&
               document.querySelector(".sidebar-overlay") !== null &&
-              localStorage.get("city").sourse === "Y"
+              localStorage.getItem("city").sourse === "Y"
             ) {
-              document
-                .querySelector(".sidebar-overlay")
-                .classList.add("active");
+              document.querySelector(".sidebar-overlay").classList.add("active");
               document.querySelector(".sidebar-overlay").classList.add("city");
               document.querySelector("body").classList.add("no-scroll");
             }
@@ -452,16 +458,8 @@ const MenuPoints = observer(
 
             elem.childs.sort((prev, next) => {
               if (prev.name.includes(" до ") && next.name.includes(" до ")) {
-                if (
-                  +prev.name.split(" до ")[1].split(" ")[0] <
-                  +next.name.split(" до ")[1].split(" ")[0]
-                )
-                  return -1;
-                if (
-                  +prev.name.split(" до ")[1].split(" ")[0] >
-                  +next.name.split(" до ")[1].split(" ")[0]
-                )
-                  return 1;
+                if (+prev.name.split(" до ")[1].split(" ")[0] < +next.name.split(" до ")[1].split(" ")[0]) return -1;
+                if (+prev.name.split(" до ")[1].split(" ")[0] > +next.name.split(" до ")[1].split(" ")[0]) return 1;
                 return 1;
               } else {
                 if (prev.name < next.name) return -1;
@@ -469,13 +467,7 @@ const MenuPoints = observer(
                 return 1;
               }
             });
-            const firstName = [
-              "Учителям",
-              "Влюбленным",
-              "Женщинам",
-              "Мужчинам",
-              "Родителям",
-            ];
+            const firstName = ["Учителям", "Влюбленным", "Женщинам", "Мужчинам", "Родителям"];
             const first = [];
 
             elem.childs.forEach((child, iCh) => {
@@ -484,10 +476,7 @@ const MenuPoints = observer(
               if (elem.name === "Подарки" && firstName.includes(child.name)) {
                 first.push(
                   <li key={child.name}>
-                    <NavLink
-                      to={`/catalog/${elem.slug}/${child.slug}`}
-                      onClick={this.closeNav}
-                    >
+                    <NavLink to={`/catalog/${elem.slug}/${child.slug}`} onClick={this.closeNav}>
                       {child.name}
                     </NavLink>
                   </li>
@@ -495,10 +484,7 @@ const MenuPoints = observer(
               } else {
                 childsPoints.push(
                   <li key={child.name}>
-                    <NavLink
-                      to={`/catalog/${elem.slug}/${child.slug}`}
-                      onClick={this.closeNav}
-                    >
+                    <NavLink to={`/catalog/${elem.slug}/${child.slug}`} onClick={this.closeNav}>
                       {child.name}
                     </NavLink>
                   </li>
@@ -506,43 +492,50 @@ const MenuPoints = observer(
               }
             });
 
-            if (elem.name === "Сервировка стола") {
+            if (elem.name === "Новый год") {
               menu[0] = (
                 <div key={elem.name}>
                   <h5>{elem.name}</h5>
                   <ul>{childsPoints}</ul>
                 </div>
               );
-            } else if (elem.name === "Для приготовления") {
+            } else if (elem.name === "Сервировка стола") {
               menu[1] = (
                 <div key={elem.name}>
                   <h5>{elem.name}</h5>
                   <ul>{childsPoints}</ul>
                 </div>
               );
-            } else if (elem.name === "Напитки") {
+            } else if (elem.name === "Для приготовления") {
               menu[2] = (
                 <div key={elem.name}>
                   <h5>{elem.name}</h5>
                   <ul>{childsPoints}</ul>
                 </div>
               );
-            } else if (elem.name === "Кофе и чай") {
+            } else if (elem.name === "Напитки") {
               menu[3] = (
                 <div key={elem.name}>
                   <h5>{elem.name}</h5>
                   <ul>{childsPoints}</ul>
                 </div>
               );
-            } else if (elem.name === "Аксессуары для стола") {
+            } else if (elem.name === "Кофе и чай") {
               menu[4] = (
                 <div key={elem.name}>
                   <h5>{elem.name}</h5>
                   <ul>{childsPoints}</ul>
                 </div>
               );
-            } else if (elem.name === "Интерьер") {
+            } else if (elem.name === "Аксессуары для стола") {
               menu[5] = (
+                <div key={elem.name}>
+                  <h5>{elem.name}</h5>
+                  <ul>{childsPoints}</ul>
+                </div>
+              );
+            } else if (elem.name === "Интерьер") {
+              menu[6] = (
                 <div key={elem.name}>
                   <h5>{elem.name}</h5>
                   <ul>{childsPoints}</ul>
@@ -550,14 +543,14 @@ const MenuPoints = observer(
               );
               this.interier.push(<ul key={elem.name}>{childsPoints}</ul>);
             } else if (elem.name === "Наборы") {
-              menu[6] = (
+              menu[7] = (
                 <div key={elem.name}>
                   <h5>{elem.name}</h5>
                   <ul>{childsPoints}</ul>
                 </div>
               );
             } else if (elem.name === "Сервизы") {
-              menu[7] = (
+              menu[8] = (
                 <div key={elem.name}>
                   <h5>{elem.name}</h5>
                   <ul>{childsPoints}</ul>
@@ -568,7 +561,7 @@ const MenuPoints = observer(
             } else if (elem.name === "Подарки") {
               let ind = 0;
               let sum = 0;
-              let key = 0;
+              let key = 1;
               let timeCont = [];
 
               // childsPoints.sort((prev, next) => {
@@ -586,7 +579,7 @@ const MenuPoints = observer(
               // });
               if (first.length) {
                 this.gifts.push(
-                  <div className="column" key={key}>
+                  <div className="column" key="0">
                     <ul>{first}</ul>
                   </div>
                 );
@@ -620,12 +613,23 @@ const MenuPoints = observer(
 
           this.props.store.fullCats = data;
           for (let index = 0; index < Object.keys(menu).length; index += 2) {
-            this.menuContainer.push(
-              <div className="column" key={index}>
-                {menu[index]}
-                {menu[index + 1]}
-              </div>
-            );
+            if (index === 2) {
+              this.menuContainer.push(
+                <div className="column" key={index}>
+                  {menu[index]}
+                  {menu[index + 1]}
+                  {menu[index + 2]}
+                </div>
+              );
+              index += 1;
+            } else {
+              this.menuContainer.push(
+                <div className="column" key={index}>
+                  {menu[index]}
+                  {menu[index + 1]}
+                </div>
+              );
+            }
           }
 
           this.props.store.loaderInc = 100;
@@ -677,7 +681,7 @@ const MenuPoints = observer(
     };
 
     render() {
-      const { collInMenu } = this.props.store;
+      const { collInMenu, onePlusOneSlug } = this.props.store;
 
       // const { store } = this.props;
       // const { collectionsData } = store;
@@ -731,15 +735,12 @@ const MenuPoints = observer(
                 this.props.location.pathname.includes("/closeout") ||
                 this.props.location.pathname.includes("/ideas") ||
                 this.props.location.pathname.includes("/hits") ||
-                this.props.location.pathname.includes("/new") ||
+                (this.props.location.pathname.includes("/new") && !this.props.location.pathname.includes("/new-")) ||
                 this.props.location.pathname.includes("/help") ||
                 this.props.location.pathname.includes("/search")
                   ? "header_w "
                   : " ") +
-                (this.props.location.pathname.includes("/finish") ||
-                this.props.location.pathname.includes("/cart")
-                  ? "header_dn "
-                  : " ")
+                (this.props.location.pathname.includes("/finish") || this.props.location.pathname.includes("/cart") ? "header_dn " : " ")
               }
             >
               <div className="container container_f">
@@ -838,9 +839,7 @@ const MenuPoints = observer(
                 <button
                   className="cart ic i_bag"
                   onClick={() => {
-                    document
-                      .querySelector(".sidebar-overlay")
-                      .classList.add("active");
+                    document.querySelector(".sidebar-overlay").classList.add("active");
 
                     document.querySelector("body").classList.add("no-scroll");
 
@@ -849,11 +848,7 @@ const MenuPoints = observer(
                 >
                   {this.props.store.cartCount !== 0 && (
                     <span className="i_bag__counter">
-                      {this.props.store.cartCount > 9
-                        ? 9
-                        : this.props.store.cartCount === 0
-                        ? ""
-                        : this.props.store.cartCount}
+                      {this.props.store.cartCount > 9 ? 9 : this.props.store.cartCount === 0 ? "" : this.props.store.cartCount}
                     </span>
                   )}
                 </button>
@@ -861,9 +856,7 @@ const MenuPoints = observer(
                 <div className="tooltip tooltip_cart">
                   <div className="tooltip__content">
                     <span className="ic i_plus"></span>
-                    <div className="text">
-                      Кружка 370 мл Модерн, черная матовая
-                    </div>
+                    <div className="text">Кружка 370 мл Модерн, черная матовая</div>
                   </div>
                 </div>
               </div>
@@ -878,14 +871,11 @@ const MenuPoints = observer(
                 this.props.location.pathname.includes("/closeout") ||
                 this.props.location.pathname.includes("/ideas") ||
                 this.props.location.pathname.includes("/hits") ||
-                this.props.location.pathname.includes("/new") ||
+                (this.props.location.pathname.includes("/new") && !this.props.location.pathname.includes("/new-")) ||
                 this.props.location.pathname.includes("/help")
                   ? "navigation_w "
                   : " ") +
-                (this.props.location.pathname.includes("/finish") ||
-                this.props.location.pathname.includes("/cart")
-                  ? "navigation_dn "
-                  : " ")
+                (this.props.location.pathname.includes("/finish") || this.props.location.pathname.includes("/cart") ? "navigation_dn " : " ")
               }
             >
               <div className="container container_f">
@@ -901,10 +891,7 @@ const MenuPoints = observer(
                     <span className="ic i_menu"></span> Каталог
                   </button>
                   <span className="menu__sub ">
-                    <Link
-                      to="/collections"
-                      className="menu-point menu-point_collections"
-                    >
+                    <Link to="/collections" className="menu-point menu-point_collections">
                       Коллекции
                     </Link>
                     <div className="menu menu_sub menu_collection">
@@ -912,9 +899,7 @@ const MenuPoints = observer(
                         <button
                           className="btn btn_prev"
                           onClick={(e) => {
-                            e.target
-                              .closest(".menu")
-                              .classList.remove("visible");
+                            e.target.closest(".menu").classList.remove("visible");
                           }}
                         >
                           <span className="ic i_left"></span> Назад
@@ -924,7 +909,7 @@ const MenuPoints = observer(
                     </div>
                   </span>
 
-                  <span className="menu__drop">
+                  {/* <span className="menu__drop">
                     <Link to="/catalog/premium" className="menu-point">
                       Премиум
                     </Link>
@@ -933,9 +918,7 @@ const MenuPoints = observer(
                         <button
                           className="btn btn_prev"
                           onClick={(e) => {
-                            e.target
-                              .closest(".menu")
-                              .classList.remove("visible");
+                            e.target.closest(".menu").classList.remove("visible");
                             $(".navigation").scrollTop(0);
                           }}
                         >
@@ -944,7 +927,7 @@ const MenuPoints = observer(
                         <div className="column">{this.premium}</div>
                       </div>
                     </div>
-                  </span>
+                  </span> */}
 
                   {/* <span className="menu__drop">
                     <Link className="menu-point">Милениум</Link>
@@ -968,9 +951,7 @@ const MenuPoints = observer(
                         <button
                           className="btn btn_prev"
                           onClick={(e) => {
-                            e.target
-                              .closest(".menu")
-                              .classList.remove("visible");
+                            e.target.closest(".menu").classList.remove("visible");
                           }}
                         >
                           <span className="ic i_left"></span> Назад
@@ -996,9 +977,7 @@ const MenuPoints = observer(
                         <button
                           className="btn btn_prev"
                           onClick={(e) => {
-                            e.target
-                              .closest(".menu")
-                              .classList.remove("visible");
+                            e.target.closest(".menu").classList.remove("visible");
                           }}
                         >
                           <span className="ic i_left"></span> Назад
@@ -1016,28 +995,52 @@ const MenuPoints = observer(
                     </span>
                   )}
 
-                  <span className="menu__drop">
-                    {localStorage.get("BFcheck") === true ||
-                    localStorage.get("BFcheck") === "true" ? (
-                      <Link to="/close-sale" className="menu-point sale-point">
-                        Закрытая распродажа
-                      </Link>
-                    ) : (
-                      <Link
-                        to="/black-friday"
-                        className="menu-point sale-point"
-                      >
-                        Черная пятница
-                      </Link>
-                    )}
-                    {/* <div className="menu menu_sub">
+                  {/* <span className="menu__drop">
+                    <Link to="/catalog/interer" className="menu-point">
+                      Интерьер
+                    </Link>
+                    <div className="menu menu_sub">
                       <div className="container container_f">
                         <button
                           className="btn btn_prev"
                           onClick={(e) => {
-                            e.target
-                              .closest(".menu")
-                              .classList.remove("visible");
+                            e.target.closest(".menu").classList.remove("visible");
+                          }}
+                        >
+                          <span className="ic i_left"></span> Назад
+                        </button>
+                        <div className="column">{this.interier}</div>
+                      </div>
+                    </div>
+                  </span> */}
+
+                  <span className="menu__drop">
+                    {/* {localStorage.getItem("BFcheck") === true || localStorage.getItem("BFcheck") === "true" ? (
+                        <Link to="/close-sale" className="menu-point sale-point">
+                          Закрытая распродажа
+                        </Link>
+                      ) : (
+                        <Link to="/black-friday" className="menu-point sale-point">
+                          Черная пятница
+                        </Link>
+                      )} */}
+
+                    <Link
+                      to="/actions"
+                      className="menu-point"
+                      onClick={(e) => {
+                        // this.toggleDrop(e);
+                        // e.preventDefault();
+                      }}
+                    >
+                      Акции
+                    </Link>
+                    <div className="menu menu_sub">
+                      <div className="container container_f">
+                        <button
+                          className="btn btn_prev"
+                          onClick={(e) => {
+                            e.target.closest(".menu").classList.remove("visible");
                           }}
                         >
                           <span className="ic i_left"></span> Назад
@@ -1054,15 +1057,22 @@ const MenuPoints = observer(
                                 Акции
                               </NavLink>
                             </li>
-                            <li>
-                              <NavLink to="/main/1+13" onClick={this.closeNav}>
-                                1 + 1 = 3
-                              </NavLink>
-                            </li>
+                            {onePlusOneSlug && (
+                              <li>
+                                <NavLink to={`/main/${onePlusOneSlug}`} onClick={this.closeNav}>
+                                  1 + 1 = 3
+                                </NavLink>
+                              </li>
+                            )}
                           </ul>
                         </div>
                       </div>
-                    </div> */}
+                    </div>
+                  </span>
+                  <span className="menu__drop">
+                    <Link to="/new-year" className="menu-point menu-point_news" style={{ color: "#BA250D", fontWeight: "600" }}>
+                      Новый Год
+                    </Link>
                   </span>
                 </div>
                 <div className="search-pos">
@@ -1079,9 +1089,13 @@ const MenuPoints = observer(
                     <button
                       className="ic i_search"
                       onClick={(e) => {
-                        this.props.store.searchText = this.searchValue;
+                        // this.props.store.searchText = this.searchValue;
 
-                        this.props.history.push("/search");
+                        if (!window.location.pathname.includes("search")) {
+                          this.props.store.productsToRender = [];
+                        }
+
+                        this.props.history.push(`/search?search=${encodeURIComponent(this.searchValue)}`);
 
                         e.preventDefault();
                         this.closeNav(e);
@@ -1093,9 +1107,7 @@ const MenuPoints = observer(
                   <button
                     className="liked ic i_fav"
                     onClick={() => {
-                      document
-                        .querySelector(".sidebar-overlay")
-                        .classList.add("active");
+                      document.querySelector(".sidebar-overlay").classList.add("active");
 
                       document.querySelector("body").classList.add("no-scroll");
 
@@ -1108,9 +1120,7 @@ const MenuPoints = observer(
                   <div className="tooltip tooltip_cart">
                     <div className="tooltip__content">
                       <span className="ic i_plus"></span>
-                      <div className="text">
-                        Кружка 370 мл Модерн, черная матовая
-                      </div>
+                      <div className="text">Кружка 370 мл Модерн, черная матовая</div>
                     </div>
                   </div>
                   <button
@@ -1119,13 +1129,9 @@ const MenuPoints = observer(
                       if (this.props.store.auth) {
                         this.props.history.push("/profile");
                       } else {
-                        document
-                          .querySelector(".sidebar-overlay")
-                          .classList.add("active");
+                        document.querySelector(".sidebar-overlay").classList.add("active");
 
-                        document
-                          .querySelector("body")
-                          .classList.add("no-scroll");
+                        document.querySelector("body").classList.add("no-scroll");
 
                         this.props.store.sideLogin = true;
                       }
@@ -1136,9 +1142,7 @@ const MenuPoints = observer(
                   <button
                     className="cart ic i_bag"
                     onClick={() => {
-                      document
-                        .querySelector(".sidebar-overlay")
-                        .classList.add("active");
+                      document.querySelector(".sidebar-overlay").classList.add("active");
 
                       document.querySelector("body").classList.add("no-scroll");
 
@@ -1147,11 +1151,7 @@ const MenuPoints = observer(
                   >
                     {this.props.store.cartCount !== 0 && (
                       <span className="i_bag__counter">
-                        {this.props.store.cartCount > 9
-                          ? 9
-                          : this.props.store.cartCount === 0
-                          ? ""
-                          : this.props.store.cartCount}
+                        {this.props.store.cartCount > 9 ? 9 : this.props.store.cartCount === 0 ? "" : this.props.store.cartCount}
                       </span>
                     )}
                   </button>
@@ -1258,46 +1258,16 @@ const MenuPoints = observer(
                   </button>
                 )}
               </div>
-              {this.state.popLike && (
-                <LikeSidebar
-                  store={this.props.store}
-                  closeSidebar={this.closeSidebar}
-                />
-              )}
-              {this.props.store.sideAsk && (
-                <AskSidebar
-                  store={this.props.store}
-                  closeSidebar={this.closeSidebar}
-                />
-              )}
-              {this.props.store.changeSide && (
-                <ChangeSidebar
-                  store={this.props.store}
-                  closeSidebar={this.closeSidebar}
-                />
-              )}
-              {this.props.store.sideLogin && (
-                <AuthSidebar
-                  closeSidebar={this.closeSidebar}
-                  store={this.props.store}
-                />
-              )}
-              {this.props.store.sideGift && (
-                <GiftSidebar
-                  closeSidebar={this.closeSidebar}
-                  store={this.props.store}
-                />
-              )}
-              {this.state.popCart && (
-                <CartSidebar
-                  store={this.props.store}
-                  closeSidebar={this.closeSidebar}
-                />
-              )}
+              {this.state.popLike && <LikeSidebar store={this.props.store} closeSidebar={this.closeSidebar} />}
+              {this.props.store.sideAsk && <AskSidebar store={this.props.store} closeSidebar={this.closeSidebar} />}
+              {this.props.store.changeSide && <ChangeSidebar store={this.props.store} closeSidebar={this.closeSidebar} />}
+              {this.props.store.sideLogin && <AuthSidebar closeSidebar={this.closeSidebar} store={this.props.store} />}
+              {this.props.store.sideGift && <GiftSidebar closeSidebar={this.closeSidebar} store={this.props.store} />}
+              {this.state.popCart && <CartSidebar store={this.props.store} closeSidebar={this.closeSidebar} />}
             </div>
 
             <div
-              className="sidebar-overlay"
+              className={"sidebar-overlay" + (this.props.store.sideLogin ? " active" : "")}
               onClick={(e) => {
                 this.setState({
                   popCart: false,
@@ -1314,35 +1284,25 @@ const MenuPoints = observer(
                 e.target.classList.remove("active");
                 document.querySelector(".sidebar").classList.remove("visible");
                 if (document.querySelector(".catalog__bar")) {
-                  document
-                    .querySelector(".catalog__bar")
-                    .classList.remove("visible");
-                  document
-                    .querySelector(".i_filter")
-                    .classList.remove("active");
+                  document.querySelector(".catalog__bar").classList.remove("visible");
+                  document.querySelector(".i_filter").classList.remove("active");
                 }
               }}
             ></div>
 
             {document.body.clientWidth < 760 &&
-              localStorage.get("city") !== null &&
-              localStorage.get("city") !== undefined &&
-              localStorage.get("city").sourse === "Y" && (
+              localStorage.getItem("city") !== null &&
+              localStorage.getItem("city") !== undefined &&
+              localStorage.getItem("city").sourse === "Y" && (
                 <div
                   className="city-check"
                   onClick={(e) => {
                     if (e.target.classList.contains("city-check")) {
-                      const cityData = localStorage.get("city");
+                      const cityData = localStorage.getItem("city");
                       cityData.sourse = "U";
-                      document
-                        .querySelector(".sidebar-overlay")
-                        .classList.remove("active");
-                      document
-                        .querySelector(".sidebar-overlay")
-                        .classList.remove("city");
-                      document
-                        .querySelector("body")
-                        .classList.remove("no-scroll");
+                      document.querySelector(".sidebar-overlay").classList.remove("active");
+                      document.querySelector(".sidebar-overlay").classList.remove("city");
+                      document.querySelector("body").classList.remove("no-scroll");
                       localStorage.setItem("city", cityData);
                     }
                   }}
@@ -1366,17 +1326,11 @@ const MenuPoints = observer(
                       <button
                         className=" btn_yellow btn"
                         onClick={() => {
-                          const cityData = localStorage.get("city");
+                          const cityData = localStorage.getItem("city");
                           cityData.sourse = "U";
-                          document
-                            .querySelector(".sidebar-overlay")
-                            .classList.remove("active");
-                          document
-                            .querySelector(".sidebar-overlay")
-                            .classList.remove("city");
-                          document
-                            .querySelector("body")
-                            .classList.remove("no-scroll");
+                          document.querySelector(".sidebar-overlay").classList.remove("active");
+                          document.querySelector(".sidebar-overlay").classList.remove("city");
+                          document.querySelector("body").classList.remove("no-scroll");
                           localStorage.setItem("city", cityData);
                         }}
                       >
@@ -1407,38 +1361,21 @@ const MenuPoints = observer(
                                           type="submit"
                                           onClick={(e) => {
                                             e.preventDefault();
-                                            $(".header__drop").removeClass(
-                                              "visible"
-                                            );
-                                            document
-                                              .querySelector(".sidebar-overlay")
-                                              .classList.remove("active");
-                                            document
-                                              .querySelector(".sidebar-overlay")
-                                              .classList.remove("city");
-                                            document
-                                              .querySelector("body")
-                                              .classList.remove("no-scroll");
-                                            localStorage.set("city", {
-                                              name:
-                                                one.addressComponents[
-                                                  one.addressComponents.length -
-                                                    1
-                                                ].name,
+                                            $(".header__drop").removeClass("visible");
+                                            document.querySelector(".sidebar-overlay").classList.remove("active");
+                                            document.querySelector(".sidebar-overlay").classList.remove("city");
+                                            document.querySelector("body").classList.remove("no-scroll");
+                                            localStorage.setItem("city", {
+                                              name: one.addressComponents[one.addressComponents.length - 1].name,
                                               geoId: one.geoId,
-                                              region:
-                                                one.addressComponents[2].name,
+                                              region: one.addressComponents[2].name,
                                               sourse: "U",
                                             });
                                           }}
                                         >
-                                          {one.addressComponents[
-                                            one.addressComponents.length - 2
-                                          ].name +
+                                          {one.addressComponents[one.addressComponents.length - 2].name +
                                             ", " +
-                                            one.addressComponents[
-                                              one.addressComponents.length - 1
-                                            ].name}
+                                            one.addressComponents[one.addressComponents.length - 1].name}
                                         </button>
                                       </li>
                                     );
@@ -1469,27 +1406,22 @@ const MenuPoints = observer(
               )}
 
             <div className="bottom-fix">
-              {!this.props.store.auth &&
-                !window.location.pathname.includes("/cart") &&
-                !window.location.pathname.includes("/finish/") && (
-                  <div
-                    className="discond-fix"
-                    onClick={() => {
-                      document
-                        .querySelector(".sidebar-overlay")
-                        .classList.add("active");
+              {!this.props.store.auth && !window.location.pathname.includes("/cart") && !window.location.pathname.includes("/finish/") && (
+                <div
+                  className="discond-fix"
+                  onClick={() => {
+                    document.querySelector(".sidebar-overlay").classList.add("active");
 
-                      document.querySelector("body").classList.add("no-scroll");
+                    document.querySelector("body").classList.add("no-scroll");
 
-                      this.props.store.sideLogin = true;
-                    }}
-                  >
-                    <img src="/image/button/icon/gift.svg"></img>
-                  </div>
-                )}
+                    this.props.store.sideLogin = true;
+                  }}
+                >
+                  <img src="/image/button/icon/gift.svg"></img>
+                </div>
+              )}
 
-              {(localStorage.getItem("cookie-close") === undefined ||
-                localStorage.getItem("cookie-close") === null) && (
+              {(localStorage.getItem("cookie-close") === undefined || localStorage.getItem("cookie-close") === null) && (
                 <div className="cookie-message">
                   <p>Наш сайт использует cookie</p>
                   <button

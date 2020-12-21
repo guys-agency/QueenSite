@@ -1,18 +1,12 @@
 import { observer } from "mobx-react";
 import React from "react";
 import { withRouter } from "react-router";
-import ProductCard from "./ProductCard";
-
-import Paginat from "./paginat";
 
 const ProductCardContainer = observer(
   class ProductCardContainer extends React.Component {
     state = {
       ready: false,
-      sortLabel:
-        this.props.store.sortInProd === ""
-          ? "По умолчанию"
-          : this.props.store.sortInProd,
+      sortLabel: this.props.store.sortInProd === "" ? "По умолчанию" : this.props.store.sortInProd,
     };
 
     searchValue = this.props.store.searchText;
@@ -113,8 +107,7 @@ const ProductCardContainer = observer(
                     <button
                       className="ic i_search"
                       onClick={(e) => {
-                        this.props.store.searchText = this.searchValue;
-                        this.props.history.push("/search");
+                        this.props.history.push(`/search?search=${encodeURIComponent(this.searchValue)}`);
 
                         e.preventDefault();
                       }}
@@ -142,34 +135,19 @@ const ProductCardContainer = observer(
                     >
                       Сначала новые
                     </button> */}
-                      <button
-                        className="dropdown__list-item item"
-                        onClick={this.sortClick}
-                      >
+                      <button className="dropdown__list-item item" onClick={this.sortClick}>
                         По умолчанию
                       </button>
-                      <button
-                        className="dropdown__list-item item"
-                        onClick={this.sortClick}
-                      >
+                      <button className="dropdown__list-item item" onClick={this.sortClick}>
                         Сначала дороже
                       </button>
-                      <button
-                        className="dropdown__list-item item"
-                        onClick={this.sortClick}
-                      >
+                      <button className="dropdown__list-item item" onClick={this.sortClick}>
                         Сначала дешевле
                       </button>
-                      <button
-                        className="dropdown__list-item item"
-                        onClick={this.sortClick}
-                      >
+                      <button className="dropdown__list-item item" onClick={this.sortClick}>
                         Сначала новые
                       </button>
-                      <button
-                        className="dropdown__list-item item"
-                        onClick={this.sortClick}
-                      >
+                      <button className="dropdown__list-item item" onClick={this.sortClick}>
                         Сначала акционные
                       </button>
                     </div>
@@ -178,17 +156,11 @@ const ProductCardContainer = observer(
                     className="ic i_filter btn"
                     onClick={(e) => {
                       e.target.classList.toggle("active");
-                      document
-                        .querySelector(".catalog__bar")
-                        .classList.toggle("visible");
+                      document.querySelector(".catalog__bar").classList.toggle("visible");
 
                       if (document.body.clientWidth < 760) {
-                        document
-                          .querySelector(".sidebar-overlay")
-                          .classList.add("active");
-                        document
-                          .querySelector("body")
-                          .classList.add("no-scroll");
+                        document.querySelector(".sidebar-overlay").classList.add("active");
+                        document.querySelector("body").classList.add("no-scroll");
                       }
                     }}
                   >
@@ -198,9 +170,7 @@ const ProductCardContainer = observer(
               )}
             </div>
             {this.props.store.productsToRender}
-            {window.location.pathname.includes("profile")
-              ? null
-              : this.props.store.paginatCont}
+            {window.location.pathname.includes("profile") ? null : this.props.store.paginatCont}
           </div>
         </div>
       );

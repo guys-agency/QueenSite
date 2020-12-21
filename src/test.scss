@@ -130,12 +130,43 @@ body {
     .product__price {
       color: #fff;
     }
+
+    .sidebar {
+      .product {
+        .product__name {
+          color: #00094d;
+        }
+      }
+      .product__price {
+        color: #00094d;
+        &.product__price_disc {
+          color: #ba250d;
+        }
+      }
+    }
   }
 }
 
+#jvlabelWrap {
+  right: 135px !important;
+}
+#jcont {
+  right: 135px !important;
+}
+.globalClass_84ca {
+  .button_3155 {
+    width: 40px;
+    height: 40px;
+
+    .logoIconCloud_362b {
+      background-size: contain;
+      width: 29px;
+      height: 25px;
+    }
+  }
+}
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 .slider-cont {
   width: 100%;
@@ -327,11 +358,7 @@ code {
         width: 100%;
         left: 0;
         top: 0;
-        background: linear-gradient(
-          180deg,
-          rgba(0, 0, 0, 0) 0%,
-          rgba(0, 0, 0, 0.4) 100%
-        );
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.4) 100%);
         border-radius: 5px;
       }
       .banner__desc {

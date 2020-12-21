@@ -3,7 +3,6 @@ import React from "react";
 import { withRouter } from "react-router";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
-import localStorage from "mobx-localstorage";
 import { Link, NavLink } from "react-router-dom";
 import $ from "jquery";
 import api from "./api";
@@ -13,12 +12,8 @@ const ProductCard = observer(function ProductCard(props) {
 
   const { productInCartList, addtoCart, certInCart } = store;
 
-  const inLike = store.likeContainer.length
-    ? store.likeContainer.indexOf(String(data.slug))
-    : -1;
-  let inCart = Object.keys(store.productInCartList).length
-    ? Object.keys(store.productInCartList).indexOf(String(data.slug))
-    : -1;
+  const inLike = store.likeContainer.length ? store.likeContainer.indexOf(String(data.slug)) : -1;
+  let inCart = Object.keys(store.productInCartList).length ? Object.keys(store.productInCartList).indexOf(String(data.slug)) : -1;
 
   if (Object.keys(productInCartList).length) {
     if (data.name === "Электронный подарочный сертификат" && certInCart) {
@@ -98,6 +93,14 @@ const ProductCard = observer(function ProductCard(props) {
               },
             },
           });
+
+          window._tmr.push({
+            type: "itemView",
+            productid: String(this.data.slug),
+            pagetype: "cart",
+            list: "1",
+            totalvalue: String(this.data.price),
+          });
         }
       }
       api.updateCountStats(data._id, "cart");
@@ -151,16 +154,12 @@ const ProductCard = observer(function ProductCard(props) {
 
   return (
     // <Link className="product" to={`/product/${data.slug}`}>
-    <Link
-      className="product"
-      to={`/product/${data.slug}`}
-      onClick={clickHandler}
-    >
+    <Link className="product" to={`/product/${data.slug}`} onClick={clickHandler}>
       <div className="product__image">
         <div className="product__image-wrp">
           <LazyLoadImage effect="blur" src={imagePath} />
           <div className="product__attr-cont">
-            {data.BFclose && (
+            {/* {data.BFclose && (
               <div
                 className="product__sale"
                 style={{
@@ -171,46 +170,32 @@ const ProductCard = observer(function ProductCard(props) {
               >
                 Закрытый раздел
               </div>
-            )}
+            )} */}
             {data.hit && <div className="product__hit">Хит</div>}
-            {data.sale && !data.BFclose && (
-              <div className="product__sale">Акция</div>
-            )}
+            {data.sale && !data.NY2021 && <div className="product__sale">Акция</div>}
+            {data.NY2021 && <div className="product__sale">Новый год</div>}
 
-            {/* {!data.sale &&
-              data.categories[0].childsSlug[0] !== "sertificats" && (
-                <div className="product__sale">1 + 1 = 3</div>
-              )} */}
+            {data.onePlusOne && <div className="product__sale">1 + 1 = 3</div>}
             {/* {data.new && <div className="product__new">Новинка</div>} */}
           </div>
         </div>
         <div className="product__action">
-          <button
-            className={"ic i_fav" + (inLike === -1 ? "" : " active")}
-          ></button>
-          <button
-            className={"ic i_bag" + (inCart === -1 ? "" : " active")}
-          ></button>
+          <button className={"ic i_fav" + (inLike === -1 ? "" : " active")}></button>
+          <button className={"ic i_bag" + (inCart === -1 ? "" : " active")}></button>
         </div>
       </div>
       <h3 className="product__name">{data.name}</h3>
       {data.sale ? (
         <div className={"product__price product__price_disc"}>
-          <span className="old">{data.regular_price.toLocaleString()} ₽</span>{" "}
-          {data.sale_price.toLocaleString()} ₽{" "}
-          <span className="disc_perc">
-            {((data.sale_price / data.regular_price - 1) * 100).toFixed(0)}%
-          </span>
+          <span className="old">{data.regular_price.toLocaleString()} ₽</span> {data.sale_price.toLocaleString()} ₽{" "}
+          <span className="disc_perc">{((data.sale_price / data.regular_price - 1) * 100).toFixed(0)}%</span>
         </div>
       ) : data.name === "Электронный подарочный сертификат" ? (
-        <div className={"product__price"}>
-          {data.regular_price.toLocaleString()} ₽{" "}
-        </div>
+        <div className={"product__price"}>{data.regular_price.toLocaleString()} ₽ </div>
       ) : (
-        <div className={"product__price product__price_disc"}>
-          <span className="old">{data.regular_price.toLocaleString()} ₽</span>{" "}
-          {Math.floor(data.regular_price * 0.8).toLocaleString()} ₽{" "}
-          <span className="disc_perc disc_perc-bf">- 20%</span>
+        <div className={"product__price"}>
+          {/* <span className="old">{data.regular_price.toLocaleString()} ₽</span>{" "} */}
+          {data.regular_price.toLocaleString()} ₽{" "}
         </div>
       )}
       {/* <p className="product__brand">{data.brand}</p> */}

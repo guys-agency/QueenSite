@@ -2,7 +2,6 @@ import React from "react";
 import { observer } from "mobx-react";
 import localStorage from "mobx-localstorage";
 import $ from "jquery";
-import { cities } from "../constants";
 import api from "./api";
 const { Component } = React;
 
@@ -17,9 +16,9 @@ const CityCh = observer(
           <button className="link dotted header__btn header__btn-city">
             {this.props.store.city} <span className="ic i_drop"></span>
           </button>
-          {localStorage.get("city") !== null &&
-            localStorage.get("city") !== undefined &&
-            localStorage.get("city").sourse === "Y" && (
+          {localStorage.getItem("city") !== null &&
+            localStorage.getItem("city") !== undefined &&
+            localStorage.getItem("city").sourse === "Y" && (
               <div className="header__drop header__drop_city-check">
                 <p>
                   {" "}
@@ -46,7 +45,7 @@ const CityCh = observer(
                   <button
                     className=" btn_yellow btn"
                     onClick={() => {
-                      const cityData = localStorage.get("city");
+                      const cityData = localStorage.getItem("city");
                       cityData.sourse = "U";
                       localStorage.setItem("city", cityData);
                     }}
@@ -89,7 +88,7 @@ const CityCh = observer(
                                   onClick={(e) => {
                                     e.preventDefault();
                                     $(".header__drop").removeClass("visible");
-                                    localStorage.set("city", {
+                                    localStorage.setItem("city", {
                                       name:
                                         one.addressComponents[
                                           one.addressComponents.length - 1

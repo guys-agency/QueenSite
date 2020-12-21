@@ -7,6 +7,7 @@ import $ from "jquery";
 import LoginSchema from "../schemas/loginSchema";
 import RestoreSchema from "../schemas/restoreSchema";
 import { Link } from "react-router-dom";
+import localStorage from "mobx-localstorage";
 
 const { Component } = React;
 
@@ -85,6 +86,7 @@ const AuthSidebar = observer(
                         $("#loginBtn").text("Войти");
                       }, 3000);
                     } else {
+                      localStorage.setItem("auth", true);
                       this.props.store.auth = true;
                       const lc = this.props.store.likeContainer;
                       data.likeProducts.forEach((prod) => {
@@ -92,6 +94,8 @@ const AuthSidebar = observer(
                           lc.push(prod);
                         }
                       });
+
+                      window.location.assign("/profile");
 
                       this.props.store.likeContainer = lc;
                       // const localCartCont = Object.keys(this.props.store.productInCartList);
@@ -110,9 +114,7 @@ const AuthSidebar = observer(
                       // this.props.store.addtoCart(true);
                       this.props.store.sideAsk = false;
                       this.props.store.sideLogin = false;
-                      document
-                        .querySelector(".sidebar-overlay")
-                        .classList.remove("active");
+                      document.querySelector(".sidebar-overlay").classList.remove("active");
                       $("body").removeClass("no-scroll");
                       $(".navigation").removeClass("visible");
                     }
@@ -123,14 +125,7 @@ const AuthSidebar = observer(
               //touched-поля формы, которые мы "затронули",
               //то есть, в которых что-то ввели
             >
-              {({
-                errors,
-                touched,
-                handleSubmit,
-                isSubmitting,
-                values,
-                handleChange,
-              }) => (
+              {({ errors, touched, handleSubmit, isSubmitting, values, handleChange }) => (
                 <>
                   <form className=" visible" onSubmit={handleSubmit}>
                     <div className="input-field">
@@ -163,15 +158,9 @@ const AuthSidebar = observer(
                         value={values.password}
                         onChange={handleChange}
                       />
-                      {errors.password && touched.password && (
-                        <div className="field-error">{errors.password}</div>
-                      )}
+                      {errors.password && touched.password && <div className="field-error">{errors.password}</div>}
                     </div>
-                    <button
-                      type="submit"
-                      className="btn btn_primary"
-                      id="loginBtn"
-                    >
+                    <button type="submit" className="btn btn_primary" id="loginBtn">
                       Войти
                     </button>
                   </form>
@@ -222,14 +211,7 @@ const AuthSidebar = observer(
               //touched-поля формы, которые мы "затронули",
               //то есть, в которых что-то ввели
             >
-              {({
-                errors,
-                touched,
-                handleSubmit,
-                isSubmitting,
-                values,
-                handleChange,
-              }) => (
+              {({ errors, touched, handleSubmit, isSubmitting, values, handleChange }) => (
                 <>
                   <form className=" visible" action="" onSubmit={handleSubmit}>
                     <div className="input-field">
@@ -249,11 +231,7 @@ const AuthSidebar = observer(
                       <div className="field-error">{errors.email}</div>
                     </div>
 
-                    <button
-                      type="submit"
-                      className="btn btn_primary"
-                      id="restorePass"
-                    >
+                    <button type="submit" className="btn btn_primary" id="restorePass">
                       Восстановить пароль
                     </button>
                   </form>
@@ -367,6 +345,7 @@ const AuthSidebar = observer(
                           lc.push(prod);
                         }
                       });
+                      window.location.assign("/profile");
 
                       this.props.store.likeContainer = lc;
                       // const localCartCont = Object.keys(this.props.store.productInCartList);
@@ -385,9 +364,7 @@ const AuthSidebar = observer(
                       // this.props.store.addtoCart(true);
                       this.props.store.sideAsk = false;
                       this.props.store.sideLogin = false;
-                      document
-                        .querySelector(".sidebar-overlay")
-                        .classList.remove("active");
+                      document.querySelector(".sidebar-overlay").classList.remove("active");
                       $("body").removeClass("no-scroll");
                       $(".navigation").removeClass("visible");
                     } else {
@@ -408,14 +385,7 @@ const AuthSidebar = observer(
               //touched-поля формы, которые мы "затронули",
               //то есть, в которых что-то ввели
             >
-              {({
-                errors,
-                touched,
-                handleSubmit,
-                isSubmitting,
-                values,
-                handleChange,
-              }) => (
+              {({ errors, touched, handleSubmit, isSubmitting, values, handleChange }) => (
                 <form className=" visible" onSubmit={handleSubmit}>
                   <div className="input-field">
                     <label className="required" htmlFor="name">
@@ -480,11 +450,7 @@ const AuthSidebar = observer(
                     />
                     <div className="field-error">{errors.repassword}</div>
                   </div>
-                  <button
-                    className="btn btn_primary"
-                    type="submit"
-                    id="registrBtn"
-                  >
+                  <button className="btn btn_primary" type="submit" id="registrBtn">
                     Регистрация
                   </button>
                   <label className="checkbox checkbox_margin">
@@ -514,6 +480,14 @@ const AuthSidebar = observer(
           )}
         </>
       );
+    }
+
+    componentWillMount() {
+      if (window.location.pathname.includes("login")) {
+        this.setState({ reg: false, log: true, pass: false });
+      } else if (window.location.pathname.includes("password")) {
+        this.setState({ reg: false, log: false, pass: true });
+      }
     }
   }
 );

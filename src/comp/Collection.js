@@ -1,6 +1,5 @@
 import { observer } from "mobx-react";
 import React from "react";
-import api from "./api";
 import Filters from "./Filters";
 import ProductCardContainer from "./ProductCardContainer";
 import Breadcrumbs from "./breadcrumbs";

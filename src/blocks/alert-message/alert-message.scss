@@ -5,6 +5,27 @@
   top: -10px;
   border-radius: 10px;
 
+  &_main {
+    position: absolute;
+    top: -52px;
+    right: auto;
+    display: flex;
+    overflow: hidden;
+    height: 44px;
+
+    visibility: hidden;
+    left: 0px;
+
+    opacity: 0;
+    margin-right: 5px;
+    transition: all 0.3s;
+
+    &-active {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+
   &_error {
     background: #ffb2a6;
     /* Red/Middle */
@@ -81,6 +102,7 @@
 
     &::after {
       content: "!";
+      color: #675210;
       position: absolute;
       top: 10px;
       left: 10px;
@@ -113,5 +135,16 @@
 
   &_active {
     display: flex;
+    opacity: 1;
+  }
+}
+
+@keyframes warning {
+  0% {
+    display: flex;
+  }
+
+  100% {
+    opacity: 1;
   }
 }

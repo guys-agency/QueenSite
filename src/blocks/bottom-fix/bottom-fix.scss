@@ -10,6 +10,17 @@
 
   @include max($s) {
     right: 0px;
+    bottom: 20px;
+  }
+
+  @include max($t) {
+    right: 20px;
+
+    bottom: 20px;
+  }
+
+  &.jivo-accept {
+    bottom: 75px;
   }
 
   &.hide {

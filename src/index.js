@@ -8,15 +8,15 @@ import * as serviceWorker from "./serviceWorker";
 import store from "./MobxStore";
 import { BrowserRouter } from "react-router-dom";
 // const WooCommerceRestApi = require("@woocommerce/woocommerce-rest-api").default;
-if (
-  process.env.REACT_APP_TYPE === "prod" &&
-  typeof window.__REACT_DEVTOOLS_GLOBAL_HOOK__ === "object"
-) {
+if (process.env.REACT_APP_TYPE === "prod" && typeof window.__REACT_DEVTOOLS_GLOBAL_HOOK__ === "object") {
   window.__REACT_DEVTOOLS_GLOBAL_HOOK__.inject = function () {};
 }
 window.dataLayer = window.dataLayer || [];
-console.log("process.env.REACT_APP_TYPE :>> ", process.env.REACT_APP_TYPE);
+window._tmr = window._tmr || [];
+console.log("> ", process.env.REACT_APP_TYPE.charAt(0));
 if (process.env.REACT_APP_TYPE === "prod") {
+  console.log("123123 :>> ", 123123);
+  //YANDEX
   (function (m, e, t, r, i, k, a) {
     m[i] =
       m[i] ||
@@ -38,7 +38,36 @@ if (process.env.REACT_APP_TYPE === "prod") {
     webvisor: true,
     ecommerce: "dataLayer",
   });
+
+  //MAIL.RU
+  window._tmr.push({ id: "3202464", type: "pageView", start: new Date().getTime(), pid: "USER_ID" });
+  (function (d, w, id) {
+    if (d.getElementById(id)) return;
+    var ts = d.createElement("script");
+    ts.type = "text/javascript";
+    ts.async = true;
+    ts.id = id;
+    ts.src = "https://top-fwz1.mail.ru/js/code.js";
+    var f = function () {
+      var s = d.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(ts, s);
+    };
+    if (w.opera == "[object Opera]") {
+      d.addEventListener("DOMContentLoaded", f, false);
+    } else {
+      f();
+    }
+  })(document, window, "topmailru-code");
 }
+
+// var _tmr = window._tmr || (window._tmr = []);
+//       _tmr.push({
+//         type: "itemView",
+//         productid: "VALUE",
+//         pagetype: "VALUE",
+//         list: "VALUE",
+//         totalvalue: "VALUE",
+//       });
 
 ReactDOM.render(
   <BrowserRouter>

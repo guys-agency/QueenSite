@@ -1,15 +1,14 @@
 import { observable, decorate, autorun } from "mobx";
 import $ from "jquery";
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import FilterPoint from "./comp/FilterPoint";
 import ProductCard from "./comp/ProductCard";
 import React from "react";
 import Paginat from "./comp/paginat";
 import localStorage from "mobx-localstorage";
-import getCookie from "./ulits/getCookie";
+
 import { SERVER_URL } from "./constants";
 import api from "./comp/api";
-import { useHistory } from "react-router-dom";
 import moment from "moment";
 
 //1http://134.122.81.119/api
@@ -17,13 +16,11 @@ import moment from "moment";
 const mainAdressServ = "http://134.122.81.119";
 
 window.dataLayer = window.dataLayer || [];
+window._tmr = window._tmr || [];
 
 class Store {
   productsToRender = [];
-  lastSeenProds =
-    localStorage.get("lastSeenProds") === null
-      ? []
-      : localStorage.get("lastSeenProds");
+  lastSeenProds = localStorage.getItem("lastSeenProds") === null ? [] : localStorage.getItem("lastSeenProds");
 
   withProds = [];
   likeProds = [];
@@ -97,10 +94,7 @@ class Store {
   resetPage = false;
 
   productInCart = {};
-  productInCartList =
-    localStorage.get("productInCart") === null
-      ? {}
-      : localStorage.get("productInCart");
+  productInCartList = localStorage.getItem("productInCart") === null ? {} : localStorage.getItem("productInCart");
   dontSaleProdCount = [];
   // seenProd =
   //   localStorage.get("seenProd") === null ? [] : localStorage.get("seenProd");
@@ -121,8 +115,7 @@ class Store {
   paginatCont = [];
 
   likeData = [];
-  likeContainer =
-    localStorage.get("like") === null ? [] : localStorage.get("like");
+  likeContainer = localStorage.getItem("like") === null ? [] : localStorage.getItem("like");
 
   city = "";
 
@@ -133,10 +126,7 @@ class Store {
 
   searchQ = "";
 
-  auth =
-    getCookie("auth") === undefined || getCookie("auth") === null
-      ? false
-      : true;
+  auth = localStorage.getItem("auth") === undefined || localStorage.getItem("auth") === null ? false : true;
 
   loaderPercent = 0;
   loaderInc = 0;
@@ -144,6 +134,8 @@ class Store {
   hitCont = [];
 
   notSaleSum = 0;
+
+  onePlusOneSlug = false;
 
   //для формирования заказа на сервер
   dataToSend = {
@@ -177,7 +169,12 @@ class Store {
         .getUserData()
         .then((data) => {
           // console.log("123123123 :>> ", data);
-          this.userData = data;
+          if (data.status === 404) {
+            localStorage.removeItem("auth");
+            this.auth = false;
+          } else {
+            this.userData = data;
+          }
         })
         .catch((err) => {
           console.log("err :>> ", err);
@@ -187,7 +184,7 @@ class Store {
   // e-com метрика
   eComMetric = autorun(() => {
     // console.log("this.cardContainer :>> ", this.cardContainer.slug);
-    if (process.env.REACT_APP_TYPE === "prod") {
+    if (process.env.REACT_APP_TYPE === "dev") {
       if (this.cardContainer.slug !== undefined) {
         window.dataLayer.push({
           ecommerce: {
@@ -203,12 +200,19 @@ class Store {
             },
           },
         });
+        window._tmr.push({
+          type: "itemView",
+          productid: String(this.cardContainer.slug),
+          pagetype: "product",
+          list: "1",
+          totalvalue: String(this.cardContainer.price),
+        });
       }
     }
   });
 
   lastSeenProdsGetData = autorun(() => {
-    localStorage.set("lastSeenProds", this.lastSeenProds);
+    localStorage.setItem("lastSeenProds", this.lastSeenProds);
     if (this.lastSeenProds.length > 0) {
       api
         .getAnyProd({ slugs: this.lastSeenProds })
@@ -251,6 +255,7 @@ class Store {
           return 0;
         });
         this.bannersData = data[0];
+
         const timeCollInMenu = [];
         let ind = 0;
         let sum = 0;
@@ -266,10 +271,7 @@ class Store {
         const maxInColl = Math.floor(this.bannersData.collections.length / 4);
 
         this.bannersData.collections.forEach((elem) => {
-          if (
-            ind < maxInColl &&
-            sum < this.bannersData.collections.length - 1
-          ) {
+          if (ind < maxInColl && sum < this.bannersData.collections.length - 1) {
             timeCont.push(
               <li key={elem.slug}>
                 <NavLink to={"/collections/" + elem.slug} onClick={closeNav}>
@@ -304,6 +306,11 @@ class Store {
             this.menuAccor[elem.slug] = elem.name;
           });
         });
+        data[0].main.forEach((banner) => {
+          if (banner.name.includes("1+1=3")) {
+            this.onePlusOneSlug = banner.slug;
+          }
+        });
       })
       .catch((err) => {
         console.log("err :>> ", err);
@@ -311,7 +318,7 @@ class Store {
   };
   addToLike = (toUser) => {
     // console.log("likeContainer :>> ", this.likeContainer);
-    localStorage.set("like", this.likeContainer);
+    localStorage.setItem("like", this.likeContainer);
     if (this.auth && !toUser) {
       const like = this.likeContainer;
       api
@@ -352,7 +359,7 @@ class Store {
     //   localStorage.get("productInCart")
     // );
     const productInCartListOld = localStorage.get("productInCart");
-    localStorage.set("productInCart", this.productInCartList);
+    localStorage.setItem("productInCart", this.productInCartList);
     this.cartCount = Object.keys(this.productInCartList).length;
 
     if (this.auth) {
@@ -373,16 +380,28 @@ class Store {
           const timeCont = {};
           this.certInCart = 0;
           // console.log("prodCart :>> ", data);
+
           Object.keys(data).forEach((prod) => {
             timeCont[data[prod].slug] = {
               ...data[prod],
               countInCart: this.productInCartList[data[prod].slug],
             };
           });
+          if (Object.keys(this.productInCartList).length !== Object.keys(timeCont).length) {
+            const newProductInCartList = {};
+            Object.keys(timeCont).forEach((sl) => {
+              newProductInCartList[sl] = timeCont[sl].countInCart;
+            });
+            this.productInCartList = newProductInCartList;
+            localStorage.setItem("productInCart", this.productInCartList);
+          }
+
           // this.productInCart = timeCont;
           // console.log("object :>> ", this.productInCart);
           this.notSaleSum = 0;
           const dontSaleProd = [];
+          const onePlusOneProds = [];
+          let onePlusOneProdsCount = 0;
 
           let dontSaleProdCount = 0;
           if (Object.keys(timeCont).length) {
@@ -392,78 +411,62 @@ class Store {
                   dontSaleProdCount += +this.productInCartList[el];
                   dontSaleProd.push(timeCont[el]);
                 }
+                if (timeCont[el].onePlusOne) {
+                  onePlusOneProdsCount += +this.productInCartList[el];
+                  onePlusOneProds.push(timeCont[el]);
+                }
               } else {
                 this.certInCart = el;
               }
             });
             this.dontSaleProdCount = dontSaleProdCount;
 
-            if (dontSaleProd.length) {
-              dontSaleProd.forEach((el, i) => {
-                timeCont[el.slug].sale_price = Math.floor(
-                  el.regular_price * 0.8
-                );
-                timeCont[el.slug].sale = true;
-                timeCont[el.slug].bfsale = true;
-              });
-            }
+            // if (dontSaleProd.length && moment().utcOffset("+03:00").month() === 10 && moment().utcOffset("+03:00").date() >= 20) {
+            //   dontSaleProd.forEach((el, i) => {
+            //     timeCont[el.slug].sale_price = Math.floor(el.regular_price * 0.8);
+            //     timeCont[el.slug].sale = true;
+            //     timeCont[el.slug].bfsale = true;
+            //   });
+            // }
 
-            if (
-              dontSaleProdCount > 0 &&
-              Math.floor(dontSaleProdCount / 3) > 0 &&
-              moment().format("MM") === "10"
-            ) {
-              let minProdSlug = 0;
-              const minProdSlugs = [];
+            if (onePlusOneProdsCount > 0 && Math.floor(onePlusOneProdsCount / 3) > 0) {
+              // let minProdSlug = 0;
+              // const minProdSlugs = [];
 
-              dontSaleProd.sort((a, b) => {
-                if (a.regular_price < b.regular_price) return -1;
-                if (a.regular_price > b.regular_price) return 1;
+              onePlusOneProds.sort((a, b) => {
+                if ((a.sale ? a.sale_price : a.regular_price) < (b.sale ? b.sale_price : b.regular_price)) return -1;
+                if ((a.sale ? a.sale_price : a.regular_price) > (b.sale ? b.sale_price : b.regular_price)) return 1;
                 return 0;
               });
 
               // console.log("dont :>> ", dontSaleProd);
-              minProdSlugs.push(minProdSlug);
-              let toSaleProdCount = Math.floor(dontSaleProdCount / 3);
+              // minProdSlugs.push(minProdSlug);
+              let toSaleProdCount = Math.floor(onePlusOneProdsCount / 3);
               // console.log("minProdSlugs :>> ", minProdSlugs);
-              for (let index = 0; index < dontSaleProd.length; index++) {
-                if (
-                  this.productInCartList[dontSaleProd[index].slug] ===
-                  toSaleProdCount
-                ) {
-                  timeCont[dontSaleProd[index].slug].sale_price = 0;
-                  timeCont[dontSaleProd[index].slug].price = 0;
-                  timeCont[dontSaleProd[index].slug].sale = true;
+              for (let index = 0; index < onePlusOneProds.length; index++) {
+                if (this.productInCartList[onePlusOneProds[index].slug] === toSaleProdCount) {
+                  timeCont[onePlusOneProds[index].slug].sale_price = 0;
+                  timeCont[onePlusOneProds[index].slug].price = 0;
+                  timeCont[onePlusOneProds[index].slug].sale = true;
                   break;
-                } else if (
-                  this.productInCartList[dontSaleProd[index].slug] >
-                  toSaleProdCount
-                ) {
-                  timeCont[dontSaleProd[index].slug].sale_price = Math.floor(
-                    timeCont[dontSaleProd[index].slug].regular_price *
-                      (1 -
-                        toSaleProdCount /
-                          this.productInCartList[dontSaleProd[index].slug])
+                } else if (this.productInCartList[onePlusOneProds[index].slug] > toSaleProdCount) {
+                  const pr = timeCont[onePlusOneProds[index].slug].sale
+                    ? timeCont[onePlusOneProds[index].slug].sale_price
+                    : timeCont[onePlusOneProds[index].slug].regular_price;
+                  timeCont[onePlusOneProds[index].slug].sale_price = Math.floor(
+                    pr * (1 - toSaleProdCount / this.productInCartList[onePlusOneProds[index].slug])
                   );
-                  timeCont[dontSaleProd[index].slug].sale = true;
-                  timeCont[dontSaleProd[index].slug].price =
-                    timeCont[dontSaleProd[index].slug].sale_price;
+                  timeCont[onePlusOneProds[index].slug].sale = true;
+                  timeCont[onePlusOneProds[index].slug].price = timeCont[onePlusOneProds[index].slug].sale_price;
 
-                  this.notSaleSum =
-                    timeCont[dontSaleProd[index].slug].regular_price *
-                    (this.productInCartList[dontSaleProd[index].slug] -
-                      toSaleProdCount);
+                  // this.notSaleSum =
+                  //   timeCont[onePlusOneProds[index].slug].regular_price * (this.productInCartList[onePlusOneProds[index].slug] - toSaleProdCount);
                   break;
-                } else if (
-                  this.productInCartList[dontSaleProd[index].slug] <
-                  toSaleProdCount
-                ) {
-                  timeCont[dontSaleProd[index].slug].sale_price = 0;
-                  timeCont[dontSaleProd[index].slug].price = 0;
-                  timeCont[dontSaleProd[index].slug].sale = true;
-                  toSaleProdCount -= this.productInCartList[
-                    dontSaleProd[index].slug
-                  ];
+                } else if (this.productInCartList[onePlusOneProds[index].slug] < toSaleProdCount) {
+                  timeCont[onePlusOneProds[index].slug].sale_price = 0;
+                  timeCont[onePlusOneProds[index].slug].price = 0;
+                  timeCont[onePlusOneProds[index].slug].sale = true;
+                  toSaleProdCount -= this.productInCartList[onePlusOneProds[index].slug];
                 }
               }
             }
@@ -477,7 +480,7 @@ class Store {
         .catch((err) => {
           console.log("err :>> ", err);
           this.productInCartList = productInCartListOld;
-          localStorage.set("productInCart", this.productInCartList);
+          localStorage.setItem("productInCart", this.productInCartList);
         });
     } else {
       this.productInCart = {};
@@ -498,30 +501,27 @@ class Store {
     const typeIsPREPAID = typePayment === "PREPAID";
 
     const coupsCont =
-      localStorage.get("coupsCont") === undefined ||
-      localStorage.get("coupsCont") === null ||
+      localStorage.getItem("coupsCont") === undefined ||
+      localStorage.getItem("coupsCont") === null ||
       localStorage.getItem("coupsCont") === "undefined"
         ? {}
-        : localStorage.get("coupsCont");
+        : localStorage.getItem("coupsCont");
     if (this.useBonus) {
       this.bonusDisc = 1 - this.useBonus / (this.totalPrice + this.useBonus);
     }
 
     Object.keys(this.productInCart).forEach((el) => {
-      const regPrice = typeIsPREPAID
-        ? Math.floor(this.productInCart[el].regular_price * 0.98)
-        : this.productInCart[el].regular_price;
+      const regPrice =
+        typeIsPREPAID && this.certInCart !== el ? Math.floor(this.productInCart[el].regular_price * 0.98) : this.productInCart[el].regular_price;
       const salePrice = this.productInCart[el].sale
-        ? typeIsPREPAID
+        ? typeIsPREPAID && this.certInCart !== el
           ? Math.floor(this.productInCart[el].sale_price * 0.98)
           : this.productInCart[el].sale_price
         : 0;
       this.ecomProd.push({
         id: this.productInCart[el].sale,
         name: this.productInCart[el].name,
-        price: typeIsPREPAID
-          ? Math.floor(this.productInCart[el].price * 0.98)
-          : this.productInCart[el].price,
+        price: typeIsPREPAID && this.certInCart !== el ? Math.floor(this.productInCart[el].price * 0.98) : this.productInCart[el].price,
         brand: this.productInCart[el].brand,
 
         quantity: this.productInCartList[el],
@@ -536,32 +536,16 @@ class Store {
         priceForWoo: this.useBonus ? regPrice * this.bonusDisc : regPrice,
       };
       if (this.productInCart[el].sale) {
-        this.dataToSend.prod[el].sale_price = this.useBonus
-          ? salePrice * this.bonusDisc
-          : salePrice;
-        this.dataToSend.prod[el].priceForWoo = this.useBonus
-          ? salePrice * this.bonusDisc
-          : salePrice;
+        this.dataToSend.prod[el].sale_price = this.useBonus ? salePrice * this.bonusDisc : salePrice;
+        this.dataToSend.prod[el].priceForWoo = this.useBonus ? salePrice * this.bonusDisc : salePrice;
       }
 
       this.productForYA.push({
         externalId: String(this.productInCart[el].slug),
         name: this.productInCart[el].name,
         count: el === this.certInCart ? 1 : this.productInCartList[el],
-        price: Math.floor(
-          this.productInCart[el].sale
-            ? salePrice === 0
-              ? 1
-              : salePrice
-            : regPrice
-        ),
-        assessedValue: Math.floor(
-          this.productInCart[el].sale
-            ? salePrice === 0
-              ? regPrice
-              : salePrice
-            : regPrice
-        ),
+        price: Math.floor(this.productInCart[el].sale ? (salePrice === 0 ? 1 : salePrice) : regPrice),
+        assessedValue: Math.floor(this.productInCart[el].sale ? (salePrice === 0 ? regPrice : salePrice) : regPrice),
         tax: "NO_VAT",
         dimensions: {
           length: +this.productInCart[el].dimensions.length,
@@ -571,91 +555,68 @@ class Store {
         },
       });
       this.totalProductSum +=
-        Math.floor(this.productForYA[this.productForYA.length - 1].price) *
-        this.productForYA[this.productForYA.length - 1].count;
+        Math.floor(this.productForYA[this.productForYA.length - 1].price) * this.productForYA[this.productForYA.length - 1].count;
     });
     if (Object.keys(coupsCont).length) {
-      this.totalProductSum = 0;
-
       Object.keys(coupsCont).forEach((coupon) => {
+        this.totalProductSum = 0;
         let couponC = coupsCont[coupon].count;
+        const coupForProd = Math.round(couponC / this.productForYA.length);
         this.productForYA.forEach((el, i) => {
           if (el.price > 1) {
             if (coupsCont[coupon].type === "percent") {
-              this.productForYA[i].price = Math.floor(
-                this.productForYA[i].price *
-                  (1 - +coupsCont[coupon].count / 100)
-              );
+              this.productForYA[i].price = Math.floor(this.productForYA[i].price * (1 - +coupsCont[coupon].count / 100));
             } else if (coupsCont[coupon].type === "fixed_cart") {
-              if (couponC > 0) {
-                if (el.price - couponC >= 1) {
-                  this.productForYA[i].price -= couponC;
+              // if (couponC > 0) {
+              //   if (el.price - couponC >= 1) {
+              //     this.productForYA[i].price -= couponC;
 
-                  couponC = 0;
-                } else {
-                  this.productForYA[i].price = 1;
+              //     couponC = 0;
+              //   } else {
+              //     this.productForYA[i].price = 1;
 
-                  couponC -= this.productForYA[i].price - 1;
-                }
-              }
+              //     couponC -= this.productForYA[i].price - 1;
+              //   }
+              // }
+              this.productForYA[i].price -= Math.round(coupForProd / this.productForYA[i].count);
             }
           }
-          this.totalProductSum +=
-            this.productForYA[i].price * this.productForYA[i].count;
+          this.totalProductSum += this.productForYA[i].price * this.productForYA[i].count;
         });
         Object.keys(this.dataToSend.prod).forEach((el) => {
           if (this.dataToSend.prod[el].sale_price !== 0) {
             if (coupsCont[coupon].type === "percent") {
               if (this.dataToSend.prod[el].sale) {
-                this.dataToSend.prod[el].sale_price = Math.floor(
-                  this.dataToSend.prod[el].sale_price *
-                    (1 - +coupsCont[coupon].count / 100)
-                );
+                this.dataToSend.prod[el].sale_price = Math.floor(this.dataToSend.prod[el].sale_price * (1 - +coupsCont[coupon].count / 100));
               } else {
-                this.dataToSend.prod[el].regular_price = Math.floor(
-                  this.dataToSend.prod[el].regular_price *
-                    (1 - +coupsCont[coupon].count / 100)
-                );
+                this.dataToSend.prod[el].regular_price = Math.floor(this.dataToSend.prod[el].regular_price * (1 - +coupsCont[coupon].count / 100));
               }
             } else if (coupsCont[coupon].type === "fixed_cart") {
-              if (couponC > 0) {
-                if (this.dataToSend.prod[el].sale) {
-                  if (
-                    this.dataToSend.prod[el].sale_price *
-                      this.productInCartList[el] -
-                      couponC >=
-                    0
-                  ) {
-                    this.dataToSend.prod[el].sale_price -= Math.round(
-                      couponC / this.productInCartList[el]
-                    );
+              // if (couponC > 0) {
+              //   if (this.dataToSend.prod[el].sale) {
+              //     if (this.dataToSend.prod[el].sale_price * this.productInCartList[el] - couponC >= 0) {
+              //       this.dataToSend.prod[el].sale_price -= Math.round(couponC / this.productInCartList[el]);
 
-                    couponC = 0;
-                  } else {
-                    couponC -=
-                      this.dataToSend.prod[el].sale_price *
-                      this.productInCartList[el];
-                    this.dataToSend.prod[el].sale_price = 0;
-                  }
-                } else {
-                  if (
-                    this.dataToSend.prod[el].regular_price *
-                      this.productInCartList[el] -
-                      couponC >=
-                    0
-                  ) {
-                    this.dataToSend.prod[el].regular_price -= Math.round(
-                      couponC / this.productInCartList[el]
-                    );
+              //       couponC = 0;
+              //     } else {
+              //       couponC -= this.dataToSend.prod[el].sale_price * this.productInCartList[el];
+              //       this.dataToSend.prod[el].sale_price = 0;
+              //     }
+              //   } else {
+              //     if (this.dataToSend.prod[el].regular_price * this.productInCartList[el] - couponC >= 0) {
+              //       this.dataToSend.prod[el].regular_price -= Math.round(couponC / this.productInCartList[el]);
 
-                    couponC = 0;
-                  } else {
-                    couponC -=
-                      this.dataToSend.prod[el].regular_price *
-                      this.productInCartList[el];
-                    this.dataToSend.prod[el].regular_price = 0;
-                  }
-                }
+              //       couponC = 0;
+              //     } else {
+              //       couponC -= this.dataToSend.prod[el].regular_price * this.productInCartList[el];
+              //       this.dataToSend.prod[el].regular_price = 0;
+              //     }
+              //   }
+              // }
+              if (this.dataToSend.prod[el].sale) {
+                this.dataToSend.prod[el].sale_price -= Math.round(coupForProd / this.productInCartList[el]);
+              } else {
+                this.dataToSend.prod[el].regular_price -= Math.round(coupForProd / this.productInCartList[el]);
               }
             }
           }
@@ -672,20 +633,12 @@ class Store {
       while (totalDeff > 0) {
         if (i < this.productForYA.length) {
           if (this.productForYA[i].price > 1) {
-            if (
-              this.productForYA[i].price -
-                totalDeff / this.productForYA[i].count >
-              1
-            ) {
-              this.productForYA[i].price = Math.floor(
-                this.productForYA[i].price -
-                  totalDeff / this.productForYA[i].count
-              );
+            if (this.productForYA[i].price - totalDeff / this.productForYA[i].count > 1) {
+              this.productForYA[i].price = Math.floor(this.productForYA[i].price - totalDeff / this.productForYA[i].count);
               noPriceCount = this.productForYA[i].count;
               totalDeff = 0;
             } else {
-              totalDeff -=
-                this.productForYA[i].price * this.productForYA[i].count - 1;
+              totalDeff -= this.productForYA[i].price * this.productForYA[i].count - 1;
               this.productForYA[i].price = 1;
 
               i += 1;
@@ -700,25 +653,24 @@ class Store {
     }
     this.totalProductSum = 0;
     this.productForYA.forEach((el, i) => {
-      this.totalProductSum +=
-        this.productForYA[i].price * this.productForYA[i].count;
+      this.totalProductSum += this.productForYA[i].price * this.productForYA[i].count;
     });
 
     if (this.totalProductSum !== this.totalPrice) {
       let totalDeff = this.totalProductSum - this.totalPrice;
       let magicProd = null;
 
-      console.log("totalDeff :>> ", totalDeff);
+      // console.log("totalDeff :>> ", totalDeff);
 
       for (let i = 0; i < this.productForYA.length; i++) {
         if (magicProd !== null) {
           break;
         }
         if (this.productForYA[i].count > 1) {
-          console.log("this.productForYA[i] :>> ", this.productForYA[i]);
+          // console.log("this.productForYA[i] :>> ", this.productForYA[i]);
           magicProd = Object.assign({}, this.productForYA[i]);
           this.productForYA[i].count -= 1;
-          console.log("this.productForYA[i] 2 :>> ", this.productForYA[i]);
+          // console.log("this.productForYA[i] 2 :>> ", this.productForYA[i]);
           break;
         }
       }
@@ -728,7 +680,7 @@ class Store {
         magicProd.price -= totalDeff;
         this.productForYA.push(magicProd);
       }
-      console.log("this.productForYA end :>> ", this.productForYA);
+      // console.log("this.productForYA end :>> ", this.productForYA);
     }
 
     this.productForYA.forEach((el, i) => {
@@ -760,11 +712,8 @@ class Store {
 
   cityCheck = autorun(() => {
     // console.log('localStorage.get("city") :>> ', localStorage.get("city"));
-    if (
-      localStorage.get("city") !== undefined &&
-      localStorage.get("city") !== null
-    ) {
-      this.city = localStorage.get("city").name;
+    if (localStorage.getItem("city") !== undefined && localStorage.getItem("city") !== null) {
+      this.city = localStorage.getItem("city").name;
     } else {
       const init = () => {
         // console.log("window.ymaps :>> ", window.ymaps);
@@ -775,21 +724,15 @@ class Store {
             .getCity(geolocation.region + " " + geolocation.city)
             .then((data) => {
               if (data.length) {
-                localStorage.set("city", {
-                  name:
-                    data[0].addressComponents[
-                      data[0].addressComponents.length - 1
-                    ].name,
+                localStorage.setItem("city", {
+                  name: data[0].addressComponents[data[0].addressComponents.length - 1].name,
                   geoId: data[0].geoId,
                   region: data[0].addressComponents[2].name,
                   sourse: "Y",
                 });
-                this.city =
-                  data[0].addressComponents[
-                    data[0].addressComponents.length - 1
-                  ].name;
+                this.city = data[0].addressComponents[data[0].addressComponents.length - 1].name;
               } else {
-                localStorage.set("city", {
+                localStorage.setItem("city", {
                   name: "Москва",
                   geoId: 213,
                   region: "Москва",
@@ -1075,77 +1018,46 @@ class Store {
         // console.log("Object.keys(data).length :>> ", data[0].product.length);
         if (!data[0].product.length) {
           if (this.activeFilters.choosePoint.length) {
-            this.activeFilters[
-              this.activeFilters.choosePoint[
-                this.activeFilters.choosePoint.length - 1
-              ]
-            ] = [];
+            this.activeFilters[this.activeFilters.choosePoint[this.activeFilters.choosePoint.length - 1]] = [];
             this.activeFilters.choosePoint.pop();
             if (this.activeFilters.count) {
               let searchQt = "";
               this.activeFilters.choosePoint.forEach((filterName) => {
                 if (filterName !== "choosePoint") {
                   if (filterName !== "measure") {
-                    if (
-                      filterName === "maxPrice" ||
-                      filterName === "minPrice"
-                    ) {
+                    if (filterName === "maxPrice" || filterName === "minPrice") {
                       if (!searchQt.length) {
-                        searchQt =
-                          filterName + "=" + this.activeFilters[filterName];
+                        searchQt = filterName + "=" + this.activeFilters[filterName];
                       } else {
-                        searchQt +=
-                          "&&" +
-                          filterName +
-                          "=" +
-                          this.activeFilters[filterName];
+                        searchQt += "&&" + filterName + "=" + this.activeFilters[filterName];
                       }
                     } else {
                       if (this.activeFilters[filterName].length) {
                         if (!searchQt.length) {
-                          searchQt =
-                            filterName +
-                            "=" +
-                            this.activeFilters[filterName].join();
+                          searchQt = filterName + "=" + this.activeFilters[filterName].join();
                         } else {
-                          searchQt +=
-                            "&&" +
-                            filterName +
-                            "=" +
-                            this.activeFilters[filterName].join();
+                          searchQt += "&&" + filterName + "=" + this.activeFilters[filterName].join();
                         }
                       }
                     }
                   } else {
                     if (Object.keys(this.activeFilters[filterName]).length) {
-                      Object.keys(this.activeFilters[filterName]).forEach(
-                        (ind) => {
-                          // console.log(
-                          //   "ind :>> ",
-                          //   this.activeFilters[filterName][ind]
-                          // );
-                          if (!searchQt.length) {
-                            searchQt =
-                              filterName +
-                              "=" +
-                              ind +
-                              "!~" +
-                              this.activeFilters[filterName][ind].join(",");
-                          } else {
-                            searchQt +=
-                              "&&" +
-                              filterName +
-                              "=" +
-                              ind +
-                              "!~" +
-                              this.activeFilters[filterName][ind].join(",");
-                          }
+                      Object.keys(this.activeFilters[filterName]).forEach((ind) => {
+                        // console.log(
+                        //   "ind :>> ",
+                        //   this.activeFilters[filterName][ind]
+                        // );
+                        if (!searchQt.length) {
+                          searchQt = filterName + "=" + ind + "!~" + this.activeFilters[filterName][ind].join(",");
+                        } else {
+                          searchQt += "&&" + filterName + "=" + ind + "!~" + this.activeFilters[filterName][ind].join(",");
                         }
-                      );
+                      });
                     }
                   }
                 }
               });
+              $(".categories-block__child").find(".active").removeClass("active");
               window.history.replaceState(null, null, "?" + searchQt);
               this.filtration();
               return;
@@ -1171,13 +1083,7 @@ class Store {
         const sortDataClear = {};
         // console.log("data[0].clearSort :>> ", data[0].clearSort);
         Object.keys(data[0].clearSort[0]).forEach((name) => {
-          if (
-            (name !== "_id") &
-            (name !== "minPrice") &
-            (name !== "maxPrice") &
-            (name !== "measure") &
-            (name !== "count")
-          ) {
+          if ((name !== "_id") & (name !== "minPrice") & (name !== "maxPrice") & (name !== "measure") & (name !== "count")) {
             sortDataClear[name] = data[0].clearSort[0][name].sort();
           } else if (name === "measure") {
             const newMeasure = [];
@@ -1295,28 +1201,18 @@ class Store {
           this.createFilterPointsContainers(sortData);
 
           //КАТЕГОРИИ БАННЕРА
-          if (
-            data[0].cats !== undefined &&
-            (!this.prodCats.length ||
-              window.location.pathname.includes("/search"))
-          ) {
+          if (data[0].cats !== undefined && (!this.prodCats.length || window.location.pathname.includes("/search"))) {
             const cats = {};
             data[0].cats[0].cats.forEach((elemMain) => {
               elemMain.forEach((elem) => {
                 if (cats[elem.slugName] !== undefined) {
                   elem.childs.forEach((child, i) => {
-                    if (
-                      !cats[elem.slugName].childsNameArr.includes(
-                        elem.childsSlug[i]
-                      )
-                    ) {
+                    if (!cats[elem.slugName].childsNameArr.includes(elem.childsSlug[i])) {
                       cats[elem.slugName].childs.push({
                         name: child,
                         slug: elem.childsSlug[i],
                       });
-                      cats[elem.slugName].childsNameArr.push(
-                        elem.childsSlug[i]
-                      );
+                      cats[elem.slugName].childsNameArr.push(elem.childsSlug[i]);
                     }
                   });
                 } else {
@@ -1329,18 +1225,12 @@ class Store {
                     cats[elem.slugName].childsNameArr = [];
                   }
                   elem.childs.forEach((child, i) => {
-                    if (
-                      !cats[elem.slugName].childsNameArr.includes(
-                        elem.childsSlug[i]
-                      )
-                    ) {
+                    if (!cats[elem.slugName].childsNameArr.includes(elem.childsSlug[i])) {
                       cats[elem.slugName].childs.push({
                         name: child,
                         slug: elem.childsSlug[i],
                       });
-                      cats[elem.slugName].childsNameArr.push(
-                        elem.childsSlug[i]
-                      );
+                      cats[elem.slugName].childsNameArr.push(elem.childsSlug[i]);
                     }
                   });
                 }
@@ -1378,6 +1268,8 @@ class Store {
         console.log("err", err);
         if (!window.location.pathname.includes("search")) {
           window.location.replace("/");
+        } else {
+          this.productsToRender = null;
         }
       });
 
@@ -1482,6 +1374,7 @@ class Store {
     this.stopPag = 42;
     this.firstBread = "";
     this.secondBread = "";
+    // this.searchText = "";
     // this.sortInProd = "";
 
     // console.log("clean :>> 11111111111222222222222");
@@ -1506,15 +1399,15 @@ class Store {
       premium: false,
     };
 
+    this.searchText = "";
+
     // console.log("search :>> ", window.location.href.split("?")[1]);
+
+    let findPage = false;
 
     let decodSearch = decodeURIComponent(window.location.href.split("?")[1]);
     // console.log("ddecodSearche :>> ", decodSearch);
-    if (
-      decodSearch !== "undefined" &&
-      decodSearch !== "" &&
-      !window.location.href.includes("?yclid")
-    ) {
+    if (decodSearch !== "undefined" && decodSearch !== "" && !window.location.href.includes("?yclid")) {
       // console.log("1111 :>> ", 1111);
       if (decodSearch.includes("&yclid=")) {
         decodSearch = decodSearch.split("&yclid=")[0];
@@ -1522,13 +1415,7 @@ class Store {
       decodSearch.split("&&").forEach((elem) => {
         const elemSp = elem.split("=");
         if (elemSp[0] !== "measure") {
-          if (
-            elemSp[0] === "minPrice" ||
-            elemSp[0] === "maxPrice" ||
-            elemSp[0] === "premium" ||
-            elemSp[0] === "sale" ||
-            elemSp[0] === "hit"
-          ) {
+          if (elemSp[0] === "minPrice" || elemSp[0] === "maxPrice" || elemSp[0] === "premium" || elemSp[0] === "sale" || elemSp[0] === "hit") {
             this.activeFilters[elemSp[0]] = elemSp[1];
           } else if (elemSp[0] === "page") {
             if (!this.resetPage) {
@@ -1536,6 +1423,9 @@ class Store {
               this.stopPag = (+elemSp[1] + 1) * 42;
             }
             this.resetPage = false;
+            findPage = true;
+          } else if (elemSp[0] === "search") {
+            this.searchText = elemSp[1];
           } else {
             this.activeFilters[elemSp[0]] = elemSp[1].split(",");
             this.activeFilters.choosePoint.push(elemSp[0]);
@@ -1549,6 +1439,10 @@ class Store {
         }
       });
       // console.log(" this.activeFilters:>> ", this.activeFilters);
+    }
+    if (!findPage) {
+      this.startPag = 0;
+      this.stopPag = 42;
     }
     // console.log("this.activeFilters :>> ", this.activeFilters);
     const pathname = window.location.pathname;
@@ -1572,10 +1466,7 @@ class Store {
         const onePointFilter = [];
         if (filterName !== "choosePoint" && filterName !== "premium") {
           if (filterName !== "measure") {
-            if (
-              this.activeFilters[filterName].length &&
-              filterName !== "attr"
-            ) {
+            if (this.activeFilters[filterName].length && filterName !== "attr") {
               this.activeFilters[filterName].forEach((filterValue) => {
                 onePointFilter.push({
                   [filterName]: filterValue,
@@ -1730,10 +1621,7 @@ class Store {
   createFilterPointsContainers = (availableFilters) => {
     this.minPrice = this.categoryFilter.minPrice;
     this.maxPrice = this.categoryFilter.maxPrice;
-    if (
-      Object.keys(this.dirtyFilter).length === 0 ||
-      this.activeFilters.choosePoint.length === 0
-    ) {
+    if (Object.keys(this.dirtyFilter).length === 0 || this.activeFilters.choosePoint.length === 0) {
       this.dirtyFilter = Object.assign({}, this.categoryFilter);
     }
 
@@ -1741,10 +1629,7 @@ class Store {
     const measurePoints = [];
     const optPoints = [];
     Object.keys(availableFilters).forEach((filterType) => {
-      if (
-        filterType === "brand" &&
-        !window.location.pathname.includes("/brand/")
-      ) {
+      if (filterType === "brand" && !window.location.pathname.includes("/brand/")) {
         if (this.activeFilters.choosePoint.indexOf(filterType) === 0) {
           Object.keys(this.categoryFilter).forEach((name) => {
             if (!this.activeFilters.choosePoint.includes(name)) {
@@ -1753,25 +1638,9 @@ class Store {
           });
         }
         if (this.activeFilters.choosePoint.includes(filterType)) {
-          filterPoints.push(
-            <FilterPoint
-              name="Бренды"
-              objectName={filterType}
-              key={filterType}
-              data={this.dirtyFilter[filterType]}
-              store={this}
-            />
-          );
+          filterPoints.push(<FilterPoint name="Бренды" objectName={filterType} key={filterType} data={this.dirtyFilter[filterType]} store={this} />);
         } else {
-          filterPoints.push(
-            <FilterPoint
-              name="Бренды"
-              objectName={filterType}
-              key={filterType}
-              data={availableFilters[filterType]}
-              store={this}
-            />
-          );
+          filterPoints.push(<FilterPoint name="Бренды" objectName={filterType} key={filterType} data={availableFilters[filterType]} store={this} />);
         }
       } else if (filterType === "glassType") {
         if (this.activeFilters.choosePoint.indexOf(filterType) === 0) {
@@ -1783,23 +1652,11 @@ class Store {
         }
         if (this.activeFilters.choosePoint.includes(filterType)) {
           filterPoints.push(
-            <FilterPoint
-              name="Тип бокалов"
-              objectName={filterType}
-              key={filterType}
-              data={this.dirtyFilter[filterType]}
-              store={this}
-            />
+            <FilterPoint name="Тип бокалов" objectName={filterType} key={filterType} data={this.dirtyFilter[filterType]} store={this} />
           );
         } else {
           filterPoints.push(
-            <FilterPoint
-              name="Тип бокалов"
-              objectName={filterType}
-              key={filterType}
-              data={availableFilters[filterType]}
-              store={this}
-            />
+            <FilterPoint name="Тип бокалов" objectName={filterType} key={filterType} data={availableFilters[filterType]} store={this} />
           );
         }
       } else if (filterType === "material") {
@@ -1812,23 +1669,11 @@ class Store {
         }
         if (this.activeFilters.choosePoint.includes(filterType)) {
           filterPoints.push(
-            <FilterPoint
-              name="Материалы"
-              objectName={filterType}
-              key={filterType}
-              data={this.dirtyFilter[filterType]}
-              store={this}
-            />
+            <FilterPoint name="Материалы" objectName={filterType} key={filterType} data={this.dirtyFilter[filterType]} store={this} />
           );
         } else {
           filterPoints.push(
-            <FilterPoint
-              name="Материалы"
-              objectName={filterType}
-              key={filterType}
-              data={availableFilters[filterType]}
-              store={this}
-            />
+            <FilterPoint name="Материалы" objectName={filterType} key={filterType} data={availableFilters[filterType]} store={this} />
           );
         }
       } else if (filterType === "country") {
@@ -1840,25 +1685,9 @@ class Store {
           });
         }
         if (this.activeFilters.choosePoint.includes(filterType)) {
-          filterPoints.push(
-            <FilterPoint
-              name="Страны"
-              objectName={filterType}
-              key={filterType}
-              data={this.dirtyFilter[filterType]}
-              store={this}
-            />
-          );
+          filterPoints.push(<FilterPoint name="Страны" objectName={filterType} key={filterType} data={this.dirtyFilter[filterType]} store={this} />);
         } else {
-          filterPoints.push(
-            <FilterPoint
-              name="Страны"
-              objectName={filterType}
-              key={filterType}
-              data={availableFilters[filterType]}
-              store={this}
-            />
-          );
+          filterPoints.push(<FilterPoint name="Страны" objectName={filterType} key={filterType} data={availableFilters[filterType]} store={this} />);
         }
       } else if (filterType === "color") {
         if (this.activeFilters.choosePoint.indexOf(filterType) === 0) {
@@ -1869,25 +1698,9 @@ class Store {
           });
         }
         if (this.activeFilters.choosePoint.includes(filterType)) {
-          filterPoints.push(
-            <FilterPoint
-              name="Цвета"
-              objectName={filterType}
-              key={filterType}
-              data={this.dirtyFilter[filterType]}
-              store={this}
-            />
-          );
+          filterPoints.push(<FilterPoint name="Цвета" objectName={filterType} key={filterType} data={this.dirtyFilter[filterType]} store={this} />);
         } else {
-          filterPoints.push(
-            <FilterPoint
-              name="Цвета"
-              objectName={filterType}
-              key={filterType}
-              data={availableFilters[filterType]}
-              store={this}
-            />
-          );
+          filterPoints.push(<FilterPoint name="Цвета" objectName={filterType} key={filterType} data={availableFilters[filterType]} store={this} />);
         }
       } else if (filterType === "measure") {
         if (this.activeFilters.choosePoint.indexOf(filterType) === 0) {
@@ -1899,56 +1712,18 @@ class Store {
         }
         if (this.activeFilters.choosePoint.includes(filterType)) {
           this.dirtyFilter[filterType].forEach((meas) => {
-            if (
-              meas.name === "Кол-во персон" ||
-              meas.name === "Комплектность"
-            ) {
-              optPoints.push(
-                <FilterPoint
-                  name={meas.name}
-                  objectName={filterType}
-                  key={meas.name}
-                  data={meas.value}
-                  store={this}
-                />
-              );
+            if (meas.name === "Кол-во персон" || meas.name === "Комплектность") {
+              optPoints.push(<FilterPoint name={meas.name} objectName={filterType} key={meas.name} data={meas.value} store={this} />);
             } else {
-              measurePoints.push(
-                <FilterPoint
-                  name={meas.name}
-                  objectName={filterType}
-                  key={meas.name}
-                  data={meas.value}
-                  store={this}
-                />
-              );
+              measurePoints.push(<FilterPoint name={meas.name} objectName={filterType} key={meas.name} data={meas.value} store={this} />);
             }
           });
         } else {
           availableFilters[filterType].forEach((meas) => {
-            if (
-              meas.name === "Кол-во персон" ||
-              meas.name === "Комплектность"
-            ) {
-              optPoints.push(
-                <FilterPoint
-                  name={meas.name}
-                  objectName={filterType}
-                  key={meas.name}
-                  data={meas.value}
-                  store={this}
-                />
-              );
+            if (meas.name === "Кол-во персон" || meas.name === "Комплектность") {
+              optPoints.push(<FilterPoint name={meas.name} objectName={filterType} key={meas.name} data={meas.value} store={this} />);
             } else {
-              measurePoints.push(
-                <FilterPoint
-                  name={meas.name}
-                  objectName={filterType}
-                  key={meas.name}
-                  data={meas.value}
-                  store={this}
-                />
-              );
+              measurePoints.push(<FilterPoint name={meas.name} objectName={filterType} key={meas.name} data={meas.value} store={this} />);
             }
           });
         }
@@ -2009,6 +1784,7 @@ decorate(Store, {
   loaderPercent: observable,
   hitCont: observable,
   searchText: observable,
+  onePlusOneSlug: observable,
 });
 
 const store = new Store();

@@ -1,8 +1,6 @@
 import { observer } from "mobx-react";
 import React from "react";
 import api from "./api";
-import { SERVER_URL } from "../constants";
-import { Link } from "react-router-dom";
 import ProductCardContainer from "./ProductCardContainer";
 import ProductCard from "./ProductCard";
 import Filters from "./Filters";
@@ -22,14 +20,8 @@ const Search = observer(
         .then((data) => {
           Object.keys(data[0].hit).forEach((element, i) => {
             hitContTime.push(
-              <div
-                className="swiper-slide col col-3 col-t-4 col-s-6"
-                key={data[0].hit[element].slug}
-              >
-                <ProductCard
-                  data={data[0].hit[element]}
-                  store={this.props.store}
-                />
+              <div className="swiper-slide col col-3 col-t-4 col-s-6" key={data[0].hit[element].slug}>
+                <ProductCard data={data[0].hit[element]} store={this.props.store} />
               </div>
             );
           });
@@ -90,11 +82,7 @@ const Search = observer(
           if (lastSeenProdsData[el] !== undefined) {
             return (
               <div className="col col-3 col-t-4 col-s-6" key={el}>
-                <ProductCard
-                  key={el}
-                  data={lastSeenProdsData[el]}
-                  store={this.props.store}
-                />
+                <ProductCard key={el} data={lastSeenProdsData[el]} store={this.props.store} />
               </div>
             );
           }
@@ -110,21 +98,13 @@ const Search = observer(
                 <h3 className="catalog-title">Поиск</h3>
               </div>
             </div>
-            {this.props.store.productsToRender.length !== 0 ? (
+            {this.props.store.productsToRender !== null ? (
               <div className="row catalog">
                 <div className="col col-3">
-                  <Filters
-                    store={this.props.store}
-                    parentName={this.props.parentName}
-                    childName={this.props.childName}
-                  />
+                  <Filters store={this.props.store} parentName={this.props.parentName} childName={this.props.childName} />
                 </div>
 
-                <ProductCardContainer
-                  store={this.props.store}
-                  parentName={this.props.parentName}
-                  childName={this.props.childName}
-                />
+                <ProductCardContainer store={this.props.store} parentName={this.props.parentName} childName={this.props.childName} />
               </div>
             ) : (
               <div className="row catalog">
@@ -146,9 +126,9 @@ const Search = observer(
                           <button
                             className="ic i_search"
                             onClick={(e) => {
-                              this.props.store.searchText = this.searchValue;
+                              // this.props.store.searchText = this.searchValue;
 
-                              this.props.history.push("/search");
+                              this.props.history.push(`/search?search=${this.searchValue}`);
 
                               e.preventDefault();
                             }}
@@ -164,36 +144,28 @@ const Search = observer(
                             Свяжитесь с нами!
                             <br />
                             <br />
-                            Телефон:{" "}
-                            <a href="tel:88006003421">8 800 600-34-21</a>
+                            Телефон: <a href="tel:88006003421">8 800 600-34-21</a>
                             <br />
                             E-mail:{" "}
-                            <a
-                              href="mailto:info@queenbohemia.ru"
-                              className="underline"
-                            >
+                            <a href="mailto:info@queenbohemia.ru" className="underline">
                               info@queenbohemia.ru
                             </a>
                           </p>
                         </div>
-                        {lastSeenProdsRender !== undefined &&
-                          lastSeenProdsRender !== null &&
-                          lastSeenProdsRender.length !== 0 && (
-                            <div className="carousel carousel_product">
-                              <div className="container">
-                                <div className="title">
-                                  <h3>Вы недавно просматривали</h3>
-                                </div>
-                              </div>
-                              <div className="container container_s">
-                                <div className="slider-cont">
-                                  <Swiper {...this.relativeCar}>
-                                    {lastSeenProdsRender}
-                                  </Swiper>
-                                </div>
+                        {lastSeenProdsRender !== undefined && lastSeenProdsRender !== null && lastSeenProdsRender.length !== 0 && (
+                          <div className="carousel carousel_product">
+                            <div className="container">
+                              <div className="title">
+                                <h3>Вы недавно просматривали</h3>
                               </div>
                             </div>
-                          )}
+                            <div className="container container_s">
+                              <div className="slider-cont">
+                                <Swiper {...this.relativeCar}>{lastSeenProdsRender}</Swiper>
+                              </div>
+                            </div>
+                          </div>
+                        )}
                         <div className="carousel carousel_product">
                           <div className="container">
                             <div className="title">
@@ -204,9 +176,7 @@ const Search = observer(
                             <div className="slider-cont">
                               {/* <Slider {...settingsMulti}>{hitCont}</Slider> */}
 
-                              {hitCont.length !== 0 && (
-                                <Swiper {...this.relativeCar}>{hitCont}</Swiper>
-                              )}
+                              {hitCont.length !== 0 && <Swiper {...this.relativeCar}>{hitCont}</Swiper>}
                             </div>
                           </div>
                         </div>

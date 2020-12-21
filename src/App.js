@@ -1,7 +1,7 @@
 import React, { Suspense } from "react";
 import "./App.css";
 import { observer } from "mobx-react";
-import { Router, Route, Switch, Redirect } from "react-router";
+import { Route, Switch } from "react-router";
 
 import api from "./comp/api";
 
@@ -28,16 +28,20 @@ import ShopsMap from "./comp/ShopsMap";
 import StartLoader from "./comp/Loader";
 import PageNotFound from "./comp/404";
 import BlackFriday from "./comp/BlackFriday";
-import { Link } from "react-router-dom";
+import NewYear from "./comp/temp/NewYear2021";
 
 import Breadcrumbs from "./comp/breadcrumbs";
 import localStorage from "mobx-localstorage";
 import $ from "jquery";
 import { withRouter } from "react-router";
+import Profile from "./comp/Profile";
+
+import buildKey from "./buildKey.json";
 
 const CartPage = React.lazy(() => import("./comp/CartPage"));
 const Finish = React.lazy(() => import("./comp/Finish"));
-const Profile = React.lazy(() => import("./comp/Profile"));
+
+// const Profile = React.lazy(() => import("./comp/Profile"));
 
 const Help = React.lazy(() => import("./comp/Help"));
 const About = React.lazy(() => import("./comp/About"));
@@ -59,13 +63,11 @@ const MainScreen = observer(
     state = {
       cardRender: false,
       loginDev:
-        localStorage.get("dev-login") === undefined ||
-        localStorage.get("dev-login") === null
-          ? false
-          : localStorage.get("dev-login"),
+        localStorage.getItem("dev-login") === undefined || localStorage.getItem("dev-login") === null ? false : localStorage.getItem("dev-login"),
     };
 
     cardContainer = [];
+    keyInsaid = window.localStorage.getItem("buildKey");
 
     // clickHandler = (data) => {
     //   // this.cardContainer = <CardView data={data} store={this.props.store} />;
@@ -156,7 +158,7 @@ const MainScreen = observer(
         })
         .then((data) => {
           if (data.bfcheck === "ok") {
-            localStorage.set("BFcheck", true);
+            localStorage.setItem("BFcheck", true);
           }
           if (+slug !== this.props.store.cardContainer.slug) {
             this.props.store.cardContainer = data.product[0];
@@ -199,40 +201,13 @@ const MainScreen = observer(
     };
 
     chekFinishDelete = () => {
-      if (localStorage.get("deleteCart") === true) {
+      if (localStorage.getItem("deleteCart") === true) {
         this.props.store.productInCartList = {};
         this.props.store.addtoCart(false);
         if (process.env.REACT_APP_TYPE === "prod") {
           window.ym(65097901, "reachGoal", "Checkout");
         }
         localStorage.removeItem("deleteCart");
-        if (localStorage.get("sendDeliveryPickUp") === true) {
-          function t(w) {
-            function start() {
-              w.removeEventListener("YaDeliveryLoad", start);
-              w.YaDelivery.createWidget({
-                containerId: "yaDeliveryWidget",
-                type: "deliveryCart",
-                params: {
-                  // Нужно указать те же значения, что и при первом создании
-                  apiKey: process.env.REACT_APP_SECRET_CODE_YA_WID, // Авторизационный ключ
-                  senderId: 500001936,
-                },
-              })
-                .then((widget) => widget.createOrder())
-                .catch(failureCallback);
-
-              function failureCallback(error) {
-                // Эта функция будет вызвана, если при создании виджета произошли ошибки.
-              }
-            }
-            w.YaDelivery
-              ? start()
-              : w.addEventListener("YaDeliveryLoad", start);
-          }
-          t(window);
-          localStorage.removeItem("sendDeliveryPickUp");
-        }
       }
     };
     itsSuperDev = process.env.REACT_APP_TYPE === "superDev";
@@ -244,41 +219,49 @@ const MainScreen = observer(
       console.log("object :>> ", $("#login-dev").val());
       console.log('$("#password-dev").val() :>> ', $("#password-dev").val());
       if ($("#login-dev").val() === process.env.REACT_APP_SUPER_DEV_LOGIN) {
-        if (
-          $("#password-dev").val() === process.env.REACT_APP_SUPER_DEV_PASSWORD
-        ) {
-          localStorage.set("dev-login", true);
+        if ($("#password-dev").val() === process.env.REACT_APP_SUPER_DEV_PASSWORD) {
+          localStorage.setItem("dev-login", true);
           this.setState({ loginDev: true });
         } else {
-          localStorage.set("dev-login", false);
+          localStorage.setItem("dev-login", false);
         }
       } else {
-        localStorage.set("dev-login", false);
+        localStorage.setItem("dev-login", false);
       }
     };
 
     checkBFregistration = (key) => {
       api.checkBFreg(key).then((ok) => {
         if (ok.status === 201) {
-          localStorage.set("BFcheck", true);
+          localStorage.setItem("BFcheck", true);
           window.location.replace("/close-sale");
         }
       });
     };
 
     render() {
-      console.log("bfcheck :>> ", localStorage.get("BFcheck"));
+      // console.log("bfcheck :>> ", localStorage.getItem("BFcheck"));
+      // console.log("test :>> ", window.location.pathname);
+      fetch("/buildKey.json")
+        .then((res) => {
+          // console.log("res", res);
+          return res.json();
+        })
+        .then((buildKey) => {
+          // console.log("buildKey :>> ", buildKey);
+          if (this.keyInsaid !== buildKey.key) {
+            window.localStorage.setItem("buildKey", buildKey.key);
+            window.location.reload();
+          }
+        })
+        .catch((errbuildKey) => console.log("errbuildKey", errbuildKey));
+
+      // console.log("buildKey :>> ", buildKey.key);
+      // console.log('window.localStorage.getItem("buildKey") :>> ', window.localStorage.getItem("buildKey"));
       return (
         <>
           {!this.itsDev && <StartLoader store={this.props.store} />}
-          <MenuPoints
-            store={this.props.store}
-            chooseMenuPoint={this.chooseMenuPoint}
-          />
-          <div
-            id="yaDeliveryWidget"
-            style={{ width: "0px", height: "0px" }}
-          ></div>
+          <MenuPoints store={this.props.store} chooseMenuPoint={this.chooseMenuPoint} />
 
           <Switch>
             {this.itsSuperDev && !this.state.loginDev && (
@@ -318,76 +301,78 @@ const MainScreen = observer(
               )}
             />
             <Route
+              path="/login"
+              exact
+              render={(routProps) => (
+                this.props.store.cleaningActiveFilters(),
+                (this.props.store.sideLogin = true),
+                $("html, body").animate({ scrollTop: 0 }, 500),
+                (document.title = "Queen of Bohemia"),
+                (<MainPage store={this.props.store} />)
+              )}
+            />
+            <Route
+              path="/registration"
+              exact
+              render={(routProps) => (
+                this.props.store.cleaningActiveFilters(),
+                (this.props.store.sideLogin = true),
+                $("html, body").animate({ scrollTop: 0 }, 500),
+                (document.title = "Queen of Bohemia"),
+                (<MainPage store={this.props.store} />)
+              )}
+            />
+            <Route
+              path="/password"
+              exact
+              render={(routProps) => (
+                this.props.store.cleaningActiveFilters(),
+                (this.props.store.sideLogin = true),
+                $("html, body").animate({ scrollTop: 0 }, 500),
+                (document.title = "Queen of Bohemia"),
+                (<MainPage store={this.props.store} />)
+              )}
+            />
+            <Route
               path="/gift/:id"
               exact
               render={(routProps) => (
                 this.props.store.cleaningActiveFilters(),
                 $("html, body").animate({ scrollTop: 0 }, 500),
                 (document.title = "Queen of Bohemia"),
-                (
-                  <MainPage
-                    store={this.props.store}
-                    gift={routProps.match.params.id}
-                  />
-                )
+                (<MainPage store={this.props.store} gift={routProps.match.params.id} />)
               )}
             />
             <Route
-              path={[
-                "/catalog/:parentName/:childName",
-                "/catalog/:parentName",
-                "/catalog",
-              ]}
+              path={["/catalog/:parentName/:childName", "/catalog/:parentName", "/catalog"]}
               render={(routProps) => (
-                this.props.store.nameMainCat !==
-                  routProps.match.params.parentName ||
-                this.props.store.nameSecondCat !==
-                  routProps.match.params.childName
+                this.props.store.nameMainCat !== routProps.match.params.parentName ||
+                this.props.store.nameSecondCat !== routProps.match.params.childName
                   ? this.props.store.cleaningActiveFilters()
                   : null,
-                this.props.store.nameMainCat !==
-                  routProps.match.params.parentName ||
-                this.props.store.nameSecondCat !==
-                  routProps.match.params.childName
+                this.props.store.nameMainCat !== routProps.match.params.parentName ||
+                this.props.store.nameSecondCat !== routProps.match.params.childName
                   ? $("html, body").animate({ scrollTop: 0 }, 500)
                   : null,
-                (this.props.store.nameMainCat =
-                  routProps.match.params.parentName),
-                (this.props.store.nameSecondCat =
-                  routProps.match.params.childName),
+                (this.props.store.nameMainCat = routProps.match.params.parentName),
+                (this.props.store.nameSecondCat = routProps.match.params.childName),
                 this.props.store.filtration(),
                 (this.props.store.activeCats = this.props.store.fullCats),
-                this.props.store.menuAccor[
-                  routProps.match.params.parentName
-                ] !== undefined
+                this.props.store.menuAccor[routProps.match.params.parentName] !== undefined
                   ? routProps.match.params.childName
-                    ? (document.title =
-                        this.props.store.menuAccor[
-                          routProps.match.params.childName
-                        ] + " - Queen of Bohemia")
-                    : (document.title =
-                        this.props.store.menuAccor[
-                          routProps.match.params.parentName
-                        ] + " - Queen of Bohemia")
+                    ? (document.title = this.props.store.menuAccor[routProps.match.params.childName] + " - Queen of Bohemia")
+                    : (document.title = this.props.store.menuAccor[routProps.match.params.parentName] + " - Queen of Bohemia")
                   : (document.title = "Queen of Bohemia"),
                 (
                   <div className="main-screen">
                     <div className="container">
                       <div className="row">
                         <div className="col col-12">
-                          <Breadcrumbs
-                            name={routProps.match.params.parentName}
-                            child={routProps.match.params.childName}
-                            store={this.props.store}
-                          />
+                          <Breadcrumbs name={routProps.match.params.parentName} child={routProps.match.params.childName} store={this.props.store} />
                           <h3 className="catalog-title">
                             {routProps.match.params.childName
-                              ? this.props.store.menuAccor[
-                                  routProps.match.params.childName
-                                ]
-                              : this.props.store.menuAccor[
-                                  routProps.match.params.parentName
-                                ]}
+                              ? this.props.store.menuAccor[routProps.match.params.childName]
+                              : this.props.store.menuAccor[routProps.match.params.parentName]}
                           </h3>
                         </div>
                       </div>
@@ -466,22 +451,27 @@ const MainScreen = observer(
                 )
               )}
             />
+            <Route
+              path="/new-year"
+              render={() => (
+                $("html, body").animate({ scrollTop: 0 }, 500),
+                (document.title = "Новый Год - Queen of Bohemia"),
+                (
+                  <div className="main-screen">
+                    <NewYear store={this.props.store} />
+                  </div>
+                )
+              )}
+            />
 
-            {(localStorage.get("BFcheck") === true ||
-              localStorage.get("BFcheck") === "true") && (
+            {(localStorage.getItem("BFcheck") === true || localStorage.getItem("BFcheck") === "true") && (
               <Route
                 path="/close-sale"
                 render={(propsRout) => (
                   (this.props.store.nameMainCat = ""),
                   (this.props.store.nameSecondCat = ""),
-                  this.props.store.bannerFilter.slug !==
-                  propsRout.match.params.slug
-                    ? this.props.store.cleaningActiveFilters()
-                    : null,
-                  this.props.store.bannerFilter.slug !==
-                  propsRout.match.params.slug
-                    ? $("html, body").animate({ scrollTop: 0 }, 500)
-                    : null,
+                  this.props.store.bannerFilter.slug !== propsRout.match.params.slug ? this.props.store.cleaningActiveFilters() : null,
+                  this.props.store.bannerFilter.slug !== propsRout.match.params.slug ? $("html, body").animate({ scrollTop: 0 }, 500) : null,
                   (this.props.store.bannerFilter = {
                     type: "closeBanner",
                     slug: "zakrytyj_razdel_-_chyornaya_pyatnica",
@@ -489,10 +479,7 @@ const MainScreen = observer(
                   this.props.store.filtration(),
                   (
                     <div className="main-screen">
-                      <Collection
-                        store={this.props.store}
-                        slug={propsRout.match.params.slug}
-                      />
+                      <Collection store={this.props.store} slug={propsRout.match.params.slug} />
                     </div>
                   )
                 )}
@@ -502,17 +489,10 @@ const MainScreen = observer(
               path={["/product/:id&:t", "/product/:id"]}
               render={(propsRout) => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
-                (this.addToLastSeenProd(
-                  propsRout.match.params.id,
-                  propsRout.match.params.t
-                ),
+                (this.addToLastSeenProd(propsRout.match.params.id, propsRout.match.params.t),
                 (
                   <div className="main-screen">
-                    <CardView
-                      store={this.props.store}
-                      data={this.props.store.cardContainer}
-                      sku={propsRout.match.params.id}
-                    />
+                    <CardView store={this.props.store} data={this.props.store.cardContainer} sku={propsRout.match.params.id} />
                   </div>
                 ))
               )}
@@ -524,11 +504,9 @@ const MainScreen = observer(
                 $("html, body").animate({ scrollTop: 0 }, 500),
                 (document.title = "Профиль - Queen of Bohemia"),
                 (
-                  <Suspense fallback={<div></div>}>
-                    <div className="main-screen">
-                      <Profile store={this.props.store} />
-                    </div>
-                  </Suspense>
+                  <div className="main-screen">
+                    <Profile store={this.props.store} />
+                  </div>
                 )
               )}
             />
@@ -548,14 +526,8 @@ const MainScreen = observer(
               render={(propsRout) => (
                 (this.props.store.nameMainCat = ""),
                 (this.props.store.nameSecondCat = ""),
-                this.props.store.bannerFilter.slug !==
-                propsRout.match.params.slug
-                  ? this.props.store.cleaningActiveFilters()
-                  : null,
-                this.props.store.bannerFilter.slug !==
-                propsRout.match.params.slug
-                  ? $("html, body").animate({ scrollTop: 0 }, 500)
-                  : null,
+                this.props.store.bannerFilter.slug !== propsRout.match.params.slug ? this.props.store.cleaningActiveFilters() : null,
+                this.props.store.bannerFilter.slug !== propsRout.match.params.slug ? $("html, body").animate({ scrollTop: 0 }, 500) : null,
                 (this.props.store.bannerFilter = {
                   type: "collections",
                   slug: propsRout.match.params.slug,
@@ -563,10 +535,7 @@ const MainScreen = observer(
                 this.props.store.filtration(),
                 (
                   <div className="main-screen">
-                    <Collection
-                      store={this.props.store}
-                      slug={propsRout.match.params.slug}
-                    />
+                    <Collection store={this.props.store} slug={propsRout.match.params.slug} />
                   </div>
                 )
               )}
@@ -577,14 +546,8 @@ const MainScreen = observer(
               render={(propsRout) => (
                 (this.props.store.nameMainCat = ""),
                 (this.props.store.nameSecondCat = ""),
-                this.props.store.bannerFilter.slug !==
-                propsRout.match.params.slug
-                  ? this.props.store.cleaningActiveFilters()
-                  : null,
-                this.props.store.bannerFilter.slug !==
-                propsRout.match.params.slug
-                  ? $("html, body").animate({ scrollTop: 0 }, 500)
-                  : null,
+                this.props.store.bannerFilter.slug !== propsRout.match.params.slug ? this.props.store.cleaningActiveFilters() : null,
+                this.props.store.bannerFilter.slug !== propsRout.match.params.slug ? $("html, body").animate({ scrollTop: 0 }, 500) : null,
                 (this.props.store.bannerFilter = {
                   type: "brend",
                   slug: propsRout.match.params.slug,
@@ -592,10 +555,7 @@ const MainScreen = observer(
                 this.props.store.filtration(),
                 (
                   <div className="main-screen">
-                    <Collection
-                      store={this.props.store}
-                      slug={propsRout.match.params.slug}
-                    />
+                    <Collection store={this.props.store} slug={propsRout.match.params.slug} />
                   </div>
                 )
               )}
@@ -629,14 +589,8 @@ const MainScreen = observer(
               render={(propsRout) => (
                 (this.props.store.nameMainCat = ""),
                 (this.props.store.nameSecondCat = ""),
-                this.props.store.bannerFilter.slug !==
-                propsRout.match.params.slug
-                  ? this.props.store.cleaningActiveFilters()
-                  : null,
-                this.props.store.bannerFilter.slug !==
-                propsRout.match.params.slug
-                  ? $("html, body").animate({ scrollTop: 0 }, 500)
-                  : null,
+                this.props.store.bannerFilter.slug !== propsRout.match.params.slug ? this.props.store.cleaningActiveFilters() : null,
+                this.props.store.bannerFilter.slug !== propsRout.match.params.slug ? $("html, body").animate({ scrollTop: 0 }, 500) : null,
                 (this.props.store.bannerFilter = {
                   type: "main",
                   slug: propsRout.match.params.slug,
@@ -644,10 +598,7 @@ const MainScreen = observer(
                 this.props.store.filtration(),
                 (
                   <div className="main-screen">
-                    <Collection
-                      store={this.props.store}
-                      slug={propsRout.match.params.slug}
-                    />
+                    <Collection store={this.props.store} slug={propsRout.match.params.slug} />
                   </div>
                 )
               )}
@@ -700,9 +651,7 @@ const MainScreen = observer(
                 (this.props.store.nameMainCat = ""),
                 (this.props.store.nameSecondCat = ""),
                 $("html, body").animate({ scrollTop: 0 }, 500),
-                this.props.store.pathS !== "hits"
-                  ? this.props.store.cleaningActiveFilters()
-                  : null,
+                this.props.store.pathS !== "hits" ? this.props.store.cleaningActiveFilters() : null,
                 (this.props.store.pathS = "hits"),
                 this.props.store.filtration(),
                 (document.title = "Хиты - Queen of Bohemia"),
@@ -740,9 +689,7 @@ const MainScreen = observer(
                 (this.props.store.nameMainCat = ""),
                 (this.props.store.nameSecondCat = ""),
                 $("html, body").animate({ scrollTop: 0 }, 500),
-                this.props.store.pathS !== "new"
-                  ? this.props.store.cleaningActiveFilters()
-                  : null,
+                this.props.store.pathS !== "new" ? this.props.store.cleaningActiveFilters() : null,
                 (this.props.store.pathS = "new"),
                 (this.props.store.sortInProd = "Сначала новые"),
                 this.props.store.filtration(),
@@ -775,17 +722,13 @@ const MainScreen = observer(
               )}
             />
 
-            {/* <Route
+            <Route
               path="/closeout"
               render={(routProps) => (
                 (this.props.store.nameMainCat = ""),
                 (this.props.store.nameSecondCat = ""),
-                this.props.store.pathS !== "closeout"
-                  ? $("html, body").animate({ scrollTop: 0 }, 500)
-                  : null,
-                this.props.store.pathS !== "closeout"
-                  ? this.props.store.cleaningActiveFilters()
-                  : null,
+                this.props.store.pathS !== "closeout" ? $("html, body").animate({ scrollTop: 0 }, 500) : null,
+                this.props.store.pathS !== "closeout" ? this.props.store.cleaningActiveFilters() : null,
                 (this.props.store.pathS = "closeout"),
                 this.props.store.filtration(),
                 (document.title = "Расспродажа - Queen of Bohemia"),
@@ -823,14 +766,8 @@ const MainScreen = observer(
               render={(propsRout) => (
                 (this.props.store.nameMainCat = ""),
                 (this.props.store.nameSecondCat = ""),
-                this.props.store.bannerFilter.slug !==
-                propsRout.match.params.slug
-                  ? this.props.store.cleaningActiveFilters()
-                  : null,
-                this.props.store.bannerFilter.slug !==
-                propsRout.match.params.slug
-                  ? $("html, body").animate({ scrollTop: 0 }, 500)
-                  : null,
+                this.props.store.bannerFilter.slug !== propsRout.match.params.slug ? this.props.store.cleaningActiveFilters() : null,
+                this.props.store.bannerFilter.slug !== propsRout.match.params.slug ? $("html, body").animate({ scrollTop: 0 }, 500) : null,
                 (this.props.store.bannerFilter = {
                   type: "sale",
                   slug: propsRout.match.params.slug,
@@ -838,11 +775,7 @@ const MainScreen = observer(
                 this.props.store.filtration(),
                 (
                   <div className="main-screen">
-                    <Collection
-                      store={this.props.store}
-                      slug={propsRout.match.params.slug}
-                      sale={true}
-                    />
+                    <Collection store={this.props.store} slug={propsRout.match.params.slug} sale={true} />
                   </div>
                 )
               )}
@@ -859,7 +792,7 @@ const MainScreen = observer(
                   </div>
                 )
               )}
-            /> */}
+            />
 
             <Route
               path="/search"
@@ -867,19 +800,11 @@ const MainScreen = observer(
                 (this.props.store.nameMainCat = ""),
                 (this.props.store.nameSecondCat = ""),
                 $("html, body").animate({ scrollTop: 0 }, 500),
-                this.props.store.pathS !== "search"
-                  ? this.props.store.cleaningActiveFilters()
-                  : null,
+                this.props.store.pathS !== "search" ? this.props.store.cleaningActiveFilters() : null,
                 (this.props.store.pathS = "search"),
                 this.props.store.filtration(),
                 (document.title = "Поиск - Queen of Bohemia"),
-                (
-                  <Search
-                    store={this.props.store}
-                    parentName={routProps.match.params.parentName}
-                    childName={routProps.match.params.childName}
-                  />
-                )
+                (<Search store={this.props.store} parentName={routProps.match.params.parentName} childName={routProps.match.params.childName} />)
               )}
             />
 
@@ -952,10 +877,7 @@ const MainScreen = observer(
                 (
                   <Suspense fallback={<div></div>}>
                     <div className="main-screen">
-                      <Finish
-                        id={routProps.match.params.id}
-                        store={this.props.store}
-                      />
+                      <Finish id={routProps.match.params.id} store={this.props.store} />
                     </div>
                   </Suspense>
                 )
@@ -966,8 +888,7 @@ const MainScreen = observer(
               render={() => {
                 const a = document.createElement("a");
                 a.download = "apple-developer-merchantid-domain-association";
-                a.href =
-                  "/.well-known/apple-developer-merchantid-domain-association1/merchant.ru.yandex.kassa";
+                a.href = "/.well-known/apple-developer-merchantid-domain-association1/merchant.ru.yandex.kassa";
                 // console.log("a", a);
                 a.click();
               }}

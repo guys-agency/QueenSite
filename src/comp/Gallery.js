@@ -10,9 +10,7 @@ let d = "";
 const Gallery = (props) => {
   const [gallerySwiper, getGallerySwiper] = useState(null);
   const [thumbnailSwiper, getThumbnailSwiper] = useState(null);
-  const typeDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-    navigator.userAgent
-  );
+  const typeDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
   const gallerySwiperParams = {
     getSwiper: getGallerySwiper,
     slidesPerView: 1,
@@ -41,12 +39,7 @@ const Gallery = (props) => {
     slideToClickedSlide: true,
   };
   useEffect(() => {
-    if (
-      gallerySwiper !== null &&
-      gallerySwiper.controller &&
-      thumbnailSwiper !== null &&
-      thumbnailSwiper.controller
-    ) {
+    if (gallerySwiper !== null && gallerySwiper.controller && thumbnailSwiper !== null && thumbnailSwiper.controller) {
       gallerySwiper.controller.control = thumbnailSwiper;
       thumbnailSwiper.controller.control = gallerySwiper;
     }
@@ -69,10 +62,7 @@ const Gallery = (props) => {
   }, [props.path, typeDevice]);
 
   const zoomInit = () => {
-    if (
-      document.querySelector(".swiper-slide-active .drift") !== null &&
-      $(window).width() > 425
-    ) {
+    if (document.querySelector(".swiper-slide-active .drift") !== null && $(window).width() > 425) {
       if (d !== "") {
         d.destroy();
       }
@@ -209,8 +199,21 @@ const Gallery = (props) => {
   //   </div>
   // );
   props.path.forEach((p, i) => {
-    if (i === 1) {
+    main.push(
+      <div className="main-img" key={i}>
+        <img id="imgs" className="drift" src={"/image/items/" + p} data-zoom={"/image/items/" + p} alt="" />
+      </div>
+    );
+    small.push(
+      <div className="thumb-img" key={i}>
+        <img src={"/image/items/" + p} alt="" />
+      </div>
+    );
+
+    if (i === 0) {
+      // console.log("props.video1 :>> ", props.video);
       if (props.video !== undefined && props.video !== null) {
+        // console.log("props.video2 :>> ", props.video);
         props.video.forEach((el, i) => {
           main.push(
             <div className="main-img" key={`v-${i}`}>
@@ -240,22 +243,6 @@ const Gallery = (props) => {
         });
       }
     }
-    main.push(
-      <div className="main-img" key={i}>
-        <img
-          id="imgs"
-          className="drift"
-          src={"/image/items/" + p}
-          data-zoom={"/image/items/" + p}
-          alt=""
-        />
-      </div>
-    );
-    small.push(
-      <div className="thumb-img" key={i}>
-        <img src={"/image/items/" + p} alt="" />
-      </div>
-    );
   });
 
   // clickThumb = () => {

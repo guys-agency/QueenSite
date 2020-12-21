@@ -1,168 +1,191 @@
-.red{
+.red {
   color: $red;
 }
 
-.b_gray{
+.b_gray {
   color: $b_gray;
 }
 
-.b_dark{
+.b_dark {
   color: $b_dark;
 }
 
-.fw_m{
+.fw_m {
   font-weight: 500;
 }
 
-h1, h2{
-  font-family: "CaslonC 540 BT", 'Times New Roman', Times, serif;
+h1,
+h2 {
+  font-family: "CaslonC 540 BT", "Times New Roman", Times, serif;
   text-transform: uppercase;
-  a, .link{
-    font-family: "Excentra Pro", 'Times New Roman', Times, serif;
+  a,
+  .link {
+    font-family: "Excentra Pro", "Times New Roman", Times, serif;
     font-size: 16px;
     font-weight: normal;
     text-transform: none;
     color: $b_light;
     margin-left: 10px;
-    .ic{
+    .ic {
       position: relative;
       top: 2px;
       left: 0;
       transition: left 0.2s;
     }
   }
-  &:hover{
-    a, .link{
+  &:hover {
+    a,
+    .link {
       color: $g_middle;
-      .ic{
+      .ic {
         left: 3px;
       }
     }
   }
 }
 
-h1, h2, h3, h4, h5, h6{
-  &.dib{
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  &.dib {
     display: inline-block;
   }
-  &.tilda{
-    &::before{
+  &.tilda {
+    &::before {
       @include icon;
       display: block;
       content: $i_line-h;
       @include gold-txt;
     }
   }
-  &.white{
+  &.white {
     color: white;
   }
 }
 
-h3, h4, h5, h6, p, a, input, button{
-  font-family: "Excentra Pro", 'Times New Roman', Times, serif;
+h3,
+h4,
+h5,
+h6,
+p,
+a,
+input,
+button {
+  font-family: "Excentra Pro", "Times New Roman", Times, serif;
 }
 
-h1{
+h1 {
   font-size: 40px;
-  @include max($s){
+  @include max($s) {
     font-size: 24px;
   }
 }
 
-h2{
+h2 {
   font-size: 27px;
-  @include max($s){
+  @include max($s) {
     font-size: 21px;
   }
-  &.tilda{
-    &::before{
+  &.tilda {
+    &::before {
       font-size: 70px;
       margin-bottom: -20px;
     }
   }
 }
 
-h3{
+h3 {
   font-size: 24px;
   font-weight: 500;
-  @include max($s){
+  @include max($s) {
     font-size: 18px;
   }
-  &.tilda{
-    &::before{
+  &.tilda {
+    &::before {
       font-size: 40px;
       margin-bottom: -10px;
     }
   }
-  &.catalog-title{
+  &.catalog-title {
     margin-top: 20px;
   }
 }
 
-h4{
+h4 {
   font-size: 18px;
   font-weight: 500;
 }
 
-h5{
+h5 {
   font-size: 14px;
   font-weight: 500;
   color: $a_dark;
 }
 
-a, .link{
+a,
+.link {
   transition: all 0.2s;
   color: $b_dark;
   cursor: pointer;
-  h1, h2, h3, h4, h5 , h6{
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     color: $b_dark;
   }
-  .i_drop{
+  .i_drop {
     position: relative;
     top: 2px;
     transition: top 0.2s;
   }
-  &.dotted{
+  &.dotted {
     color: $b_light;
     border-bottom: 1px dotted $a_dark;
   }
-  &.underline{
+  &.underline {
     color: $b_light;
     text-decoration: underline;
   }
-  &:hover, &.active{
-    .i_drop{
+  &:hover,
+  &.active {
+    .i_drop {
       top: 3px;
     }
     color: $g_middle;
   }
-  &.active{
-    .i_drop{
+  &.active {
+    .i_drop {
       transform: scale(-1);
       top: 1px;
     }
   }
 }
 
-p{
+p {
   font-size: 16px;
   color: $b_dark;
-  @include max($s){
+  @include max($s) {
     font-size: 14px;
   }
-  &.red, .red{
+  &.red,
+  .red {
     color: $red;
   }
 }
 
-.title{
+.title {
   padding-bottom: 30px;
 }
 
-.dib{
+.dib {
   display: inline-block;
 }
 
-.a_dark{
+.a_dark {
   color: $a_dark;
 }

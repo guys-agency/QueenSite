@@ -52,6 +52,16 @@ button {
     }
   }
 
+  &_in-main-page {
+    position: relative;
+    top: -5.5px;
+    margin-left: 25px;
+    margin-top: 0px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    margin-bottom: 7px;
+  }
+
   &.close {
     opacity: 0;
     visibility: hidden;
@@ -206,7 +216,7 @@ button {
       opacity: 1;
     }
     &::before {
-      opacity: 0;
+      opacity: 1;
     }
   }
 }

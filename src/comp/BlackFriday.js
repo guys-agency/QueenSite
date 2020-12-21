@@ -8,9 +8,9 @@ import ProductCard from "./ProductCard";
 import { SERVER_URL } from "../constants";
 import { Formik } from "formik";
 import api from "./api";
-import RestoreSchema from "../schemas/restoreSchema";
 import { withRouter } from "react-router";
 import SuscribeSchema from "../schemas/suscribeSchema";
+import localStorage from "mobx-localstorage";
 
 const { Component } = React;
 
@@ -241,7 +241,7 @@ const BlackFriday = observer(
                               $("#subscription").removeClass("error");
                               $("#subscription").text("Подписаться");
                               if (data.bfok !== undefined && data.bfok) {
-                                localStorage.set("BFcheck", true);
+                                localStorage.setItem("BFcheck", true);
                                 window.location.replace("/close-sale");
                               }
                             }, 2000);
@@ -492,7 +492,7 @@ const BlackFriday = observer(
                             $("#subscription").removeClass("error");
                             $("#subscription").text("Подписаться");
                             if (data.bfok !== undefined && data.bfok) {
-                              localStorage.set("BFcheck", true);
+                              localStorage.setItem("BFcheck", true);
                               window.location.replace("/close-sale");
                             }
                           }, 2000);

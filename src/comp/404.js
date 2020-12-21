@@ -1,12 +1,9 @@
 import { observer } from "mobx-react";
 import React from "react";
 import api from "./api";
-import { SERVER_URL } from "../constants";
 import { Link } from "react-router-dom";
-import ProductCardContainer from "./ProductCardContainer";
 import ProductCard from "./ProductCard";
-import Filters from "./Filters";
-import Swiper from "react-id-swiper";
+
 const { Component } = React;
 
 const PageNotFound = observer(

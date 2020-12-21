@@ -1,16 +1,10 @@
 import { observer } from "mobx-react";
 import React from "react";
-import $ from "jquery";
 import { Link } from "react-router-dom";
 // import Slider from "react-slick";
 // import "slick-carousel/slick/slick.css";
 // import "slick-carousel/slick/slick-theme.css";
 import Swiper from "react-id-swiper";
-import ProductCard from "./ProductCard";
-import { SERVER_URL } from "../constants";
-import { Formik } from "formik";
-import api from "./api";
-import RestoreSchema from "../schemas/restoreSchema";
 import { withRouter } from "react-router";
 
 const { Component } = React;

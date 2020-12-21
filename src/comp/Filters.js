@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import React from "react";
 // import StickySidebar from "sticky-sidebar";
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { withRouter } from "react-router";
 import $ from "jquery";
 import Fade from "react-reveal/Fade";
@@ -28,12 +28,10 @@ const Filters = observer(
     minPriceLocal = 0;
     maxPriceLocal = 0;
 
-    typeDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-      navigator.userAgent
-    );
+    typeDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
     checkBoxHandler = (name, value) => {
-      const { activeFilters, filtration } = this.props.store;
+      const { activeFilters, filtration, searchText } = this.props.store;
       // console.log("value :>> ", value);
       if (value) {
         // console.log(" :>> test");
@@ -54,10 +52,7 @@ const Filters = observer(
         if (name !== "premium") {
           if (activeFilters.attr.includes(name)) {
             activeFilters.attr.splice(activeFilters.attr.indexOf(name), 1);
-            activeFilters.choosePoint.splice(
-              activeFilters.choosePoint.indexOf("attr"),
-              1
-            );
+            activeFilters.choosePoint.splice(activeFilters.choosePoint.indexOf("attr"), 1);
           }
         } else {
           activeFilters.premium = !activeFilters.premium;
@@ -65,6 +60,10 @@ const Filters = observer(
         }
       }
       let searchQt = "";
+      console.log("searchText :>> ", searchText);
+      if (searchText.length) {
+        searchQt = "search=" + encodeURIComponent(searchText);
+      }
       activeFilters.choosePoint.forEach((filterName) => {
         if (filterName !== "choosePoint") {
           if (filterName !== "measure") {
@@ -78,22 +77,16 @@ const Filters = observer(
               if (name !== "premium") {
                 if (activeFilters[filterName].length) {
                   if (!searchQt.length) {
-                    searchQt =
-                      filterName + "=" + activeFilters[filterName].join();
+                    searchQt = filterName + "=" + activeFilters[filterName].join();
                   } else {
-                    searchQt +=
-                      "&&" +
-                      filterName +
-                      "=" +
-                      activeFilters[filterName].join();
+                    searchQt += "&&" + filterName + "=" + activeFilters[filterName].join();
                   }
                 }
               } else {
                 if (!searchQt.length) {
                   searchQt = filterName + "=" + activeFilters[filterName];
                 } else {
-                  searchQt +=
-                    "&&" + filterName + "=" + activeFilters[filterName];
+                  searchQt += "&&" + filterName + "=" + activeFilters[filterName];
                 }
               }
             }
@@ -102,20 +95,9 @@ const Filters = observer(
               Object.keys(activeFilters[filterName]).forEach((ind) => {
                 // console.log("ind :>> ", activeFilters[filterName][ind]);
                 if (!searchQt.length) {
-                  searchQt =
-                    filterName +
-                    "=" +
-                    ind +
-                    "!~" +
-                    activeFilters[filterName][ind].join(",");
+                  searchQt = filterName + "=" + ind + "!~" + activeFilters[filterName][ind].join(",");
                 } else {
-                  searchQt +=
-                    "&&" +
-                    filterName +
-                    "=" +
-                    ind +
-                    "!~" +
-                    activeFilters[filterName][ind].join(",");
+                  searchQt += "&&" + filterName + "=" + ind + "!~" + activeFilters[filterName][ind].join(",");
                 }
               });
             }
@@ -132,13 +114,27 @@ const Filters = observer(
     };
 
     setCats = (main, child, choose) => {
+      let searchQt = window.location.href.split("?")[1];
+      if (searchQt !== "undefined" && searchQt !== "" && searchQt !== undefined) {
+        if (searchQt.includes("page=")) {
+          const searchQtParts = searchQt.split("page=" + this.props.store.startPag / 42);
+
+          searchQt = searchQtParts[0] + `page=0` + searchQtParts[1];
+        }
+
+        this.props.history.replace({ search: searchQt });
+      }
       if (choose) {
         this.props.store.nameMainCat = "";
         this.props.store.nameSecondCat = "";
+        this.props.store.startPag = 0;
+        this.props.store.stopPag = 42;
         this.props.store.filtration();
       } else {
         this.props.store.nameMainCat = main;
         this.props.store.nameSecondCat = child;
+        this.props.store.startPag = 0;
+        this.props.store.stopPag = 42;
         this.props.store.filtration();
       }
     };
@@ -182,24 +178,19 @@ const Filters = observer(
         elem.childs.forEach((child, iCh) => {
           //убрать tr, так как будут поля с транскрипцией в бд
           childsPoints.push(
-            <li
-              key={child.name}
-              className={child.slug === childName ? "active" : ""}
-            >
+            <li key={child.name} className={child.slug === childName ? "active" : ""}>
               {prodCats.length ? (
                 <a
                   onClick={(e) => {
                     e.preventDefault();
-                    $(".categories-block__child")
-                      .find(".active")
-                      .removeClass("active");
+                    const hasActive = e.target.classList.contains("active");
+                    $(".categories-block__child").find(".active").removeClass("active");
 
-                    this.setCats(
-                      elem.slug,
-                      child.slug,
-                      e.target.classList.contains("active")
-                    );
-                    e.target.classList.toggle("active");
+                    this.setCats(elem.slug, child.slug, hasActive);
+                    if (!hasActive) {
+                      e.target.classList.toggle("active");
+                    }
+
                     this.setState({ categoriesWindow: false });
                   }}
                 >
@@ -229,207 +220,87 @@ const Filters = observer(
         if (elem.name === "Сервировка стола") {
           menu[0] = (
             <li key={elem.name} className="categories-mob-block">
-              <h5
-                className={
-                  pathname.includes(elem.slug)
-                    ? "categories-block__name active"
-                    : "categories-block__name"
-                }
-                onClick={this.subCat}
-              >
+              <h5 className={pathname.includes(elem.slug) ? "categories-block__name active" : "categories-block__name"} onClick={this.subCat}>
                 {elem.name}
                 <span className="ic i_drop"></span>
               </h5>
 
-              <ul
-                className={
-                  pathname.includes(elem.slug)
-                    ? "categories-block__child visible"
-                    : "categories-block__child"
-                }
-              >
-                {childsPoints}
-              </ul>
+              <ul className={pathname.includes(elem.slug) ? "categories-block__child visible" : "categories-block__child"}>{childsPoints}</ul>
             </li>
           );
         } else if (elem.name === "Для приготовления") {
           menu[1] = (
             <li key={elem.name} className="categories-mob-block">
-              <h5
-                className={
-                  pathname.includes(elem.slug)
-                    ? "categories-block__name active"
-                    : "categories-block__name"
-                }
-                onClick={this.subCat}
-              >
+              <h5 className={pathname.includes(elem.slug) ? "categories-block__name active" : "categories-block__name"} onClick={this.subCat}>
                 {elem.name} <span className="ic i_drop"></span>
               </h5>
 
-              <ul
-                className={
-                  pathname.includes(elem.slug)
-                    ? "categories-block__child visible"
-                    : "categories-block__child"
-                }
-              >
-                {childsPoints}
-              </ul>
+              <ul className={pathname.includes(elem.slug) ? "categories-block__child visible" : "categories-block__child"}>{childsPoints}</ul>
             </li>
           );
         } else if (elem.name === "Напитки") {
           menu[2] = (
             <li key={elem.name} className="categories-mob-block">
-              <h5
-                className={
-                  pathname.includes(elem.slug)
-                    ? "categories-block__name active"
-                    : "categories-block__name"
-                }
-                onClick={this.subCat}
-              >
+              <h5 className={pathname.includes(elem.slug) ? "categories-block__name active" : "categories-block__name"} onClick={this.subCat}>
                 {elem.name} <span className="ic i_drop"></span>
               </h5>
 
-              <ul
-                className={
-                  pathname.includes(elem.slug)
-                    ? "categories-block__child visible"
-                    : "categories-block__child"
-                }
-              >
-                {childsPoints}
-              </ul>
+              <ul className={pathname.includes(elem.slug) ? "categories-block__child visible" : "categories-block__child"}>{childsPoints}</ul>
             </li>
           );
         } else if (elem.name === "Кофе и чай") {
           menu[3] = (
             <li key={elem.name} className="categories-mob-block">
-              <h5
-                className={
-                  pathname.includes(elem.slug)
-                    ? "categories-block__name active"
-                    : "categories-block__name"
-                }
-                onClick={this.subCat}
-              >
+              <h5 className={pathname.includes(elem.slug) ? "categories-block__name active" : "categories-block__name"} onClick={this.subCat}>
                 {elem.name}
                 <span className="ic i_drop"></span>
               </h5>
 
-              <ul
-                className={
-                  pathname.includes(elem.slug)
-                    ? "categories-block__child visible"
-                    : "categories-block__child"
-                }
-              >
-                {childsPoints}
-              </ul>
+              <ul className={pathname.includes(elem.slug) ? "categories-block__child visible" : "categories-block__child"}>{childsPoints}</ul>
             </li>
           );
         } else if (elem.name === "Аксесуары для стола") {
           menu[4] = (
             <li key={elem.name} className="categories-mob-block">
-              <h5
-                className={
-                  pathname.includes(elem.slug)
-                    ? "categories-block__name active"
-                    : "categories-block__name"
-                }
-                onClick={this.subCat}
-              >
+              <h5 className={pathname.includes(elem.slug) ? "categories-block__name active" : "categories-block__name"} onClick={this.subCat}>
                 {elem.name}
                 <span className="ic i_drop"></span>
               </h5>
 
-              <ul
-                className={
-                  pathname.includes(elem.slug)
-                    ? "categories-block__child visible"
-                    : "categories-block__child"
-                }
-              >
-                {childsPoints}
-              </ul>
+              <ul className={pathname.includes(elem.slug) ? "categories-block__child visible" : "categories-block__child"}>{childsPoints}</ul>
             </li>
           );
         } else if (elem.name === "Интерьер") {
           menu[5] = (
             <li key={elem.name} className="categories-mob-block">
-              <h5
-                className={
-                  pathname.includes(elem.slug)
-                    ? "categories-block__name active"
-                    : "categories-block__name"
-                }
-                onClick={this.subCat}
-              >
+              <h5 className={pathname.includes(elem.slug) ? "categories-block__name active" : "categories-block__name"} onClick={this.subCat}>
                 {elem.name}
                 <span className="ic i_drop"></span>
               </h5>
 
-              <ul
-                className={
-                  pathname.includes(elem.slug)
-                    ? "categories-block__child visible"
-                    : "categories-block__child"
-                }
-              >
-                {childsPoints}
-              </ul>
+              <ul className={pathname.includes(elem.slug) ? "categories-block__child visible" : "categories-block__child"}>{childsPoints}</ul>
             </li>
           );
         } else if (elem.name === "Наборы") {
           menu[6] = (
             <li key={elem.name} className="categories-mob-block">
-              <h5
-                className={
-                  pathname.includes(elem.slug)
-                    ? "categories-block__name active"
-                    : "categories-block__name"
-                }
-                onClick={this.subCat}
-              >
+              <h5 className={pathname.includes(elem.slug) ? "categories-block__name active" : "categories-block__name"} onClick={this.subCat}>
                 {elem.name}
                 <span className="ic i_drop"></span>
               </h5>
 
-              <ul
-                className={
-                  pathname.includes(elem.slug)
-                    ? "categories-block__child visible"
-                    : "categories-block__child"
-                }
-              >
-                {childsPoints}
-              </ul>
+              <ul className={pathname.includes(elem.slug) ? "categories-block__child visible" : "categories-block__child"}>{childsPoints}</ul>
             </li>
           );
         } else if (elem.name === "Сервизы") {
           menu[7] = (
             <li key={elem.name} className="categories-mob-block">
-              <h5
-                className={
-                  pathname.includes(elem.slug)
-                    ? "categories-block__name active"
-                    : "categories-block__name"
-                }
-                onClick={this.subCat}
-              >
+              <h5 className={pathname.includes(elem.slug) ? "categories-block__name active" : "categories-block__name"} onClick={this.subCat}>
                 {elem.name}
                 <span className="ic i_drop"></span>
               </h5>
 
-              <ul
-                className={
-                  pathname.includes(elem.slug)
-                    ? "categories-block__child visible"
-                    : "categories-block__child"
-                }
-              >
-                {childsPoints}
-              </ul>
+              <ul className={pathname.includes(elem.slug) ? "categories-block__child visible" : "categories-block__child"}>{childsPoints}</ul>
             </li>
           );
         }
@@ -457,43 +328,23 @@ const Filters = observer(
               className="ic i_close"
               onClick={() => {
                 if (document.querySelector(".catalog__bar")) {
-                  document
-                    .querySelector(".catalog__bar")
-                    .classList.remove("visible");
+                  document.querySelector(".catalog__bar").classList.remove("visible");
                 }
-                document
-                  .querySelector(".sidebar-overlay")
-                  .classList.remove("active");
+                document.querySelector(".sidebar-overlay").classList.remove("active");
                 document.querySelector("body").classList.remove("no-scroll");
                 document.querySelector(".i_filter").classList.remove("active");
               }}
             ></button>
           </div>
           {/* {!categoriesWindow ? ( */}
-          <Fade
-            distance="50px"
-            duration={300}
-            opposite
-            right
-            when={this.state.categoriesWindow}
-          >
-            <div
-              className={`sidebar__inner sidebar__inner_cats ${
-                this.state.categoriesWindow && "active"
-              }`}
-            >
+          <Fade distance="50px" duration={300} opposite right when={this.state.categoriesWindow}>
+            <div className={`sidebar__inner sidebar__inner_cats ${this.state.categoriesWindow && "active"}`}>
               <div className="categories-block">
                 <ul>{menu}</ul>
               </div>
             </div>
           </Fade>
-          <Fade
-            distance="50px"
-            duration={300}
-            opposite
-            right
-            when={!this.state.categoriesWindow}
-          >
+          <Fade distance="50px" duration={300} opposite right when={!this.state.categoriesWindow}>
             <div className="sidebar__inner">
               {this.typeDevice ? (
                 <button
@@ -502,10 +353,7 @@ const Filters = observer(
                     this.setState({ categoriesWindow: true });
                   }}
                 >
-                  Категория{" "}
-                  <p>
-                    {this.props.store.menuAccor[this.props.store.nameSecondCat]}
-                  </p>
+                  Категория <p>{this.props.store.menuAccor[this.props.store.nameSecondCat]}</p>
                   <div className="ic i_drop"></div>
                 </button>
               ) : (
@@ -522,11 +370,7 @@ const Filters = observer(
                       placeholder={minPrice}
                       name="min"
                       type="number"
-                      value={
-                        activeFilters.minPrice.length > 0
-                          ? activeFilters.minPrice
-                          : null
-                      }
+                      value={activeFilters.minPrice.length > 0 ? activeFilters.minPrice : null}
                       onBlur={() => {
                         $("#priceBtn").addClass("close");
                       }}
@@ -534,11 +378,7 @@ const Filters = observer(
                         $("#priceBtn").removeClass("close");
                       }}
                       onChange={(e) => {
-                        if (
-                          e.target.value > minPrice &&
-                          e.target.value < maxPrice
-                        )
-                          activeFilters.minPrice = e.target.value;
+                        if (e.target.value > minPrice && e.target.value < maxPrice) activeFilters.minPrice = e.target.value;
                         // if (e.target.value.length > 0) {
                         //   $("#priceBtn").removeClass("close");
                         // } else if (
@@ -554,11 +394,7 @@ const Filters = observer(
                       placeholder={maxPrice}
                       name="max"
                       type="number"
-                      value={
-                        activeFilters.maxPrice.length > 0
-                          ? activeFilters.maxPrice
-                          : null
-                      }
+                      value={activeFilters.maxPrice.length > 0 ? activeFilters.maxPrice : null}
                       onBlur={() => {
                         $("#priceBtn").addClass("close");
                       }}
@@ -566,10 +402,7 @@ const Filters = observer(
                         $("#priceBtn").removeClass("close");
                       }}
                       onChange={(e) => {
-                        if (
-                          e.target.value > minPrice &&
-                          e.target.value < maxPrice
-                        ) {
+                        if (e.target.value > minPrice && e.target.value < maxPrice) {
                           activeFilters.maxPrice = e.target.value;
                         } else {
                           activeFilters.maxPrice = maxPrice;
@@ -594,10 +427,7 @@ const Filters = observer(
                           activeFilters.count += 1;
                         } else {
                           if (activeFilters.choosePoint.includes("minPrice")) {
-                            activeFilters.choosePoint.splice(
-                              activeFilters.choosePoint.indexOf("minPrice"),
-                              1
-                            );
+                            activeFilters.choosePoint.splice(activeFilters.choosePoint.indexOf("minPrice"), 1);
                           }
                         }
                         if (+activeFilters.maxPrice > 0) {
@@ -606,10 +436,7 @@ const Filters = observer(
                           activeFilters.count += 1;
                         } else {
                           if (activeFilters.choosePoint.includes("maxPrice")) {
-                            activeFilters.choosePoint.splice(
-                              activeFilters.choosePoint.indexOf("maxPrice"),
-                              1
-                            );
+                            activeFilters.choosePoint.splice(activeFilters.choosePoint.indexOf("maxPrice"), 1);
                           }
                         }
 
@@ -617,70 +444,34 @@ const Filters = observer(
                         activeFilters.choosePoint.forEach((filterName) => {
                           if (filterName !== "choosePoint") {
                             if (filterName !== "measure") {
-                              if (
-                                filterName === "maxPrice" ||
-                                filterName === "minPrice"
-                              ) {
+                              if (filterName === "maxPrice" || filterName === "minPrice") {
                                 if (!searchQt.length) {
-                                  searchQt =
-                                    filterName +
-                                    "=" +
-                                    activeFilters[filterName];
+                                  searchQt = filterName + "=" + activeFilters[filterName];
                                 } else {
-                                  searchQt +=
-                                    "&&" +
-                                    filterName +
-                                    "=" +
-                                    activeFilters[filterName];
+                                  searchQt += "&&" + filterName + "=" + activeFilters[filterName];
                                 }
                               } else {
                                 if (activeFilters[filterName].length) {
                                   if (!searchQt.length) {
-                                    searchQt =
-                                      filterName +
-                                      "=" +
-                                      activeFilters[filterName].join();
+                                    searchQt = filterName + "=" + activeFilters[filterName].join();
                                   } else {
-                                    searchQt +=
-                                      "&&" +
-                                      filterName +
-                                      "=" +
-                                      activeFilters[filterName].join();
+                                    searchQt += "&&" + filterName + "=" + activeFilters[filterName].join();
                                   }
                                 }
                               }
                             } else {
-                              if (
-                                Object.keys(activeFilters[filterName]).length
-                              ) {
-                                Object.keys(activeFilters[filterName]).forEach(
-                                  (ind) => {
-                                    // console.log(
-                                    //   "ind :>> ",
-                                    //   activeFilters[filterName][ind]
-                                    // );
-                                    if (!searchQt.length) {
-                                      searchQt =
-                                        filterName +
-                                        "=" +
-                                        ind +
-                                        "!~" +
-                                        activeFilters[filterName][ind].join(
-                                          ","
-                                        );
-                                    } else {
-                                      searchQt +=
-                                        "&&" +
-                                        filterName +
-                                        "=" +
-                                        ind +
-                                        "!~" +
-                                        activeFilters[filterName][ind].join(
-                                          ","
-                                        );
-                                    }
+                              if (Object.keys(activeFilters[filterName]).length) {
+                                Object.keys(activeFilters[filterName]).forEach((ind) => {
+                                  // console.log(
+                                  //   "ind :>> ",
+                                  //   activeFilters[filterName][ind]
+                                  // );
+                                  if (!searchQt.length) {
+                                    searchQt = filterName + "=" + ind + "!~" + activeFilters[filterName][ind].join(",");
+                                  } else {
+                                    searchQt += "&&" + filterName + "=" + ind + "!~" + activeFilters[filterName][ind].join(",");
                                   }
-                                );
+                                });
                               }
                             }
                           }
@@ -702,101 +493,72 @@ const Filters = observer(
                     <div>{measurePointsContainers}</div>
                   </div>
                 )}
-                {(optPointsContainers.length ||
-                  this.props.store.canHit ||
-                  this.props.store.canPremium ||
-                  this.props.store.canSale) && (
+                {(optPointsContainers.length || this.props.store.canHit || this.props.store.canPremium || this.props.store.canSale) && (
                   <div className="main-filers-block">
                     <h5>Дополнительно</h5>
                     <div>{optPointsContainers}</div>
                     <div>
-                      {!window.location.pathname.includes("hits") &&
-                        this.props.store.canHit && (
-                          <label
-                            className={`checkbox ${
-                              activeFilters.attr.includes("hit")
-                                ? "checkbox_active"
-                                : ""
-                            }`}
-                          >
-                            <input
-                              type="checkbox"
-                              checked={activeFilters.attr.includes("hit")}
-                              onChange={(e) => {
-                                // console.log(
-                                //   "e.target.value",
-                                //   $(e.target).is(":checked")
-                                // );
+                      {!window.location.pathname.includes("hits") && this.props.store.canHit && (
+                        <label className={`checkbox ${activeFilters.attr.includes("hit") ? "checkbox_active" : ""}`}>
+                          <input
+                            type="checkbox"
+                            checked={activeFilters.attr.includes("hit")}
+                            onChange={(e) => {
+                              // console.log(
+                              //   "e.target.value",
+                              //   $(e.target).is(":checked")
+                              // );
 
-                                this.checkBoxHandler(
-                                  "hit",
-                                  $(e.target).is(":checked")
-                                );
-                              }}
-                            />
-                            <span className="checkbox-btn"></span>
-                            <i>Хиты продаж</i>
-                          </label>
-                        )}
+                              this.checkBoxHandler("hit", $(e.target).is(":checked"));
+                            }}
+                          />
+                          <span className="checkbox-btn"></span>
+                          <i>Хиты продаж</i>
+                        </label>
+                      )}
 
-                      {!window.location.pathname.includes("premium") &&
-                        this.props.store.canPremium && (
-                          <label
-                            className={`checkbox checkbox_margin
-                              ${
-                                activeFilters.premium === "true"
-                                  ? "checkbox_active"
-                                  : ""
-                              }`}
-                          >
-                            <input
-                              type="checkbox"
-                              checked={activeFilters.premium === "true"}
-                              onChange={(e) => {
-                                // console.log(
-                                //   "e.target.value",
-                                //   $(e.target).is(":checked")
-                                // );
+                      {!window.location.pathname.includes("premium") && this.props.store.canPremium && (
+                        <label
+                          className={`checkbox checkbox_margin
+                              ${activeFilters.premium === "true" ? "checkbox_active" : ""}`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={activeFilters.premium === "true"}
+                            onChange={(e) => {
+                              // console.log(
+                              //   "e.target.value",
+                              //   $(e.target).is(":checked")
+                              // );
 
-                                this.checkBoxHandler(
-                                  "premium",
-                                  $(e.target).is(":checked")
-                                );
-                              }}
-                            />
-                            <span className="checkbox-btn"></span>
-                            <i>Премиум</i>
-                          </label>
-                        )}
-                      {!window.location.pathname.includes("sale") &&
-                        this.props.store.canSale && (
-                          <label
-                            className={`checkbox checkbox_margin
-                            ${
-                              activeFilters.attr.includes("sale")
-                                ? "checkbox_active"
-                                : ""
-                            }`}
-                          >
-                            <input
-                              type="checkbox"
-                              checked={activeFilters.attr.includes("sale")}
-                              onChange={(e) => {
-                                // console.log(
-                                //   "e.target.value",
-                                //   $(e.target).is(":checked")
-                                // );
+                              this.checkBoxHandler("premium", $(e.target).is(":checked"));
+                            }}
+                          />
+                          <span className="checkbox-btn"></span>
+                          <i>Премиум</i>
+                        </label>
+                      )}
+                      {!window.location.pathname.includes("sale") && this.props.store.canSale && (
+                        <label
+                          className={`checkbox checkbox_margin
+                            ${activeFilters.attr.includes("sale") ? "checkbox_active" : ""}`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={activeFilters.attr.includes("sale")}
+                            onChange={(e) => {
+                              // console.log(
+                              //   "e.target.value",
+                              //   $(e.target).is(":checked")
+                              // );
 
-                                this.checkBoxHandler(
-                                  "sale",
-                                  $(e.target).is(":checked")
-                                );
-                              }}
-                            />
-                            <span className="checkbox-btn"></span>
-                            <i>Со скидкой</i>
-                          </label>
-                        )}
+                              this.checkBoxHandler("sale", $(e.target).is(":checked"));
+                            }}
+                          />
+                          <span className="checkbox-btn"></span>
+                          <i>Со скидкой</i>
+                        </label>
+                      )}
                     </div>
                   </div>
                 )}
@@ -810,17 +572,11 @@ const Filters = observer(
                 className="btn btn_yellow"
                 onClick={() => {
                   if (document.querySelector(".catalog__bar")) {
-                    document
-                      .querySelector(".catalog__bar")
-                      .classList.remove("visible");
+                    document.querySelector(".catalog__bar").classList.remove("visible");
                   }
-                  document
-                    .querySelector(".sidebar-overlay")
-                    .classList.remove("active");
+                  document.querySelector(".sidebar-overlay").classList.remove("active");
                   document.querySelector("body").classList.remove("no-scroll");
-                  document
-                    .querySelector(".i_filter")
-                    .classList.remove("active");
+                  document.querySelector(".i_filter").classList.remove("active");
                 }}
               >
                 Применить

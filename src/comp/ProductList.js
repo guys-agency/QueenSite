@@ -4,7 +4,7 @@ import Fade from "react-reveal/Fade";
 import $ from "jquery";
 import api from "./api";
 
-import { Link, NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const { Component } = React;
 
@@ -84,6 +84,14 @@ const ProductList = observer(
             },
           },
         });
+
+        window._tmr.push({
+          type: "itemView",
+          productid: String(this.data.slug),
+          pagetype: "cart",
+          list: "1",
+          totalvalue: String(this.data.price),
+        });
       }
       if (this.props.clearDeliveryData) {
         this.props.clearDeliveryData();
@@ -119,25 +127,15 @@ const ProductList = observer(
 
     render() {
       const { data, el, store, cart } = this.props;
-      const {
-        productInCartList,
-        likeContainer,
-        addToLike,
-        addtoCart,
-        certInCart,
-      } = store;
+      const { productInCartList, likeContainer, addToLike, addtoCart, certInCart } = store;
       const itsSert = data.name === "Электронный подарочный сертификат";
       let inCart;
 
       if (!cart) {
-        inCart = Object.keys(store.productInCartList).length
-          ? Object.keys(store.productInCartList).indexOf(String(data.slug))
-          : -1;
+        inCart = Object.keys(store.productInCartList).length ? Object.keys(store.productInCartList).indexOf(String(data.slug)) : -1;
 
         if (data.name === "Электронный подарочный сертификат" && certInCart) {
-          inCart = Object.keys(this.props.store.productInCartList).indexOf(
-            certInCart
-          );
+          inCart = Object.keys(this.props.store.productInCartList).indexOf(certInCart);
         }
       }
 
@@ -149,11 +147,7 @@ const ProductList = observer(
             <div className="product__image">
               <div className="product__image-wrp">
                 <img
-                  src={
-                    data.path_to_photo !== undefined
-                      ? "/image/items/" + data.path_to_photo[0]
-                      : "/image/Category/Product-card/Placeholder.png"
-                  }
+                  src={data.path_to_photo !== undefined ? "/image/items/" + data.path_to_photo[0] : "/image/Category/Product-card/Placeholder.png"}
                 />
               </div>
             </div>
@@ -165,69 +159,29 @@ const ProductList = observer(
                 data.sale_price !== 0 ? (
                   productInCartList[el] !== undefined ? (
                     <div className={"product__price product__price_disc"}>
-                      <span className="old">
-                        {(
-                          productInCartList[el] * data.regular_price
-                        ).toLocaleString()}{" "}
-                        ₽
-                      </span>{" "}
-                      {(
-                        productInCartList[el] * data.sale_price
-                      ).toLocaleString()}{" "}
-                      ₽{" "}
-                      <span
-                        className={`disc_perc ${
-                          data.bfsale ? " disc_perc-bf" : ""
-                        }`}
-                      >
-                        {(
-                          (data.sale_price / data.regular_price - 1) *
-                          100
-                        ).toFixed(0)}
-                        %
+                      <span className="old">{(productInCartList[el] * data.regular_price).toLocaleString()} ₽</span>{" "}
+                      {(productInCartList[el] * data.sale_price).toLocaleString()} ₽{" "}
+                      <span className={`disc_perc ${data.bfsale ? " disc_perc-bf" : ""}`}>
+                        {((data.sale_price / data.regular_price - 1) * 100).toFixed(0)}%
                       </span>
                     </div>
                   ) : (
                     <div className={"product__price product__price_disc"}>
-                      <span className="old">
-                        {data.regular_price.toLocaleString()} ₽
-                      </span>{" "}
-                      {data.sale_price.toLocaleString()} ₽{" "}
-                      <span
-                        className={
-                          "disc_perc" + data.bfsale ? " disc_perc-bf" : ""
-                        }
-                      >
-                        {(
-                          (data.sale_price / data.regular_price - 1) *
-                          100
-                        ).toFixed(0)}
-                        %
+                      <span className="old">{data.regular_price.toLocaleString()} ₽</span> {data.sale_price.toLocaleString()} ₽{" "}
+                      <span className={"disc_perc" + data.bfsale ? " disc_perc-bf" : ""}>
+                        {((data.sale_price / data.regular_price - 1) * 100).toFixed(0)}%
                       </span>
                     </div>
                   )
                 ) : (
                   <div className={"product__price product__price_text"}>
-                    <span className="old">
-                      {(
-                        productInCartList[el] * data.regular_price
-                      ).toLocaleString()}{" "}
-                      ₽
-                    </span>{" "}
-                    Бесплатно
+                    <span className="old">{(productInCartList[el] * data.regular_price).toLocaleString()} ₽</span> Бесплатно
                   </div>
                 )
               ) : productInCartList[el] !== undefined && itsNotCert ? (
-                <div className={"product__price"}>
-                  {(
-                    productInCartList[el] * data.regular_price
-                  ).toLocaleString()}{" "}
-                  ₽{" "}
-                </div>
+                <div className={"product__price"}>{(productInCartList[el] * data.regular_price).toLocaleString()} ₽ </div>
               ) : (
-                <div className={"product__price"}>
-                  {data.regular_price.toLocaleString()} ₽{" "}
-                </div>
+                <div className={"product__price"}>{data.regular_price.toLocaleString()} ₽ </div>
               )}
               {cart ? (
                 <button
@@ -257,13 +211,7 @@ const ProductList = observer(
                         }
                       }}
                     ></button>
-                    <input
-                      min="1"
-                      max="100"
-                      type="number"
-                      value={productInCartList[el]}
-                      readOnly
-                    />
+                    <input min="1" max="100" type="number" value={productInCartList[el]} readOnly />
                     <button
                       className="ic i_plus"
                       onClick={() => {
@@ -280,9 +228,7 @@ const ProductList = observer(
                         className="gift__change-text"
                         onClick={() => {
                           this.props.store.sideGift = true;
-                          document
-                            .querySelector(".sidebar-overlay")
-                            .classList.add("active");
+                          document.querySelector(".sidebar-overlay").classList.add("active");
                         }}
                       >
                         Текст поздравления
@@ -296,10 +242,7 @@ const ProductList = observer(
                         var drop = document.querySelector(".drop_shop");
 
                         $(".drop_shop").offset({
-                          top:
-                            $(".gift__drop-btn").offset().top +
-                            $(".gift__drop-btn").height() +
-                            12,
+                          top: $(".gift__drop-btn").offset().top + $(".gift__drop-btn").height() + 12,
                           left: $(".gift__drop-btn").offset().left,
                         });
                         $(".drop_shop").width($(".gift__drop-btn").width());
@@ -391,6 +334,14 @@ const ProductList = observer(
                               ],
                             },
                           },
+                        });
+
+                        window._tmr.push({
+                          type: "itemView",
+                          productid: String(this.data.slug),
+                          pagetype: "cart",
+                          list: "1",
+                          totalvalue: String(this.data.price),
                         });
                       }
                     }
