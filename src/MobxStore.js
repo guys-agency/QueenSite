@@ -559,9 +559,12 @@ class Store {
     });
     if (Object.keys(coupsCont).length) {
       Object.keys(coupsCont).forEach((coupon) => {
+        let couponC = +coupsCont[coupon].count;
+        const coupForProd = couponC / this.totalProductSum >= 1 ? 0.05 : 1 - couponC / this.totalProductSum;
+        // console.log("couponC  :>> ", couponC);
+        // console.log(" this.totalProductSum :>> ", this.totalProductSum);
+        // console.log("couponC / this.totalProductSum :>> ", couponC / this.totalProductSum);
         this.totalProductSum = 0;
-        let couponC = coupsCont[coupon].count;
-        const coupForProd = Math.round(couponC / this.productForYA.length);
         this.productForYA.forEach((el, i) => {
           if (el.price > 1) {
             if (coupsCont[coupon].type === "percent") {
@@ -578,7 +581,7 @@ class Store {
               //     couponC -= this.productForYA[i].price - 1;
               //   }
               // }
-              this.productForYA[i].price -= Math.round(coupForProd / this.productForYA[i].count);
+              this.productForYA[i].price = Math.round(coupForProd * this.productForYA[i].price);
             }
           }
           this.totalProductSum += this.productForYA[i].price * this.productForYA[i].count;
@@ -614,23 +617,46 @@ class Store {
               //   }
               // }
               if (this.dataToSend.prod[el].sale) {
-                this.dataToSend.prod[el].sale_price -= Math.round(coupForProd / this.productInCartList[el]);
+                this.dataToSend.prod[el].sale_price = Math.round(coupForProd * this.dataToSend.prod[el].sale_price);
               } else {
-                this.dataToSend.prod[el].regular_price -= Math.round(coupForProd / this.productInCartList[el]);
+                this.dataToSend.prod[el].regular_price = Math.round(coupForProd * this.dataToSend.prod[el].regular_price);
               }
             }
           }
         });
       });
     }
+
+    if (this.totalProductSum !== this.totalPrice) {
+      let totalDeff = this.totalPrice / this.totalProductSum;
+      // console.log("totalProductSum :>> ", this.totalPrice);
+      // console.log("this.totalProductSum :>> ", this.totalProductSum);
+      // console.log("totalDeff :>> ", totalDeff);
+
+      let i = 0;
+      // console.log("totalDeff :>> ", totalDeff);
+      while (i < this.productForYA.length) {
+        this.productForYA[i].price = Math.floor(this.productForYA[i].price * totalDeff);
+
+        i += 1;
+      }
+    }
+    this.totalProductSum = 0;
+    this.productForYA.forEach((el, i) => {
+      this.totalProductSum += this.productForYA[i].price * this.productForYA[i].count;
+    });
+
     let noPriceCount = 1;
 
     if (this.totalProductSum !== this.totalPrice) {
       let totalDeff = this.totalProductSum - this.totalPrice;
+      // console.log("totalProductSum :>> ", this.totalPrice);
+      // console.log("this.totalProductSum :>> ", this.totalProductSum);
+      // console.log("totalDeff :>> ", totalDeff);
 
       let i = 0;
       // console.log("totalDeff :>> ", totalDeff);
-      while (totalDeff > 0) {
+      while (totalDeff !== 0) {
         if (i < this.productForYA.length) {
           if (this.productForYA[i].price > 1) {
             if (this.productForYA[i].price - totalDeff / this.productForYA[i].count > 1) {

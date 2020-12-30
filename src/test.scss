@@ -350,6 +350,7 @@ code {
     &:last-child {
       margin-right: 0px;
     }
+
     &.banner_overlay {
       &::after {
         content: "";
@@ -365,6 +366,48 @@ code {
         color: #fff;
         z-index: 1;
       }
+    }
+  }
+}
+
+.banner_cats {
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  border-radius: 3px;
+  box-shadow: 0px 2px 16px rgba(0, 0, 0, 0.07);
+  border-radius: 3px;
+  background-position: bottom center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  // @include max(500px) {
+  //   height: 170px;
+  // }
+  margin-right: auto;
+  margin-left: auto;
+
+  .cat-elem {
+    display: inline-block;
+    align-self: flex-start;
+    flex-direction: column;
+    padding: 6px;
+    background-color: #f7f6f7;
+    border-radius: 5px;
+    margin-bottom: 12px;
+
+    font-family: Excentra Pro;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 16px;
+
+    &:last-child {
+      margin-bottom: 0px;
+    }
+
+    &:hover {
+      background-color: #fadf90;
+      color: #00094d;
     }
   }
 }
@@ -649,6 +692,55 @@ code {
   }
 }
 
+.banner-service {
+  background-image: url("/image/serv.jpg");
+
+  height: 200px;
+  width: 100%;
+  margin-bottom: 30px;
+}
+
 // #ymarket-affiliate #a .ReactModalPortal ._2it2MNL {
 //   display: none !important;
 // }
+
+.ny-warning {
+  width: 100vw;
+  height: 38px;
+  background-color: #fff2ca;
+  z-index: 5;
+  padding: 11px 0px;
+  display: flex;
+  justify-content: center;
+  border-bottom: 1px solid #ffd65c;
+
+  a {
+    font-size: 16px;
+    position: relative;
+    text-align: top;
+    vertical-align: text-top;
+
+    &::before {
+      content: "!";
+      font-weight: bold;
+
+      position: absolute;
+
+      left: -11px;
+      font-size: 16px;
+    }
+
+    &:hover {
+      .i_drop {
+        top: 2px;
+      }
+    }
+
+    .i_drop {
+      position: relative;
+      right: -5px;
+      transform: rotate(-90deg);
+      font-size: 14px;
+    }
+  }
+}

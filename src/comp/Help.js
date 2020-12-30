@@ -7,6 +7,20 @@ const { Component } = React;
 const Help = observer(
   class Help extends Component {
     state = {};
+    nyWarning = (
+      <div className="col col-8 col-t-7 col-s-12 help__desc">
+        <h3>Работа магазина 31.12—2.01</h3>
+        <p>Режим работы интернет-магазина изменится в праздничные дни:</p>
+        <ul>
+          <li>С 31.12 мы перестанем обрабатывать заказы после 17:00.</li>
+          <li>Магазин возобновит свою работу уже в Новом году со 2.01! </li>
+        </ul>
+        <p>Также на праздники изменятся правила доставки: </p>
+        <ul>
+          <li>Доставка на 31.12 может быть осуществлена только до 17:00</li>
+        </ul>
+      </div>
+    );
     payment = (
       <div className="col col-8 col-t-7 col-s-12 help__desc">
         <h3>Способы оплаты</h3>
@@ -998,6 +1012,8 @@ const Help = observer(
         this.renderBlock = this.policy;
       } else if (this.props.path === "cppd") {
         this.renderBlock = this.cppd;
+      } else if (this.props.path === "ny-delivery") {
+        this.renderBlock = this.nyWarning;
       } else {
         this.props.history.replace("/");
       }
@@ -1046,6 +1062,11 @@ const Help = observer(
               <li>
                 <NavLink activeClassName="active" to="/help/certificate" className="small-nav__btn">
                   Сертификат
+                </NavLink>
+              </li>
+              <li>
+                <NavLink activeClassName="active" to="/help/ny-delivery" className="small-nav__btn">
+                  Работа магазина 31.12 - 2.01
                 </NavLink>
               </li>
               <li>

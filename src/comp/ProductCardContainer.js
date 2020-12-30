@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
 import React from "react";
 import { withRouter } from "react-router";
+import { Link } from "react-router-dom";
 
 const ProductCardContainer = observer(
   class ProductCardContainer extends React.Component {
@@ -74,6 +75,10 @@ const ProductCardContainer = observer(
     render() {
       const { searchQ } = this.props.store;
 
+      let serv =
+        window.location.href.includes("/servizy/stolovye") ||
+        (window.location.href.includes("/servizy") && !window.location.href.includes("/servizy/"));
+
       // console.log(
       //   "decodeURIComponent :>> ",
       //   decodeURIComponent(this.props.history.location.search),
@@ -114,6 +119,12 @@ const ProductCardContainer = observer(
                     ></button>
                   </form>
                 </div>
+              )}
+
+              {serv && (
+                <Link className="banner banner_overlay banner-service" to="/sborka-serviza">
+                  <div className="banner__desc">Соберите сервиз сами</div>
+                </Link>
               )}
 
               {!window.location.pathname.includes("profile") && (

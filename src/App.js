@@ -201,12 +201,14 @@ const MainScreen = observer(
     };
 
     chekFinishDelete = () => {
-      if (localStorage.getItem("deleteCart") === true) {
+      if (localStorage.getItem("deleteCart") === true || localStorage.getItem("deleteCart") === "true") {
+        localStorage.removeItem("orderID");
         this.props.store.productInCartList = {};
         this.props.store.addtoCart(false);
-        if (process.env.REACT_APP_TYPE === "prod") {
-          window.ym(65097901, "reachGoal", "Checkout");
-        }
+        // if (process.env.REACT_APP_TYPE === "prod") {
+        //   window.ym(65097901, "reachGoal", "Checkout");
+        // }
+        localStorage.removeItem("coupsCont");
         localStorage.removeItem("deleteCart");
       }
     };
@@ -242,13 +244,14 @@ const MainScreen = observer(
     render() {
       // console.log("bfcheck :>> ", localStorage.getItem("BFcheck"));
       // console.log("test :>> ", window.location.pathname);
-      fetch("/buildKey.json")
+      fetch("/buildKey.json", { cache: "no-store" })
         .then((res) => {
           // console.log("res", res);
           return res.json();
         })
         .then((buildKey) => {
-          // console.log("buildKey :>> ", buildKey);
+          console.log("buildKey :>> ", buildKey.key);
+          console.log("this.keyInsaid :>> ", this.keyInsaid);
           if (this.keyInsaid !== buildKey.key) {
             window.localStorage.setItem("buildKey", buildKey.key);
             window.location.reload();
@@ -424,7 +427,7 @@ const MainScreen = observer(
                 )
               )}
             />
-            <Route
+            {/* <Route
               path="/black-friday/:id"
               render={(propsRout) => (
                 this.checkBFregistration(propsRout.match.params.id),
@@ -450,7 +453,7 @@ const MainScreen = observer(
                   </div>
                 )
               )}
-            />
+            /> */}
             <Route
               path="/new-year"
               render={() => (
@@ -566,6 +569,18 @@ const MainScreen = observer(
               render={() => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
                 (document.title = "Коллекции - Queen of Bohemia"),
+                (
+                  <div className="main-screen">
+                    <Collections store={this.props.store} />
+                  </div>
+                )
+              )}
+            />
+            <Route
+              path="/sborka-serviza"
+              render={() => (
+                $("html, body").animate({ scrollTop: 0 }, 500),
+                (document.title = "Сборка сервиза - Queen of Bohemia"),
                 (
                   <div className="main-screen">
                     <Collections store={this.props.store} />

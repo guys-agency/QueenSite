@@ -96,10 +96,10 @@ const ProductCard = observer(function ProductCard(props) {
 
           window._tmr.push({
             type: "itemView",
-            productid: String(this.data.slug),
+            productid: String(data.slug),
             pagetype: "cart",
             list: "1",
-            totalvalue: String(this.data.price),
+            totalvalue: String(data.price),
           });
         }
       }

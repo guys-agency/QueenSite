@@ -199,9 +199,9 @@ const Profile = observer(
           }
         }
       } else {
-        if (Object.keys(this.props.store.fullCats).length !== 0) {
-          this.props.history.push("/#profile");
-        }
+        // if (Object.keys(this.props.store.fullCats).length !== 0) {
+        window.location.replace("/login");
+        // }
       }
 
       return (

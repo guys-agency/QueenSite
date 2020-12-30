@@ -82,7 +82,7 @@ const MapDel = observer(
                 //   this._renderedTemplate.data._dataManager._data.properties
                 //     ._data
                 // );
-                console.log("123123 :>> ", 123123);
+                // console.log("123123 :>> ", 123123);
                 const dData = this._renderedTemplate.data._dataManager._data.properties._data.data;
                 geoMap.geoObjects.removeAll();
 

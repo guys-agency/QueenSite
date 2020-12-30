@@ -134,6 +134,12 @@
           width: 100%;
           margin: 0px;
         }
+
+        &.dropdown__label {
+          &::after {
+            top: 10px;
+          }
+        }
       }
     }
 

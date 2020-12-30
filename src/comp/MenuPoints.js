@@ -550,6 +550,13 @@ const MenuPoints = observer(
                 </div>
               );
             } else if (elem.name === "Сервизы") {
+              childsPoints.unshift(
+                <li key={"Собрать сервиз"}>
+                  <NavLink to={`/sborka-serviza`} onClick={this.closeNav}>
+                    Собрать сервиз
+                  </NavLink>
+                </li>
+              );
               menu[8] = (
                 <div key={elem.name}>
                   <h5>{elem.name}</h5>
@@ -724,6 +731,13 @@ const MenuPoints = observer(
       return (
         this.state.ready && (
           <>
+            {moment("02.01.2021", "DD.MM.YYYY").isAfter(moment()) && (
+              <div className="ny-warning">
+                <Link to="/help/ny-delivery">
+                  Работа магазина в праздничные дни<span className="i_drop"></span>
+                </Link>
+              </div>
+            )}
             {/* <Menu>{this.menuContainer}</Menu> */}
             <div
               className={

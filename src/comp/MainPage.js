@@ -708,6 +708,114 @@ const MainPage = observer(
                 </div>
               )}
               {ideasCon}
+
+              <div className="title ">
+                <p>
+                  <h2 className="tilda dib">Популярные категории</h2>
+                </p>
+              </div>
+              <div className="gifts row gifts_price" style={{ marginBottom: "30px" }}>
+                <Swiper {...giftCar}>
+                  {/* <div className="col col-4 col-t-6 col-s-9">
+                    <Link
+                      to="/catalog/podarki/uchitelyam"
+                      className="banner banner_overlay"
+                      style={{
+                        backgroundImage:
+                          "url(" + "/image/gifts/dayTeaMainPage.jpg" + ")",
+                      }}
+                    >
+                      <div className="banner__desc">Для учителей</div>
+                    </Link>
+                  </div> */}
+                  <div className="col col-4 col-t-6 col-s-9">
+                    <div
+                      className="banner_cats"
+                      style={{
+                        backgroundImage: "url(/image/cat1.png)",
+                        height: "258px",
+                      }}
+                    >
+                      <Link className="cat-elem" to="/catalog/napitki/bokaly">
+                        Бокалы
+                      </Link>
+                      <Link className="cat-elem" to="/catalog/napitki/stopki_i_ryumki">
+                        Стопки и рюмки
+                      </Link>
+                      <Link className="cat-elem" to="/catalog/napitki/stakany">
+                        Стаканы
+                      </Link>
+                      <Link className="cat-elem" to="/catalog/napitki/grafiny">
+                        Графины
+                      </Link>
+                      <Link className="cat-elem" to="/catalog/napitki/kuvshiny">
+                        Кувшины
+                      </Link>
+                      <Link className="cat-elem" to="/catalog/nabory/dlya_viski">
+                        Наборы для виски
+                      </Link>
+                    </div>
+                  </div>
+
+                  <div className="col col-4 col-t-6 col-s-9">
+                    <div
+                      className="banner_cats"
+                      style={{
+                        backgroundImage: "url(/image/cat2.png)",
+                        height: "258px",
+                      }}
+                    >
+                      <Link className="cat-elem" to="/catalog/servizy">
+                        Сервизы
+                      </Link>
+                      <Link className="cat-elem" to="/catalog/servirovka_stola/tarelki">
+                        Тарелки
+                      </Link>
+                      <Link className="cat-elem" to="/catalog/servirovka_stola/blyuda">
+                        Блюда
+                      </Link>
+                      <Link className="cat-elem" to="/catalog/servirovka_stola/salatniki">
+                        Салатники
+                      </Link>
+                      <Link className="cat-elem" to="/catalog/interer/podsvechniki">
+                        Подсвечники
+                      </Link>
+                      <Link className="cat-elem" to="/catalog/nabory/dlya_sushi">
+                        Наборы для суши
+                      </Link>
+                    </div>
+                  </div>
+                  <div className="col col-4 col-t-6 col-s-9">
+                    <div
+                      className="banner_cats"
+                      style={{
+                        backgroundImage: "url(/image/cat3.png)",
+                        height: "258px",
+                      }}
+                    >
+                      <Link className="cat-elem" to="/catalog/servizy/chajnye">
+                        Чайные сервизы
+                      </Link>
+                      <Link className="cat-elem" to="/catalog/kofe_i_chaj/chajniki">
+                        Чайники
+                      </Link>
+                      <Link className="cat-elem" to="/catalog/kofe_i_chaj/chajnaya_para">
+                        Чайная пара
+                      </Link>
+                      <Link className="cat-elem" to="/catalog/kofe_i_chaj/kofejnaya_para">
+                        Кофейная пара
+                      </Link>
+                      <Link className="cat-elem" to="/catalog/kofe_i_chaj/chashki_i_blyudca">
+                        Чашки и блюдца
+                      </Link>
+                      <Link className="cat-elem" to="/catalog/kofe_i_chaj/kruzhki">
+                        Кружки
+                      </Link>
+                    </div>
+                  </div>
+                </Swiper>
+              </div>
+
               {/* <div className="row ideas-block">
                 <div className="col col-5 col-t-12">
                   <a
@@ -765,7 +873,7 @@ const MainPage = observer(
                   </h2>
                 </Link>
               </div>
-              <div className="gifts row gifts_price">
+              <div className="gifts row gifts_price ">
                 <Swiper {...giftCar}>
                   {/* <div className="col col-4 col-t-6 col-s-9">
                     <Link

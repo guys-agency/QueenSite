@@ -77,6 +77,10 @@ const CartPage = observer(
       SDEK: "СДЭК",
     };
 
+    coupsD = {};
+
+    useUserData = false;
+
     // BalloonContentLayout = window.ymaps.templateLayoutFactory.createClass(
     //   '<div style="margin: 10px;">' +
     //     "<b>{{properties.name}}</b><br />" +
@@ -315,6 +319,11 @@ const CartPage = observer(
                 } else {
                   time = +time;
                 }
+                if (moment("31.12.2020", "DD.MM.YYYY").isSame(moment())) {
+                  time += 2;
+                } else if (moment("01.01.2021", "DD.MM.YYYY").isSame(moment())) {
+                  time += 1;
+                }
                 if (data.msg.match(/\d/) !== null) {
                   time += +data.msg.match(/\d/)[0];
                 }
@@ -370,6 +379,11 @@ const CartPage = observer(
                     time = +time.split("-")[0];
                   } else {
                     time = +time;
+                  }
+                  if (moment("31.12.2020", "DD.MM.YYYY").isSame(moment())) {
+                    time += 2;
+                  } else if (moment("01.01.2021", "DD.MM.YYYY").isSame(moment())) {
+                    time += 1;
                   }
                   if (pvz.extra[p.partner].msg.match(/\d/) !== null) {
                     time += +pvz.extra[p.partner].msg.match(/\d/)[0];
@@ -553,6 +567,37 @@ const CartPage = observer(
       }
     };
 
+    startCancelPay = (orderID) => {
+      api
+        .cancelOrder({ id: orderID })
+        .then((ok) => {
+          const coupsCont = localStorage.getItem("coupsCont");
+          // console.log("coupsCont :>> ", coupsCont);
+
+          if (coupsCont !== undefined && coupsCont !== null && coupsCont !== "undefined") {
+            Object.keys(coupsCont).forEach((coup) => {
+              api.coupon({ code: coup.toLowerCase() }).then((d) => {
+                if (d.status === 400) {
+                  const newCoupsCont = this.state.coupsCont;
+
+                  delete newCoupsCont[coup];
+
+                  localStorage.setItem("coupsCont", newCoupsCont);
+
+                  this.setState({
+                    coupsCont: newCoupsCont,
+                  });
+                }
+              });
+            });
+          }
+        })
+        .catch((err) => console.log("err", err));
+
+      localStorage.removeItem("deleteCart");
+      localStorage.removeItem("orderID");
+    };
+
     render() {
       if (!Object.keys(localStorage.getItem("productInCart")).length) {
         this.props.history.push("/");
@@ -567,7 +612,14 @@ const CartPage = observer(
       this.props.store.useBonus = useBonus;
 
       const regexEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
+      if (!this.useUserData && this.props.store.auth && this.props.store.userData.user !== undefined) {
+        this.useUserData = true;
+        this.setState({
+          name: this.props.store.userData.user.name,
+          email: this.props.store.userData.user.email,
+          tel: this.props.store.userData.user.tel !== undefined ? this.props.store.userData.user.tel.substr(1) : "",
+        });
+      }
       const productList = [];
       this.totalPrice = 0;
       this.totalNotSalePrice = 0;
@@ -587,7 +639,7 @@ const CartPage = observer(
             <p className="city-choose__title">Населенный пункт:</p>
 
             <div
-              className="product__counter gift__drop-btn"
+              className="product__counter gift__drop-btn dropdown__label"
               onClick={(e) => {
                 e.stopPropagation();
                 e.target.classList.toggle("active");
@@ -609,7 +661,6 @@ const CartPage = observer(
               }}
             >
               <p>{cityLocal.name}</p>
-              <img src="/image/>.svg"></img>
             </div>
 
             <div className="drop drop_cart">
@@ -766,10 +817,26 @@ const CartPage = observer(
       Object.keys(this.stores).forEach((st) => {
         let dateInStore = "";
         if (this.stores[st].aval) {
-          dateInStore += moment().add(0, "days").format("DD.MM") + " ";
-          dateInStore += "— " + moment().add(1, "days").format("DD.MM");
+          let time = 0;
+          if (moment("31.12.2020", "DD.MM.YYYY").isSame(moment())) {
+            time += 2;
+          } else if (moment("01.01.2021", "DD.MM.YYYY").isSame(moment())) {
+            time += 1;
+          }
+          dateInStore += moment().add(time, "days").format("DD.MM") + " ";
+          dateInStore +=
+            "— " +
+            moment()
+              .add(time + 1, "days")
+              .format("DD.MM");
         } else {
-          dateInStore += moment().add(1, "days").format("DD.MM");
+          let time = 1;
+          if (moment("31.12.2020", "DD.MM.YYYY").isSame(moment())) {
+            time += 2;
+          } else if (moment("01.01.2021", "DD.MM.YYYY").isSame(moment())) {
+            time += 1;
+          }
+          dateInStore += moment().add(time, "days").format("DD.MM");
         }
         htmlStore.push(
           <div
@@ -1948,14 +2015,6 @@ const CartPage = observer(
                                 );
                               }
                               if (Object.keys(this.state.deliveryData).length === 0) {
-                                // document
-                                //   .querySelectorAll("#delivery")
-                                //   .forEach((elem) => {
-                                //     elem.classList.add("red");
-                                //     setTimeout(() => {
-                                //       elem.classList.remove("red");
-                                //     }, 1500);
-                                //   });
                                 $(".cart-page__list-elem_delivery").find(".alert-message").addClass("alert-message_active");
                               }
                               if (house === "" || adress === "") {
@@ -1972,8 +2031,6 @@ const CartPage = observer(
                                   },
                                   500
                                 );
-
-                                // console.log("testtt :>> ");
                               }
                               inError = true;
                             }
@@ -2011,268 +2068,43 @@ const CartPage = observer(
                           $(".cart-page__data").find(".alert-message").addClass("alert-message_active");
                           inError = true;
                         }
+
+                        Object.keys(this.state.coupsCont).forEach((key) => {
+                          if (this.state.coupsCont[key].limit === null && this.state.coupsCont[key].use.includes(this.state.email.toLowerCase())) {
+                            const newCoupsCont = this.state.coupsCont;
+
+                            delete newCoupsCont[key];
+
+                            localStorage.setItem("coupsCont", newCoupsCont);
+
+                            this.setState({
+                              coupsCont: newCoupsCont,
+                            });
+                            $(".cart-page__promo").find(".alert-message").removeClass("alert-message_warning");
+                            $(".cart-page__promo").find(".alert-message").addClass("alert-message_error");
+                            $(".cart-page__promo").find(".alert-message").find("p").text("Вы уже использовали данный промокод");
+                            $(".cart-page__promo").find(".alert-message").addClass("alert-message_active");
+                            inError = true;
+                          }
+                        });
+
                         if (inError) {
                           return;
                         }
                         $(e.target).addClass("deactive");
                         $(e.target).text("Создаем заказ");
                         this.props.store.createOrderData(this.state.payment);
-                        // console.log(
-                        //   "this.state.payment :>> ",
-                        //   this.state.payment
-                        // );
-                        // console.log("productInCart", productInCart);
+
                         const senderId = 500001936;
                         const cityLoc = localStorage.getItem("city");
-                        // console.log("cityLoc", cityLoc);
 
                         const dataToSend = {
                           ...this.props.store.dataToSend,
                         };
                         const ecomProd = [...this.props.store.ecomProd];
                         const productForYA = [...this.props.store.productForYA];
-                        // let totalProductSum = 0;
-                        // let bonusDisc;
-
-                        // if (useBonus) {
-                        //   bonusDisc =
-                        //     1 - useBonus / (this.totalPrice + useBonus);
-                        // }
 
                         const payItems = [...this.props.store.payItems];
-
-                        // console.log("bonusDisc :>> ", bonusDisc);
-
-                        // Object.keys(productInCart).forEach((el) => {
-                        //   ecomProd.push({
-                        //     id: productInCart[el].sale,
-                        //     name: productInCart[el].name,
-                        //     price: productInCart[el].price,
-                        //     brand: productInCart[el].brand,
-
-                        //     quantity: productInCartList[el],
-                        //   });
-                        //   dataToSend.prod[el] = {
-                        //     countIn: productInCartList[el],
-                        //     sale: productInCart[el].sale,
-                        //     slug: productInCart[el].slug,
-                        //     regular_price: useBonus
-                        //       ? productInCart[el].regular_price * bonusDisc
-                        //       : productInCart[el].regular_price,
-                        //     dbid: productInCart[el].dbid,
-                        //     name: productInCart[el].name,
-                        //     priceForWoo: useBonus
-                        //       ? productInCart[el].regular_price * bonusDisc
-                        //       : productInCart[el].regular_price,
-                        //   };
-                        //   if (productInCart[el].sale) {
-                        //     dataToSend.prod[el].sale_price = useBonus
-                        //       ? productInCart[el].sale_price * bonusDisc
-                        //       : productInCart[el].sale_price;
-                        //     dataToSend.prod[el].priceForWoo = useBonus
-                        //       ? productInCart[el].sale_price * bonusDisc
-                        //       : productInCart[el].sale_price;
-                        //   }
-
-                        //   productForYA.push({
-                        //     externalId: String(productInCart[el].slug),
-                        //     name: productInCart[el].name,
-                        //     count:
-                        //       el === certInCart ? 1 : productInCartList[el],
-                        //     price: Math.floor(
-                        //       productInCart[el].sale
-                        //         ? productInCart[el].sale_price === 0
-                        //           ? 1
-                        //           : productInCart[el].sale_price
-                        //         : productInCart[el].regular_price
-                        //     ),
-                        //     assessedValue: Math.floor(
-                        //       productInCart[el].sale
-                        //         ? productInCart[el].sale_price === 0
-                        //           ? productInCart[el].regular_price
-                        //           : productInCart[el].sale_price
-                        //         : productInCart[el].regular_price
-                        //     ),
-                        //     tax: "NO_VAT",
-                        //     dimensions: {
-                        //       length: +productInCart[el].dimensions.length,
-                        //       height: +productInCart[el].dimensions.height,
-                        //       width: +productInCart[el].dimensions.width,
-                        //       weight: productInCart[el].weight,
-                        //     },
-                        //   });
-                        //   totalProductSum +=
-                        //     Math.floor(
-                        //       productForYA[productForYA.length - 1].price
-                        //     ) * productForYA[productForYA.length - 1].count;
-                        // });
-
-                        // if (Object.keys(coupsCont).length) {
-                        //   totalProductSum = 0;
-
-                        //   Object.keys(coupsCont).forEach((coupon) => {
-                        //     let couponC = coupsCont[coupon].count;
-                        //     productForYA.forEach((el, i) => {
-                        //       if (el.price > 1) {
-                        //         if (coupsCont[coupon].type === "percent") {
-                        //           productForYA[i].price = Math.floor(
-                        //             productForYA[i].price *
-                        //               (1 - +coupsCont[coupon].count / 100)
-                        //           );
-                        //         } else if (
-                        //           coupsCont[coupon].type === "fixed_cart"
-                        //         ) {
-                        //           if (couponC > 0) {
-                        //             if (el.price - couponC >= 1) {
-                        //               productForYA[i].price -= couponC;
-
-                        //               couponC = 0;
-                        //             } else {
-                        //               productForYA[i].price = 1;
-
-                        //               couponC -= productForYA[i].price - 1;
-                        //             }
-                        //           }
-                        //         }
-                        //       }
-                        //       totalProductSum +=
-                        //         productForYA[i].price * productForYA[i].count;
-                        //     });
-                        //     Object.keys(dataToSend.prod).forEach((el) => {
-                        //       if (dataToSend.prod[el].sale_price !== 0) {
-                        //         if (coupsCont[coupon].type === "percent") {
-                        //           if (dataToSend.prod[el].sale) {
-                        //             dataToSend.prod[el].sale_price = Math.floor(
-                        //               dataToSend.prod[el].sale_price *
-                        //                 (1 - +coupsCont[coupon].count / 100)
-                        //             );
-                        //           } else {
-                        //             dataToSend.prod[
-                        //               el
-                        //             ].regular_price = Math.floor(
-                        //               dataToSend.prod[el].regular_price *
-                        //                 (1 - +coupsCont[coupon].count / 100)
-                        //             );
-                        //           }
-                        //         } else if (
-                        //           coupsCont[coupon].type === "fixed_cart"
-                        //         ) {
-                        //           if (couponC > 0) {
-                        //             if (dataToSend.prod[el].sale) {
-                        //               if (
-                        //                 dataToSend.prod[el].sale_price *
-                        //                   productInCartList[el] -
-                        //                   couponC >=
-                        //                 0
-                        //               ) {
-                        //                 dataToSend.prod[
-                        //                   el
-                        //                 ].sale_price -= Math.round(
-                        //                   couponC / productInCartList[el]
-                        //                 );
-
-                        //                 couponC = 0;
-                        //               } else {
-                        //                 couponC -=
-                        //                   dataToSend.prod[el].sale_price *
-                        //                   productInCartList[el];
-                        //                 dataToSend.prod[el].sale_price = 0;
-                        //               }
-                        //             } else {
-                        //               if (
-                        //                 dataToSend.prod[el].regular_price *
-                        //                   productInCartList[el] -
-                        //                   couponC >=
-                        //                 0
-                        //               ) {
-                        //                 dataToSend.prod[
-                        //                   el
-                        //                 ].regular_price -= Math.round(
-                        //                   couponC / productInCartList[el]
-                        //                 );
-
-                        //                 couponC = 0;
-                        //               } else {
-                        //                 couponC -=
-                        //                   dataToSend.prod[el].regular_price *
-                        //                   productInCartList[el];
-                        //                 dataToSend.prod[el].regular_price = 0;
-                        //               }
-                        //             }
-                        //           }
-                        //         }
-                        //       }
-                        //     });
-                        //   });
-                        // }
-
-                        // let noPriceCount = 1;
-                        // // console.log("totalProductSum :>> ", totalProductSum);
-                        // // console.log("this.totalPrice :>> ", this.totalPrice);
-
-                        // if (totalProductSum !== this.totalPrice) {
-                        //   let totalDeff = totalProductSum - this.totalPrice;
-                        //   let i = 0;
-                        //   // console.log("totalDeff :>> ", totalDeff);
-                        //   while (totalDeff > 0) {
-                        //     if (i < productForYA.length) {
-                        //       if (productForYA[i].price > 1) {
-                        //         if (
-                        //           productForYA[i].price -
-                        //             totalDeff / productForYA[i].count >
-                        //           1
-                        //         ) {
-                        //           productForYA[i].price = Math.floor(
-                        //             productForYA[i].price -
-                        //               totalDeff / productForYA[i].count
-                        //           );
-                        //           noPriceCount = productForYA[i].count;
-                        //           totalDeff = 0;
-                        //         } else {
-                        //           totalDeff -=
-                        //             productForYA[i].price *
-                        //               productForYA[i].count -
-                        //             1;
-                        //           productForYA[i].price = 1;
-
-                        //           i += 1;
-                        //         }
-                        //       } else {
-                        //         i += 1;
-                        //       }
-                        //     } else {
-                        //       break;
-                        //     }
-                        //   }
-                        // }
-
-                        // productForYA.forEach((el, i) => {
-                        //   if (el.price > 1) {
-                        //     payItems.push({
-                        //       description: el.name,
-                        //       quantity: el.count,
-                        //       amount: {
-                        //         value: String(el.price),
-                        //         currency: "RUB",
-                        //       },
-                        //       vat_code: 1,
-                        //     });
-                        //   } else {
-                        //     productForYA[i].price *= noPriceCount / el.count;
-                        //     payItems.push({
-                        //       description: el.name,
-                        //       quantity: el.count,
-                        //       amount: {
-                        //         value: String(el.price),
-                        //         currency: "RUB",
-                        //       },
-                        //       vat_code: 1,
-                        //     });
-                        //     productForYA[i].price = Math.floor(
-                        //       productForYA[i].price
-                        //     );
-                        //   }
-                        // });
 
                         dataToSend.sum = this.totalPrice;
                         dataToSend.email = this.state.email.toLowerCase();
@@ -2362,6 +2194,8 @@ const CartPage = observer(
 
                               localStorage.setItem("deleteCart", true);
 
+                              // console.log('localStorage.getItem("orderID") :>> ', localStorage.getItem("orderID"));
+
                               if (dataToSend.payment === "PREPAID") {
                                 const checkout = new window.YandexCheckout({
                                   confirmation_token: data.confirmationToken, //Токен, который перед проведением оплаты нужно получить от Яндекс.Кассы
@@ -2380,7 +2214,7 @@ const CartPage = observer(
                                 $(".sidebar-cart").addClass("visible");
 
                                 $("body").addClass("no-scroll");
-                                localStorage.removeItem("coupsCont");
+
                                 // if (
                                 //   deliveryData.deliveryOption !== undefined &&
                                 //   deliveryData.type === undefined
@@ -2391,6 +2225,7 @@ const CartPage = observer(
                                 //     externalId: String(data.orderId),
                                 //   });
                                 // }
+                                localStorage.setItem("orderID", data.id);
                               } else {
                                 // if (
                                 //   deliveryData.deliveryOption !== undefined &&
@@ -2499,29 +2334,12 @@ const CartPage = observer(
                                 $(".sidebar-cart").addClass("visible");
 
                                 $("body").addClass("no-scroll");
-                                localStorage.removeItem("coupsCont");
-
-                                // window.widget.setOrderInfo({
-                                //   ...this.order,
-                                //   externalId: String(data.orderId),
-                                // });
+                                // localStorage.removeItem("coupsCont");
+                                localStorage.setItem("orderID", data.id);
                               } else {
                                 localStorage.removeItem("coupsCont");
                                 window.location.href = data.return;
                               }
-
-                              // window.widget
-                              //   .createOrder()
-                              //   .then((ok) => {
-
-                              //   })
-                              //   .catch((err) => {
-                              //     console.log("err :>> ", err);
-
-                              //   });
-                              // this.props.store.productInCartList = {};
-                              // this.props.store.addtoCart(false);
-                              // window.location.href = data.link;
                             })
                             .catch((err) => {
                               console.log("err :>> ", err);
@@ -2598,25 +2416,38 @@ const CartPage = observer(
                             })
                             .then((d) => {
                               if (d.status === 200) {
-                                const newCoupsCont = this.state.coupsCont;
+                                if (
+                                  d.data.usage_limit === null &&
+                                  this.state.email !== "" &&
+                                  d.data.used_by.includes(this.state.email.toLowerCase())
+                                ) {
+                                  $(".cart-page__promo").find(".alert-message").removeClass("alert-message_warning");
+                                  $(".cart-page__promo").find(".alert-message").addClass("alert-message_error");
+                                  $(".cart-page__promo").find(".alert-message").find("p").text("Вы уже использовали данный промокод");
+                                  $(".cart-page__promo").find(".alert-message").addClass("alert-message_active");
+                                } else {
+                                  const newCoupsCont = this.state.coupsCont;
 
-                                newCoupsCont[d.data.code] = {
-                                  count: d.data.amount,
-                                  type: d.data.discount_type,
-                                  code: d.data.code,
-                                  id: d.data.id,
-                                };
+                                  newCoupsCont[d.data.code] = {
+                                    count: d.data.amount,
+                                    type: d.data.discount_type,
+                                    code: d.data.code,
+                                    id: d.data.id,
+                                    use: d.data.used_by,
+                                    limit: d.data.usage_limit,
+                                  };
 
-                                localStorage.setItem("coupsCont", newCoupsCont);
-                                $("#coup").val("");
-                                // this.props.store.createOrderData(this.state.payment)
-                                this.setState({
-                                  coupsCont: newCoupsCont,
-                                });
+                                  localStorage.setItem("coupsCont", newCoupsCont);
+                                  $("#coup").val("");
+                                  // this.props.store.createOrderData(this.state.payment)
+                                  this.setState({
+                                    coupsCont: newCoupsCont,
+                                  });
+                                }
                               } else {
                                 $(".cart-page__promo").find(".alert-message").removeClass("alert-message_warning");
                                 $(".cart-page__promo").find(".alert-message").addClass("alert-message_error");
-                                $(".cart-page__promo").find(".alert-message").find("p").text("Промокода не существует");
+                                $(".cart-page__promo").find(".alert-message").find("p").text(d.message);
                                 $(".cart-page__promo").find(".alert-message").addClass("alert-message_active");
                               }
                             });
@@ -2667,6 +2498,9 @@ const CartPage = observer(
     };
 
     componentDidMount() {
+      try {
+      } catch {}
+
       setInterval(() => {
         window.location.reload();
       }, 1000 * 60 * 60 * 24);
@@ -2678,25 +2512,30 @@ const CartPage = observer(
 
       tel.mask($("#phone"));
 
-      const coupsCont = localStorage.getItem("coupsCont");
-      // console.log("coupsCont :>> ", coupsCont);
+      if (localStorage.getItem("orderID") !== null) {
+        this.startCancelPay(localStorage.getItem("orderID"));
+      } else {
+        // console.log("k");
+        const coupsCont = localStorage.getItem("coupsCont");
+        // console.log("coupsCont :>> ", coupsCont);
 
-      if (coupsCont !== undefined && coupsCont !== null && coupsCont !== "undefined") {
-        Object.keys(coupsCont).forEach((coup) => {
-          api.coupon({ code: coup.toLowerCase() }).then((d) => {
-            if (d.status === 400) {
-              const newCoupsCont = this.state.coupsCont;
+        if (coupsCont !== undefined && coupsCont !== null && coupsCont !== "undefined") {
+          Object.keys(coupsCont).forEach((coup) => {
+            api.coupon({ code: coup.toLowerCase() }).then((d) => {
+              if (d.status === 400) {
+                const newCoupsCont = this.state.coupsCont;
 
-              delete newCoupsCont[coup];
+                delete newCoupsCont[coup];
 
-              localStorage.setItem("coupsCont", newCoupsCont);
+                localStorage.setItem("coupsCont", newCoupsCont);
 
-              this.setState({
-                coupsCont: newCoupsCont,
-              });
-            }
+                this.setState({
+                  coupsCont: newCoupsCont,
+                });
+              }
+            });
           });
-        });
+        }
       }
 
       this.runLoadDelivCost();

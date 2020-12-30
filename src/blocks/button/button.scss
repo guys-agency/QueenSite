@@ -41,6 +41,23 @@ button {
     font-weight: 500;
   }
 
+  &_utensil-set {
+    order: 2;
+    display: inline-flex;
+    align-self: flex-start;
+    margin-top: 20px;
+    font-weight: normal;
+
+    .i_drop {
+      transform: rotate(-90deg);
+
+      &::before {
+        right: 1px;
+        top: 10px;
+      }
+    }
+  }
+
   &_dis {
     pointer-events: none;
     background: #ffffff;

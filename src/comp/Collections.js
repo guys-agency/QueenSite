@@ -8,16 +8,16 @@ const Collections = observer(
     state = {};
     render() {
       const { store } = this.props;
-      let { collections } = store.bannersData;
+      let { collections } = Object.assign({}, store.bannersData);
       if (window.location.href.includes("/ideas")) {
         collections = store.bannersData.ideas;
+      } else if (collections !== undefined && window.location.href.includes("/sborka-serviza")) {
+        collections = collections.filter((coll) => coll.utensilSet);
       }
       const renderColl = [];
       const mainBan = [];
       const sortData = [];
-      const typeDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-        navigator.userAgent
-      );
+      const typeDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
       if (collections !== undefined) {
         collections.forEach((el, i) => {
@@ -30,9 +30,7 @@ const Collections = observer(
                   this.props.store.dataColl = [el];
                 }}
                 style={{
-                  backgroundImage: `url(/image/banners/${
-                    typeDevice ? el["image-mob-large"] : el["image-desc-large"]
-                  })`,
+                  backgroundImage: `url(/image/banners/${typeDevice ? el["image-mob-large"] : el["image-desc-large"]})`,
                 }}
                 to={`${el.type}/${el.slug}`}
               ></Link>
@@ -48,11 +46,7 @@ const Collections = observer(
                   }}
                   to={`${el.type}/${el.slug}`}
                   style={{
-                    backgroundImage: `url(/image/banners/${
-                      typeDevice
-                        ? el["image-mob-small"]
-                        : el["image-desc-small"]
-                    })`,
+                    backgroundImage: `url(/image/banners/${typeDevice ? el["image-mob-small"] : el["image-desc-small"]})`,
                   }}
                 >
                   <div className="banner__desc">{el.name}</div>

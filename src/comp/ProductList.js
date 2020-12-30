@@ -68,6 +68,9 @@ const ProductList = observer(
       const { data } = this.props;
       productInCartList[el] += 1;
       addtoCart(false);
+      if (this.props.clearDeliveryData) {
+        this.props.clearDeliveryData();
+      }
       if (process.env.REACT_APP_TYPE === "prod") {
         window.dataLayer.push({
           ecommerce: {
@@ -87,14 +90,11 @@ const ProductList = observer(
 
         window._tmr.push({
           type: "itemView",
-          productid: String(this.data.slug),
+          productid: String(data.slug),
           pagetype: "cart",
           list: "1",
-          totalvalue: String(this.data.price),
+          totalvalue: String(data.price),
         });
-      }
-      if (this.props.clearDeliveryData) {
-        this.props.clearDeliveryData();
       }
     };
 
@@ -103,6 +103,9 @@ const ProductList = observer(
       const { data } = this.props;
       productInCartList[el] -= 1;
       addtoCart(false);
+      if (this.props.clearDeliveryData) {
+        this.props.clearDeliveryData();
+      }
       if (process.env.REACT_APP_TYPE === "prod") {
         window.dataLayer.push({
           ecommerce: {
@@ -119,9 +122,6 @@ const ProductList = observer(
             },
           },
         });
-      }
-      if (this.props.clearDeliveryData) {
-        this.props.clearDeliveryData();
       }
     };
 
@@ -296,54 +296,57 @@ const ProductList = observer(
                   onClick={() => {
                     if (inCart !== -1) {
                       delete productInCartList[data.slug];
-                      if (process.env.REACT_APP_TYPE === "prod") {
-                        window.dataLayer.push({
-                          ecommerce: {
-                            remove: {
-                              products: [
-                                {
-                                  id: data.slug,
-                                  name: data.name,
-                                  price: data.price,
-                                  brand: data.brand,
-                                },
-                              ],
+                      try {
+                        if (process.env.REACT_APP_TYPE === "prod") {
+                          window.dataLayer.push({
+                            ecommerce: {
+                              remove: {
+                                products: [
+                                  {
+                                    id: data.slug,
+                                    name: data.name,
+                                    price: data.price,
+                                    brand: data.brand,
+                                  },
+                                ],
+                              },
                             },
-                          },
-                        });
-                      }
+                          });
+                        }
+                      } catch {}
                     } else {
                       if (itsSert) {
                         productInCartList[data.slug] = "";
                       } else {
                         productInCartList[data.slug] = 1;
                       }
-
-                      if (process.env.REACT_APP_TYPE === "prod") {
-                        window.dataLayer.push({
-                          ecommerce: {
-                            add: {
-                              products: [
-                                {
-                                  id: data.slug,
-                                  name: data.name,
-                                  price: data.price,
-                                  brand: data.brand,
-                                  quantity: 1,
-                                },
-                              ],
+                      try {
+                        if (process.env.REACT_APP_TYPE === "prod") {
+                          window.dataLayer.push({
+                            ecommerce: {
+                              add: {
+                                products: [
+                                  {
+                                    id: data.slug,
+                                    name: data.name,
+                                    price: data.price,
+                                    brand: data.brand,
+                                    quantity: 1,
+                                  },
+                                ],
+                              },
                             },
-                          },
-                        });
+                          });
 
-                        window._tmr.push({
-                          type: "itemView",
-                          productid: String(this.data.slug),
-                          pagetype: "cart",
-                          list: "1",
-                          totalvalue: String(this.data.price),
-                        });
-                      }
+                          window._tmr.push({
+                            type: "itemView",
+                            productid: String(data.slug),
+                            pagetype: "cart",
+                            list: "1",
+                            totalvalue: String(data.price),
+                          });
+                        }
+                      } catch {}
                     }
                     addtoCart(true);
                   }}

@@ -6,6 +6,7 @@ class Api {
   regist(data) {
     return fetch(SERVER_URL + "/registration", {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },

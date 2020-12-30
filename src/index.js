@@ -15,7 +15,7 @@ window.dataLayer = window.dataLayer || [];
 window._tmr = window._tmr || [];
 console.log("> ", process.env.REACT_APP_TYPE.charAt(0));
 if (process.env.REACT_APP_TYPE === "prod") {
-  console.log("123123 :>> ", 123123);
+  // console.log("123123 :>> ", 123123);
   //YANDEX
   (function (m, e, t, r, i, k, a) {
     m[i] =

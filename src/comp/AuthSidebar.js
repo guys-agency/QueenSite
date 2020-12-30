@@ -8,6 +8,7 @@ import LoginSchema from "../schemas/loginSchema";
 import RestoreSchema from "../schemas/restoreSchema";
 import { Link } from "react-router-dom";
 import localStorage from "mobx-localstorage";
+import { withRouter } from "react-router";
 
 const { Component } = React;
 
@@ -94,8 +95,9 @@ const AuthSidebar = observer(
                           lc.push(prod);
                         }
                       });
-
-                      window.location.assign("/profile");
+                      if (!window.location.pathname.includes("/cart")) {
+                        window.location.assign("/profile");
+                      }
 
                       this.props.store.likeContainer = lc;
                       // const localCartCont = Object.keys(this.props.store.productInCartList);
@@ -345,7 +347,7 @@ const AuthSidebar = observer(
                           lc.push(prod);
                         }
                       });
-                      window.location.assign("/profile");
+                      // window.location.assign("/profile");
 
                       this.props.store.likeContainer = lc;
                       // const localCartCont = Object.keys(this.props.store.productInCartList);
@@ -367,6 +369,7 @@ const AuthSidebar = observer(
                       document.querySelector(".sidebar-overlay").classList.remove("active");
                       $("body").removeClass("no-scroll");
                       $(".navigation").removeClass("visible");
+                      this.props.history.push(`/profile`);
                     } else {
                       $("#registrBtn").addClass("error");
                     }
@@ -492,4 +495,4 @@ const AuthSidebar = observer(
   }
 );
 
-export default AuthSidebar;
+export default withRouter(AuthSidebar);

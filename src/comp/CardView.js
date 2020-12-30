@@ -284,6 +284,7 @@ const CardView = observer(
       const { timeDelivery } = this.state;
 
       const { dontSaleProdCount, lastSeenProdsData, lastSeenProds, withProds, likeProds, certInCart, brandSlugs } = this.props.store;
+      let { collections } = this.props.store.bannersData;
 
       if (this.data.slug === +this.props.sku && this.count) {
         if (timeDelivery === "" && localStorage.getItem("city") !== null && localStorage.getItem("city") !== undefined) {
@@ -387,6 +388,16 @@ const CardView = observer(
           return null;
         });
       }
+      let collSlugSet = 0;
+      if (collections !== undefined && this.data.kit !== undefined && this.data.kit.length !== 0) {
+        collections.some((coll) => {
+          if (coll.products.includes(this.data.slug)) {
+            collSlugSet = coll.slug;
+            return true;
+          }
+          return false;
+        });
+      }
 
       return (
         this.data.slug === +this.props.sku && (
@@ -461,7 +472,7 @@ const CardView = observer(
                             <span className="old">{this.data.regular_price.toLocaleString()} ₽</span> {this.data.sale_price.toLocaleString()} ₽{" "}
                             <span className="disc_perc">{((this.data.sale_price / this.data.regular_price - 1) * 100).toFixed(0)}%</span>
                           </div>
-                        ) : itsSert ? (
+                        ) : !itsSert ? (
                           <div className={"product__price"}>
                             {this.data.regular_price.toLocaleString()} ₽{" "}
                             {!itsSert && (
@@ -517,6 +528,17 @@ const CardView = observer(
 
                       {this.data.kit !== undefined && this.data.kit.length !== 0 && (
                         <>
+                          {collSlugSet ? (
+                            <button
+                              className="btn btn_yellow btn_primary btn_utensil-set"
+                              onClick={() => {
+                                this.props.history.push(`/collections/${collSlugSet}`);
+                              }}
+                              style={{ fontWeight: "normal" }}
+                            >
+                              Соберите сервиз сами <span className="ic i_drop"></span>
+                            </button>
+                          ) : null}
                           <button
                             className="link dotted drop_kit-btn"
                             onClick={(e) => {
