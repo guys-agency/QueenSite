@@ -137,7 +137,8 @@ const AuthSidebar = observer(
                       <input
                         id="email"
                         name="email"
-                        type="text"
+                        type="email"
+                        autocomplete="email"
                         onFocus={this.focusHandler}
                         onBlur={this.blurHandler}
                         value={values.email}
@@ -155,6 +156,7 @@ const AuthSidebar = observer(
                         name="password"
                         type="password"
                         id="password"
+                        autocomplete="current-password"
                         onFocus={this.focusHandler}
                         onBlur={this.blurHandler}
                         value={values.password}
@@ -223,7 +225,8 @@ const AuthSidebar = observer(
                       <input
                         id="email"
                         name="email"
-                        type="text"
+                        type="email"
+                        autocomplete="email"
                         onFocus={this.focusHandler}
                         onBlur={this.blurHandler}
                         value={values.email}
@@ -321,7 +324,7 @@ const AuthSidebar = observer(
               //инициализируем значения input-ов
               initialValues={{
                 email: "",
-                username: "",
+                name: "",
                 password: "",
                 repassword: "",
                 acceptedTerms: true,
@@ -332,7 +335,7 @@ const AuthSidebar = observer(
               onSubmit={(values, { setSubmitting }) => {
                 api
                   .regist({
-                    name: values.username,
+                    name: values.name,
                     email: values.email.toLowerCase(),
                     password: values.password,
                   })
@@ -396,8 +399,9 @@ const AuthSidebar = observer(
                     </label>
                     <input
                       id="name"
-                      name="username"
+                      name="name"
                       type="text"
+                      autocomplete="name"
                       onFocus={this.focusHandler}
                       onBlur={this.blurHandler}
                       value={values.username}
@@ -413,7 +417,8 @@ const AuthSidebar = observer(
                     <input
                       id="email"
                       name="email"
-                      type="text"
+                      type="email"
+                      autocomplete="email"
                       onFocus={this.focusHandler}
                       onBlur={this.blurHandler}
                       value={values.email}
@@ -430,6 +435,7 @@ const AuthSidebar = observer(
                       id="password"
                       name="password"
                       type="password"
+                      autocomplete="new-password"
                       onFocus={this.focusHandler}
                       onBlur={this.blurHandler}
                       value={values.password}
@@ -446,6 +452,7 @@ const AuthSidebar = observer(
                       id="password_confirm"
                       type="password"
                       name="repassword"
+                      autocomplete="new-password"
                       onFocus={this.focusHandler}
                       onBlur={this.blurHandler}
                       value={values.repassword}

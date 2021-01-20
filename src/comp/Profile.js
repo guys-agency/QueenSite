@@ -204,6 +204,8 @@ const Profile = observer(
         // }
       }
 
+      const doubleBonusDate = moment("11.01.2021", "DD.MM.YYYY").isSameOrBefore(moment()) && moment("01.02.2021", "DD.MM.YYYY").isAfter(moment());
+
       return (
         Object.keys(data).length !== 0 && (
           <div className="profile-p">
@@ -328,18 +330,59 @@ const Profile = observer(
                     <div className="profile-p__side">
                       <div className="profile-p__bonus-total">
                         <div>
-                          <p>Бонусные баллы:</p>
+                          <p>Бонусные баллы</p>
                           <p>
-                            {(data.bonus.bonusSum - data.bonus.useBonusValue).toLocaleString()} <p className="i_coin"></p>
+                            {(doubleBonusDate
+                              ? data.bonus.bonusSum - data.bonus.useBonusValue
+                              : moment("01.02.2021", "DD.MM.YYYY").isSameOrBefore(moment())
+                              ? data.bonus.bonusSumDouble < data.bonus.useBonusSumDouble
+                                ? data.bonus.bonusSum - data.bonus.useBonusValue - (data.bonus.useBonusSumDouble - data.bonus.bonusSumDouble)
+                                : data.bonus.bonusSum - data.bonus.useBonusValue
+                              : data.bonus.bonusSum - data.bonus.useBonusValue
+                            ).toLocaleString()}{" "}
+                            <p className="i_coin"></p>
                           </p>{" "}
                         </div>
-                        {data.bonus.bonusToBe ? (
+                        {doubleBonusDate && data.bonus.bonusSumDouble > data.bonus.useBonusSumDouble && (
                           <div>
-                            <p>К зачислению:</p>
-                            <p>
-                              {data.bonus.bonusToBe.toLocaleString()} <p className="i_coin"></p>
+                            <p style={{ color: "#BA250D" }}>Удвоение до 1.02</p>
+                            <p style={{ color: "#BA250D" }}>
+                              {Math.floor(data.bonus.bonusSumDouble - data.bonus.useBonusSumDouble).toLocaleString()}{" "}
+                              <p className="i_coin" style={{ color: "#BA250D" }}></p>
                             </p>{" "}
                           </div>
+                        )}
+                        {doubleBonusDate && data.bonus.bonusSumDouble > data.bonus.useBonusSumDouble && (
+                          <div>
+                            <p>Итого</p>
+                            <p>
+                              {Math.floor(
+                                doubleBonusDate
+                                  ? data.bonus.bonusSum - data.bonus.useBonusValue + data.bonus.bonusSumDouble
+                                  : moment("01.02.2021", "DD.MM.YYYY").isSameOrBefore(moment())
+                                  ? data.bonus.bonusSumDouble < data.bonus.useBonusSumDouble
+                                    ? data.bonus.bonusSum - data.bonus.useBonusValue - (data.bonus.useBonusSumDouble - data.bonus.bonusSumDouble)
+                                    : data.bonus.bonusSum - data.bonus.useBonusValue
+                                  : data.bonus.bonusSum - data.bonus.useBonusValue
+                              ).toLocaleString()}{" "}
+                              <p className="i_coin"></p>
+                            </p>{" "}
+                          </div>
+                        )}
+                        {data.bonus.bonusToBe ? (
+                          <>
+                            {doubleBonusDate && (
+                              <div
+                                style={{ width: "100%", height: "1px", borderBottom: "1px solid #DAB958", marginTop: "0px", marginBottom: "8px" }}
+                              ></div>
+                            )}
+                            <div>
+                              <p>К зачислению:</p>
+                              <p>
+                                {data.bonus.bonusToBe.toLocaleString()} <p className="i_coin"></p>
+                              </p>{" "}
+                            </div>
+                          </>
                         ) : null}
                       </div>
                       <div className="profile-p__card">

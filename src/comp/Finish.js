@@ -5,6 +5,7 @@ import api from "./api";
 import { Formik } from "formik";
 import RegistrationSchema from "../schemas/registrationSchema";
 import { withRouter } from "react-router";
+import { Link } from "react-router-dom";
 
 const { Component } = React;
 
@@ -19,6 +20,9 @@ const Finish = observer(
     };
 
     statusToCheck = ["Created", "Ожидает оплаты", "Создан"];
+
+    firstView =
+      (localStorage.getItem("deleteCart") === true || localStorage.getItem("deleteCart") === "true") && process.env.REACT_APP_TYPE === "prod";
 
     copy = (str) => {
       let tmp = document.createElement("INPUT"), // Создаём новый текстовой input
@@ -86,19 +90,29 @@ const Finish = observer(
         //   //   this.setState({ startCheck: false });
         //   // }
         // }
+        const purchaseTarget = {
+          type: "itemView",
+          productid: [],
+          pagetype: "purchase",
+          totalvalue: String(data.sum),
+          list: "1",
+        };
         Object.keys(data.products).forEach((prod) => {
           products.push(
             <div className="item">
               <span className="name">{data.products[prod].name}</span>
               <span className="price">
-                {data.products[prod].sale
-                  ? data.products[prod].sale_price.toLocaleString()
-                  : data.products[prod].regular_price.toLocaleString()}{" "}
-                ₽
+                {data.products[prod].sale ? data.products[prod].sale_price.toLocaleString() : data.products[prod].regular_price.toLocaleString()} ₽
               </span>
             </div>
           );
+          if (this.firstView) {
+            purchaseTarget.productid.push(String(prod));
+          }
         });
+        if (this.firstView) {
+          window._tmr.push(purchaseTarget);
+        }
       }
 
       return (
@@ -120,29 +134,19 @@ const Finish = observer(
                           <b>Cсылка на подарочный сертификат:</b>
                           <br />
                         </p>
-                        <p className="gift-link">
-                          https://queenbohemia.ru/gift/{data.certificate}
-                        </p>
+                        <p className="gift-link">https://queenbohemia.ru/gift/{data.certificate}</p>
                         <button
                           className="btn btn_primary"
                           id="gift-copy"
                           onClick={() => {
                             try {
-                              this.copy(
-                                `https://queenbohemia.ru/gift/${data.certificate}`
-                              );
-                              $("#gift-copy").css(
-                                "border",
-                                "1px solid lightgreen"
-                              );
+                              this.copy(`https://queenbohemia.ru/gift/${data.certificate}`);
+                              $("#gift-copy").css("border", "1px solid lightgreen");
                               setTimeout(() => {
                                 $("#gift-copy").css("border", "");
                               }, 3000);
                             } catch {
-                              $("#gift-copy").css(
-                                "border",
-                                "1px solid rgb(235, 87, 87)"
-                              );
+                              $("#gift-copy").css("border", "1px solid rgb(235, 87, 87)");
                               setTimeout(() => {
                                 $("#gift-copy").css("border", "");
                               }, 3000);
@@ -159,13 +163,9 @@ const Finish = observer(
                           <button
                             className="link dotted"
                             onClick={() => {
-                              document
-                                .querySelector(".sidebar-overlay")
-                                .classList.add("active");
+                              document.querySelector(".sidebar-overlay").classList.add("active");
 
-                              document
-                                .querySelector("body")
-                                .classList.add("no-scroll");
+                              document.querySelector("body").classList.add("no-scroll");
 
                               this.props.store.sideLogin = true;
                             }}
@@ -178,8 +178,7 @@ const Finish = observer(
                           <p>
                             <b>Не зарегистрированы?</b>
                             <br />
-                            Копите бонусы и отслеживайте заказы в личном
-                            кабинете, осталось только придумать пароль:
+                            Копите бонусы и отслеживайте заказы в личном кабинете, осталось только придумать пароль:
                           </p>
                           {/* <form className="profile-p__card-login">
                       <div className="input-field">
@@ -263,23 +262,10 @@ const Finish = observer(
                             //touched-поля формы, которые мы "затронули",
                             //то есть, в которых что-то ввели
                           >
-                            {({
-                              errors,
-                              touched,
-                              handleSubmit,
-                              isSubmitting,
-                              values,
-                              handleChange,
-                            }) => (
-                              <form
-                                className="profile-p__card-login"
-                                onSubmit={handleSubmit}
-                              >
+                            {({ errors, touched, handleSubmit, isSubmitting, values, handleChange }) => (
+                              <form className="profile-p__card-login" onSubmit={handleSubmit}>
                                 <div className="input-field">
-                                  <label
-                                    className="required active"
-                                    htmlFor="email"
-                                  >
+                                  <label className="required active" htmlFor="email">
                                     E-mail
                                   </label>
                                   <input
@@ -291,18 +277,11 @@ const Finish = observer(
                                     value={values.email}
                                     onChange={handleChange}
                                   />
-                                  <div className="field-error">
-                                    {this.state.err
-                                      ? this.state.stopMess
-                                      : errors.email}
-                                  </div>
+                                  <div className="field-error">{this.state.err ? this.state.stopMess : errors.email}</div>
                                 </div>
 
                                 <div className="input-field">
-                                  <label
-                                    className="required"
-                                    htmlFor="password"
-                                  >
+                                  <label className="required" htmlFor="password">
                                     Пароль
                                   </label>
                                   <input
@@ -314,15 +293,10 @@ const Finish = observer(
                                     value={values.password}
                                     onChange={handleChange}
                                   />
-                                  <div className="field-error">
-                                    {errors.password}
-                                  </div>
+                                  <div className="field-error">{errors.password}</div>
                                 </div>
 
-                                <button
-                                  className="btn btn_primary"
-                                  type="submit"
-                                >
+                                <button className="btn btn_primary" type="submit">
                                   Регистрация
                                 </button>
                                 <label className="checkbox checkbox_margin">
@@ -349,14 +323,9 @@ const Finish = observer(
                         </div>
                       </>
                     ) : (
-                      <button
-                        className="btn btn_primary"
-                        onClick={() => {
-                          this.props.history.push("/profile");
-                        }}
-                      >
+                      <Link className="btn btn_primary" to="/profile">
                         <span className="ic i_user"></span>В личный кабинет
-                      </button>
+                      </Link>
                     )}
                   </div>
                 ) : (
@@ -374,22 +343,15 @@ const Finish = observer(
                     <h4 className="a_dark">Ваш заказ</h4>
                     <div className="orders-item__products">
                       {products}
-                      {(!data.delivery.pickUpChoose ||
-                        data.delivery.pickUpChoose === undefined) &&
-                        (data.certInCart &&
-                        Object.keys(data.products).length === 1 ? null : (
+                      {(!data.delivery.pickUpChoose || data.delivery.pickUpChoose === undefined) &&
+                        (data.certInCart && Object.keys(data.products).length === 1 ? null : (
                           <div className="item">
                             <span className="name">Доставка</span>
                             <span className="price">
                               {data.delivery.price.toLocaleString()}₽
                               {data.delivery.type === "express" ? (
                                 <span className="b_gray">
-                                  /{" "}
-                                  {data.delivery.time === 0
-                                    ? "Сегодня"
-                                    : data.delivery.time === 1
-                                    ? "Завтра"
-                                    : "Послезавтра"}
+                                  / {data.delivery.time === 0 ? "Сегодня" : data.delivery.time === 1 ? "Завтра" : "Послезавтра"}
                                 </span>
                               ) : null}
                             </span>
@@ -399,9 +361,7 @@ const Finish = observer(
                       <div className="item">
                         <b className="name">Итого</b>
                         <b className="price">
-                          {((data.certInCart &&
-                            Object.keys(data.products).length === 1) ||
-                          data.delivery.pickUpChoose
+                          {((data.certInCart && Object.keys(data.products).length === 1) || data.delivery.pickUpChoose
                             ? data.sum
                             : data.sum + +data.delivery.price
                           ).toLocaleString()}
@@ -415,13 +375,10 @@ const Finish = observer(
                   <div className="profile-p__card profile-p__card_no-wrp">
                     <div className="user__name">{data.name} </div>
                     <div className="user__contact">
-                      {data.tel !== undefined && (
-                        <div className="user__phone">{data.tel}</div>
-                      )}
+                      {data.tel !== undefined && <div className="user__phone">{data.tel}</div>}
                       <div className="user__mail">{data.user}</div>
                     </div>
-                    {data.certInCart &&
-                    Object.keys(data.products).length === 1 ? null : (
+                    {data.certInCart && Object.keys(data.products).length === 1 ? null : (
                       <div className="user__address">
                         {data.delivery.pickUpChoose === true
                           ? `Магазин:${data.delivery.store}, 

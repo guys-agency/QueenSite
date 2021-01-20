@@ -201,7 +201,7 @@ const Gallery = (props) => {
   props.path.forEach((p, i) => {
     main.push(
       <div className="main-img" key={i}>
-        <img id="imgs" className="drift" src={"/image/items/" + p} data-zoom={"/image/items/" + p} alt="" />
+        <img id="imgs" className="drift" src={"/image/items/" + p} data-zoom={"/image/items/" + p} alt="" style={{ backgroundColor: "#fff" }} />
       </div>
     );
     small.push(
@@ -216,8 +216,9 @@ const Gallery = (props) => {
         // console.log("props.video2 :>> ", props.video);
         props.video.forEach((el, i) => {
           main.push(
-            <div className="main-img" key={`v-${i}`}>
+            <div className={`main-img v-${i}`} id={`v-${i}`} key={`v-${i}`}>
               <VideoPlayer
+                id={`v-${i}`}
                 controls={true}
                 src={`/image/videos/${el.src}`}
                 poster={`/image/videos/${el.prev}`}

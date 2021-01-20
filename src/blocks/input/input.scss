@@ -1,9 +1,10 @@
-textarea:focus, input:focus{
-    outline: none;
+textarea:focus,
+input:focus {
+  outline: none;
 }
 
-textarea{
-    resize: none;
+textarea {
+  resize: none;
 }
 
 input::-webkit-outer-spin-button,
@@ -12,134 +13,137 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
-input[type=number] {
+input[type="number"] {
   -moz-appearance: textfield;
 }
 
-input[type="text"], input[type="password"], input[type="tel"], textarea{
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="tel"],
+textarea {
+  border: 0;
+  border-radius: 0px;
+  font-size: 16px;
+  border-bottom: 1px solid $gr_middle;
+  color: $b_dark;
+  width: 100%;
+  &::placeholder {
+    opacity: 0;
+  }
+  &:focus {
+    border-color: $g_middle;
+    &::placeholder {
+      opacity: 1;
+    }
+  }
+}
+
+label {
+  i {
+    font-style: normal;
+  }
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  &_margin {
+    margin-top: 10px;
+  }
+  &-btn {
+    height: 15px;
+    width: 15px;
+    display: inline-block;
+    border: 1px solid $gr_middle;
+    transition: all 0.2s;
+    background-color: #fff;
+    margin-right: 5px;
+    border-radius: 3px;
+    position: relative;
+    &::after {
+      @include icon;
+      content: $i_check;
+      font-size: 8px;
+      position: absolute;
+      color: white;
+      @include c();
+      transition: all 0.2s;
+    }
+  }
+  input {
+    display: none;
+    &:checked + .checkbox-btn {
+      border: 1px solid $a_light;
+      &::after {
+        color: $b_light;
+      }
+    }
+  }
+  &:hover {
+    .checkbox-btn {
+      box-shadow: $sh_btn;
+    }
+  }
+  i {
+    margin-top: 2px;
+  }
+}
+
+input.def {
+  border: 1px solid $gr_middle;
+  border-radius: 30px;
+  height: 44px;
+  padding: {
+    left: 20px;
+  }
+  &::placeholder {
+    opacity: 1;
+  }
+}
+
+.input-field {
+  position: relative;
+  label {
+    position: absolute;
+    font-size: 16px;
+    font-weight: 500;
+    color: $a_dark;
+    transition: all 0.2s;
+    left: 0;
+    cursor: pointer;
+    &.active {
+      font-size: 14px;
+      // top: -20px;
+      transform: translateY(-25px);
+    }
+    & + input {
+      &::placeholder {
+        opacity: 1;
+      }
+    }
+    &.required {
+      &::after {
+        content: " *";
+        color: $red;
+      }
+    }
+  }
+  input[type="number"] {
     border: 0;
-    border-radius: 0px;
     font-size: 16px;
     border-bottom: 1px solid $gr_middle;
     color: $b_dark;
     width: 100%;
-    &::placeholder{
-        opacity: 0;
+    &::placeholder {
+      opacity: 0;
     }
-    &:focus{
-        border-color: $g_middle;
-        &::placeholder{
-            opacity: 1;
-        }
-    }
-}
-
-label{
-    i{
-        font-style: normal;
-    }
-}
-
-.checkbox{
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    &_margin{
-        margin-top: 10px;
-    }
-    &-btn{
-        height: 15px;
-        width: 15px;
-        display: inline-block;
-        border: 1px solid $gr_middle;
-        transition: all 0.2s;
-        background-color: #fff;
-        margin-right: 5px;
-        border-radius: 3px;
-        position: relative;
-        &::after{
-            @include icon;
-            content: $i_check;
-            font-size: 8px;
-            position: absolute;
-            color: white;
-            @include c();
-            transition: all 0.2s;
-        }
-    }
-    input{
-        display: none;
-        &:checked + .checkbox-btn{
-            border: 1px solid $a_light;
-            &::after{
-                color: $b_light;
-            }
-        }
-    }
-    &:hover{
-        .checkbox-btn{
-            box-shadow: $sh_btn;
-        }
-    }
-    i{
-        margin-top: 2px;
-    }
-}
-
-input.def{
-    border: 1px solid $gr_middle;
-    border-radius: 30px;
-    height: 44px;
-    padding: {
-        left: 20px;
-    };
-    &::placeholder{
+    &:focus {
+      border-color: $g_middle;
+      &::placeholder {
         opacity: 1;
-    } 
-}
-
-.input-field{
-    position: relative;
-    label{
-        position: absolute;
-        font-size: 16px;
-        font-weight: 500;
-        color: $a_dark;
-        transition: all 0.2s;
-        left: 0;
-        cursor: pointer;
-        &.active{
-            font-size: 14px;
-            // top: -20px;
-            transform: translateY(-25px);
-        }
-        & + input{
-            &::placeholder{
-                opacity: 1;
-            } 
-        }
-        &.required{
-            &::after{
-                content: ' *';
-                color: $red;
-            }
-        }
+      }
     }
-    input[type="number"]{
-        border: 0;
-        font-size: 16px;
-        border-bottom: 1px solid $gr_middle;
-        color: $b_dark;
-        width: 100%;
-        &::placeholder{
-            opacity: 0;
-        }
-        &:focus{
-            border-color: $g_middle;
-            &::placeholder{
-                opacity: 1;
-            }
-        }
-    }
+  }
 }
-

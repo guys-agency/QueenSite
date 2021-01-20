@@ -492,7 +492,14 @@ const MenuPoints = observer(
               }
             });
 
-            if (elem.name === "Новый год") {
+            if (elem.name === "Сервизы") {
+              childsPoints.unshift(
+                <li key={"Собрать сервиз"}>
+                  <NavLink to={`/sborka-serviza`} onClick={this.closeNav}>
+                    Собрать сервиз
+                  </NavLink>
+                </li>
+              );
               menu[0] = (
                 <div key={elem.name}>
                   <h5>{elem.name}</h5>
@@ -544,20 +551,6 @@ const MenuPoints = observer(
               this.interier.push(<ul key={elem.name}>{childsPoints}</ul>);
             } else if (elem.name === "Наборы") {
               menu[7] = (
-                <div key={elem.name}>
-                  <h5>{elem.name}</h5>
-                  <ul>{childsPoints}</ul>
-                </div>
-              );
-            } else if (elem.name === "Сервизы") {
-              childsPoints.unshift(
-                <li key={"Собрать сервиз"}>
-                  <NavLink to={`/sborka-serviza`} onClick={this.closeNav}>
-                    Собрать сервиз
-                  </NavLink>
-                </li>
-              );
-              menu[8] = (
                 <div key={elem.name}>
                   <h5>{elem.name}</h5>
                   <ul>{childsPoints}</ul>
@@ -731,11 +724,9 @@ const MenuPoints = observer(
       return (
         this.state.ready && (
           <>
-            {moment("02.01.2021", "DD.MM.YYYY").isAfter(moment()) && (
+            {moment("01.02.2021", "DD.MM.YYYY").isAfter(moment()) && !this.props.location.pathname.includes("/cart") && (
               <div className="ny-warning">
-                <Link to="/help/ny-delivery">
-                  Работа магазина в праздничные дни<span className="i_drop"></span>
-                </Link>
+                <p>Баланс бонусов удвоен до 01.02</p>
               </div>
             )}
             {/* <Menu>{this.menuContainer}</Menu> */}
@@ -1083,11 +1074,11 @@ const MenuPoints = observer(
                       </div>
                     </div>
                   </span>
-                  <span className="menu__drop">
+                  {/* <span className="menu__drop">
                     <Link to="/new-year" className="menu-point menu-point_news" style={{ color: "#BA250D", fontWeight: "600" }}>
                       Новый Год
                     </Link>
-                  </span>
+                  </span> */}
                 </div>
                 <div className="search-pos">
                   <form className="search-wrp">

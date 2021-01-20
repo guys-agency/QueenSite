@@ -162,6 +162,32 @@ const MainScreen = observer(
           }
           if (+slug !== this.props.store.cardContainer.slug) {
             this.props.store.cardContainer = data.product[0];
+
+            if (process.env.REACT_APP_TYPE === "prod") {
+              if (this.props.store.cardContainer.slug !== undefined) {
+                window.dataLayer.push({
+                  ecommerce: {
+                    detail: {
+                      products: [
+                        {
+                          id: this.props.store.cardContainer.slug,
+                          name: this.props.store.cardContainer.name,
+                          price: this.props.store.cardContainer.price,
+                          brand: this.props.store.cardContainer.brand,
+                        },
+                      ],
+                    },
+                  },
+                });
+                window._tmr.push({
+                  type: "itemView",
+                  productid: String(this.props.store.cardContainer.slug),
+                  pagetype: "product",
+                  list: "1",
+                  totalvalue: String(this.props.store.cardContainer.price),
+                });
+              }
+            }
           }
           this.props.store.withProds = data.addProd[0].with;
           this.props.store.likeProds.replace(data.addProd[0].like);
@@ -252,7 +278,9 @@ const MainScreen = observer(
         .then((buildKey) => {
           console.log("buildKey :>> ", buildKey.key);
           console.log("this.keyInsaid :>> ", this.keyInsaid);
-          if (this.keyInsaid !== buildKey.key) {
+          if (this.keyInsaid === null) {
+            window.localStorage.setItem("buildKey", buildKey.key);
+          } else if (this.keyInsaid !== buildKey.key) {
             window.localStorage.setItem("buildKey", buildKey.key);
             window.location.reload();
           }
@@ -454,7 +482,7 @@ const MainScreen = observer(
                 )
               )}
             /> */}
-            <Route
+            {/* <Route
               path="/new-year"
               render={() => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
@@ -465,7 +493,7 @@ const MainScreen = observer(
                   </div>
                 )
               )}
-            />
+            /> */}
 
             {(localStorage.getItem("BFcheck") === true || localStorage.getItem("BFcheck") === "true") && (
               <Route

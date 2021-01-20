@@ -182,34 +182,34 @@ class Store {
     }
   });
   // e-com метрика
-  eComMetric = autorun(() => {
-    // console.log("this.cardContainer :>> ", this.cardContainer.slug);
-    if (process.env.REACT_APP_TYPE === "dev") {
-      if (this.cardContainer.slug !== undefined) {
-        window.dataLayer.push({
-          ecommerce: {
-            detail: {
-              products: [
-                {
-                  id: this.cardContainer.slug,
-                  name: this.cardContainer.name,
-                  price: this.cardContainer.price,
-                  brand: this.cardContainer.brand,
-                },
-              ],
-            },
-          },
-        });
-        window._tmr.push({
-          type: "itemView",
-          productid: String(this.cardContainer.slug),
-          pagetype: "product",
-          list: "1",
-          totalvalue: String(this.cardContainer.price),
-        });
-      }
-    }
-  });
+  // eComMetric = autorun(() => {
+  //   // console.log("this.cardContainer :>> ", this.cardContainer.slug);
+  //   if (process.env.REACT_APP_TYPE === "dev") {
+  //     if (this.cardContainer.slug !== undefined) {
+  //       window.dataLayer.push({
+  //         ecommerce: {
+  //           detail: {
+  //             products: [
+  //               {
+  //                 id: this.cardContainer.slug,
+  //                 name: this.cardContainer.name,
+  //                 price: this.cardContainer.price,
+  //                 brand: this.cardContainer.brand,
+  //               },
+  //             ],
+  //           },
+  //         },
+  //       });
+  //       window._tmr.push({
+  //         type: "itemView",
+  //         productid: String(this.cardContainer.slug),
+  //         pagetype: "product",
+  //         list: "1",
+  //         totalvalue: String(this.cardContainer.price),
+  //       });
+  //     }
+  //   }
+  // });
 
   lastSeenProdsGetData = autorun(() => {
     localStorage.setItem("lastSeenProds", this.lastSeenProds);
@@ -1117,14 +1117,18 @@ class Store {
               names: [],
             };
             data[0].sort[0][name].forEach((elem) => {
+              let value = elem.value[0];
               if (elem.name !== "") {
                 if (!sortObj.names.includes(elem.name[0])) {
                   sortObj.names.push(elem.name[0]);
                 }
+                if (elem.value[0] !== undefined && elem.value[0].includes(",")) {
+                  value = elem.value[0].split(",").join(".");
+                }
                 if (sortObj[elem.name]) {
-                  sortObj[elem.name].push(Number(elem.value[0]));
+                  sortObj[elem.name].push(Number(value));
                 } else {
-                  sortObj[elem.name] = [Number(elem.value[0])];
+                  sortObj[elem.name] = [Number(value)];
                 }
                 if (!sortObj[elem.name + "Unit"]) {
                   sortObj[elem.name + "Unit"] = elem.unit;
@@ -1175,14 +1179,18 @@ class Store {
                 names: [],
               };
               data[0].sort[0][name].forEach((elem) => {
+                let value = elem.value[0];
                 if (elem.name !== "") {
                   if (!sortObj.names.includes(elem.name[0])) {
                     sortObj.names.push(elem.name[0]);
                   }
+                  if (elem.value[0] !== undefined && elem.value[0].includes(",")) {
+                    value = elem.value[0].split(",").join(".");
+                  }
                   if (sortObj[elem.name]) {
-                    sortObj[elem.name].push(Number(elem.value[0]));
+                    sortObj[elem.name].push(Number(value));
                   } else {
-                    sortObj[elem.name] = [Number(elem.value[0])];
+                    sortObj[elem.name] = [Number(value)];
                   }
                   if (!sortObj[elem.name + "Unit"]) {
                     sortObj[elem.name + "Unit"] = elem.unit;

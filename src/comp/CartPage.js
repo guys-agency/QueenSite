@@ -818,11 +818,11 @@ const CartPage = observer(
         let dateInStore = "";
         if (this.stores[st].aval) {
           let time = 0;
-          if (moment("31.12.2020", "DD.MM.YYYY").isSame(moment())) {
-            time += 2;
-          } else if (moment("01.01.2021", "DD.MM.YYYY").isSame(moment())) {
-            time += 1;
-          }
+          // if (moment("31.12.2020", "DD.MM.YYYY").isSame(moment())) {
+          //   time += 2;
+          // } else if (moment("01.01.2021", "DD.MM.YYYY").isSame(moment())) {
+          //   time += 1;
+          // }
           dateInStore += moment().add(time, "days").format("DD.MM") + " ";
           dateInStore +=
             "— " +
@@ -831,11 +831,11 @@ const CartPage = observer(
               .format("DD.MM");
         } else {
           let time = 1;
-          if (moment("31.12.2020", "DD.MM.YYYY").isSame(moment())) {
-            time += 2;
-          } else if (moment("01.01.2021", "DD.MM.YYYY").isSame(moment())) {
-            time += 1;
-          }
+          // if (moment("31.12.2020", "DD.MM.YYYY").isSame(moment())) {
+          //   time += 2;
+          // } else if (moment("01.01.2021", "DD.MM.YYYY").isSame(moment())) {
+          //   time += 1;
+          // }
           dateInStore += moment().add(time, "days").format("DD.MM");
         }
         htmlStore.push(
@@ -942,7 +942,7 @@ const CartPage = observer(
       }
 
       // console.log("coupDisc :>> ", coupDisc);
-      if (this.totalPrice === 0 && Object.keys(productInCart).length) {
+      if (this.totalPrice === 0 && Object.keys(productInCart).length && this.state.payment !== "PREPAID") {
         this.choosePaymentType(undefined, "PREPAID");
       }
 
@@ -994,14 +994,19 @@ const CartPage = observer(
           </div>
         );
       }
+      const doubleBonusDate = moment("11.01.2021", "DD.MM.YYYY").isSameOrBefore(moment()) && moment("01.02.2021", "DD.MM.YYYY").isAfter(moment());
       const autnAndUserData = auth && Object.keys(userData).length;
       let maxBonusCount = 0;
       if (autnAndUserData) {
-        maxBonusCount = Math.floor(
-          userData.bonus.bonusSum - userData.bonus.useBonusValue > this.totalPrice / 2
-            ? this.totalPrice / 2
+        let bonusSum = doubleBonusDate
+          ? userData.bonus.bonusSum - userData.bonus.useBonusValue + userData.bonus.bonusSumDouble
+          : moment("01.02.2021", "DD.MM.YYYY").isSameOrBefore(moment())
+          ? userData.bonus.bonusSumDouble < userData.bonus.useBonusSumDouble
+            ? userData.bonus.bonusSum - userData.bonus.useBonusValue - (userData.bonus.useBonusSumDouble - userData.bonus.bonusSumDouble)
             : userData.bonus.bonusSum - userData.bonus.useBonusValue
-        );
+          : userData.bonus.bonusSum - userData.bonus.useBonusValue;
+
+        maxBonusCount = Math.floor(bonusSum > this.totalPrice / 2 ? this.totalPrice / 2 : bonusSum);
       }
 
       this.props.store.totalPrice = this.totalPrice;
@@ -1785,93 +1790,6 @@ const CartPage = observer(
                     </label>
                   </form>
                 </div>
-                {Object.keys(userData).length !== 0 && userData.bonus.bonusSum - userData.bonus.useBonusValue > 0 && (
-                  <div className="cart-page__delivery" id="bonusCont" style={{ marginTop: "45px" }}>
-                    <div className="cart__list cart-page__list ">
-                      <div
-                        className={`cart-page__list-elem cart-page__list-elem_not-c ${this.state.useBonus ? "cart-page__list-elem_use-bonus" : ""}`}
-                      >
-                        <div className="cart-page__store-info">
-                          <p className="cart-page__store-name">
-                            Бонусные баллы <span className="dib">(можно оплатить до 50% от покупки)</span>
-                          </p>
-                          {this.state.useBonus ? (
-                            <div className="cart-page__bonus">
-                              <div className="cart-page__bonus-block">
-                                <p>Использованно: </p>
-                                <div
-                                  style={{
-                                    marginLeft: "5px",
-                                  }}
-                                >
-                                  <p>
-                                    <b> {this.state.useBonus}</b>
-                                  </p>
-                                  <p className="i_coin" />
-                                </div>
-                              </div>
-                              <button
-                                className="ic i_close"
-                                onClick={() => {
-                                  this.setState({
-                                    useBonus: 0,
-                                  });
-                                }}
-                              ></button>
-                            </div>
-                          ) : (
-                            <div className="cart-page__bonus">
-                              <div className="cart-page__bonus-block">
-                                <p>Баланс: </p>
-                                <div
-                                  style={{
-                                    marginLeft: "5px",
-                                  }}
-                                >
-                                  <p>
-                                    <b> {Math.floor(userData.bonus.bonusSum - userData.bonus.useBonusValue)}</b>
-                                  </p>
-                                  <p className="i_coin" />
-                                </div>
-                              </div>
-                              <div className="cart-page__bonus-block">
-                                <p>Использовать: </p>
-                                <div>
-                                  <input
-                                    type="number"
-                                    placeholder={maxBonusCount}
-                                    onChange={(e) => {
-                                      if (+e.target.value > maxBonusCount) {
-                                        this.setState({
-                                          bonus: maxBonusCount,
-                                        });
-                                      } else {
-                                        this.setState({
-                                          bonus: Math.floor(+e.target.value),
-                                        });
-                                      }
-                                    }}
-                                    value={this.state.bonus ? this.state.bonus : ""}
-                                  />
-                                  <p className="i_coin" />
-                                </div>
-                              </div>
-                              <button
-                                onClick={() => {
-                                  this.setState({
-                                    useBonus: this.state.bonus,
-                                  });
-                                }}
-                              >
-                                Активировать
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
               </div>
               <div className="col col-1 hide-s"></div>
               <div className="col col-4 col-s-12">
@@ -2114,6 +2032,16 @@ const CartPage = observer(
                         dataToSend.payment = this.state.payment;
                         dataToSend.coupon = this.state.coupsCont;
                         const that = this;
+                        if (certInCart) {
+                          dataToSend.certInCart = certInCart;
+                        }
+                        if (this.totalNotSalePrice) {
+                          dataToSend.totalNotSalePrice = this.totalNotSalePrice;
+                        }
+                        if (useBonus) {
+                          dataToSend.useBonus = useBonus;
+                        }
+
                         if (delChoose || pickUpChoose) {
                           const addressData = {
                             geoId: localStorage.getItem("city").geoId,
@@ -2148,15 +2076,15 @@ const CartPage = observer(
                             payItems,
                           };
 
-                          if (certInCart) {
-                            dataToSend.certInCart = certInCart;
-                          }
-                          if (this.totalNotSalePrice) {
-                            dataToSend.totalNotSalePrice = this.totalNotSalePrice;
-                          }
-                          if (useBonus) {
-                            dataToSend.useBonus = useBonus;
-                          }
+                          // if (certInCart) {
+                          //   dataToSend.certInCart = certInCart;
+                          // }
+                          // if (this.totalNotSalePrice) {
+                          //   dataToSend.totalNotSalePrice = this.totalNotSalePrice;
+                          // }
+                          // if (useBonus) {
+                          //   dataToSend.useBonus = useBonus;
+                          // }
 
                           // console.log("object :>> ", delivery, dataToSend);
                           // return;
@@ -2195,8 +2123,10 @@ const CartPage = observer(
                               localStorage.setItem("deleteCart", true);
 
                               // console.log('localStorage.getItem("orderID") :>> ', localStorage.getItem("orderID"));
+                              const preValue =
+                                Object.keys(dataToSend.prod).length === 1 && certInCart ? dataToSend.sum : +delivery.price + dataToSend.sum;
 
-                              if (dataToSend.payment === "PREPAID") {
+                              if (dataToSend.payment === "PREPAID" && preValue > 0) {
                                 const checkout = new window.YandexCheckout({
                                   confirmation_token: data.confirmationToken, //Токен, который перед проведением оплаты нужно получить от Яндекс.Кассы
                                   return_url: data.return, //Ссылка на страницу завершения оплаты
@@ -2300,6 +2230,7 @@ const CartPage = observer(
                             })
                             .then((data) => {
                               if (process.env.REACT_APP_TYPE === "prod") {
+                                window.ym(65097901, "reachGoal", "Checkout");
                                 window.dataLayer.push({
                                   ecommerce: {
                                     purchase: {
@@ -2314,7 +2245,7 @@ const CartPage = observer(
 
                               localStorage.setItem("deleteCart", true);
 
-                              if (dataToSend.payment === "PREPAID") {
+                              if (dataToSend.payment === "PREPAID" && dataToSend.sum > 0) {
                                 const checkout = new window.YandexCheckout({
                                   confirmation_token: data.confirmationToken, //Токен, который перед проведением оплаты нужно получить от Яндекс.Кассы
                                   return_url: data.return, //Ссылка на страницу завершения оплаты
@@ -2383,6 +2314,135 @@ const CartPage = observer(
                         : "Заказать"}
                     </button>
                   </div>
+                  {Object.keys(userData).length !== 0 && userData.bonus.bonusSum - userData.bonus.useBonusValue > 0 && (
+                    <div className="cart-page__bonus" id="bonusCont">
+                      <div className="cart__list cart-page__list ">
+                        <div
+                          className={`cart-page__list-elem cart-page__list-elem_not-c ${this.state.useBonus ? "cart-page__list-elem_use-bonus" : ""}`}
+                        >
+                          <div className="cart-page__store-info bonus-block">
+                            <p className="cart-page__store-name">
+                              Бонусные баллы
+                              <br /> <span className="dib">(можно оплатить до 50% от покупки)</span>
+                            </p>
+                            {this.state.useBonus ? (
+                              <div className="cart-page__bonus">
+                                <div className="cart-page__bonus-block">
+                                  <p>Использованно: </p>
+                                  <div
+                                    style={{
+                                      marginLeft: "5px",
+                                    }}
+                                  >
+                                    <p>
+                                      <b> {this.state.useBonus}</b>
+                                    </p>
+                                    <p className="i_coin" />
+                                  </div>
+                                </div>
+                                <span className="bonus-line"></span>
+                                <button
+                                  onClick={() => {
+                                    this.setState({
+                                      useBonus: 0,
+                                    });
+                                  }}
+                                >
+                                  Отменить
+                                </button>
+                              </div>
+                            ) : (
+                              <div className="cart-page__bonus">
+                                <div className="cart-page__bonus-block">
+                                  <p>Баланс </p>
+                                  <div
+                                    style={{
+                                      marginLeft: "5px",
+                                    }}
+                                  >
+                                    <p>
+                                      <b> {Math.floor(userData.bonus.bonusSum - userData.bonus.useBonusValue).toLocaleString()}</b>
+                                    </p>
+                                    <p className="i_coin" />
+                                  </div>
+                                </div>
+                                {doubleBonusDate && userData.bonus.bonusSumDouble > userData.bonus.useBonusSumDouble && (
+                                  <div className="cart-page__bonus-block">
+                                    <p style={{ color: "#BA250D" }}>Удвоение до 1.02 </p>
+                                    <div
+                                      style={{
+                                        marginLeft: "5px",
+                                      }}
+                                    >
+                                      <p>
+                                        <b style={{ color: "#BA250D" }}>
+                                          {" "}
+                                          {Math.floor(userData.bonus.bonusSumDouble - userData.bonus.useBonusSumDouble).toLocaleString()}
+                                        </b>
+                                      </p>
+                                      <p className="i_coin" style={{ color: "#BA250D" }} />
+                                    </div>
+                                  </div>
+                                )}
+                                {doubleBonusDate && userData.bonus.bonusSumDouble > userData.bonus.useBonusSumDouble && (
+                                  <div className="cart-page__bonus-block">
+                                    <p>Итого </p>
+                                    <div
+                                      style={{
+                                        marginLeft: "5px",
+                                      }}
+                                    >
+                                      <p>
+                                        <b>
+                                          {" "}
+                                          {Math.floor(
+                                            userData.bonus.bonusSumDouble - userData.bonus.useBonusSumDouble + userData.bonus.bonusSumDouble
+                                          ).toLocaleString()}
+                                        </b>
+                                      </p>
+                                      <p className="i_coin" />
+                                    </div>
+                                  </div>
+                                )}
+                                <div className="cart-page__bonus-block">
+                                  <p>Использовать </p>
+                                  <div>
+                                    <input
+                                      type="number"
+                                      placeholder={maxBonusCount.toLocaleString()}
+                                      onChange={(e) => {
+                                        if (+e.target.value > maxBonusCount) {
+                                          this.setState({
+                                            bonus: maxBonusCount,
+                                          });
+                                        } else {
+                                          this.setState({
+                                            bonus: Math.floor(+e.target.value),
+                                          });
+                                        }
+                                      }}
+                                      value={this.state.bonus ? this.state.bonus : ""}
+                                    />
+                                    <p className="i_coin" />
+                                  </div>
+                                </div>
+                                <span className="bonus-line"></span>
+                                <button
+                                  onClick={() => {
+                                    this.setState({
+                                      useBonus: this.state.bonus,
+                                    });
+                                  }}
+                                >
+                                  Активировать
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   <div className="cart-page__coups">{coupRender}</div>
                   <div className="cart-page__promo">
                     <input className="def" id="coup" placeholder="Промокод" type="text" />{" "}

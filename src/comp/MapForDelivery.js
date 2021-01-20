@@ -245,19 +245,22 @@ const MapDel = observer(
           // minClusterSize: 5,
         });
 
+        const mapClassHTML = $("#map ymaps").attr("class").split("-map")[0];
+        // console.log("ttt :>> ", ttt.split("-map"));
+
         clusterer.events.add("balloonopen", function (e) {
-          $(".ymaps-2-1-77-balloon__content").find(".ymaps-2-1-77-b-cluster-tabs__menu").off("click");
+          $(`.${mapClassHTML}-balloon__content`).find(`.${mapClassHTML}-b-cluster-tabs__menu`).off("click");
 
           var clusterPlacemark = e.get("target");
 
           const clHand = () => {
-            $(".ymaps-2-1-77-balloon__content")
+            $(`.${mapClassHTML}-balloon__content`)
               .find(".popover-content__btn")
               .on("click", (btn) => {
                 let dData;
 
                 clusterPlacemark._propertiesDataManger._sourceDataManager._data.geoObjects.forEach((obj) => {
-                  if (obj.properties._data.data.id === $(".ymaps-2-1-77-balloon__content").find(".popover-content__btn").attr("id")) {
+                  if (obj.properties._data.data.id === $(`.${mapClassHTML}-balloon__content`).find(".popover-content__btn").attr("id")) {
                     dData = obj.properties._data.data;
                   }
                 });
@@ -300,11 +303,11 @@ const MapDel = observer(
               });
           };
 
-          $(".ymaps-2-1-77-balloon__content")
-            .find(".ymaps-2-1-77-b-cluster-tabs__menu")
+          $(`.${mapClassHTML}-balloon__content`)
+            .find(`.${mapClassHTML}-b-cluster-tabs__menu`)
             .on("click", (btnCh) => {
               console.log("123 :>> ", 123);
-              $(".ymaps-2-1-77-balloon__content").find(".popover-content__btn").off("click");
+              $(`.${mapClassHTML}-balloon__content`).find(".popover-content__btn").off("click");
               clHand();
             });
 
