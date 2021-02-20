@@ -19,11 +19,7 @@
     padding: 9.5px 7px;
     padding-right: 16px;
     margin-left: 12px;
-    background: radial-gradient(
-      242.18% 175.14% at 50% 11.86%,
-      #c4dcf3 0%,
-      #93bae0 100%
-    );
+    background: radial-gradient(242.18% 175.14% at 50% 11.86%, #c4dcf3 0%, #93bae0 100%);
     border-radius: 20px;
     cursor: pointer;
 
@@ -47,6 +43,12 @@
       line-height: 14px;
 
       text-align: center;
+    }
+
+    @include max(365px) {
+      order: 2;
+      margin-left: 0px;
+      margin-top: 5px;
     }
   }
   &_disc {

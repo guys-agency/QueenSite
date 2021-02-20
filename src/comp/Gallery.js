@@ -20,6 +20,7 @@ const Gallery = (props) => {
       nextEl: ".swiper-button-next",
       prevEl: ".swiper-button-prev",
     },
+    shouldSwiperUpdate: true,
     // preventClicksPropagation: false,
     // preventClicks: false,
     // allowSlideNext: typeDevice,
@@ -37,6 +38,9 @@ const Gallery = (props) => {
       prevEl: ".swiper-button-prev",
     },
     slideToClickedSlide: true,
+    allowTouchMove: typeDevice,
+    preventClicksPropagation: false,
+    preventClicks: false,
   };
   useEffect(() => {
     if (gallerySwiper !== null && gallerySwiper.controller && thumbnailSwiper !== null && thumbnailSwiper.controller) {
@@ -80,20 +84,19 @@ const Gallery = (props) => {
 
   useEffect(() => {
     zoomInit();
-    $(".swiper-button-next").on("click", () => {
-      zoomInit();
-    });
-    $(".swiper-button-prev").on("click", () => {
-      zoomInit();
-    });
+
+    $(".swiper-button-next").on("click", zoomInit);
+    $(".swiper-button-prev").on("click", zoomInit);
+    $(".swiper-slide").on("click", zoomInit);
 
     return () => {
       if (d !== "") {
         d.destroy();
       }
 
-      $(".swiper-button-next").off("click");
-      $(".swiper-button-prev").off("click");
+      $(".swiper-button-next").off("click", zoomInit);
+      $(".swiper-button-prev").off("click", zoomInit);
+      $(".swiper-slide").off("click", zoomInit);
     };
   }, [gallerySwiper, thumbnailSwiper]);
 

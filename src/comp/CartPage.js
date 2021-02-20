@@ -33,7 +33,7 @@ const CartPage = observer(
       email: this.props.store.userData.user !== undefined ? this.props.store.userData.user.email : "",
       tel:
         this.props.store.userData.user !== undefined && this.props.store.userData.user.tel !== undefined
-          ? this.props.store.userData.user.tel.substr(1)
+          ? this.props.store.userData.user.tel.substr(2)
           : "",
       acceptedTerms: true,
       delChoose: true,
@@ -81,6 +81,14 @@ const CartPage = observer(
 
     useUserData = false;
 
+    bonusNextSum = {
+      1: 10000,
+      2: 30000,
+      3: 50000,
+      4: 80000,
+      5: 100000,
+    };
+
     // BalloonContentLayout = window.ymaps.templateLayoutFactory.createClass(
     //   '<div style="margin: 10px;">' +
     //     "<b>{{properties.name}}</b><br />" +
@@ -114,12 +122,12 @@ const CartPage = observer(
     // );
 
     stores = {
-      // "ТРЦ Орджоникидзе 11": {
-      //   name: "ТЦ ОРДЖОНИКИДЗЕ 11",
-      //   address: "Москва, ул. Орджоникидзе 11, стр.1А, 4 линия",
-      //   coor: "55.707791,37.595806",
-      //   aval: true,
-      // },
+      "ТРЦ Орджоникидзе 11": {
+        name: "ТЦ ОРДЖОНИКИДЗЕ 11",
+        address: "Москва, ул. Орджоникидзе 11, стр.1А, 4 линия",
+        coor: "55.707791,37.595806",
+        aval: true,
+      },
       // "OV БЕЛАЯ ДАЧА": {
       //   name: "OV БЕЛАЯ ДАЧА",
       //   address: "Московская область, Котельники, Новорязанское шоссе, 8",
@@ -331,6 +339,7 @@ const CartPage = observer(
                   payment: type,
                   deliveryData: this.state.delChoose && !inMSC ? { ...data, time } : {},
                   delVar: { [Object.keys(d)[0]]: { ...data, time } },
+                  useBonus: 0,
                 });
               }
             } else {
@@ -443,6 +452,7 @@ const CartPage = observer(
 
               this.setState({
                 pvzDataCont: this.pvzDataCont.length ? this.pvzDataCont : false,
+                useBonus: 0,
               });
 
               if (geoMap !== undefined) {
@@ -598,6 +608,10 @@ const CartPage = observer(
       localStorage.removeItem("orderID");
     };
 
+    bonusBalance = 0;
+    bonusDoubleBalance = 0;
+    bonusDouble = {};
+
     render() {
       if (!Object.keys(localStorage.getItem("productInCart")).length) {
         this.props.history.push("/");
@@ -610,14 +624,51 @@ const CartPage = observer(
       const cityLocal = localStorage.getItem("city");
 
       this.props.store.useBonus = useBonus;
+      const autnAndUserData = auth && Object.keys(userData).length;
 
       const regexEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-      if (!this.useUserData && this.props.store.auth && this.props.store.userData.user !== undefined) {
+      if (!this.useUserData && autnAndUserData) {
         this.useUserData = true;
+        this.bonusBalance = 0;
+        this.bonusDoubleBalance = 0;
+        userData.user.bonusHistory.forEach((bon) => {
+          if (bon.activeGift) {
+            this.bonusDouble = { ...bon };
+            this.bonusDoubleBalance = bon.value;
+          }
+        });
+
+        userData.user.bonusHistory.forEach((bon) => {
+          if (bon.head) {
+            if (!bon.activeGift) {
+              if (bon.plus) {
+                this.bonusBalance += bon.value;
+              } else {
+                this.bonusBalance -= bon.value;
+              }
+            }
+          } else {
+            if (bon.plus) {
+              this.bonusBalance += bon.value;
+            } else {
+              if (this.bonusDoubleBalance && this.bonusDouble.date < bon.date) {
+                this.bonusDoubleBalance -= bon.value;
+              } else {
+                this.bonusBalance -= bon.value;
+              }
+            }
+          }
+        });
+
+        if (this.bonusDoubleBalance < 0) {
+          this.bonusBalance += this.bonusDoubleBalance;
+          this.bonusDoubleBalance = 0;
+        }
+
         this.setState({
           name: this.props.store.userData.user.name,
           email: this.props.store.userData.user.email,
-          tel: this.props.store.userData.user.tel !== undefined ? this.props.store.userData.user.tel.substr(1) : "",
+          tel: this.props.store.userData.user.tel !== undefined ? this.props.store.userData.user.tel.substr(2) : "",
         });
       }
       const productList = [];
@@ -994,17 +1045,10 @@ const CartPage = observer(
           </div>
         );
       }
-      const doubleBonusDate = moment("11.01.2021", "DD.MM.YYYY").isSameOrBefore(moment()) && moment("01.02.2021", "DD.MM.YYYY").isAfter(moment());
-      const autnAndUserData = auth && Object.keys(userData).length;
+
       let maxBonusCount = 0;
       if (autnAndUserData) {
-        let bonusSum = doubleBonusDate
-          ? userData.bonus.bonusSum - userData.bonus.useBonusValue + userData.bonus.bonusSumDouble
-          : moment("01.02.2021", "DD.MM.YYYY").isSameOrBefore(moment())
-          ? userData.bonus.bonusSumDouble < userData.bonus.useBonusSumDouble
-            ? userData.bonus.bonusSum - userData.bonus.useBonusValue - (userData.bonus.useBonusSumDouble - userData.bonus.bonusSumDouble)
-            : userData.bonus.bonusSum - userData.bonus.useBonusValue
-          : userData.bonus.bonusSum - userData.bonus.useBonusValue;
+        let bonusSum = this.bonusDoubleBalance + this.bonusBalance;
 
         maxBonusCount = Math.floor(bonusSum > this.totalPrice / 2 ? this.totalPrice / 2 : bonusSum);
       }
@@ -1024,21 +1068,27 @@ const CartPage = observer(
             <div id="payment-form"></div>
           </div>
           <div className="container">
-            <p>
+            <div className="cart_header">
               <a
                 className="btn"
                 onClick={() => {
                   if (this.props.history.length) {
-                    this.props.history.goBack();
+                    window.history.go(-2);
                   } else {
-                    this.props.history.push("/");
+                    window.location.replace("/");
                   }
                 }}
               >
                 {" "}
                 <span className="ic i_left"></span> Вернуться в магазин
               </a>
-            </p>
+              <Link className="logo logo_vl" to="/">
+                <span className="i_queen"></span>
+                <span className="i_of"></span>
+                <span className="i_bohemia"></span>
+                <span className="i_qd"></span>
+              </Link>
+            </div>
             <div className="row cart-page__wrp">
               <div className="col col-7 col-s-12">
                 <div className="cart-page__cart">
@@ -1794,14 +1844,20 @@ const CartPage = observer(
               <div className="col col-1 hide-s"></div>
               <div className="col col-4 col-s-12">
                 <div className="cart-page__result-stick">
-                  {this.totalNotSalePrice ? (
-                    <div className="cart-page__bonus-sum">
-                      <p>Бонусные баллы через 14 дней:</p>
+                  <div className="cart-page__bonus-sum">
+                    <p>Бонусные баллы через 14 дней:</p>
+                    {autnAndUserData ? (
                       <div>
-                        + {Math.round(this.totalNotSalePrice * 0.1)} <p className="i_coin"></p>
+                        + {Math.round(userData.user.percentLoyal ? this.totalPrice * userData.user.percentLoyal : this.totalPrice * 0.02)}{" "}
+                        <p className="i_coin"></p>
                       </div>
-                    </div>
-                  ) : null}
+                    ) : (
+                      <div>
+                        до {Math.round(this.totalPrice * 0.1)} <p className="i_coin"></p>
+                      </div>
+                    )}
+                  </div>
+
                   <div className="cart-page__result">
                     <ul>
                       <li>
@@ -2110,14 +2166,6 @@ const CartPage = observer(
                                     },
                                   },
                                 });
-
-                                // window._tmr.push({
-                                //   type: "itemView",
-                                //   productid: String(this.data.slug),
-                                //   pagetype: "cart",
-                                //   list: "VALUE",
-                                //   totalvalue: String(this.data.price),
-                                // });
                               }
 
                               localStorage.setItem("deleteCart", true);
@@ -2229,6 +2277,7 @@ const CartPage = observer(
                               dataToSend,
                             })
                             .then((data) => {
+                              this.orderCancelID = data.id;
                               if (process.env.REACT_APP_TYPE === "prod") {
                                 window.ym(65097901, "reachGoal", "Checkout");
                                 window.dataLayer.push({
@@ -2314,12 +2363,53 @@ const CartPage = observer(
                         : "Заказать"}
                     </button>
                   </div>
-                  {Object.keys(userData).length !== 0 && userData.bonus.bonusSum - userData.bonus.useBonusValue > 0 && (
-                    <div className="cart-page__bonus" id="bonusCont">
+                  {Object.keys(userData).length !== 0 && this.bonusDoubleBalance + this.bonusBalance > 0 && (
+                    <div className="cart-page__bonus" id="bonusCont" style={{ position: "relative" }}>
+                      <div className="alert-message alert-message_error">
+                        <p>Заполните кол-во бонусов</p>
+                        <button
+                          className="ic i_close"
+                          onClick={(e) => {
+                            $(e.target).parent().removeClass("alert-message_active");
+                          }}
+                        ></button>
+                      </div>
                       <div className="cart__list cart-page__list ">
                         <div
                           className={`cart-page__list-elem cart-page__list-elem_not-c ${this.state.useBonus ? "cart-page__list-elem_use-bonus" : ""}`}
                         >
+                          <div className="cart-page__level">
+                            <div className="cart-page__bonus-level-head">
+                              <h5>{userData.user.numLoyal} уровень</h5>
+                              {userData.user.numLoyal < 6 && (
+                                <>
+                                  <div className="cart-page__bonus-level-line">
+                                    <div
+                                      style={{
+                                        width: `${
+                                          (userData.user.orderCloseSum
+                                            ? userData.user.orderCloseSum / this.bonusNextSum[userData.user.numLoyal]
+                                            : 0 / this.bonusNextSum[userData.user.numLoyal]) * 100
+                                        }%`,
+                                      }}
+                                    ></div>
+                                  </div>
+                                  <div className="cart-page__bonus-level-link">
+                                    <p>
+                                      До перехода:{" "}
+                                      {userData.user.orderCloseSum
+                                        ? (this.bonusNextSum[userData.user.numLoyal] - userData.user.orderCloseSum).toLocaleString()
+                                        : (this.bonusNextSum[userData.user.numLoyal] - 0).toLocaleString()}{" "}
+                                      ₽
+                                    </p>
+                                    {this.bonusNextSum[userData.user.numLoyal] - userData.user.orderCloseSum < this.totalPrice && (
+                                      <p className="green">Новый уровень через 14 дней после получения этой покупки</p>
+                                    )}
+                                  </div>
+                                </>
+                              )}
+                            </div>
+                          </div>
                           <div className="cart-page__store-info bonus-block">
                             <p className="cart-page__store-name">
                               Бонусные баллы
@@ -2361,30 +2451,27 @@ const CartPage = observer(
                                     }}
                                   >
                                     <p>
-                                      <b> {Math.floor(userData.bonus.bonusSum - userData.bonus.useBonusValue).toLocaleString()}</b>
+                                      <b> {this.bonusBalance.toLocaleString()}</b>
                                     </p>
                                     <p className="i_coin" />
                                   </div>
                                 </div>
-                                {doubleBonusDate && userData.bonus.bonusSumDouble > userData.bonus.useBonusSumDouble && (
+                                {Object.keys(this.bonusDouble).length !== 0 && (
                                   <div className="cart-page__bonus-block">
-                                    <p style={{ color: "#BA250D" }}>Удвоение до 1.02 </p>
+                                    <p style={{ color: "#BA250D" }}>Подарочные бонусы до {this.bonusDouble.dateDouble}</p>
                                     <div
                                       style={{
                                         marginLeft: "5px",
                                       }}
                                     >
                                       <p>
-                                        <b style={{ color: "#BA250D" }}>
-                                          {" "}
-                                          {Math.floor(userData.bonus.bonusSumDouble - userData.bonus.useBonusSumDouble).toLocaleString()}
-                                        </b>
+                                        <b style={{ color: "#BA250D" }}> {this.bonusDoubleBalance.toLocaleString()}</b>
                                       </p>
                                       <p className="i_coin" style={{ color: "#BA250D" }} />
                                     </div>
                                   </div>
                                 )}
-                                {doubleBonusDate && userData.bonus.bonusSumDouble > userData.bonus.useBonusSumDouble && (
+                                {Object.keys(this.bonusDouble).length !== 0 && (
                                   <div className="cart-page__bonus-block">
                                     <p>Итого </p>
                                     <div
@@ -2393,12 +2480,7 @@ const CartPage = observer(
                                       }}
                                     >
                                       <p>
-                                        <b>
-                                          {" "}
-                                          {Math.floor(
-                                            userData.bonus.bonusSumDouble - userData.bonus.useBonusSumDouble + userData.bonus.bonusSumDouble
-                                          ).toLocaleString()}
-                                        </b>
+                                        <b> {(this.bonusDoubleBalance + this.bonusBalance).toLocaleString()}</b>
                                       </p>
                                       <p className="i_coin" />
                                     </div>
@@ -2409,6 +2491,7 @@ const CartPage = observer(
                                   <div>
                                     <input
                                       type="number"
+                                      id="inputBonusCount"
                                       placeholder={maxBonusCount.toLocaleString()}
                                       onChange={(e) => {
                                         if (+e.target.value > maxBonusCount) {
@@ -2429,9 +2512,15 @@ const CartPage = observer(
                                 <span className="bonus-line"></span>
                                 <button
                                   onClick={() => {
-                                    this.setState({
-                                      useBonus: this.state.bonus,
-                                    });
+                                    if (this.state.bonus) {
+                                      this.setState({
+                                        useBonus: this.state.bonus,
+                                      });
+                                    } else {
+                                      this.setState({
+                                        useBonus: maxBonusCount,
+                                      });
+                                    }
                                   }}
                                 >
                                   Активировать

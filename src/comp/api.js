@@ -361,6 +361,21 @@ class Api {
     });
   }
 
+  getRepaid(id) {
+    return fetch(SERVER_URL + "/repaid/" + id, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      Promise.reject(res.json());
+    });
+  }
+
   sendQestion(data) {
     return fetch(SERVER_URL + "/question", {
       method: "POST",

@@ -78,29 +78,33 @@ const ProductCard = observer(function ProductCard(props) {
           $(".tooltip_cart").removeClass("visible");
         }, 2000);
         if (process.env.REACT_APP_TYPE === "prod") {
-          window.dataLayer.push({
-            ecommerce: {
-              add: {
-                products: [
-                  {
-                    id: data.slug,
-                    name: data.name,
-                    price: data.price,
-                    brand: data.brand,
-                    quantity: 1,
-                  },
-                ],
+          try {
+            window.dataLayer.push({
+              ecommerce: {
+                add: {
+                  products: [
+                    {
+                      id: data.slug,
+                      name: data.name,
+                      price: data.price,
+                      brand: data.brand,
+                      quantity: 1,
+                    },
+                  ],
+                },
               },
-            },
-          });
+            });
 
-          window._tmr.push({
-            type: "itemView",
-            productid: String(data.slug),
-            pagetype: "cart",
-            list: "1",
-            totalvalue: String(data.price),
-          });
+            window._tmr.push({
+              type: "itemView",
+              productid: String(data.slug),
+              pagetype: "cart",
+              list: "1",
+              totalvalue: String(data.price),
+            });
+          } catch (err) {
+            console.log("err :>> ", err);
+          }
         }
       }
       api.updateCountStats(data._id, "cart");
@@ -159,23 +163,23 @@ const ProductCard = observer(function ProductCard(props) {
         <div className="product__image-wrp">
           <LazyLoadImage effect="blur" src={imagePath} />
           <div className="product__attr-cont">
-            {/* {data.BFclose && (
+            {data.BFclose && (
               <div
                 className="product__sale"
                 style={{
-                  background:
-                    "linear-gradient(90.09deg, #fadf90 0.08%, #efd27e 99.9%)",
+                  background: "#F6E8FB",
                   color: "#000636",
                 }}
               >
                 Закрытый раздел
               </div>
-            )} */}
+            )}
             {data.hit && <div className="product__hit">Хит</div>}
             {data.sale && !data.NY2021 && <div className="product__sale">Акция</div>}
             {data.NY2021 && <div className="product__sale">Новый год</div>}
 
             {data.onePlusOne && <div className="product__sale">1 + 1 = 3</div>}
+            {data.isSet && <div className="product__sale">1 = 2</div>}
             {/* {data.new && <div className="product__new">Новинка</div>} */}
           </div>
         </div>

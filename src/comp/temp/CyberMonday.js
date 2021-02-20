@@ -4,18 +4,36 @@ import $ from "jquery";
 import { Link } from "react-router-dom";
 import moment from "moment";
 import Swiper from "react-id-swiper";
-import ProductCard from "./ProductCard";
-import { SERVER_URL } from "../constants";
+import ProductCard from "../ProductCard";
+import { SERVER_URL } from "../../constants";
 import { Formik } from "formik";
-import api from "./api";
+import api from "../api";
 import { withRouter } from "react-router";
-import SuscribeSchema from "../schemas/suscribeSchema";
+import SuscribeSchema from "../../schemas/suscribeSchema";
 import localStorage from "mobx-localstorage";
 
 const { Component } = React;
 
-const BlackFriday = observer(
-  class BlackFriday extends Component {
+const BB = {
+  1: "5637246426",
+  2: "5637284605",
+  3: "5637284599",
+  4: "5637287639",
+  5: "5637287624",
+  6: "5637287652",
+  7: "5637255873",
+  8: "5637257355",
+  9: "5637286882",
+  10: "5637276091",
+  11: "5637253467",
+  12: "5637242668",
+  13: "5637259848",
+  14: "5637237331",
+  15: "5637253926",
+};
+
+const CyberMonday = observer(
+  class CyberMonday extends Component {
     state = {
       days: "",
       h: "",
@@ -58,11 +76,11 @@ const BlackFriday = observer(
     };
 
     checkTimer = () => {
-      const time = moment("01.12.2020", "DD.MM.YYYY").diff(moment()).toPrecision();
+      const time = moment("01.02.2021", "DD.MM.YYYY").diff(moment()).toPrecision();
       const dur = moment.duration(time, "milliseconds");
 
       this.setState({
-        days: dur.days(),
+        days: dur.days() + 31 * dur.months(),
         h: dur.hours(),
         m: dur.minutes(),
         s: dur.seconds() + 1,
@@ -98,7 +116,7 @@ const BlackFriday = observer(
     typeDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
     scrollToSubs = () => {
-      let destination = $(".subscribe_black-friday").offset().top;
+      let destination = $(".subscribe_cyber-monday").offset().top;
 
       if (this.typeDevice) {
         destination -= 200;
@@ -110,11 +128,15 @@ const BlackFriday = observer(
     };
 
     YBrender = () => {
-      const nR = Math.floor(Math.random() * 17) + 1;
+      let nR = Math.floor(Math.random() * 10) + 1;
       const YBContTime = [];
+      //!убрать
+      // if (nR <= 3) {
+      //   nR = 4;
+      // }
 
       for (let i = nR; i < nR + 4; i++) {
-        const style = { backgroundColor: "transparent" };
+        const style = { backgroundColor: "transparent", display: "flex" };
         if (YBContTime.length === 0 || YBContTime.length === 2) {
           style.marginBottom = this.typeDevice ? "18px" : "0px";
         }
@@ -129,11 +151,12 @@ const BlackFriday = observer(
               }}
             >
               <img
-                src={`/image/BF/YB/${i}.png`}
+                src={`/image/CM/BB/${i}.jpg`}
                 alt=""
                 style={{
                   height: "100%",
                   width: "100%",
+                  borderRadius: "5px",
                 }}
               />
             </Link>
@@ -151,20 +174,22 @@ const BlackFriday = observer(
       const { days, h, m, s, hitCont } = this.state;
       this.typeDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
       return (
-        <div className="main-page black-friday">
+        <div className="main-page cyber-monday">
           <div className="head head_big">
             <div className="head-cont">
               <div
-                className="head-banner black-friday__banner"
+                className="head-banner cyber-monday__banner"
                 style={{
-                  backgroundImage: `url(/image/BF/${this.typeDevice ? "BF-pl-m" : "BF-pl"}.jpg)`,
+                  backgroundImage: `url(/image/CM/${this.typeDevice ? "banner-m" : "banner"}.jpg?v2)`,
+                  border: "none",
+                  marginBottom: "110px",
                 }}
               >
                 {/* <img className="gift__img" src={`/image/BF/BF-pl.jpg`}></img> */}
 
-                <div className="black-friday__timer-cont">
-                  <h3>До завершения акции</h3>
-                  <div className="black-friday__timer">
+                <div className="cyber-monday__timer-cont" style={{ background: "#fff", border: "1px solid #C4DCF3" }}>
+                  <h3>До конца распродажи</h3>
+                  <div className="cyber-monday__timer">
                     <div className="days">
                       <p className="num">{days}</p>
                       <p className="str">дней</p>
@@ -188,13 +213,13 @@ const BlackFriday = observer(
           </div>
 
           <div className="container">
-            <div className="subscribe subscribe_black-friday">
+            <div className="subscribe subscribe_cyber-monday">
               <div className="container">
                 <div className="row">
                   <div className="col col-6 col-t-12 col-s-12 col-middle subscribe__form">
                     <h3>Доступ в закрытый раздел</h3>
                     <p>
-                      Закрытый раздел на <b>286 товаров</b> со <b>скидками до 78%</b>
+                      Закрытый раздел на <b>229 товаров</b> со <b>скидками до 67%</b>
                       <br /> для наших подписчиков!
                     </p>
                     <Formik
@@ -226,7 +251,7 @@ const BlackFriday = observer(
                               $("#subscription").removeClass("error");
                               $("#subscription").text("Подписаться");
                               if (data.bfok !== undefined && data.bfok) {
-                                localStorage.setItem("BFcheck", true);
+                                localStorage.setItem("CMcheck", true);
                                 window.location.replace("/close-sale");
                               }
                             }, 2000);
@@ -284,7 +309,12 @@ const BlackFriday = observer(
                             </label>
                           </div>
                           <div className="col col-4 col-s-12">
-                            <button className="btn btn_primary btn_wide" type="submit" id="subscription" style={{ marginTop: "0px" }}>
+                            <button
+                              className="btn btn_primary btn_wide"
+                              type="submit"
+                              id="subscription"
+                              style={{ marginTop: this.typeDevice ? "10px" : "0px" }}
+                            >
                               Получить доступ
                             </button>
                           </div>
@@ -294,76 +324,72 @@ const BlackFriday = observer(
                   </div>
                 </div>
               </div>
-              <div
-                className="subscribe__img"
-                style={{
-                  // backgroundImage: "url(" + "/image/plate.png" + ")",
-                  background: "linear-gradient(90.22deg, #dab958 -140.48%, #efd27e 99.78%)",
-                }}
-              >
-                <img className="disc" src="/image/BF/disc.png"></img>
-                <img className="plate" src="/image/BF/plate.png" />
+              <div className="subscribe__img">
+                <img className="disc" src="/image/CM/sc.jpg"></img>
               </div>
             </div>
           </div>
-          <div className="kosa-cont">
-            <div className="kosa">
-              <div className="kosa-in"></div>
-            </div>
-          </div>
 
-          <div className="container bf-c" style={{ marginBottom: "60px" }}>
-            <div className="title">
-              {/* <h2 className="tilda">Идеи</h2> */}
+          <div style={{ width: "100%", backgroundColor: "#F6E8FB", overflow: "visible", marginBottom: "10px" }}>
+            <div className="kosa-cont" style={{ position: "relative", top: "-6px" }}>
+              <div className="kosa">
+                <div className="kosa-in"></div>
+              </div>
+            </div>
+            <div className="container bf-c" style={{ marginBottom: "60px" }}>
+              <div className="container">
+                <div className="title">
+                  <h2>
+                    Закрытый раздел{" "}
+                    <button className="btn btn_yellow" style={{ border: "none" }} onClick={this.scrollToSubs}>
+                      Получить доступ
+                    </button>
+                  </h2>
 
-              <h2 style={{ display: "inline-flex" }}>
-                Закрытый раздел{" "}
-                <button
-                  className="btn btn_yellow"
-                  onClick={() => {
-                    this.scrollToSubs();
-                  }}
-                >
-                  Получить доступ
-                </button>
-              </h2>
-              <p className="subtitle">Самые большие скидки для подписчиков</p>
-              <button
-                className="btn btn_yellow"
-                style={{ marginLeft: "0px" }}
-                onClick={() => {
-                  this.scrollToSubs();
-                }}
-              >
-                Получить доступ
-              </button>
+                  <p className="subtitle" style={{ marginTop: "5px" }}>
+                    Самые большие скидки для подписчиков
+                  </p>
+                  <button
+                    className="btn btn_yellow"
+                    style={{ marginLeft: "0px", background: "#BA250D", borderColor: "#59160C", color: "#fff" }}
+                    onClick={() => {
+                      this.props.history.push("/main/novyj_god");
+                    }}
+                  >
+                    Посмотреть все
+                  </button>
+                </div>
+              </div>
+              <div className="row" style={{ marginBottom: "18px" }}>
+                {this.state.YBCont[0]}
+                {this.state.YBCont[1]}
+              </div>
+              <div className="row">
+                {this.state.YBCont[2]}
+                {this.state.YBCont[3]}
+              </div>
             </div>
-            <div className="row" style={{ marginBottom: "18px" }}>
-              {this.state.YBCont[0]}
-              {this.state.YBCont[1]}
-            </div>
-            <div className="row">
-              {this.state.YBCont[2]}
-              {this.state.YBCont[3]}
-            </div>
-          </div>
 
-          <div className="kosa-cont">
-            <div className="kosa">
-              <div className="kosa-in"></div>
+            <div className="kosa-cont" style={{ position: "relative", bottom: "-6px" }}>
+              <div className="kosa" style={{ marginBottom: "0px" }}>
+                <div className="kosa-in"></div>
+              </div>
             </div>
           </div>
 
           <div className="carousel carousel_product">
             <div className="container">
               <div className="title">
-                <Link to="/catalog">
+                <Link to="/catalog/?attr=sale">
                   <h2 className="tilda">
-                    Скидка –20% <button className="btn btn_yellow">В каталог</button>
+                    Скидки{" "}
+                    <button className="btn btn_yellow" style={{ border: "none" }}>
+                      В каталог
+                    </button>
                   </h2>
                 </Link>
                 <p className="subtitle" style={{ marginTop: "5px" }}>
-                  На все товары без акций с 20.11 по 30.11!
+                  Скидки из открытых разделов!
                 </p>
               </div>
             </div>
@@ -407,21 +433,16 @@ const BlackFriday = observer(
               </div>
             </div>
           </div> */}
-          <div
-            className="subscribe subscribe_black-friday subscribe_black-friday-s"
-            style={{
-              marginBottom: "0px",
-              borderRadius: "0px",
-            }}
-          >
+          <div className="subscribe">
             <div className="container">
               <div className="row">
-                <div className="col col-6 col-s-12 col-t-12 col-middle subscribe__form">
+                <div className="col col-6 col-s-12 col-middle subscribe__form" style={{ paddingTop: "25px" }}>
                   <h3>Доступ в закрытый раздел</h3>
                   <p>
-                    Закрытый раздел на <b>286 товаров</b> со <b>скидками до 78%</b>
+                    Закрытый раздел на <b>229 товаров</b> со <b>скидками до 67%</b>
                     <br /> для наших подписчиков!
                   </p>
+                  <p>{/* <b>Скидка 5%</b> на первую покупку */}</p>
                   <Formik
                     //инициализируем значения input-ов
                     initialValues={{
@@ -432,8 +453,6 @@ const BlackFriday = observer(
                     validationSchema={SuscribeSchema}
                     //определяем, что будет происходить при вызове onsubmit
                     onSubmit={(values, { setSubmitting }) => {
-                      $("#subscription").addClass("deactive");
-                      $("#subscription").text("Загрузка");
                       api
                         .addSubs({
                           email: values.email.toLowerCase(),
@@ -451,7 +470,7 @@ const BlackFriday = observer(
                             $("#subscription").removeClass("error");
                             $("#subscription").text("Подписаться");
                             if (data.bfok !== undefined && data.bfok) {
-                              localStorage.setItem("BFcheck", true);
+                              localStorage.setItem("CMcheck", true);
                               window.location.replace("/close-sale");
                             }
                           }, 2000);
@@ -463,7 +482,7 @@ const BlackFriday = observer(
                     //то есть, в которых что-то ввели
                   >
                     {({ errors, touched, handleSubmit, isSubmitting, values, handleChange }) => (
-                      <form className="row row_inner col-top" onSubmit={handleSubmit}>
+                      <form className="row row_inner col-bottom" onSubmit={handleSubmit}>
                         <div className="col col-7 col-s-12">
                           <div className="input-field">
                             <label className="required" htmlFor="emailSubs">
@@ -486,6 +505,13 @@ const BlackFriday = observer(
                             />
                           </div>
                           <div className="field-error">{errors.email}</div>
+                        </div>
+                        <div className="col col-4 col-s-12">
+                          <button className="btn btn_primary btn_wide" type="submit" id="subscription">
+                            Подписаться
+                          </button>
+                        </div>
+                        <div className="col col-12 col-s-12">
                           <label className="checkbox checkbox_margin">
                             <input
                               type="checkbox"
@@ -508,11 +534,6 @@ const BlackFriday = observer(
                             </i>
                           </label>
                         </div>
-                        <div className="col col-4 col-s-12">
-                          <button className="btn btn_primary btn_wide" type="submit" id="subscription" style={{ marginTop: "0px" }}>
-                            Подписаться
-                          </button>
-                        </div>
                       </form>
                     )}
                   </Formik>
@@ -531,6 +552,8 @@ const BlackFriday = observer(
     }
 
     componentDidMount() {
+      console.log("object :>> ", $(".header"));
+      $("#root").addClass("header_cm");
       this.getData();
       this.checkTimer();
       window.timerInt = setInterval(() => {
@@ -540,10 +563,10 @@ const BlackFriday = observer(
     }
 
     componentWillUnmount() {
-      $("#root").removeClass("black-friday");
       clearInterval(window.timerInt);
+      $("#root").removeClass("header_cm");
     }
   }
 );
 
-export default withRouter(BlackFriday);
+export default withRouter(CyberMonday);

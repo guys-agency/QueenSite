@@ -2,6 +2,7 @@ import React, { Suspense } from "react";
 import "./App.css";
 import { observer } from "mobx-react";
 import { Route, Switch } from "react-router";
+import moment from "moment";
 
 import api from "./comp/api";
 
@@ -29,14 +30,13 @@ import StartLoader from "./comp/Loader";
 import PageNotFound from "./comp/404";
 import BlackFriday from "./comp/BlackFriday";
 import NewYear from "./comp/temp/NewYear2021";
+import CyberMonday from "./comp/temp/CyberMonday";
 
 import Breadcrumbs from "./comp/breadcrumbs";
 import localStorage from "mobx-localstorage";
 import $ from "jquery";
 import { withRouter } from "react-router";
 import Profile from "./comp/Profile";
-
-import buildKey from "./buildKey.json";
 
 const CartPage = React.lazy(() => import("./comp/CartPage"));
 const Finish = React.lazy(() => import("./comp/Finish"));
@@ -75,6 +75,11 @@ const MainScreen = observer(
     //   this.props.store.productPage = true;
     //   this.props.store.cartPage = false;
     // };
+
+    clearCats = () => {
+      this.props.store.nameMainCat = "";
+      this.props.store.nameSecondCat = "";
+    };
 
     chooseMenuPoint = (nameMainCat, nameSecondCat, start, stop) => {
       const testContainer = [];
@@ -158,34 +163,38 @@ const MainScreen = observer(
         })
         .then((data) => {
           if (data.bfcheck === "ok") {
-            localStorage.setItem("BFcheck", true);
+            localStorage.setItem("CMcheck", true);
           }
           if (+slug !== this.props.store.cardContainer.slug) {
             this.props.store.cardContainer = data.product[0];
 
             if (process.env.REACT_APP_TYPE === "prod") {
-              if (this.props.store.cardContainer.slug !== undefined) {
-                window.dataLayer.push({
-                  ecommerce: {
-                    detail: {
-                      products: [
-                        {
-                          id: this.props.store.cardContainer.slug,
-                          name: this.props.store.cardContainer.name,
-                          price: this.props.store.cardContainer.price,
-                          brand: this.props.store.cardContainer.brand,
-                        },
-                      ],
+              try {
+                if (this.props.store.cardContainer.slug !== undefined) {
+                  window.dataLayer.push({
+                    ecommerce: {
+                      detail: {
+                        products: [
+                          {
+                            id: this.props.store.cardContainer.slug,
+                            name: this.props.store.cardContainer.name,
+                            price: this.props.store.cardContainer.price,
+                            brand: this.props.store.cardContainer.brand,
+                          },
+                        ],
+                      },
                     },
-                  },
-                });
-                window._tmr.push({
-                  type: "itemView",
-                  productid: String(this.props.store.cardContainer.slug),
-                  pagetype: "product",
-                  list: "1",
-                  totalvalue: String(this.props.store.cardContainer.price),
-                });
+                  });
+                  window._tmr.push({
+                    type: "itemView",
+                    productid: String(this.props.store.cardContainer.slug),
+                    pagetype: "product",
+                    list: "1",
+                    totalvalue: String(this.props.store.cardContainer.price),
+                  });
+                }
+              } catch (err) {
+                console.log("err :>> ", err);
               }
             }
           }
@@ -261,7 +270,7 @@ const MainScreen = observer(
     checkBFregistration = (key) => {
       api.checkBFreg(key).then((ok) => {
         if (ok.status === 201) {
-          localStorage.setItem("BFcheck", true);
+          localStorage.setItem("CMcheck", true);
           window.location.replace("/close-sale");
         }
       });
@@ -276,8 +285,6 @@ const MainScreen = observer(
           return res.json();
         })
         .then((buildKey) => {
-          console.log("buildKey :>> ", buildKey.key);
-          console.log("this.keyInsaid :>> ", this.keyInsaid);
           if (this.keyInsaid === null) {
             window.localStorage.setItem("buildKey", buildKey.key);
           } else if (this.keyInsaid !== buildKey.key) {
@@ -494,28 +501,59 @@ const MainScreen = observer(
                 )
               )}
             /> */}
-
-            {(localStorage.getItem("BFcheck") === true || localStorage.getItem("BFcheck") === "true") && (
+            {moment().utcOffset("+03:00").month() === 0 && moment().utcOffset("+03:00").date() >= 24 && (
               <Route
-                path="/close-sale"
+                path="/cyber-monday/:id"
                 render={(propsRout) => (
-                  (this.props.store.nameMainCat = ""),
-                  (this.props.store.nameSecondCat = ""),
-                  this.props.store.bannerFilter.slug !== propsRout.match.params.slug ? this.props.store.cleaningActiveFilters() : null,
-                  this.props.store.bannerFilter.slug !== propsRout.match.params.slug ? $("html, body").animate({ scrollTop: 0 }, 500) : null,
-                  (this.props.store.bannerFilter = {
-                    type: "closeBanner",
-                    slug: "zakrytyj_razdel_-_chyornaya_pyatnica",
-                  }),
-                  this.props.store.filtration(),
+                  this.checkBFregistration(propsRout.match.params.id),
+                  $("html, body").animate({ scrollTop: 0 }, 500),
+                  (document.title = "КиберПонедельник - Queen of Bohemia"),
                   (
                     <div className="main-screen">
-                      <Collection store={this.props.store} slug={propsRout.match.params.slug} />
+                      <CyberMonday store={this.props.store} />
                     </div>
                   )
                 )}
               />
             )}
+            {moment().utcOffset("+03:00").month() === 0 && moment().utcOffset("+03:00").date() >= 24 && (
+              <Route
+                path="/cyber-monday"
+                render={() => (
+                  $("html, body").animate({ scrollTop: 0 }, 500),
+                  (document.title = "КиберПонедельник - Queen of Bohemia"),
+                  (
+                    <div className="main-screen">
+                      <CyberMonday store={this.props.store} />
+                    </div>
+                  )
+                )}
+              />
+            )}
+
+            {moment().utcOffset("+03:00").month() === 0 &&
+              moment().utcOffset("+03:00").date() >= 24 &&
+              (localStorage.getItem("CMcheck") === true || localStorage.getItem("CMcheck") === "true") && (
+                <Route
+                  path="/close-sale"
+                  render={(propsRout) => (
+                    (this.props.store.nameMainCat = ""),
+                    (this.props.store.nameSecondCat = ""),
+                    this.props.store.bannerFilter.slug !== propsRout.match.params.slug ? this.props.store.cleaningActiveFilters() : null,
+                    this.props.store.bannerFilter.slug !== propsRout.match.params.slug ? $("html, body").animate({ scrollTop: 0 }, 500) : null,
+                    (this.props.store.bannerFilter = {
+                      type: "closeBanner",
+                      slug: "kiberponedelnik",
+                    }),
+                    this.props.store.filtration(),
+                    (
+                      <div className="main-screen">
+                        <Collection store={this.props.store} slug={propsRout.match.params.slug} />
+                      </div>
+                    )
+                  )}
+                />
+              )}
             <Route
               path={["/product/:id&:t", "/product/:id"]}
               render={(propsRout) => (
@@ -547,8 +585,28 @@ const MainScreen = observer(
               render={() => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
                 (document.title = "Профиль - Queen of Bohemia"),
-                api.logoutbf().then((ok) => localStorage.removeItem("BFcheck")),
+                api.logoutbf().then((ok) => localStorage.removeItem("CMcheck")),
                 (<div></div>)
+              )}
+            />
+
+            <Route
+              path="/sets"
+              render={(propsRout) => (
+                (this.props.store.nameMainCat = ""),
+                (this.props.store.nameSecondCat = ""),
+                this.props.store.pathS !== propsRout.match.url ? this.props.store.cleaningActiveFilters() : null,
+                this.props.store.pathS !== propsRout.match.url ? $("html, body").animate({ scrollTop: 0 }, 500) : null,
+                (this.props.store.bannerFilter = {
+                  type: "isSet",
+                }),
+                (this.props.store.pathS = propsRout.match.url),
+                this.props.store.filtration(),
+                (
+                  <div className="main-screen">
+                    <Collection store={this.props.store} slug={propsRout.match.params.slug} />
+                  </div>
+                )
               )}
             />
 
@@ -768,8 +826,7 @@ const MainScreen = observer(
             <Route
               path="/closeout"
               render={(routProps) => (
-                (this.props.store.nameMainCat = ""),
-                (this.props.store.nameSecondCat = ""),
+                this.props.store.pathS !== "closeout" ? this.clearCats() : null,
                 this.props.store.pathS !== "closeout" ? $("html, body").animate({ scrollTop: 0 }, 500) : null,
                 this.props.store.pathS !== "closeout" ? this.props.store.cleaningActiveFilters() : null,
                 (this.props.store.pathS = "closeout"),
@@ -782,6 +839,44 @@ const MainScreen = observer(
                         <div className="col col-12">
                           <Breadcrumbs store={this.props.store} />
                           <h3 className="catalog-title">Распродажа</h3>
+                        </div>
+                      </div>
+                      <div className="row catalog">
+                        <div className="col col-3">
+                          <Filters
+                            store={this.props.store}
+                            parentName={routProps.match.params.parentName}
+                            childName={routProps.match.params.childName}
+                          />
+                        </div>
+                        <ProductCardContainer
+                          store={this.props.store}
+                          parentName={routProps.match.params.parentName}
+                          childName={routProps.match.params.childName}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )
+              )}
+            />
+
+            <Route
+              path="/colors/:color"
+              render={(routProps) => (
+                this.props.store.pathS !== routProps.match.url ? this.clearCats() : null,
+                this.props.store.pathS !== routProps.match.url ? $("html, body").animate({ scrollTop: 0 }, 500) : null,
+                this.props.store.pathS !== routProps.match.url ? this.props.store.cleaningActiveFilters() : null,
+                this.props.store.pathS !== routProps.match.url ? this.props.store.activeFilters.color.push(routProps.match.params.color) : null,
+                (this.props.store.pathS = routProps.match.url),
+                this.props.store.filtration(),
+                (document.title = `${routProps.match.params.color} - Queen of Bohemia`),
+                (
+                  <div className="main-screen">
+                    <div className="container">
+                      <div className="row">
+                        <div className="col col-12">
+                          <h3 className="catalog-title">{routProps.match.params.color}</h3>
                         </div>
                       </div>
                       <div className="row catalog">

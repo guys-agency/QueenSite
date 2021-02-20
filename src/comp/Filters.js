@@ -143,6 +143,65 @@ const Filters = observer(
       $(".head_filter").removeClass("visible");
     }
 
+    priceFilter = () => {
+      const { activeFilters } = this.props.store;
+      if (+activeFilters.minPrice > 0) {
+        activeFilters.choosePoint.push("minPrice");
+        activeFilters.count += 1;
+      } else {
+        if (activeFilters.choosePoint.includes("minPrice")) {
+          activeFilters.choosePoint.splice(activeFilters.choosePoint.indexOf("minPrice"), 1);
+        }
+      }
+      if (+activeFilters.maxPrice > 0) {
+        // console.log("2 :>> ", 2);
+        activeFilters.choosePoint.push("maxPrice");
+        activeFilters.count += 1;
+      } else {
+        if (activeFilters.choosePoint.includes("maxPrice")) {
+          activeFilters.choosePoint.splice(activeFilters.choosePoint.indexOf("maxPrice"), 1);
+        }
+      }
+
+      let searchQt = "";
+      activeFilters.choosePoint.forEach((filterName) => {
+        if (filterName !== "choosePoint") {
+          if (filterName !== "measure") {
+            if (filterName === "maxPrice" || filterName === "minPrice") {
+              if (!searchQt.length) {
+                searchQt = filterName + "=" + activeFilters[filterName];
+              } else {
+                searchQt += "&&" + filterName + "=" + activeFilters[filterName];
+              }
+            } else {
+              if (activeFilters[filterName].length) {
+                if (!searchQt.length) {
+                  searchQt = filterName + "=" + activeFilters[filterName].join();
+                } else {
+                  searchQt += "&&" + filterName + "=" + activeFilters[filterName].join();
+                }
+              }
+            }
+          } else {
+            if (Object.keys(activeFilters[filterName]).length) {
+              Object.keys(activeFilters[filterName]).forEach((ind) => {
+                // console.log(
+                //   "ind :>> ",
+                //   activeFilters[filterName][ind]
+                // );
+                if (!searchQt.length) {
+                  searchQt = filterName + "=" + ind + "!~" + activeFilters[filterName][ind].join(",");
+                } else {
+                  searchQt += "&&" + filterName + "=" + ind + "!~" + activeFilters[filterName][ind].join(",");
+                }
+              });
+            }
+          }
+        }
+      });
+      this.props.history.replace({ search: searchQt });
+    };
+
     render() {
       const {
         filterPointsContainers,
@@ -378,7 +437,7 @@ const Filters = observer(
                         $("#priceBtn").removeClass("close");
                       }}
                       onChange={(e) => {
-                        if (e.target.value > minPrice && e.target.value < maxPrice) activeFilters.minPrice = e.target.value;
+                        if (e.target.value < maxPrice) activeFilters.minPrice = e.target.value;
                         // if (e.target.value.length > 0) {
                         //   $("#priceBtn").removeClass("close");
                         // } else if (
@@ -418,67 +477,7 @@ const Filters = observer(
                       }}
                     ></input>
                     <p>₽</p>
-                    <button
-                      className="btn close"
-                      id="priceBtn"
-                      onClick={() => {
-                        if (+activeFilters.minPrice > 0) {
-                          activeFilters.choosePoint.push("minPrice");
-                          activeFilters.count += 1;
-                        } else {
-                          if (activeFilters.choosePoint.includes("minPrice")) {
-                            activeFilters.choosePoint.splice(activeFilters.choosePoint.indexOf("minPrice"), 1);
-                          }
-                        }
-                        if (+activeFilters.maxPrice > 0) {
-                          // console.log("2 :>> ", 2);
-                          activeFilters.choosePoint.push("maxPrice");
-                          activeFilters.count += 1;
-                        } else {
-                          if (activeFilters.choosePoint.includes("maxPrice")) {
-                            activeFilters.choosePoint.splice(activeFilters.choosePoint.indexOf("maxPrice"), 1);
-                          }
-                        }
-
-                        let searchQt = "";
-                        activeFilters.choosePoint.forEach((filterName) => {
-                          if (filterName !== "choosePoint") {
-                            if (filterName !== "measure") {
-                              if (filterName === "maxPrice" || filterName === "minPrice") {
-                                if (!searchQt.length) {
-                                  searchQt = filterName + "=" + activeFilters[filterName];
-                                } else {
-                                  searchQt += "&&" + filterName + "=" + activeFilters[filterName];
-                                }
-                              } else {
-                                if (activeFilters[filterName].length) {
-                                  if (!searchQt.length) {
-                                    searchQt = filterName + "=" + activeFilters[filterName].join();
-                                  } else {
-                                    searchQt += "&&" + filterName + "=" + activeFilters[filterName].join();
-                                  }
-                                }
-                              }
-                            } else {
-                              if (Object.keys(activeFilters[filterName]).length) {
-                                Object.keys(activeFilters[filterName]).forEach((ind) => {
-                                  // console.log(
-                                  //   "ind :>> ",
-                                  //   activeFilters[filterName][ind]
-                                  // );
-                                  if (!searchQt.length) {
-                                    searchQt = filterName + "=" + ind + "!~" + activeFilters[filterName][ind].join(",");
-                                  } else {
-                                    searchQt += "&&" + filterName + "=" + ind + "!~" + activeFilters[filterName][ind].join(",");
-                                  }
-                                });
-                              }
-                            }
-                          }
-                        });
-                        this.props.history.replace({ search: searchQt });
-                      }}
-                    >
+                    <button className="btn close" id="priceBtn" onClick={this.priceFilter}>
                       Применить
                     </button>
                   </div>
@@ -577,6 +576,7 @@ const Filters = observer(
                   document.querySelector(".sidebar-overlay").classList.remove("active");
                   document.querySelector("body").classList.remove("no-scroll");
                   document.querySelector(".i_filter").classList.remove("active");
+                  this.priceFilter();
                 }}
               >
                 Применить

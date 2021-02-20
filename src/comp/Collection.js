@@ -13,9 +13,7 @@ const Collection = observer(
 
       const collRender = [];
 
-      const typeDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-        navigator.userAgent
-      );
+      const typeDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
       if (dataColl.length) {
         if (dataColl[0].type === "brend") {
@@ -26,25 +24,18 @@ const Collection = observer(
                   <div
                     className="head-banner head-banner_brand col col-5 col-s-1"
                     style={{
-                      backgroundImage: `url(/image/brends/${
-                        typeDevice
-                          ? dataColl[0]["image-mob-large"]
-                          : dataColl[0]["image-desc-large"]
-                      })`,
+                      backgroundImage: `url(/image/brends/${typeDevice ? dataColl[0]["image-mob-large"] : dataColl[0]["image-desc-large"]})`,
                     }}
                   ></div>
-                  {dataColl[0].description !== "" &&
-                    dataColl[0].description !== undefined && (
-                      <div className="container">
-                        <div className="row">
-                          <div className="col col-10 col-s-11">
-                            <div className="collections__desc collections__desc_brand">
-                              {dataColl[0].description}
-                            </div>
-                          </div>
+                  {dataColl[0].description !== "" && dataColl[0].description !== undefined && (
+                    <div className="container">
+                      <div className="row">
+                        <div className="col col-10 col-s-11">
+                          <div className="collections__desc collections__desc_brand">{dataColl[0].description}</div>
                         </div>
                       </div>
-                    )}
+                    </div>
+                  )}
                 </div>
               </div>
             </React.Fragment>
@@ -57,9 +48,7 @@ const Collection = observer(
                   <div
                     className="head-banner"
                     style={{
-                      backgroundImage: `url(/image/BF/${
-                        typeDevice ? "BF-pl-m.jpg" : "BF-pl.jpg"
-                      })`,
+                      backgroundImage: `url(/image/CM/${typeDevice ? "banner-m.jpg" : "banner.jpg"})`,
                     }}
                   ></div>
                 </div>
@@ -71,7 +60,7 @@ const Collection = observer(
                   <div className="col col-8 col-s-10">
                     <div className="collections__desc">
                       Мы подготовили для вас закрытый раздел на 
-                      <b>286 товаров</b> со скидками <b>до 78%</b>.
+                      <b>239 товаров</b> со скидками <b>до 67%</b>.
                     </div>
                   </div>
                   <div className="col col-s-1"></div>
@@ -79,6 +68,7 @@ const Collection = observer(
               </div>
             </React.Fragment>
           );
+        } else if (dataColl[0].type === "isSet") {
         } else if (dataColl[0].type !== "sale") {
           collRender.push(
             <React.Fragment key={dataColl[0].slug}>
@@ -87,29 +77,22 @@ const Collection = observer(
                   <div
                     className="head-banner"
                     style={{
-                      backgroundImage: `url(/image/banners/${
-                        typeDevice
-                          ? dataColl[0]["image-mob-large"]
-                          : dataColl[0]["image-desc-large"]
-                      })`,
+                      backgroundImage: `url(/image/banners/${typeDevice ? dataColl[0]["image-mob-large"] : dataColl[0]["image-desc-large"]})`,
                     }}
                   ></div>
                 </div>
               </div>
-              {dataColl[0].description !== "" &&
-                dataColl[0].description !== undefined && (
-                  <div className="container">
-                    <div className="row">
-                      <div className="col col-3 col-s-1"></div>
-                      <div className="col col-8 col-s-10">
-                        <div className="collections__desc">
-                          {dataColl[0].description}
-                        </div>
-                      </div>
-                      <div className="col col-s-1"></div>
+              {dataColl[0].description !== "" && dataColl[0].description !== undefined && (
+                <div className="container">
+                  <div className="row">
+                    <div className="col col-3 col-s-1"></div>
+                    <div className="col col-8 col-s-10">
+                      <div className="collections__desc">{dataColl[0].description}</div>
                     </div>
+                    <div className="col col-s-1"></div>
                   </div>
-                )}
+                </div>
+              )}
             </React.Fragment>
           );
         } else {
@@ -118,11 +101,7 @@ const Collection = observer(
               <div
                 className="head-banner head-banner_action"
                 style={{
-                  backgroundImage: `url(/image/banners/${
-                    typeDevice
-                      ? dataColl[0]["image-mob-large"]
-                      : dataColl[0]["image-desc-large"]
-                  })`,
+                  backgroundImage: `url(/image/banners/${typeDevice ? dataColl[0]["image-mob-large"] : dataColl[0]["image-desc-large"]})`,
                 }}
               >
                 <div className="text">
@@ -130,10 +109,7 @@ const Collection = observer(
                   <h1>
                     {dataColl[0].name} <span className="ic i_right"></span>
                   </h1>
-                  {dataColl[0].description !== "" &&
-                    dataColl[0].description !== undefined && (
-                      <p>{dataColl[0].description}</p>
-                    )}
+                  {dataColl[0].description !== "" && dataColl[0].description !== undefined && <p>{dataColl[0].description}</p>}
                 </div>
               </div>
             </div>
@@ -143,9 +119,7 @@ const Collection = observer(
 
       return (
         dataColl.length !== 0 && (
-          <div
-            className={dataColl[0].type !== "sale" ? "collections" : "actions"}
-          >
+          <div className={dataColl[0].type !== "sale" ? "collections" : "actions"}>
             {collRender}
             <div className="container">
               <div className="row"></div>

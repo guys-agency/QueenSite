@@ -72,29 +72,33 @@ const ProductList = observer(
         this.props.clearDeliveryData();
       }
       if (process.env.REACT_APP_TYPE === "prod") {
-        window.dataLayer.push({
-          ecommerce: {
-            add: {
-              products: [
-                {
-                  id: data.slug,
-                  name: data.name,
-                  price: data.price,
-                  brand: data.brand,
-                  quantity: 1,
-                },
-              ],
+        try {
+          window.dataLayer.push({
+            ecommerce: {
+              add: {
+                products: [
+                  {
+                    id: data.slug,
+                    name: data.name,
+                    price: data.price,
+                    brand: data.brand,
+                    quantity: 1,
+                  },
+                ],
+              },
             },
-          },
-        });
+          });
 
-        window._tmr.push({
-          type: "itemView",
-          productid: String(data.slug),
-          pagetype: "cart",
-          list: "1",
-          totalvalue: String(data.price),
-        });
+          window._tmr.push({
+            type: "itemView",
+            productid: String(data.slug),
+            pagetype: "cart",
+            list: "1",
+            totalvalue: String(data.price),
+          });
+        } catch (err) {
+          console.log("err :>> ", err);
+        }
       }
     };
 

@@ -148,7 +148,7 @@
         margin-bottom: 0px;
       }
       .city-choose_cart {
-        margin-bottom: 30px;
+        margin-bottom: 15px;
         // .city-choose__title {
         //   padding: 9px 0px;
         //   font-size: 16px;
@@ -470,6 +470,8 @@
       border: none;
       margin-bottom: 40px;
 
+      cursor: auto;
+
       .cart-page__store-info {
         margin-bottom: 15px;
         .cart-page__store-name {
@@ -484,9 +486,56 @@
       padding: 20px;
       border-radius: 30px;
       border: none;
+      flex-direction: column;
 
       &:hover {
         box-shadow: none;
+      }
+
+      .cart-page__level {
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #f7f6f7;
+
+        h5 {
+          font-style: normal;
+          font-weight: 500;
+          font-size: 18px;
+          line-height: 18px;
+          color: #00094d;
+
+          padding-bottom: 10px;
+          margin-bottom: 10px;
+        }
+
+        .cart-page__bonus-level-line {
+          box-sizing: border-box;
+          width: 100%;
+          height: 5px;
+          border: 1px solid #f7f6f7;
+          border-radius: 3px;
+          margin-bottom: 10px;
+          div {
+            box-sizing: border-box;
+            height: 100%;
+            background: #12b757;
+            border-radius: 3px;
+            width: 0px;
+          }
+        }
+
+        .cart-page__bonus-level-link {
+          p {
+            font-size: 14px;
+
+            margin-bottom: 0px;
+            vertical-align: middle;
+          }
+          .green {
+            margin-top: 10px;
+            color: #055b29;
+          }
+        }
       }
     }
 
@@ -694,7 +743,7 @@
         }
         p {
           display: block;
-          text-align: center;
+          text-align: left;
           margin: 0px;
         }
         input {
@@ -756,6 +805,10 @@
     &_use-bonus {
       background-color: #00007d;
       color: #fff;
+      .cart-page__level {
+        display: none;
+      }
+
       .cart-page__store-info {
         .cart-page__store-name {
           color: #fff;

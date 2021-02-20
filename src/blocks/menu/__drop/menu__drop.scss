@@ -1,33 +1,40 @@
-.menu__drop{
-    position: relative;
-    @include max($s){
-        position: static;
+.menu__drop {
+  position: relative;
+  @include max($s) {
+    position: static;
+  }
+  .menu {
+    width: initial;
+    border-radius: 3px;
+    top: 40px;
+    padding: 0;
+    padding: {
+      left: 20px;
+      right: 20px;
     }
-    .menu{
-        width: initial;
-        border-radius: 3px;
-        top: 40px;
-        padding: 0;
-        padding: {
-            left: 20px;
-            right: 20px;
-        }
-        .column{
-            min-width: 160px;
-            margin-right: 0px;
-            ul{
-                margin-bottom: 0;
-            }
-        }
-        .container{
-            position: relative;
-            &::before{
-                top: -10px;
-                left: 0px;
-                @include max($t){
-                    left: -20px;
-                }
-            }
-        }
+    @include max($s) {
+      .container_f {
+        top: -20px;
+        overflow-y: scroll;
+        height: 100vh;
+      }
     }
+    .column {
+      min-width: 160px;
+      margin-right: 0px;
+      ul {
+        margin-bottom: 0;
+      }
+    }
+    .container {
+      position: relative;
+      &::before {
+        top: -10px;
+        left: 0px;
+        @include max($t) {
+          left: -20px;
+        }
+      }
+    }
+  }
 }

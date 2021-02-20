@@ -63,7 +63,7 @@ const FilterPoint = observer(
         activeFilters.choosePoint.forEach((filterName) => {
           if (filterName !== "choosePoint") {
             if (filterName !== "measure") {
-              if (activeFilters[filterName].length) {
+              if (activeFilters[filterName].length && !(filterName === "color" && window.location.pathname.includes("colors"))) {
                 if (!searchQt.length) {
                   searchQt = filterName + "=" + activeFilters[filterName].join();
                 } else {

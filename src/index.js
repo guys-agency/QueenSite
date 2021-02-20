@@ -6,7 +6,9 @@ import "./test.scss";
 import MainScreen from "./App";
 import * as serviceWorker from "./serviceWorker";
 import store from "./MobxStore";
+import getCookie from "./ulits/getCookie";
 import { BrowserRouter } from "react-router-dom";
+import localStorage from "mobx-localstorage";
 // const WooCommerceRestApi = require("@woocommerce/woocommerce-rest-api").default;
 if (process.env.REACT_APP_TYPE === "prod" && typeof window.__REACT_DEVTOOLS_GLOBAL_HOOK__ === "object") {
   window.__REACT_DEVTOOLS_GLOBAL_HOOK__.inject = function () {};
@@ -58,6 +60,12 @@ if (process.env.REACT_APP_TYPE === "prod") {
       f();
     }
   })(document, window, "topmailru-code");
+}
+
+if (getCookie("BFcheck") === "true" || getCookie("BFcheck") === true) {
+  localStorage.setItem("CMcheck", true);
+} else if (localStorage.getItem("CMcheck") !== null) {
+  localStorage.removeItem("CMcheck");
 }
 
 // var _tmr = window._tmr || (window._tmr = []);

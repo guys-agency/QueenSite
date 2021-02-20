@@ -59,13 +59,16 @@ const MainPage = observer(
               </div>
             );
           });
-          Object.keys(data[0].all).forEach((element) => {
-            allContTime.push(
-              <div className="col col-3 col-t-4 col-s-6" key={data[0].all[element].slug}>
-                <ProductCard data={data[0].all[element]} store={this.props.store} />
-              </div>
-            );
-          });
+          if (data[0].all) {
+            Object.keys(data[0].all).forEach((element) => {
+              allContTime.push(
+                <div className="col col-3 col-t-4 col-s-6" key={data[0].all[element].slug}>
+                  <ProductCard data={data[0].all[element]} store={this.props.store} />
+                </div>
+              );
+            });
+          }
+
           // console.log("cert :>> ", this.props.gift);
           if (this.props.gift === undefined) {
             this.setState({
@@ -118,7 +121,7 @@ const MainPage = observer(
       }
     };
     checkTimer = () => {
-      const time = moment("01.12.2020", "DD.MM.YYYY").diff(moment()).toPrecision();
+      const time = moment("01.02.2021", "DD.MM.YYYY").diff(moment()).toPrecision();
       const dur = moment.duration(time, "milliseconds");
 
       this.setState({
@@ -129,10 +132,12 @@ const MainPage = observer(
       });
     };
 
+    typeDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
     render() {
       const { hitCont, newCont, allCont, days, h, m, s } = this.state;
       const { bannersData } = this.props.store;
-      const typeDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
       const mainBanners = [];
       const collLast = [];
       const saleCont = [];
@@ -151,14 +156,14 @@ const MainPage = observer(
         //     }}
         //   ></Link>
         // );
-        if (moment().utcOffset("+03:00").month() === 10 && moment().utcOffset("+03:00").date() >= 20) {
+        if (moment().utcOffset("+03:00").month() === 0 && moment().utcOffset("+03:00").date() >= 24) {
           mainBanners.push(
             <Link
               key="0"
               className="head-banner"
-              to={`${localStorage.getItem("BFcheck") === true || localStorage.getItem("BFcheck") === "true" ? "/close-sale" : "/black-friday"}`}
+              to={`${localStorage.getItem("CMcheck") === true || localStorage.getItem("CMcheck") === "true" ? "/close-sale" : "/cyber-monday"}`}
               style={{
-                backgroundImage: `url(/image/BF/${this.typeDevice ? "BF-pl-m" : "BF-pl"}.jpg)`,
+                backgroundImage: `url(/image/CM/${this.typeDevice ? "banner-m" : "banner"}.jpg?v2)`,
               }}
             ></Link>
           );
@@ -173,7 +178,7 @@ const MainPage = observer(
               }}
               to={"/main/" + elem.slug}
               style={{
-                backgroundImage: `url(/image/banners/${typeDevice ? elem["image-mob-large"] : elem["image-desc-large"]})`,
+                backgroundImage: `url(/image/banners/${this.typeDevice ? elem["image-mob-large"] : elem["image-desc-large"]})`,
               }}
             ></Link>
           );
@@ -205,7 +210,7 @@ const MainPage = observer(
                 className="banner banner_overlay main"
                 style={{
                   backgroundImage: `url(/image/banners/${
-                    typeDevice ? bannersData.collections[0]["image-mob-small"] : bannersData.collections[0]["image-desc-small"]
+                    this.typeDevice ? bannersData.collections[0]["image-mob-small"] : bannersData.collections[0]["image-desc-small"]
                   })`,
                 }}
               >
@@ -223,7 +228,7 @@ const MainPage = observer(
                     className="banner banner_overlay small"
                     style={{
                       backgroundImage: `url(/image/banners/${
-                        typeDevice ? bannersData.collections[1]["image-mob-small"] : bannersData.collections[1]["image-desc-small"]
+                        this.typeDevice ? bannersData.collections[1]["image-mob-small"] : bannersData.collections[1]["image-desc-small"]
                       })`,
                     }}
                   >
@@ -239,7 +244,7 @@ const MainPage = observer(
                     className="banner banner_overlay small"
                     style={{
                       backgroundImage: `url(/image/banners/${
-                        typeDevice ? bannersData.collections[2]["image-mob-small"] : bannersData.collections[2]["image-desc-small"]
+                        this.typeDevice ? bannersData.collections[2]["image-mob-small"] : bannersData.collections[2]["image-desc-small"]
                       })`,
                     }}
                   >
@@ -252,41 +257,42 @@ const MainPage = observer(
         );
 
         // console.log("bannersData.sale :>> ", bannersData.sale);
-
-        saleCont.push(
-          <div className="actions" key={bannersData.sale[0].slug}>
-            <div className="action">
-              <div className="head head_sm head_list">
-                <Link
-                  onClick={() => {
-                    this.props.store.dataColl = [bannersData.sale[0]];
-                  }}
-                  to={"/actions/" + bannersData.sale[0].slug}
-                  className="head-banner head-banner_action"
-                  style={{
-                    backgroundImage: `url(/image/banners/${
-                      typeDevice ? bannersData.sale[0]["image-mob-large"] : bannersData.sale[0]["image-desc-large"]
-                    })`,
-                  }}
-                >
-                  <div className="text">
-                    <div className="label">Акция</div>
-                    <h1>
-                      {bannersData.sale[0].name} <span className="ic i_right"></span>
-                    </h1>
-                    <p>{bannersData.sale[0].description}</p>
-                  </div>
-                </Link>
-              </div>
-              <div className="container container_f">
-                <div className="row">{allCont}</div>
-                <Link to={"/actions/" + bannersData.sale[0].slug} className="btn btn_primary">
-                  Посмотреть еще
-                </Link>
+        if (bannersData.sale.length) {
+          saleCont.push(
+            <div className="actions" key={bannersData.sale[0].slug}>
+              <div className="action">
+                <div className="head head_sm head_list">
+                  <Link
+                    onClick={() => {
+                      this.props.store.dataColl = [bannersData.sale[0]];
+                    }}
+                    to={"/actions/" + bannersData.sale[0].slug}
+                    className="head-banner head-banner_action"
+                    style={{
+                      backgroundImage: `url(/image/banners/${
+                        this.typeDevice ? bannersData.sale[0]["image-mob-large"] : bannersData.sale[0]["image-desc-large"]
+                      })`,
+                    }}
+                  >
+                    <div className="text">
+                      <div className="label">Акция</div>
+                      <h1>
+                        {bannersData.sale[0].name} <span className="ic i_right"></span>
+                      </h1>
+                      <p>{bannersData.sale[0].description}</p>
+                    </div>
+                  </Link>
+                </div>
+                <div className="container container_f">
+                  <div className="row">{allCont}</div>
+                  <Link to={"/actions/" + bannersData.sale[0].slug} className="btn btn_primary">
+                    Посмотреть еще
+                  </Link>
+                </div>
               </div>
             </div>
-          </div>
-        );
+          );
+        }
 
         // ideasCon.push(
         //   <div className="row ideas-block" key={bannersData.ideas[0].slug}>
@@ -296,7 +302,7 @@ const MainPage = observer(
         //         className="banner banner_overlay main-idea"
         //         style={{
         //           backgroundImage: `url(/image/banners/${
-        //             typeDevice
+        //             this.typeDevice
         //               ? bannersData.ideas[0]["image-mob-main"]
         //               : bannersData.ideas[0]["image-desc-main"]
         //           })`,
@@ -313,7 +319,7 @@ const MainPage = observer(
         //             className="banner banner_overlay small"
         //             style={{
         //               backgroundImage: `url(/image/banners/${
-        //                 typeDevice
+        //                 this.typeDevice
         //                   ? bannersData.ideas[1]["image-mob-main"]
         //                   : bannersData.ideas[1]["image-desc-main"]
         //               })`,
@@ -330,7 +336,7 @@ const MainPage = observer(
         //             className="banner banner_overlay small"
         //             style={{
         //               backgroundImage: `url(/image/banners/${
-        //                 typeDevice
+        //                 this.typeDevice
         //                   ? bannersData.ideas[2]["image-mob-main"]
         //                   : bannersData.ideas[2]["image-desc-main"]
         //               })`,
@@ -347,7 +353,7 @@ const MainPage = observer(
         //             className="banner banner_overlay large"
         //             style={{
         //               backgroundImage: `url(/image/banners/${
-        //                 typeDevice
+        //                 this.typeDevice
         //                   ? bannersData.ideas[3]["image-mob-main"]
         //                   : bannersData.ideas[3]["image-desc-main"]
         //               })`,
@@ -510,11 +516,11 @@ const MainPage = observer(
             </div>
           )}
 
-          {/* {localStorage.getItem("BFcheck") !== true && localStorage.getItem("BFcheck") !== "true" && (
+          {/* {localStorage.getItem("CMcheck") !== true && localStorage.getItem("CMcheck") !== "true" && (
             <div
               className="container"
               style={{
-                paddingTop: typeDevice ? "10px" : "105px",
+                paddingTop: this.typeDevice ? "10px" : "105px",
                 borderRadius: "5px",
               }}
             >
@@ -524,7 +530,7 @@ const MainPage = observer(
                     <div className="col col-6 col-s-12 col-middle subscribe__form">
                       <h3>Доступ в закрытый раздел</h3>
                       <p>
-                        Закрытый раздел на <b>286 товаров</b> со <b>скидками до 78%</b>
+                        Закрытый раздел на <b>239 товаров</b> со <b>скидками до 67%</b>
                         <br /> для наших подписчиков!
                       </p>
                       <Formik
@@ -556,7 +562,7 @@ const MainPage = observer(
                                 $("#subscription").removeClass("error");
                                 $("#subscription").text("Подписаться");
                                 if (data.bfok !== undefined && data.bfok) {
-                                  localStorage.setItem("BFcheck", true);
+                                  localStorage.setItem("CMcheck", true);
                                   window.location.replace("/close-sale");
                                 }
                               }, 3000);
@@ -732,7 +738,7 @@ const MainPage = observer(
                     <div
                       className="banner_cats"
                       style={{
-                        backgroundImage: "url(/image/cat1.png)",
+                        backgroundImage: "url(/image/cat1.png?v2)",
                         height: "258px",
                       }}
                     >
@@ -761,7 +767,7 @@ const MainPage = observer(
                     <div
                       className="banner_cats"
                       style={{
-                        backgroundImage: "url(/image/cat2.png)",
+                        backgroundImage: "url(/image/cat2.png?v2)",
                         height: "258px",
                       }}
                     >
@@ -789,7 +795,7 @@ const MainPage = observer(
                     <div
                       className="banner_cats"
                       style={{
-                        backgroundImage: "url(/image/cat3.png)",
+                        backgroundImage: "url(/image/cat3.png?v2)",
                         height: "258px",
                       }}
                     >

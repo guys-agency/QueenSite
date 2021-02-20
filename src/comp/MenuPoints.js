@@ -15,6 +15,7 @@ import api from "./api";
 import localStorage from "mobx-localstorage";
 import store from "../MobxStore";
 import moment from "moment";
+import Swiper from "react-id-swiper";
 
 const { Component } = React;
 
@@ -62,6 +63,8 @@ const MenuPoints = observer(
         </a>
       </div>
     );
+
+    typeDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
     service = (
       <div className="header__drop" style={{ width: "160px" }}>
@@ -135,6 +138,11 @@ const MenuPoints = observer(
               Бонусы
             </Link>
           </li>
+          <li>
+            <Link to="/help/vacancy" onClick={this.closeNav}>
+              Вакансии
+            </Link>
+          </li>
 
           {/* <li>
             <Link to="/help/bonus">Бонусы</Link>
@@ -170,7 +178,10 @@ const MenuPoints = observer(
 
     toggleDrop = (e) => {
       // e.preventDefault();
-      $(".menu_mega").removeClass("visible");
+      if (!this.typeDevice) {
+        $(".menu_mega").removeClass("visible");
+      }
+
       $(".menu_sub").removeClass("visible");
       $(".menu-point").removeClass("active");
       $(".header__drop").removeClass("visible");
@@ -178,8 +189,8 @@ const MenuPoints = observer(
       $(e.target).toggleClass("active");
       $(e.target).parent().find(".menu_sub").toggleClass("visible");
       if ($(window).width() <= 760) {
-        e.stopPropagation();
         e.preventDefault();
+        e.stopPropagation();
       }
     };
 
@@ -213,8 +224,11 @@ const MenuPoints = observer(
       }
 
       var mega = $(".menu");
-      var trgClass = $(e.target).hasClass("menu");
-      if (!trgClass) {
+      var trgClass =
+        $(e.target).is(
+          ".menu, .container_f, .swiper-container, .swiper-wrapper, .swiper-slide, .colors-in-menu, .column, .swiper-button-color-next, .swiper-button-color-prev"
+        ) || $(e.target).parent().hasClass(".swiper-slide");
+      if (!trgClass && !this.typeDevice) {
         mega.removeClass("visible");
       }
 
@@ -260,8 +274,14 @@ const MenuPoints = observer(
           .getUserData()
           .then((data) => {
             // this.props.store.addToLike(true);
-            if (data.status === 404) {
+            if (data.status === 404 || data.status === 401) {
               localStorage.removeItem("auth");
+              api
+                .logout()
+                .then(() => {})
+                .catch((err) => {
+                  console.log("err :>> ", err);
+                });
             } else {
               this.props.store.userData = data;
             }
@@ -272,8 +292,9 @@ const MenuPoints = observer(
             // );
           })
           .catch((err) => {
+            // localStorage.removeItem("auth");
+            // this.auth = false;
             console.log("err :>> ", err);
-            localStorage.removeItem("auth");
           });
       }
     }
@@ -441,7 +462,14 @@ const MenuPoints = observer(
         .then((res) => {
           return res.json();
         })
-        .then((data) => {
+        .then((dataObj) => {
+          const data = dataObj.cats;
+
+          dataObj.colors.sort((prev, next) => {
+            if (prev < next) return -1;
+            if (prev > next) return 1;
+            return 1;
+          });
           const menu = {};
           // console.log("data :>> ", data);
 
@@ -492,6 +520,37 @@ const MenuPoints = observer(
               }
             });
 
+            const menuElem = () => {
+              if (this.typeDevice) {
+                return (
+                  <span className="menu__drop" key={elem.name}>
+                    <Link className="menu-point">{elem.name}</Link>
+                    <div className="menu menu_sub">
+                      <div className="container container_f">
+                        <button
+                          className="btn btn_prev"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            e.target.closest(".menu_sub").classList.remove("visible");
+                          }}
+                        >
+                          <span className="ic i_left"></span> Назад
+                        </button>
+                        <div className="column">{<ul>{childsPoints}</ul>}</div>
+                      </div>
+                    </div>
+                  </span>
+                );
+              }
+              return (
+                <div key={elem.name}>
+                  <h5>{elem.name}</h5>
+                  <ul>{childsPoints}</ul>
+                </div>
+              );
+            };
+
             if (elem.name === "Сервизы") {
               childsPoints.unshift(
                 <li key={"Собрать сервиз"}>
@@ -500,62 +559,22 @@ const MenuPoints = observer(
                   </NavLink>
                 </li>
               );
-              menu[0] = (
-                <div key={elem.name}>
-                  <h5>{elem.name}</h5>
-                  <ul>{childsPoints}</ul>
-                </div>
-              );
+              menu[0] = menuElem();
             } else if (elem.name === "Сервировка стола") {
-              menu[1] = (
-                <div key={elem.name}>
-                  <h5>{elem.name}</h5>
-                  <ul>{childsPoints}</ul>
-                </div>
-              );
+              menu[1] = menuElem();
             } else if (elem.name === "Для приготовления") {
-              menu[2] = (
-                <div key={elem.name}>
-                  <h5>{elem.name}</h5>
-                  <ul>{childsPoints}</ul>
-                </div>
-              );
+              menu[2] = menuElem();
             } else if (elem.name === "Напитки") {
-              menu[3] = (
-                <div key={elem.name}>
-                  <h5>{elem.name}</h5>
-                  <ul>{childsPoints}</ul>
-                </div>
-              );
+              menu[3] = menuElem();
             } else if (elem.name === "Кофе и чай") {
-              menu[4] = (
-                <div key={elem.name}>
-                  <h5>{elem.name}</h5>
-                  <ul>{childsPoints}</ul>
-                </div>
-              );
+              menu[4] = menuElem();
             } else if (elem.name === "Аксессуары для стола") {
-              menu[5] = (
-                <div key={elem.name}>
-                  <h5>{elem.name}</h5>
-                  <ul>{childsPoints}</ul>
-                </div>
-              );
+              menu[5] = menuElem();
             } else if (elem.name === "Интерьер") {
-              menu[6] = (
-                <div key={elem.name}>
-                  <h5>{elem.name}</h5>
-                  <ul>{childsPoints}</ul>
-                </div>
-              );
+              menu[6] = menuElem();
               this.interier.push(<ul key={elem.name}>{childsPoints}</ul>);
             } else if (elem.name === "Наборы") {
-              menu[7] = (
-                <div key={elem.name}>
-                  <h5>{elem.name}</h5>
-                  <ul>{childsPoints}</ul>
-                </div>
-              );
+              menu[7] = menuElem();
             } else if (elem.name === "Premium") {
               this.premium.push(<ul key={elem.name}>{childsPoints}</ul>);
             } else if (elem.name === "Подарки") {
@@ -604,6 +623,76 @@ const MenuPoints = observer(
               });
             }
 
+            const headCar = {
+              direction: "vertical",
+              slidesPerGroup: 7,
+              slidesPerView: 7,
+
+              preventClicksPropagation: true,
+              preventClicks: true,
+              mousewheel: true,
+              draggable: true,
+              height: 210,
+              navigation: {
+                nextEl: ".swiper-button-color-next",
+                prevEl: ".swiper-button-color-prev",
+              },
+            };
+
+            if (this.typeDevice) {
+              menu[8] = (
+                <span className="menu__drop" key="colors">
+                  <Link className="menu-point">Цвета</Link>
+                  <div className="menu menu_sub">
+                    <div className="container container_f">
+                      <button
+                        className="btn btn_prev"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          e.target.closest(".menu_sub").classList.remove("visible");
+                        }}
+                      >
+                        <span className="ic i_left"></span> Назад
+                      </button>
+                      <div className="column">
+                        {
+                          <ul>
+                            {dataObj.colors.map((el) => {
+                              return (
+                                <li key={el}>
+                                  <NavLink to={`/colors/${el}`} onClick={this.closeNav}>
+                                    {el}
+                                  </NavLink>
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                </span>
+              );
+            } else {
+              menu[8] = (
+                <div key="colors" className="colors-in-menu">
+                  <h5>Цвета</h5>
+                  <Swiper {...headCar}>
+                    {dataObj.colors.map((el) => {
+                      return (
+                        <div>
+                          <NavLink to={`/colors/${el}`} onClick={this.closeNav}>
+                            {el}
+                          </NavLink>
+                        </div>
+                      );
+                    })}
+                  </Swiper>
+                </div>
+              );
+            }
+
             // this.menuContainer.push(
             //   <Dropdown key={i} text={elem.name} pointing className="link item">
             //     <Dropdown.Menu>{childsPoints}</Dropdown.Menu>
@@ -612,23 +701,27 @@ const MenuPoints = observer(
           });
 
           this.props.store.fullCats = data;
-          for (let index = 0; index < Object.keys(menu).length; index += 2) {
-            if (index === 2) {
-              this.menuContainer.push(
-                <div className="column" key={index}>
-                  {menu[index]}
-                  {menu[index + 1]}
-                  {menu[index + 2]}
-                </div>
-              );
-              index += 1;
-            } else {
-              this.menuContainer.push(
-                <div className="column" key={index}>
-                  {menu[index]}
-                  {menu[index + 1]}
-                </div>
-              );
+          if (this.typeDevice) {
+            this.menuContainer = Object.values(menu);
+          } else {
+            for (let index = 0; index < Object.keys(menu).length; index += 2) {
+              if (index === 2) {
+                this.menuContainer.push(
+                  <div className="column" key={index}>
+                    {menu[index]}
+                    {menu[index + 1]}
+                    {menu[index + 2]}
+                  </div>
+                );
+                index += 1;
+              } else {
+                this.menuContainer.push(
+                  <div className="column" key={index}>
+                    {menu[index]}
+                    {menu[index + 1]}
+                  </div>
+                );
+              }
             }
           }
 
@@ -681,7 +774,10 @@ const MenuPoints = observer(
     };
 
     render() {
-      const { collInMenu, onePlusOneSlug } = this.props.store;
+      const { collInMenu, onePlusOneSlug, oneEqTwo } = this.props.store;
+
+      const inBF = moment().utcOffset("+03:00").month() === 0 && moment().utcOffset("+03:00").date() >= 24;
+      const inVD = moment().utcOffset("+03:00").month() === 1 && moment().utcOffset("+03:00").date() <= 14;
 
       // const { store } = this.props;
       // const { collectionsData } = store;
@@ -738,6 +834,8 @@ const MenuPoints = observer(
                 this.props.location.pathname.includes("/about") ||
                 this.props.location.pathname.includes("/product") ||
                 this.props.location.pathname.includes("/closeout") ||
+                this.props.location.pathname.includes("/sets") ||
+                this.props.location.pathname.includes("/colors") ||
                 this.props.location.pathname.includes("/ideas") ||
                 this.props.location.pathname.includes("/hits") ||
                 (this.props.location.pathname.includes("/new") && !this.props.location.pathname.includes("/new-")) ||
@@ -874,6 +972,7 @@ const MenuPoints = observer(
                 this.props.location.pathname.includes("/about") ||
                 this.props.location.pathname.includes("/product") ||
                 this.props.location.pathname.includes("/closeout") ||
+                this.props.location.pathname.includes("/colors") ||
                 this.props.location.pathname.includes("/ideas") ||
                 this.props.location.pathname.includes("/hits") ||
                 (this.props.location.pathname.includes("/new") && !this.props.location.pathname.includes("/new-")) ||
@@ -1019,66 +1118,81 @@ const MenuPoints = observer(
                     </div>
                   </span> */}
 
-                  <span className="menu__drop">
-                    {/* {localStorage.getItem("BFcheck") === true || localStorage.getItem("BFcheck") === "true" ? (
-                        <Link to="/close-sale" className="menu-point sale-point">
+                  {!inBF && (
+                    <span className="menu__drop">
+                      <Link
+                        to="/actions"
+                        className="menu-point"
+                        onClick={(e) => {
+                          // this.toggleDrop(e);
+                          // e.preventDefault();
+                        }}
+                      >
+                        Акции
+                      </Link>
+                      <div className="menu menu_sub">
+                        <div className="container container_f">
+                          <button
+                            className="btn btn_prev"
+                            onClick={(e) => {
+                              e.target.closest(".menu").classList.remove("visible");
+                            }}
+                          >
+                            <span className="ic i_left"></span> Назад
+                          </button>
+                          <div className="column">
+                            <ul>
+                              <li>
+                                <NavLink to="/closeout" onClick={this.closeNav}>
+                                  Распродажа
+                                </NavLink>
+                              </li>
+                              <li>
+                                <NavLink to="/actions" onClick={this.closeNav}>
+                                  Акции
+                                </NavLink>
+                              </li>
+                              {onePlusOneSlug && (
+                                <li>
+                                  <NavLink to={`/main/${onePlusOneSlug}`} onClick={this.closeNav}>
+                                    1 + 1 = 3
+                                  </NavLink>
+                                </li>
+                              )}
+                              {oneEqTwo && (
+                                <li>
+                                  <NavLink to={`/sets`} onClick={this.closeNav}>
+                                    1 = 2
+                                  </NavLink>
+                                </li>
+                              )}
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </span>
+                  )}
+
+                  {inBF && (
+                    <span className="menu__drop">
+                      {localStorage.getItem("CMcheck") === true || localStorage.getItem("CMcheck") === "true" ? (
+                        <Link to="/close-sale" className="menu-point menu-point_news" style={{ color: "#BA250D", fontWeight: "600" }}>
                           Закрытая распродажа
                         </Link>
                       ) : (
-                        <Link to="/black-friday" className="menu-point sale-point">
-                          Черная пятница
+                        <Link to="/cyber-monday" className="menu-point menu-point_news" style={{ color: "#BA250D", fontWeight: "600" }}>
+                          КиберПонедельник
                         </Link>
-                      )} */}
-
-                    <Link
-                      to="/actions"
-                      className="menu-point"
-                      onClick={(e) => {
-                        // this.toggleDrop(e);
-                        // e.preventDefault();
-                      }}
-                    >
-                      Акции
-                    </Link>
-                    <div className="menu menu_sub">
-                      <div className="container container_f">
-                        <button
-                          className="btn btn_prev"
-                          onClick={(e) => {
-                            e.target.closest(".menu").classList.remove("visible");
-                          }}
-                        >
-                          <span className="ic i_left"></span> Назад
-                        </button>
-                        <div className="column">
-                          <ul>
-                            <li>
-                              <NavLink to="/closeout" onClick={this.closeNav}>
-                                Распродажа
-                              </NavLink>
-                            </li>
-                            <li>
-                              <NavLink to="/actions" onClick={this.closeNav}>
-                                Акции
-                              </NavLink>
-                            </li>
-                            {onePlusOneSlug && (
-                              <li>
-                                <NavLink to={`/main/${onePlusOneSlug}`} onClick={this.closeNav}>
-                                  1 + 1 = 3
-                                </NavLink>
-                              </li>
-                            )}
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                  </span>
-                  {/* <span className="menu__drop">
-                    <Link to="/new-year" className="menu-point menu-point_news" style={{ color: "#BA250D", fontWeight: "600" }}>
-                      Новый Год
-                    </Link>
-                  </span> */}
+                      )}
+                    </span>
+                  )}
+                  {inVD && (
+                    <span className="menu__drop">
+                      <Link to="/main/podarki_vlyublennym" className="menu-point menu-point_news" style={{ color: "#BA250D", fontWeight: "600" }}>
+                        День Валентина
+                      </Link>
+                    </span>
+                  )}
                 </div>
                 <div className="search-pos">
                   <form className="search-wrp">
@@ -1282,6 +1396,7 @@ const MenuPoints = observer(
                 this.props.store.sideLogin = false;
                 this.props.store.sideAsk = false;
                 this.props.store.sideGift = false;
+                this.props.store.changeSide = false;
                 $("body").removeClass("no-scroll");
                 $(".navigation").removeClass("visible");
                 $(".header__drop_city").removeClass("active");

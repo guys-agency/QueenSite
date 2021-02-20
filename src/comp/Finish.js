@@ -6,6 +6,7 @@ import { Formik } from "formik";
 import RegistrationSchema from "../schemas/registrationSchema";
 import { withRouter } from "react-router";
 import { Link } from "react-router-dom";
+import localStorage from "mobx-localstorage";
 
 const { Component } = React;
 
@@ -18,6 +19,8 @@ const Finish = observer(
       err: false,
       startCheck: true,
     };
+
+    orderCancelID = "";
 
     statusToCheck = ["Created", "Ожидает оплаты", "Создан"];
 
@@ -46,11 +49,27 @@ const Finish = observer(
         $(e.target).parent().find("label").removeClass("active");
       }
     };
+    cancelPay = (e) => {
+      if (e.target.className.includes("sidebar-overlay") || e.target.className.includes("btn") || e === undefined) {
+        api.cancelOrder({ id: this.orderCancelID });
+        $(".sidebar-overlay").removeClass("active");
+        $(".sidebar-cart").removeClass("visible");
+        $("body").removeClass("no-scroll");
+        localStorage.removeItem("deleteCart");
+        $("#payment-form").empty();
+        $(".btn_yellow").text("Оплата отменена");
+        setTimeout(() => {
+          $(".btn_yellow").removeClass("deactive");
+          $(".btn_yellow").text("Заказать");
+        }, 1000);
+      }
+    };
     render() {
       const { ready, data, startCheck } = this.state;
       const products = [];
 
       let checkPay = false;
+      let rePaid = false;
       if (!ready) {
         api
           .getFinishData(this.props.id)
@@ -66,30 +85,30 @@ const Finish = observer(
             this.props.history.replace("/");
           });
       } else {
-        // if (
-        //   data.payment === "PREPAID" &&
-        //   this.statusToCheck.includes(data.status)
-        // ) {
-        //   checkPay = true;
-        //   // if (startCheck) {
-        //   //   const timerToChekStatus = setTimeout(() => {
-        //   //     api
-        //   //       .getFinishData(this.props.id)
-        //   //       .then((data) => {
-        //   //         console.log("11", 11);
-        //   //         this.setState({
-        //   //           data: data._doc,
-        //   //           ready: true,
-        //   //           startCheck: true,
-        //   //         });
-        //   //       })
-        //   //       .catch((err) => {
-        //   //         console.log("err :>> ", err);
-        //   //       });
-        //   //   }, 6000);
-        //   //   this.setState({ startCheck: false });
-        //   // }
-        // }
+        if (data.payment === "PREPAID" && this.statusToCheck.includes(data.status)) {
+          checkPay = true;
+          if (startCheck) {
+            const timerToChekStatus = setTimeout(() => {
+              api
+                .getFinishData(this.props.id)
+                .then((data) => {
+                  console.log("11", 11);
+                  this.setState({
+                    data: data._doc,
+                    ready: true,
+                    startCheck: true,
+                  });
+                })
+                .catch((err) => {
+                  console.log("err :>> ", err);
+                });
+            }, 6000);
+            this.setState({ startCheck: false });
+          }
+        } else if (data.payment === "PREPAID" && data.status === "Отменен") {
+          checkPay = true;
+          rePaid = true;
+        }
         const purchaseTarget = {
           type: "itemView",
           productid: [],
@@ -119,6 +138,37 @@ const Finish = observer(
         ready && (
           <div className="cart-page col-12">
             <div className="container">
+              <div className="sidebar-overlay" onClick={this.cancelPay}></div>
+              <div className="sidebar sidebar-cart">
+                <div className="sidebar__head">
+                  <div className="btn" onClick={this.cancelPay}>
+                    Отменить оплату
+                  </div>
+                </div>
+
+                <div id="payment-form"></div>
+              </div>
+              <div className="cart_header">
+                <a
+                  className="btn"
+                  onClick={() => {
+                    if (this.props.history.length) {
+                      window.history.back();
+                    } else {
+                      window.location.replace("/");
+                    }
+                  }}
+                >
+                  {" "}
+                  <span className="ic i_left"></span> Вернуться в магазин
+                </a>
+                <Link className="logo logo_vl" to="/">
+                  <span className="i_queen"></span>
+                  <span className="i_of"></span>
+                  <span className="i_bohemia"></span>
+                  <span className="i_qd"></span>
+                </Link>
+              </div>
               <div className="row">
                 {!checkPay ? (
                   <div className="col col-7 col-s-12">
@@ -328,12 +378,95 @@ const Finish = observer(
                       </Link>
                     )}
                   </div>
+                ) : rePaid ? (
+                  <div className="col col-7 col-s-12" style={{ marginBottom: "20px" }}>
+                    <div
+                      className="alert-message alert-message_error alert-message_active"
+                      style={{
+                        position: "relative",
+                        display: "inline-flex",
+                        marginBottom: "25px",
+                      }}
+                    >
+                      <p>Оплата за заказ №{data.dbid} не удалась.</p>
+                    </div>
+                    <p>
+                      Не удалось оплатить заказа, попробуйте проверить введеные данные карты и повторить попытку.
+                      <br />
+                      <br /> При повторной ошбике свяжитесь с нами по телефону: 8 800 600-34-21
+                    </p>
+                    <button
+                      className="btn btn_yellow "
+                      style={{ width: "100%", marginTop: "10px" }}
+                      onClick={() => {
+                        api
+                          .getRepaid(this.props.id)
+                          .then((data) => {
+                            this.orderCancelID = this.props.id;
+                            const that = this;
+                            const checkout = new window.YandexCheckout({
+                              confirmation_token: data.confirmationToken, //Токен, который перед проведением оплаты нужно получить от Яндекс.Кассы
+                              return_url: data.return, //Ссылка на страницу завершения оплаты
+                              embedded_3ds: true, // Способ прохождения аутентификации 3-D Secure — во всплывающем окне
+                              error_callback(error) {
+                                console.log("error :>> ", error);
+                                that.cancelPay();
+                                $("#createOrder").removeClass("deactive");
+                              },
+                            });
+
+                            checkout.render("payment-form");
+
+                            localStorage.setItem("deleteCart", true);
+
+                            $(".sidebar-overlay").addClass("active");
+                            $(".sidebar-cart").addClass("visible");
+
+                            $("body").addClass("no-scroll");
+                            // localStorage.removeItem("coupsCont");
+                            localStorage.setItem("orderID", data.id);
+                          })
+                          .catch((err) => {
+                            console.log("err :>> ", err);
+                          });
+                      }}
+                    >
+                      Оплатить{" "}
+                    </button>
+                  </div>
                 ) : (
                   <div className="col col-7 col-s-12">
                     <h3>Заказ №{data.dbid} ожидает оплаты</h3>
-                    <p>Происходит проверка оплаты, не покидайте страницу</p>
-                    <div className="profile-p__loading">
-                      <span className="i_line-h loading"></span>
+                    <p>Ваш заказ ожидает оплаты.</p>
+                    <div className="loader-page__loader" style={{ margin: "35px 0px" }}>
+                      <div className="percent">
+                        <svg className="circle">
+                          {/* <circle transform="rotate(-90)" r="30" cx="-37" cy="37" /> */}
+                          <circle
+                            // transform="rotate(0)"
+                            // style={{ "stroke-dasharray": "440" }}
+                            r="37"
+                            cx="37"
+                            cy="37"
+                          />
+                          <circle
+                            // transform="rotate(90)"
+                            style={{
+                              "stroke-dashoffset": 232 - (232 * 60) / 100,
+                            }}
+                            r="37"
+                            cx="37"
+                            cy="37"
+                          />
+                        </svg>
+                        <div className="number">
+                          <div className="logo logo_vl">
+                            <span className="i_qd" style={{ fontSize: "40px" }}></span>
+                          </div>
+                        </div>
+                        <div className="shadow"></div>
+                      </div>
+                      {/* <div className="pie spinner"></div> */}
                     </div>
                   </div>
                 )}
@@ -382,9 +515,9 @@ const Finish = observer(
                       <div className="user__address">
                         {data.delivery.pickUpChoose === true
                           ? `Магазин:${data.delivery.store}, 
-                        по адресу: ${data.delivery.address.locality}`
+                        по адресу: ${data.delivery.address.addressReduce}`
                           : data.delivery.pvz !== undefined
-                          ? `Адрес выдачи: ${data.delivery.address}`
+                          ? `Адрес выдачи: ${data.delivery.addressReduce}`
                           : `г. ${data.delivery.address.locality}, ${data.delivery.address.street}, д. ${data.delivery.address.house}, кв. ${data.delivery.address.apartment}`}
                       </div>
                     )}

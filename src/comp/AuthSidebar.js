@@ -54,8 +54,8 @@ const AuthSidebar = observer(
             <div className="discond-fix_sidebar">
               <img src="/image/button/icon/gift.svg"></img>
               <p>
-                <b>Скидка 10%</b> на первую покупку.
-                <br /> Промокод придет на почту
+                <b>Скидка 10%</b> на первую покупку
+                <br /> <b>+ 200</b> бонусных баллов
               </p>
             </div>
           )}
@@ -77,6 +77,7 @@ const AuthSidebar = observer(
                     password: values.password,
                   })
                   .then((data) => {
+                    console.log("data :>> ", data);
                     if (data.status === 400) {
                       $("#loginBtn").text(data.message);
 
@@ -87,7 +88,14 @@ const AuthSidebar = observer(
                         $("#loginBtn").text("Войти");
                       }, 3000);
                     } else {
+                      // console.log("213 :>> ", 213);
                       localStorage.setItem("auth", true);
+                      if (data.bfcheck === "ok") {
+                        localStorage.setItem("CMcheck", true);
+                      }
+                      if (!window.location.pathname.includes("/cart")) {
+                        window.location.assign("/profile");
+                      }
                       this.props.store.auth = true;
                       const lc = this.props.store.likeContainer;
                       data.likeProducts.forEach((prod) => {
@@ -95,9 +103,6 @@ const AuthSidebar = observer(
                           lc.push(prod);
                         }
                       });
-                      if (!window.location.pathname.includes("/cart")) {
-                        window.location.assign("/profile");
-                      }
 
                       this.props.store.likeContainer = lc;
                       // const localCartCont = Object.keys(this.props.store.productInCartList);
@@ -343,14 +348,21 @@ const AuthSidebar = observer(
                     $("#registrBtn").text(ok.message);
                     if (ok.status === 201) {
                       $("#registrBtn").addClass("success");
+                      localStorage.setItem("auth", true);
+                      if (ok.bfcheck === "ok") {
+                        localStorage.setItem("CMcheck", true);
+                      }
+                      if (!window.location.pathname.includes("/cart")) {
+                        window.location.assign("/profile");
+                      }
                       this.props.store.auth = true;
                       const lc = this.props.store.likeContainer;
+                      // window.location.assign("/profile");
                       ok.data.likeProducts.forEach((prod) => {
                         if (!this.props.store.likeContainer.includes(prod)) {
                           lc.push(prod);
                         }
                       });
-                      // window.location.assign("/profile");
 
                       this.props.store.likeContainer = lc;
                       // const localCartCont = Object.keys(this.props.store.productInCartList);
@@ -372,7 +384,7 @@ const AuthSidebar = observer(
                       document.querySelector(".sidebar-overlay").classList.remove("active");
                       $("body").removeClass("no-scroll");
                       $(".navigation").removeClass("visible");
-                      this.props.history.push(`/profile`);
+                      // window.location.assign("/profile");
                     } else {
                       $("#registrBtn").addClass("error");
                     }

@@ -43,6 +43,7 @@
 @import "./blocks/popover/popover.scss";
 @import "./blocks/pvz/pvz.scss";
 @import "./blocks/black-friday/black-friday.scss";
+@import "./blocks/cyber-monday/cyber-monday.scss";
 
 //HOME ELEMENTS
 @import "./blocks/carousel/carousel.scss";
@@ -741,6 +742,124 @@ code {
       right: -5px;
       transform: rotate(-90deg);
       font-size: 14px;
+    }
+  }
+}
+
+.inp-bonus-err {
+  border-bottom: 1px solid #ba250d !important;
+
+  &::placeholder {
+    color: #ba250d;
+  }
+}
+
+.colors-in-menu {
+  overflow: hidden;
+
+  .swiper-container {
+    // padding-top: 37px;
+    // padding-bottom: 37px;
+    margin-top: 6px;
+
+    display: flex;
+    flex-direction: column;
+
+    .swiper-wrapper {
+      order: 1;
+      height: 210px;
+
+      .swiper-slide {
+        a {
+          white-space: nowrap;
+          font-size: 16px;
+        }
+      }
+    }
+
+    .swiper-button-color-prev {
+      order: 0;
+      position: relative;
+      width: 100%;
+      top: 0px;
+      height: 23px;
+      display: flex;
+
+      transition: all 0.2s;
+      background: #f7f6f7;
+      border-radius: 3px;
+      z-index: 99;
+      cursor: pointer;
+      margin-bottom: 13px;
+
+      &:hover {
+        color: $g_middle;
+      }
+
+      &:before {
+        content: $i_drop;
+        display: flex;
+        margin: auto;
+
+        font-family: "icons" !important;
+
+        font-style: normal;
+        font-weight: normal;
+        font-feature-settings: normal;
+        font-variant: normal;
+        text-transform: none;
+        line-height: 1;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        font-size: 17px;
+        z-index: 1;
+        transform: rotate(-180deg);
+      }
+    }
+
+    .swiper-button-color-next {
+      position: relative;
+      order: 2;
+      width: 100%;
+      bottom: 0px;
+      height: 23px;
+      display: flex;
+
+      transition: all 0.2s;
+      background: #f7f6f7;
+      border-radius: 3px;
+      z-index: 99;
+      cursor: pointer;
+
+      &:hover {
+        color: $g_middle;
+      }
+
+      &:before {
+        content: $i_drop;
+        display: flex;
+        margin: auto;
+
+        font-family: "icons" !important;
+
+        font-style: normal;
+        font-weight: normal;
+        font-feature-settings: normal;
+        font-variant: normal;
+        text-transform: none;
+        line-height: 1;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        font-size: 17px;
+        z-index: 1;
+      }
+    }
+
+    .swiper-button-disabled {
+      opacity: 0.5;
+      height: 0px;
+      visibility: hidden;
+      cursor: auto;
     }
   }
 }

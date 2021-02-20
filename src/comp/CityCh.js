@@ -16,45 +16,43 @@ const CityCh = observer(
           <button className="link dotted header__btn header__btn-city">
             {this.props.store.city} <span className="ic i_drop"></span>
           </button>
-          {localStorage.getItem("city") !== null &&
-            localStorage.getItem("city") !== undefined &&
-            localStorage.getItem("city").sourse === "Y" && (
-              <div className="header__drop header__drop_city-check">
-                <p>
-                  {" "}
-                  Регион доставки:
-                  <b> {this.props.store.city} ?</b>
-                </p>
-                <div>
-                  <button
-                    className="btn"
-                    onClick={() => {
-                      $(".menu_mega").removeClass("visible");
-                      $(".menu_sub").removeClass("visible");
-                      $(".menu-point").removeClass("active");
-                      $(".header__drop").removeClass("visible");
-                      $(".header__btn").removeClass("active");
+          {localStorage.getItem("city") !== null && localStorage.getItem("city") !== undefined && localStorage.getItem("city").sourse === "Y" && (
+            <div className="header__drop header__drop_city-check">
+              <p>
+                {" "}
+                Регион доставки:
+                <b> {this.props.store.city} ?</b>
+              </p>
+              <div>
+                <button
+                  className="btn"
+                  onClick={() => {
+                    $(".menu_mega").removeClass("visible");
+                    $(".menu_sub").removeClass("visible");
+                    $(".menu-point").removeClass("active");
+                    $(".header__drop").removeClass("visible");
+                    $(".header__btn").removeClass("active");
 
-                      $(".header__drop_city-check").addClass("deactiv");
-                      $(".header__drop_city").addClass("visible");
-                      $(".header__btn-city").addClass("active");
-                    }}
-                  >
-                    Выбрать другой
-                  </button>
-                  <button
-                    className=" btn_yellow btn"
-                    onClick={() => {
-                      const cityData = localStorage.getItem("city");
-                      cityData.sourse = "U";
-                      localStorage.setItem("city", cityData);
-                    }}
-                  >
-                    Да
-                  </button>
-                </div>
+                    $(".header__drop_city-check").addClass("deactiv");
+                    $(".header__drop_city").addClass("visible");
+                    $(".header__btn-city").addClass("active");
+                  }}
+                >
+                  Выбрать другой
+                </button>
+                <button
+                  className=" btn_yellow btn"
+                  onClick={() => {
+                    const cityData = localStorage.getItem("city");
+                    cityData.sourse = "U";
+                    localStorage.setItem("city", cityData);
+                  }}
+                >
+                  Да
+                </button>
               </div>
-            )}
+            </div>
+          )}
           <form className="header__drop header__drop_city">
             <button
               className="btn btn_wide vis-s"
@@ -80,7 +78,7 @@ const CityCh = observer(
                       .getCity(e.target.value)
                       .then((c) => {
                         c.forEach((one) => {
-                          if (one.addressComponents.length < 6) {
+                          if (one.addressComponents.length <= 6) {
                             renderCities.push(
                               <li key={one.geoId}>
                                 <button
@@ -88,24 +86,23 @@ const CityCh = observer(
                                   onClick={(e) => {
                                     e.preventDefault();
                                     $(".header__drop").removeClass("visible");
+                                    let region = one.addressComponents[2].name;
+                                    one.addressComponents.forEach((l) => {
+                                      if (l.kind === "PROVINCE") {
+                                        region = l.name;
+                                      }
+                                    });
                                     localStorage.setItem("city", {
-                                      name:
-                                        one.addressComponents[
-                                          one.addressComponents.length - 1
-                                        ].name,
+                                      name: one.addressComponents[one.addressComponents.length - 1].name,
                                       geoId: one.geoId,
-                                      region: one.addressComponents[2].name,
+                                      region: region,
                                       sourse: "U",
                                     });
                                   }}
                                 >
-                                  {one.addressComponents[
-                                    one.addressComponents.length - 2
-                                  ].name +
+                                  {one.addressComponents[one.addressComponents.length - 2].name +
                                     ", " +
-                                    one.addressComponents[
-                                      one.addressComponents.length - 1
-                                    ].name}
+                                    one.addressComponents[one.addressComponents.length - 1].name}
                                 </button>
                               </li>
                             );

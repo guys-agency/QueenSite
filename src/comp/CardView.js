@@ -115,29 +115,35 @@ const CardView = observer(
           productInCartList[this.data.slug] = store.countInProdPage;
         }
         api.updateCountStats(this.data._id, "cart");
-        window.dataLayer.push({
-          ecommerce: {
-            add: {
-              products: [
-                {
-                  id: this.data.slug,
-                  name: this.data.name,
-                  price: this.data.price,
-                  brand: this.data.brand,
-                  quantity: store.countInProdPage,
+        if (process.env.REACT_APP_TYPE === "prod") {
+          try {
+            window.dataLayer.push({
+              ecommerce: {
+                add: {
+                  products: [
+                    {
+                      id: this.data.slug,
+                      name: this.data.name,
+                      price: this.data.price,
+                      brand: this.data.brand,
+                      quantity: store.countInProdPage,
+                    },
+                  ],
                 },
-              ],
-            },
-          },
-        });
+              },
+            });
 
-        window._tmr.push({
-          type: "itemView",
-          productid: String(this.data.slug),
-          pagetype: "cart",
-          list: "1",
-          totalvalue: String(this.data.price),
-        });
+            window._tmr.push({
+              type: "itemView",
+              productid: String(this.data.slug),
+              pagetype: "cart",
+              list: "1",
+              totalvalue: String(this.data.price),
+            });
+          } catch (err) {
+            console.log("err :>> ", err);
+          }
+        }
       }
       addtoCart(true);
 
@@ -287,7 +293,7 @@ const CardView = observer(
       let { collections } = this.props.store.bannersData;
 
       if (this.data.slug === +this.props.sku && this.count) {
-        if (timeDelivery === "" && localStorage.getItem("city") !== null && localStorage.getItem("city") !== undefined) {
+        if (timeDelivery === "" && localStorage.getItem("city") !== null && localStorage.getItem("city") !== undefined && !itsSert) {
           // console.log("11 :>> ", 11);
           this.count = false;
 
@@ -329,11 +335,12 @@ const CardView = observer(
             });
         }
       }
-
+      let unvisibleProd;
       if (this.data.slug !== +this.props.sku) {
         this.fetchReady = false;
       } else {
         this.fetchReady = true;
+        unvisibleProd = itsSert ? false : !this.data.stock_quantity || !this.data.visible;
       }
 
       const storesAvali = [];
@@ -471,6 +478,20 @@ const CardView = observer(
                           <div className={"product__price product__price_disc"}>
                             <span className="old">{this.data.regular_price.toLocaleString()} ₽</span> {this.data.sale_price.toLocaleString()} ₽{" "}
                             <span className="disc_perc">{((this.data.sale_price / this.data.regular_price - 1) * 100).toFixed(0)}%</span>
+                            {!itsSert && (
+                              <div
+                                className="product__bonus"
+                                onClick={() => {
+                                  this.props.history.push("/help/bonus");
+                                }}
+                              >
+                                <p className="i_coin"></p>
+                                <p>
+                                  до + {Math.round(this.data.sale_price * 0.1).toLocaleString()}{" "}
+                                  {num2str(Math.round(this.data.sale_price * 0.1), ["бонусный балл", "бонусных баллов", "бонусных баллов"])}{" "}
+                                </p>
+                              </div>
+                            )}
                           </div>
                         ) : !itsSert ? (
                           <div className={"product__price"}>
@@ -484,7 +505,7 @@ const CardView = observer(
                               >
                                 <p className="i_coin"></p>
                                 <p>
-                                  + {Math.round(this.data.regular_price * 0.1).toLocaleString()}{" "}
+                                  до + {Math.round(this.data.regular_price * 0.1).toLocaleString()}{" "}
                                   {num2str(Math.round(this.data.regular_price * 0.1), ["бонусный балл", "бонусных баллов", "бонусных баллов"])}{" "}
                                 </p>
                               </div>
@@ -530,7 +551,7 @@ const CardView = observer(
                         <>
                           {collSlugSet ? (
                             <button
-                              className="btn btn_yellow btn_primary btn_utensil-set"
+                              className="btn btn_primary btn_utensil-set"
                               onClick={() => {
                                 this.props.history.push(`/collections/${collSlugSet}`);
                               }}
@@ -592,10 +613,7 @@ const CardView = observer(
                           <p>Заполните все данные</p>
                         </div>
                         <div className={"product-p__buttons " + (itsSert ? " gift__buttons" : "")}>
-                          <button
-                            className={"btn btn_yellow btn_primary " + (this.data.stock_quantity ? "" : " btn_dis")}
-                            onClick={this.clickHandler}
-                          >
+                          <button className={"btn btn_yellow btn_primary " + (unvisibleProd ? " btn_dis" : "")} onClick={this.clickHandler}>
                             <span className={"ic i_bag " + (this.inCart === -1 ? "" : " active")}></span>{" "}
                             {this.inCart === -1 ? "В корзину" : " В корзинe"}
                           </button>
@@ -647,10 +665,10 @@ const CardView = observer(
                         </div>
                         {!itsSert && (
                           <div className="product-p__available">
-                            <span className={this.data.stock_quantity ? "product-p__stock " : "product-p__un-stock"}>
-                              {this.data.stock_quantity ? "Есть на складе" : "Нет на складе"}
+                            <span className={unvisibleProd ? "product-p__un-stock" : "product-p__stock "}>
+                              {!unvisibleProd ? "Есть на складе" : "Нет на складе"}
                             </span>
-                            {this.data.stock_quantity ? (
+                            {!unvisibleProd ? (
                               <span className="product-p__delivery">
                                 Доставка от{" "}
                                 <b>
