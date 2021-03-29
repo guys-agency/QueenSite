@@ -206,7 +206,7 @@ const MainPage = observer(
                 onClick={() => {
                   this.props.store.dataColl = [bannersData.collections[0]];
                 }}
-                to={"collections/" + bannersData.collections[0].slug}
+                to={"/collections/" + bannersData.collections[0].slug}
                 className="banner banner_overlay main"
                 style={{
                   backgroundImage: `url(/image/banners/${
@@ -224,7 +224,7 @@ const MainPage = observer(
                     onClick={() => {
                       this.props.store.dataColl = [bannersData.collections[1]];
                     }}
-                    to={"collections/" + bannersData.collections[1].slug}
+                    to={"/collections/" + bannersData.collections[1].slug}
                     className="banner banner_overlay small"
                     style={{
                       backgroundImage: `url(/image/banners/${
@@ -240,7 +240,7 @@ const MainPage = observer(
                     onClick={() => {
                       this.props.store.dataColl = [bannersData.collections[2]];
                     }}
-                    to={"collections/" + bannersData.collections[2].slug}
+                    to={"/collections/" + bannersData.collections[2].slug}
                     className="banner banner_overlay small"
                     style={{
                       backgroundImage: `url(/image/banners/${

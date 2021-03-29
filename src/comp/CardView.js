@@ -249,6 +249,7 @@ const CardView = observer(
       draggable: true,
       preventClicksPropagation: false,
       preventClicks: false,
+      rebuildOnUpdate: true,
       // autoplay: {
       //   delay: 4000,
       // },
@@ -344,8 +345,14 @@ const CardView = observer(
       }
 
       const storesAvali = [];
+      let metaDesc;
 
       if (this.data.slug === +this.props.sku) {
+        metaDesc = this.data.description;
+        if (metaDesc > 160 && metaDesc.includes(".")) {
+          metaDesc = metaDesc.split(".");
+          metaDesc = metaDesc.length >= 2 ? `${metaDesc[0]}. ${metaDesc[1]}.` : `${metaDesc[0]}.`;
+        }
         if (this.data.stores !== undefined) {
           this.data.stores.forEach((el) => {
             if (+el.count > 0) {
@@ -425,10 +432,30 @@ const CardView = observer(
             <Helmet
               title={this.data.name + " - Queen of Bohemia"}
               meta={[
-                { name: "description", content: this.data.description },
+                { name: "description", content: metaDesc },
                 {
                   property: "og:image",
                   content: `https://queenbohemia.ru/image/items/${this.data.path_to_photo[0]}`,
+                },
+                {
+                  property: "og:title",
+                  content: this.data.name + " - Queen of Bohemia",
+                },
+                {
+                  property: "og:description",
+                  content: metaDesc,
+                },
+                {
+                  property: "og:type",
+                  content: "website",
+                },
+                {
+                  property: "og:site_name",
+                  content: "Queen of Bohemia",
+                },
+                {
+                  property: "og:url",
+                  content: `https://queenbohemia.ru/product/${this.data.slug}`,
                 },
               ]}
             />
@@ -453,7 +480,7 @@ const CardView = observer(
                 </button>
                 <div className={"row product-p " + (this.data.description ? "" : "no-desc")}>
                   <div className="col col-6 col-t-5 col-s-12">
-                    <Gallery path={this.data.path_to_photo} key={this.data.slug} video={this.data.video} />
+                    <Gallery path={this.data.path_to_photo} key={this.data.slug} video={this.data.video} alt={this.data.name} />
                   </div>
                   <div className="col col-6 col-t-7 col-s-12">
                     <div className="product-p__description">

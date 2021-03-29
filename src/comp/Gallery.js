@@ -204,7 +204,14 @@ const Gallery = (props) => {
   props.path.forEach((p, i) => {
     main.push(
       <div className="main-img" key={i}>
-        <img id="imgs" className="drift" src={"/image/items/" + p} data-zoom={"/image/items/" + p} alt="" style={{ backgroundColor: "#fff" }} />
+        <img
+          id="imgs"
+          className="drift"
+          src={"/image/items/" + p}
+          data-zoom={"/image/items/" + p}
+          alt={props.alt ? props.alt : ""}
+          style={{ backgroundColor: "#fff" }}
+        />
       </div>
     );
     small.push(

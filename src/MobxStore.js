@@ -103,6 +103,9 @@ class Store {
 
   userData = {};
 
+  colorSlug = "";
+  colorsObj = {};
+
   productPage = false;
   cartPage = false;
 
@@ -1073,7 +1076,7 @@ class Store {
       .catch((err) => {
         console.log("err", err);
         if (!window.location.pathname.includes("search")) {
-          window.location.replace("/");
+          window.location.replace("/404");
         } else {
           this.productsToRender = null;
         }
@@ -1106,6 +1109,8 @@ class Store {
     this.stopPag = 42;
     this.firstBread = "";
     this.secondBread = "";
+    this.colorSlug = "";
+
     // this.searchText = "";
     // this.sortInProd = "";
 
@@ -1122,10 +1127,10 @@ class Store {
       material: [],
       glassType: [],
       country: [],
-      color: pathname.includes("colors") ? this.activeFilters.color : [],
+      color: [],
       measure: [],
-      count: pathname.includes("colors") ? 1 : 0,
-      choosePoint: pathname.includes("colors") ? ["color"] : [],
+      count: 0,
+      choosePoint: [],
       attr: [],
       minPrice: "",
       maxPrice: "",
@@ -1329,7 +1334,8 @@ class Store {
       clearJSON.prod["$and"] = [{ closeout: true }];
     } else if (pathname.includes("colors")) {
       bodyJSON.withCat = true;
-      clearJSON.prod["$and"] = [{ color: this.activeFilters.color[0] }];
+      bodyJSON.color = this.colorSlug;
+      // clearJSON.prod["$and"] = [{ color: this.activeFilters.color[0] }];
     } else if (pathname.includes("search")) {
       bodyJSON.withCat = true;
       bodyJSON.search = this.searchText;
@@ -1520,6 +1526,7 @@ decorate(Store, {
   searchText: observable,
   onePlusOneSlug: observable,
   oneEqTwo: observable,
+  colorsObj: observable,
 });
 
 const store = new Store();

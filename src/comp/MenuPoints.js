@@ -466,10 +466,11 @@ const MenuPoints = observer(
           const data = dataObj.cats;
 
           dataObj.colors.sort((prev, next) => {
-            if (prev < next) return -1;
-            if (prev > next) return 1;
+            if (prev.name < next.name) return -1;
+            if (prev.name > next.name) return 1;
             return 1;
           });
+
           const menu = {};
           // console.log("data :>> ", data);
 
@@ -627,11 +628,11 @@ const MenuPoints = observer(
               direction: "vertical",
               slidesPerGroup: 7,
               slidesPerView: 7,
-
+              shortSwipes: false,
               preventClicksPropagation: true,
               preventClicks: true,
               mousewheel: true,
-              draggable: true,
+              draggable: false,
               height: 210,
               navigation: {
                 nextEl: ".swiper-button-color-next",
@@ -659,10 +660,11 @@ const MenuPoints = observer(
                         {
                           <ul>
                             {dataObj.colors.map((el) => {
+                              this.props.store.colorsObj[el.slug] = el.name;
                               return (
-                                <li key={el}>
-                                  <NavLink to={`/colors/${el}`} onClick={this.closeNav}>
-                                    {el}
+                                <li key={el.slug}>
+                                  <NavLink to={`/colors/${el.slug}`} onClick={this.closeNav}>
+                                    {el.name}
                                   </NavLink>
                                 </li>
                               );
@@ -680,10 +682,11 @@ const MenuPoints = observer(
                   <h5>Цвета</h5>
                   <Swiper {...headCar}>
                     {dataObj.colors.map((el) => {
+                      this.props.store.colorsObj[el.slug] = el.name;
                       return (
                         <div>
-                          <NavLink to={`/colors/${el}`} onClick={this.closeNav}>
-                            {el}
+                          <NavLink to={`/colors/${el.slug}`} onClick={this.closeNav}>
+                            {el.name}
                           </NavLink>
                         </div>
                       );
@@ -777,7 +780,8 @@ const MenuPoints = observer(
       const { collInMenu, onePlusOneSlug, oneEqTwo } = this.props.store;
 
       const inBF = moment().utcOffset("+03:00").month() === 0 && moment().utcOffset("+03:00").date() >= 24;
-      const inVD = moment().utcOffset("+03:00").month() === 1 && moment().utcOffset("+03:00").date() <= 14;
+      // const inVD = moment().utcOffset("+03:00").month() === 1 && moment().utcOffset("+03:00").date() <= 14;
+      const inEiMarch = moment().utcOffset("+03:00").month() === 2 && moment().utcOffset("+03:00").date() <= 8;
 
       // const { store } = this.props;
       // const { collectionsData } = store;
@@ -836,6 +840,7 @@ const MenuPoints = observer(
                 this.props.location.pathname.includes("/closeout") ||
                 this.props.location.pathname.includes("/sets") ||
                 this.props.location.pathname.includes("/colors") ||
+                this.props.location.pathname.includes("/404") ||
                 this.props.location.pathname.includes("/ideas") ||
                 this.props.location.pathname.includes("/hits") ||
                 (this.props.location.pathname.includes("/new") && !this.props.location.pathname.includes("/new-")) ||
@@ -1173,7 +1178,7 @@ const MenuPoints = observer(
                     </span>
                   )}
 
-                  {inBF && (
+                  {/* {inBF && (
                     <span className="menu__drop">
                       {localStorage.getItem("CMcheck") === true || localStorage.getItem("CMcheck") === "true" ? (
                         <Link to="/close-sale" className="menu-point menu-point_news" style={{ color: "#BA250D", fontWeight: "600" }}>
@@ -1192,7 +1197,18 @@ const MenuPoints = observer(
                         День Валентина
                       </Link>
                     </span>
-                  )}
+                  )} */}
+                  {
+                    <span className="menu__drop">
+                      <Link
+                        to="/main/kollekciya_posudy_k_pashe"
+                        className="menu-point menu-point_news"
+                        style={{ color: "#BA250D", fontWeight: "600" }}
+                      >
+                        Пасха
+                      </Link>
+                    </span>
+                  }
                 </div>
                 <div className="search-pos">
                   <form className="search-wrp">

@@ -32,7 +32,7 @@ const Collections = observer(
                 style={{
                   backgroundImage: `url(/image/banners/${typeDevice ? el["image-mob-large"] : el["image-desc-large"]})`,
                 }}
-                to={`${el.type}/${el.slug}`}
+                to={`/${el.type}/${el.slug}`}
               ></Link>
             );
           } else {
@@ -44,7 +44,7 @@ const Collections = observer(
                   onClick={() => {
                     this.props.store.dataColl = [el];
                   }}
-                  to={`${el.type}/${el.slug}`}
+                  to={`/${el.type}/${el.slug}`}
                   style={{
                     backgroundImage: `url(/image/banners/${typeDevice ? el["image-mob-small"] : el["image-desc-small"]})`,
                   }}

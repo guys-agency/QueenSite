@@ -1,8 +1,9 @@
 import React, { Suspense } from "react";
-import "./App.css";
+
 import { observer } from "mobx-react";
 import { Route, Switch } from "react-router";
 import moment from "moment";
+import Helmet from "react-helmet";
 
 import api from "./comp/api";
 
@@ -18,6 +19,8 @@ import MainPage from "./comp/MainPage";
 
 import Collections from "./comp/Collections";
 import Collection from "./comp/Collection";
+import Color from "./comp/Color";
+import Catalog from "./comp/Catalog";
 
 import GiftsPage from "./comp/GiftsPage";
 
@@ -38,7 +41,7 @@ import $ from "jquery";
 import { withRouter } from "react-router";
 import Profile from "./comp/Profile";
 
-const CartPage = React.lazy(() => import("./comp/CartPage"));
+import CartPage from "./comp/CartPage";
 const Finish = React.lazy(() => import("./comp/Finish"));
 
 // const Profile = React.lazy(() => import("./comp/Profile"));
@@ -396,40 +399,14 @@ const MainScreen = observer(
                 (this.props.store.nameSecondCat = routProps.match.params.childName),
                 this.props.store.filtration(),
                 (this.props.store.activeCats = this.props.store.fullCats),
-                this.props.store.menuAccor[routProps.match.params.parentName] !== undefined
-                  ? routProps.match.params.childName
-                    ? (document.title = this.props.store.menuAccor[routProps.match.params.childName] + " - Queen of Bohemia")
-                    : (document.title = this.props.store.menuAccor[routProps.match.params.parentName] + " - Queen of Bohemia")
-                  : (document.title = "Queen of Bohemia"),
+                console.log("object", routProps),
                 (
-                  <div className="main-screen">
-                    <div className="container">
-                      <div className="row">
-                        <div className="col col-12">
-                          <Breadcrumbs name={routProps.match.params.parentName} child={routProps.match.params.childName} store={this.props.store} />
-                          <h3 className="catalog-title">
-                            {routProps.match.params.childName
-                              ? this.props.store.menuAccor[routProps.match.params.childName]
-                              : this.props.store.menuAccor[routProps.match.params.parentName]}
-                          </h3>
-                        </div>
-                      </div>
-                      <div className="row catalog">
-                        <div className="col col-3">
-                          <Filters
-                            store={this.props.store}
-                            parentName={routProps.match.params.parentName}
-                            childName={routProps.match.params.childName}
-                          />
-                        </div>
-                        <ProductCardContainer
-                          store={this.props.store}
-                          parentName={routProps.match.params.parentName}
-                          childName={routProps.match.params.childName}
-                        />
-                      </div>
-                    </div>
-                  </div>
+                  <Catalog
+                    store={this.props.store}
+                    childName={routProps.match.params.childName}
+                    parentName={routProps.match.params.parentName}
+                    url={routProps.match.url}
+                  />
                 )
               )}
             />
@@ -867,33 +844,12 @@ const MainScreen = observer(
                 this.props.store.pathS !== routProps.match.url ? this.clearCats() : null,
                 this.props.store.pathS !== routProps.match.url ? $("html, body").animate({ scrollTop: 0 }, 500) : null,
                 this.props.store.pathS !== routProps.match.url ? this.props.store.cleaningActiveFilters() : null,
-                this.props.store.pathS !== routProps.match.url ? this.props.store.activeFilters.color.push(routProps.match.params.color) : null,
+                this.props.store.pathS !== routProps.match.url ? (this.props.store.colorSlug = routProps.match.params.color) : null,
                 (this.props.store.pathS = routProps.match.url),
                 this.props.store.filtration(),
-                (document.title = `${routProps.match.params.color} - Queen of Bohemia`),
                 (
                   <div className="main-screen">
-                    <div className="container">
-                      <div className="row">
-                        <div className="col col-12">
-                          <h3 className="catalog-title">{routProps.match.params.color}</h3>
-                        </div>
-                      </div>
-                      <div className="row catalog">
-                        <div className="col col-3">
-                          <Filters
-                            store={this.props.store}
-                            parentName={routProps.match.params.parentName}
-                            childName={routProps.match.params.childName}
-                          />
-                        </div>
-                        <ProductCardContainer
-                          store={this.props.store}
-                          parentName={routProps.match.params.parentName}
-                          childName={routProps.match.params.childName}
-                        />
-                      </div>
-                    </div>
+                    <Color store={this.props.store} slug={routProps.match.params.color} url={routProps.match.url} />
                   </div>
                 )
               )}
@@ -1053,6 +1009,16 @@ const MainScreen = observer(
               }}
             />
 
+            <Route
+              path="404"
+              render={(routProps) => (
+                (this.props.store.nameMainCat = ""),
+                (this.props.store.nameSecondCat = ""),
+                $("html, body").animate({ scrollTop: 0 }, 500),
+                (document.title = "Страница не найдена - Queen of Bohemia"),
+                (<PageNotFound store={this.props.store} />)
+              )}
+            />
             <Route
               path="*"
               render={(routProps) => (

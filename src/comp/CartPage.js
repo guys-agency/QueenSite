@@ -1845,7 +1845,7 @@ const CartPage = observer(
               <div className="col col-4 col-s-12">
                 <div className="cart-page__result-stick">
                   <div className="cart-page__bonus-sum">
-                    <p>Бонусные баллы через 14 дней:</p>
+                    <p>Бонусы через 14 дней:</p>
                     {autnAndUserData ? (
                       <div>
                         + {Math.round(userData.user.percentLoyal ? this.totalPrice * userData.user.percentLoyal : this.totalPrice * 0.02)}{" "}
