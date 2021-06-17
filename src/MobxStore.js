@@ -1,4 +1,5 @@
 import { observable, decorate, autorun } from "mobx";
+import "mobx-react-lite/batchingForReactDom";
 import $ from "jquery";
 import { NavLink } from "react-router-dom";
 import FilterPoint from "./comp/FilterPoint";
@@ -53,6 +54,8 @@ class Store {
   filtCount = 0;
   pathS = "";
 
+  glassType = [];
+
   categoryFilter = {};
   dirtyFilter = {};
   nameMainCat = "";
@@ -67,6 +70,7 @@ class Store {
   sideGift = false;
 
   menuAccor = {};
+  catalogSEO = {};
 
   bannerFilter = {};
 
@@ -233,7 +237,7 @@ class Store {
         .then((data) => {
           const lastSeenProdsDataTime = {};
           Object.keys(data).forEach((prod) => {
-            lastSeenProdsDataTime[data[prod].slug] = {
+            lastSeenProdsDataTime[data[prod].sku] = {
               ...data[prod],
             };
           });
@@ -399,9 +403,9 @@ class Store {
           // console.log("prodCart :>> ", data);
 
           Object.keys(data).forEach((prod) => {
-            timeCont[data[prod].slug] = {
+            timeCont[data[prod].sku] = {
               ...data[prod],
-              countInCart: this.productInCartList[data[prod].slug],
+              countInCart: this.productInCartList[data[prod].sku],
             };
           });
           if (Object.keys(this.productInCartList).length !== Object.keys(timeCont).length) {
@@ -461,29 +465,29 @@ class Store {
               let toSaleProdCount = Math.floor(onePlusOneProdsCount / 3);
               // console.log("minProdSlugs :>> ", minProdSlugs);
               for (let index = 0; index < onePlusOneProds.length; index++) {
-                if (this.productInCartList[onePlusOneProds[index].slug] === toSaleProdCount) {
-                  timeCont[onePlusOneProds[index].slug].sale_price = 0;
-                  timeCont[onePlusOneProds[index].slug].price = 0;
-                  timeCont[onePlusOneProds[index].slug].sale = true;
+                if (this.productInCartList[onePlusOneProds[index].sku] === toSaleProdCount) {
+                  timeCont[onePlusOneProds[index].sku].sale_price = 0;
+                  timeCont[onePlusOneProds[index].sku].price = 0;
+                  timeCont[onePlusOneProds[index].sku].sale = true;
                   break;
-                } else if (this.productInCartList[onePlusOneProds[index].slug] > toSaleProdCount) {
-                  const pr = timeCont[onePlusOneProds[index].slug].sale
-                    ? timeCont[onePlusOneProds[index].slug].sale_price
-                    : timeCont[onePlusOneProds[index].slug].regular_price;
-                  timeCont[onePlusOneProds[index].slug].sale_price = Math.floor(
-                    pr * (1 - toSaleProdCount / this.productInCartList[onePlusOneProds[index].slug])
+                } else if (this.productInCartList[onePlusOneProds[index].sku] > toSaleProdCount) {
+                  const pr = timeCont[onePlusOneProds[index].sku].sale
+                    ? timeCont[onePlusOneProds[index].sku].sale_price
+                    : timeCont[onePlusOneProds[index].sku].regular_price;
+                  timeCont[onePlusOneProds[index].sku].sale_price = Math.floor(
+                    pr * (1 - toSaleProdCount / this.productInCartList[onePlusOneProds[index].sku])
                   );
-                  timeCont[onePlusOneProds[index].slug].sale = true;
-                  timeCont[onePlusOneProds[index].slug].price = timeCont[onePlusOneProds[index].slug].sale_price;
+                  timeCont[onePlusOneProds[index].sku].sale = true;
+                  timeCont[onePlusOneProds[index].sku].price = timeCont[onePlusOneProds[index].sku].sale_price;
 
                   // this.notSaleSum =
                   //   timeCont[onePlusOneProds[index].slug].regular_price * (this.productInCartList[onePlusOneProds[index].slug] - toSaleProdCount);
                   break;
-                } else if (this.productInCartList[onePlusOneProds[index].slug] < toSaleProdCount) {
-                  timeCont[onePlusOneProds[index].slug].sale_price = 0;
-                  timeCont[onePlusOneProds[index].slug].price = 0;
-                  timeCont[onePlusOneProds[index].slug].sale = true;
-                  toSaleProdCount -= this.productInCartList[onePlusOneProds[index].slug];
+                } else if (this.productInCartList[onePlusOneProds[index].sku] < toSaleProdCount) {
+                  timeCont[onePlusOneProds[index].sku].sale_price = 0;
+                  timeCont[onePlusOneProds[index].sku].price = 0;
+                  timeCont[onePlusOneProds[index].sku].sale = true;
+                  toSaleProdCount -= this.productInCartList[onePlusOneProds[index].sku];
                 }
               }
             }
@@ -529,16 +533,16 @@ class Store {
 
     Object.keys(this.productInCart).forEach((el) => {
       const regPrice =
-        typeIsPREPAID && this.certInCart !== el ? Math.floor(this.productInCart[el].regular_price * 0.98) : this.productInCart[el].regular_price;
+        typeIsPREPAID && this.certInCart !== el ? Math.floor(this.productInCart[el].regular_price * 0.97) : this.productInCart[el].regular_price;
       const salePrice = this.productInCart[el].sale
         ? typeIsPREPAID && this.certInCart !== el
-          ? Math.floor(this.productInCart[el].sale_price * 0.98)
+          ? Math.floor(this.productInCart[el].sale_price * 0.97)
           : this.productInCart[el].sale_price
         : 0;
       this.ecomProd.push({
-        id: this.productInCart[el].sale,
+        id: this.productInCart[el].sku,
         name: this.productInCart[el].name,
-        price: typeIsPREPAID && this.certInCart !== el ? Math.floor(this.productInCart[el].price * 0.98) : this.productInCart[el].price,
+        price: typeIsPREPAID && this.certInCart !== el ? Math.floor(this.productInCart[el].price * 0.97) : this.productInCart[el].price,
         brand: this.productInCart[el].brand,
 
         quantity: this.productInCartList[el],
@@ -547,6 +551,7 @@ class Store {
         countIn: this.productInCartList[el],
         sale: this.productInCart[el].sale,
         slug: this.productInCart[el].slug,
+        sku: this.productInCart[el].sku,
         regular_price: this.useBonus ? regPrice * this.bonusDisc : regPrice,
         dbid: this.productInCart[el].dbid,
         name: this.productInCart[el].name,
@@ -558,7 +563,7 @@ class Store {
       }
 
       this.productForYA.push({
-        externalId: String(this.productInCart[el].slug),
+        externalId: String(this.productInCart[el].sku),
         name: this.productInCart[el].name,
         count: el === this.certInCart ? 1 : this.productInCartList[el],
         price: Math.floor(this.productInCart[el].sale ? (salePrice === 0 ? 1 : salePrice) : regPrice),
@@ -870,7 +875,7 @@ class Store {
         } else {
           data[0].product.forEach((element) => {
             testContainer.push(
-              <div className="col col-4 col-s-6" key={element.slug}>
+              <div className="col col-4 col-s-6" key={element.sku}>
                 <ProductCard data={element} store={this} />
               </div>
             );
@@ -935,6 +940,7 @@ class Store {
         // }
         //сортировка
         const sortData = {};
+
         if (Object.keys(data[0].sort[0]).length) {
           Object.keys(data[0].sort[0]).forEach((name) => {
             if (
@@ -1061,7 +1067,10 @@ class Store {
             //данные баннера
             if (data.collData !== undefined) {
               this.dataColl = data.collData;
-              document.title = data.collData[0].name + " - Queen of Bohemia";
+              // document.title = data.collData[0].name + " - Queen of Bohemia";
+              if (this.dataColl[0].seo === undefined || this.dataColl[0].seo.title === "" || this.dataColl[0].seo.title === undefined) {
+                document.querySelector("title").textContent = data.collData[0].name + " - Queen of Bohemia";
+              }
             }
 
             // console.log("data :>> ", data);
@@ -1326,9 +1335,11 @@ class Store {
 
     if (pathname.includes("hits")) {
       bodyJSON.withCat = true;
+      clearJSON.prod.hit = true;
     }
     if (pathname.includes("new")) {
       bodyJSON.withCat = true;
+      clearJSON.prod.new = true;
     } else if (pathname.includes("closeout")) {
       bodyJSON.withCat = true;
       clearJSON.prod["$and"] = [{ closeout: true }];
@@ -1368,6 +1379,8 @@ class Store {
     const filterPoints = [];
     const measurePoints = [];
     const optPoints = [];
+    const glassType = [];
+
     Object.keys(availableFilters).forEach((filterType) => {
       if (filterType === "brand" && !window.location.pathname.includes("/brand/")) {
         if (this.activeFilters.choosePoint.indexOf(filterType) === 0) {
@@ -1391,11 +1404,11 @@ class Store {
           });
         }
         if (this.activeFilters.choosePoint.includes(filterType)) {
-          filterPoints.push(
+          glassType.push(
             <FilterPoint name="Тип бокалов" objectName={filterType} key={filterType} data={this.dirtyFilter[filterType]} store={this} />
           );
         } else {
-          filterPoints.push(
+          glassType.push(
             <FilterPoint name="Тип бокалов" objectName={filterType} key={filterType} data={availableFilters[filterType]} store={this} />
           );
         }
@@ -1473,6 +1486,7 @@ class Store {
     this.filterPointsContainers = filterPoints;
     this.measurePointsContainers = measurePoints;
     this.optPointsContainers = optPoints;
+    this.glassType = glassType;
   };
 }
 
@@ -1506,6 +1520,7 @@ decorate(Store, {
   dataColl: observable,
   sideAsk: observable,
   menuAccor: observable,
+  catalogSEO: observable,
   canHit: observable,
   canPremium: observable,
   canSale: observable,
@@ -1527,6 +1542,7 @@ decorate(Store, {
   onePlusOneSlug: observable,
   oneEqTwo: observable,
   colorsObj: observable,
+  glassType: observable,
 });
 
 const store = new Store();

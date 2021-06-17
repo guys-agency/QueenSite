@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
 import React from "react";
 import { withRouter } from "react-router";
+import $ from "jquery";
 const { Component } = React;
 
 const FilterPoint = observer(
@@ -43,7 +44,11 @@ const FilterPoint = observer(
         }
       } else {
         const number = activeFilters[objectName].indexOf(filterPoint);
-
+        if (objectName === "glassType") {
+          activeFilters[objectName] = [];
+          const numberInChoose = activeFilters.choosePoint.indexOf(objectName);
+          if (numberInChoose !== -1) activeFilters.choosePoint.splice(numberInChoose, 1);
+        }
         if (number === -1) {
           activeFilters[objectName].push(filterPoint);
           activeFilters.count += 1;
@@ -128,7 +133,12 @@ const FilterPoint = observer(
             <span
               className={!number ? "filter__point" : "filter__point active"}
               onClick={(e) => {
-                e.target.classList.toggle("active");
+                if (objectName === "glassType") {
+                  $(e.target).siblings().removeClass("acive");
+                  e.target.classList.add("active");
+                } else {
+                  e.target.classList.toggle("active");
+                }
                 this.clickHandler(filterPoint);
               }}
               key={filterPoint}
@@ -143,17 +153,19 @@ const FilterPoint = observer(
         filterPoints.length > 0 && (
           <div className="filter-block">
             {/* {active ? this.setState({ classStyle: "filter__container" }) : this.setState({ classStyle: "filter__container active" })} */}
-            <h3
-              className={classStyle ? "filter__name active" : "filter__name"}
-              onClick={(e) => {
-                e.target.classList.toggle("active");
-                // e.target.nextElementSibling.classList.toggle("active");
-                this.setState({ classStyle: !classStyle });
-              }}
-            >
-              {name} <p className="filter__active-filt">{activeFilt.join(", ")}</p>
-              <div className="ic i_drop"></div>
-            </h3>
+            {name !== "Тип бокалов" && (
+              <h3
+                className={classStyle ? "filter__name active" : "filter__name"}
+                onClick={(e) => {
+                  e.target.classList.toggle("active");
+                  // e.target.nextElementSibling.classList.toggle("active");
+                  this.setState({ classStyle: !classStyle });
+                }}
+              >
+                {name} <p className="filter__active-filt">{activeFilt.join(", ")}</p>
+                <div className="ic i_drop"></div>
+              </h3>
+            )}
 
             <div className={"filter__container " + (classStyle ? "active" : "")}>{filterPoints}</div>
           </div>

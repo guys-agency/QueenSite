@@ -168,7 +168,7 @@ const MainScreen = observer(
           if (data.bfcheck === "ok") {
             localStorage.setItem("CMcheck", true);
           }
-          if (+slug !== this.props.store.cardContainer.slug) {
+          if (slug !== this.props.store.cardContainer.slug) {
             this.props.store.cardContainer = data.product[0];
 
             if (process.env.REACT_APP_TYPE === "prod") {
@@ -179,7 +179,7 @@ const MainScreen = observer(
                       detail: {
                         products: [
                           {
-                            id: this.props.store.cardContainer.slug,
+                            id: this.props.store.cardContainer.sku,
                             name: this.props.store.cardContainer.name,
                             price: this.props.store.cardContainer.price,
                             brand: this.props.store.cardContainer.brand,
@@ -190,7 +190,7 @@ const MainScreen = observer(
                   });
                   window._tmr.push({
                     type: "itemView",
-                    productid: String(this.props.store.cardContainer.slug),
+                    productid: String(this.props.store.cardContainer.sku),
                     pagetype: "product",
                     list: "1",
                     totalvalue: String(this.props.store.cardContainer.price),
@@ -209,14 +209,14 @@ const MainScreen = observer(
           let timeLastSeenProds = lastSeenProds.slice();
           // console.log("object :>> ", this.props.store.lastSeenProds.values());
 
-          if (!lastSeenProds.includes(slug)) {
-            timeLastSeenProds.unshift(slug);
+          if (!lastSeenProds.includes(this.props.store.cardContainer.sku)) {
+            timeLastSeenProds.unshift(this.props.store.cardContainer.sku);
             // this.props.store.lastSeenProds = timeLastSeenProds;
           } else {
-            const posSlug = lastSeenProds.indexOf(slug);
+            const posSlug = lastSeenProds.indexOf(this.props.store.cardContainer.sku);
 
             timeLastSeenProds.splice(posSlug, 1);
-            timeLastSeenProds.unshift(slug);
+            timeLastSeenProds.unshift(this.props.store.cardContainer.sku);
             // this.props.store.lastSeenProds = timeLastSeenProds;
           }
 
@@ -335,10 +335,7 @@ const MainScreen = observer(
               path="/"
               exact
               render={(routProps) => (
-                this.props.store.cleaningActiveFilters(),
-                $("html, body").animate({ scrollTop: 0 }, 500),
-                (document.title = "Queen of Bohemia"),
-                (<MainPage store={this.props.store} />)
+                this.props.store.cleaningActiveFilters(), $("html, body").animate({ scrollTop: 0 }, 500), (<MainPage store={this.props.store} />)
               )}
             />
             <Route
@@ -348,7 +345,7 @@ const MainScreen = observer(
                 this.props.store.cleaningActiveFilters(),
                 (this.props.store.sideLogin = true),
                 $("html, body").animate({ scrollTop: 0 }, 500),
-                (document.title = "Queen of Bohemia"),
+                (document.querySelector("title").textContent = "Queen of Bohemia"),
                 (<MainPage store={this.props.store} />)
               )}
             />
@@ -359,7 +356,7 @@ const MainScreen = observer(
                 this.props.store.cleaningActiveFilters(),
                 (this.props.store.sideLogin = true),
                 $("html, body").animate({ scrollTop: 0 }, 500),
-                (document.title = "Queen of Bohemia"),
+                (document.querySelector("title").textContent = "Queen of Bohemia"),
                 (<MainPage store={this.props.store} />)
               )}
             />
@@ -370,7 +367,7 @@ const MainScreen = observer(
                 this.props.store.cleaningActiveFilters(),
                 (this.props.store.sideLogin = true),
                 $("html, body").animate({ scrollTop: 0 }, 500),
-                (document.title = "Queen of Bohemia"),
+                (document.querySelector("title").textContent = "Queen of Bohemia"),
                 (<MainPage store={this.props.store} />)
               )}
             />
@@ -380,7 +377,7 @@ const MainScreen = observer(
               render={(routProps) => (
                 this.props.store.cleaningActiveFilters(),
                 $("html, body").animate({ scrollTop: 0 }, 500),
-                (document.title = "Queen of Bohemia"),
+                (document.querySelector("title").textContent = "Queen of Bohemia"),
                 (<MainPage store={this.props.store} gift={routProps.match.params.id} />)
               )}
             />
@@ -399,7 +396,6 @@ const MainScreen = observer(
                 (this.props.store.nameSecondCat = routProps.match.params.childName),
                 this.props.store.filtration(),
                 (this.props.store.activeCats = this.props.store.fullCats),
-                console.log("object", routProps),
                 (
                   <Catalog
                     store={this.props.store}
@@ -414,7 +410,7 @@ const MainScreen = observer(
               path="/cart"
               render={() => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
-                (document.title = "Корзина - Queen of Bohemia"),
+                (document.querySelector("title").textContent = "Корзина - Queen of Bohemia"),
                 (
                   <div
                     className="main-screen"
@@ -445,7 +441,7 @@ const MainScreen = observer(
                 this.checkBFregistration(propsRout.match.params.id),
                 $("html, body").animate({ scrollTop: 0 }, 500),
                 $("#root").addClass("black-friday"),
-                (document.title = "Черная пятница - Queen of Bohemia"),
+                (document.querySelector("title").textContent = "Черная пятница - Queen of Bohemia"),
                 (
                   <div className="main-screen">
                     <BlackFriday store={this.props.store} />
@@ -458,7 +454,7 @@ const MainScreen = observer(
               render={() => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
                 $("#root").addClass("black-friday"),
-                (document.title = "Черная пятница - Queen of Bohemia"),
+                (document.querySelector("title").textContent = "Черная пятница - Queen of Bohemia"),
                 (
                   <div className="main-screen">
                     <BlackFriday store={this.props.store} />
@@ -470,7 +466,7 @@ const MainScreen = observer(
               path="/new-year"
               render={() => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
-                (document.title = "Новый Год - Queen of Bohemia"),
+                (document.querySelector("title").textContent = "Новый Год - Queen of Bohemia"),
                 (
                   <div className="main-screen">
                     <NewYear store={this.props.store} />
@@ -484,7 +480,7 @@ const MainScreen = observer(
                 render={(propsRout) => (
                   this.checkBFregistration(propsRout.match.params.id),
                   $("html, body").animate({ scrollTop: 0 }, 500),
-                  (document.title = "КиберПонедельник - Queen of Bohemia"),
+                  (document.querySelector("title").textContent = "КиберПонедельник - Queen of Bohemia"),
                   (
                     <div className="main-screen">
                       <CyberMonday store={this.props.store} />
@@ -498,7 +494,7 @@ const MainScreen = observer(
                 path="/cyber-monday"
                 render={() => (
                   $("html, body").animate({ scrollTop: 0 }, 500),
-                  (document.title = "КиберПонедельник - Queen of Bohemia"),
+                  (document.querySelector("title").textContent = "КиберПонедельник - Queen of Bohemia"),
                   (
                     <div className="main-screen">
                       <CyberMonday store={this.props.store} />
@@ -548,7 +544,7 @@ const MainScreen = observer(
               path="/profile"
               render={() => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
-                (document.title = "Профиль - Queen of Bohemia"),
+                (document.querySelector("title").textContent = "Профиль - Queen of Bohemia"),
                 (
                   <div className="main-screen">
                     <Profile store={this.props.store} />
@@ -561,7 +557,7 @@ const MainScreen = observer(
               path="/logoutbf"
               render={() => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
-                (document.title = "Профиль - Queen of Bohemia"),
+                (document.querySelector("title").textContent = "Профиль - Queen of Bohemia"),
                 api.logoutbf().then((ok) => localStorage.removeItem("CMcheck")),
                 (<div></div>)
               )}
@@ -631,10 +627,9 @@ const MainScreen = observer(
               path="/collections"
               render={() => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
-                (document.title = "Коллекции - Queen of Bohemia"),
                 (
                   <div className="main-screen">
-                    <Collections store={this.props.store} />
+                    <Collections store={this.props.store} slug="collections" />
                   </div>
                 )
               )}
@@ -643,10 +638,10 @@ const MainScreen = observer(
               path="/sborka-serviza"
               render={() => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
-                (document.title = "Сборка сервиза - Queen of Bohemia"),
+                (document.querySelector("title").textContent = "Сборка сервиза - Queen of Bohemia"),
                 (
                   <div className="main-screen">
-                    <Collections store={this.props.store} />
+                    <Collections store={this.props.store} slug="sborka-serviza" />
                   </div>
                 )
               )}
@@ -657,7 +652,7 @@ const MainScreen = observer(
               render={(routProps) => (
                 this.props.store.cleaningActiveFilters(),
                 $("html, body").animate({ scrollTop: 0 }, 500),
-                (document.title = "Подарки - Queen of Bohemia"),
+                (document.querySelector("title").textContent = "Подарки - Queen of Bohemia"),
                 (<GiftsPage store={this.props.store} />)
               )}
             />
@@ -732,13 +727,13 @@ const MainScreen = observer(
                 this.props.store.pathS !== "hits" ? this.props.store.cleaningActiveFilters() : null,
                 (this.props.store.pathS = "hits"),
                 this.props.store.filtration(),
-                (document.title = "Хиты - Queen of Bohemia"),
+                (document.querySelector("title").textContent = "Хиты - Queen of Bohemia"),
                 (
                   <div className="main-screen">
                     <div className="container">
                       <div className="row">
                         <div className="col col-12">
-                          <h3 className="catalog-title">Хиты</h3>
+                          <h1 className="catalog-title h3">Хиты</h1>
                         </div>
                       </div>
                       <div className="row catalog">
@@ -771,13 +766,13 @@ const MainScreen = observer(
                 (this.props.store.pathS = "new"),
                 (this.props.store.sortInProd = "Сначала новые"),
                 this.props.store.filtration(),
-                (document.title = "Новинки - Queen of Bohemia"),
+                (document.querySelector("title").textContent = "Новинки - Queen of Bohemia"),
                 (
                   <div className="main-screen">
                     <div className="container">
                       <div className="row">
                         <div className="col col-12">
-                          <h3 className="catalog-title">Новинки</h3>
+                          <h1 className="catalog-title h3">Новинки</h1>
                         </div>
                       </div>
                       <div className="row catalog">
@@ -808,7 +803,7 @@ const MainScreen = observer(
                 this.props.store.pathS !== "closeout" ? this.props.store.cleaningActiveFilters() : null,
                 (this.props.store.pathS = "closeout"),
                 this.props.store.filtration(),
-                (document.title = "Расспродажа - Queen of Bohemia"),
+                (document.querySelector("title").textContent = "Расспродажа - Queen of Bohemia"),
                 (
                   <div className="main-screen">
                     <div className="container">
@@ -879,7 +874,7 @@ const MainScreen = observer(
               path="/actions"
               render={() => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
-                (document.title = "Акции - Queen of Bohemia"),
+                (document.querySelector("title").textContent = "Акции - Queen of Bohemia"),
                 (
                   <div className="main-screen">
                     <Actions store={this.props.store} />
@@ -897,7 +892,7 @@ const MainScreen = observer(
                 this.props.store.pathS !== "search" ? this.props.store.cleaningActiveFilters() : null,
                 (this.props.store.pathS = "search"),
                 this.props.store.filtration(),
-                (document.title = "Поиск - Queen of Bohemia"),
+                (document.querySelector("title").textContent = "Поиск - Queen of Bohemia"),
                 (<Search store={this.props.store} parentName={routProps.match.params.parentName} childName={routProps.match.params.childName} />)
               )}
             />
@@ -906,7 +901,6 @@ const MainScreen = observer(
               path="/shops"
               render={() => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
-                (document.title = "Магазины - Queen of Bohemia"),
                 (
                   <Suspense fallback={<div></div>}>
                     <div className="main-screen">
@@ -921,7 +915,6 @@ const MainScreen = observer(
               path="/shops-map"
               render={() => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
-                (document.title = "Магазины - Queen of Bohemia"),
                 (
                   <Suspense fallback={<div></div>}>
                     <div className="main-screen">
@@ -936,7 +929,6 @@ const MainScreen = observer(
               path={["/help/:options"]}
               render={(routProps) => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
-                (document.title = "Помощь - Queen of Bohemia"),
                 (
                   <Suspense fallback={<div>Loading...</div>}>
                     <div className="main-screen">
@@ -951,7 +943,7 @@ const MainScreen = observer(
               path="/about"
               render={() => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
-                (document.title = "О нас - Queen of Bohemia"),
+                (document.querySelector("title").textContent = "О нас - Queen of Bohemia"),
                 (
                   <Suspense fallback={<div></div>}>
                     <div className="main-screen">
@@ -967,7 +959,7 @@ const MainScreen = observer(
               render={(routProps) => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
                 this.chekFinishDelete(),
-                (document.title = "Поздравляем с покупкой - Queen of Bohemia"),
+                (document.querySelector("title").textContent = "Поздравляем с покупкой - Queen of Bohemia"),
                 (
                   <Suspense fallback={<div></div>}>
                     <div className="main-screen">
@@ -1008,6 +1000,16 @@ const MainScreen = observer(
                 a.click();
               }}
             />
+            <Route
+              path="/sitemap.xml"
+              render={() => {
+                const a = document.createElement("a");
+                a.download = "sitemap.xml";
+                a.href = "/sitemap.xml";
+                // console.log("a", a);
+                a.click();
+              }}
+            />
 
             <Route
               path="404"
@@ -1015,7 +1017,7 @@ const MainScreen = observer(
                 (this.props.store.nameMainCat = ""),
                 (this.props.store.nameSecondCat = ""),
                 $("html, body").animate({ scrollTop: 0 }, 500),
-                (document.title = "Страница не найдена - Queen of Bohemia"),
+                (document.querySelector("title").textContent = "Страница не найдена - Queen of Bohemia"),
                 (<PageNotFound store={this.props.store} />)
               )}
             />
@@ -1025,7 +1027,7 @@ const MainScreen = observer(
                 (this.props.store.nameMainCat = ""),
                 (this.props.store.nameSecondCat = ""),
                 $("html, body").animate({ scrollTop: 0 }, 500),
-                (document.title = "Страница не найдена - Queen of Bohemia"),
+                (document.querySelector("title").textContent = "Страница не найдена - Queen of Bohemia"),
                 (<PageNotFound store={this.props.store} />)
               )}
             />

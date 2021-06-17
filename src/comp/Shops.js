@@ -2,6 +2,7 @@ import { observer } from "mobx-react";
 import React from "react";
 import { Link } from "react-router-dom";
 import Swiper from "react-id-swiper";
+import HelmetHead from "./common/Helmet";
 
 const { Component } = React;
 
@@ -26,6 +27,16 @@ const Shops = observer(
 
       return (
         <div>
+          <HelmetHead
+            title="Магазины чешского фарфора и хрусталя Queen of Bohemia в Москве "
+            description="Магазины чешского фарфора и хрусталя Queen of Bohemia в Москве, адреса магазинов на карте"
+            keywords="адрес магазина"
+          />
+          <div className="container">
+            <div className="collections__head">
+              <h1 className="h1">Магазины</h1>
+            </div>
+          </div>
           <div className="shop__tumbler">
             <div className="tumbler">
               <Link className="tumb active" to="/shops">

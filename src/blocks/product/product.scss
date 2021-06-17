@@ -134,4 +134,54 @@
     }
   }
 }
+
+.halva {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+
+  p {
+    margin-bottom: 0px;
+    line-height: 24px;
+
+    &.i_disc-v {
+      display: flex;
+      justify-content: center;
+      line-height: 20px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50px;
+      border: 1px solid #dab958;
+      box-sizing: border-box;
+      background-color: #efd27e;
+      margin-right: 10px;
+    }
+
+    &.halva__sum {
+      display: flex;
+      align-items: center;
+      &::after {
+        @include icon;
+        content: $i_line-v;
+        margin-left: 12px;
+        font-size: 20px;
+        line-height: 24px;
+        position: relative;
+        // top: 6px;
+        opacity: 0.3;
+        color: $b_dark !important;
+        margin-right: 12px;
+        text-decoration: none;
+      }
+    }
+  }
+
+  a {
+    font-size: 16px;
+    line-height: 24px;
+
+    text-decoration-line: underline;
+  }
+}
+
 @import "./product-p.scss";

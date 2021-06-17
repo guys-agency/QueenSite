@@ -693,7 +693,7 @@
         font-style: normal;
         font-weight: normal;
         font-size: 16px;
-        p {
+        & > p {
           color: inherit;
         }
       }
@@ -858,6 +858,21 @@
       }
     }
 
+    .halva-line {
+      display: flex;
+      align-items: center;
+      margin-top: 4px;
+      margin-bottom: 0px;
+
+      p {
+        margin-left: 20px;
+        padding: 3px 10px;
+        background: #00094d;
+        border-radius: 12px;
+        color: #fff;
+      }
+    }
+
     &.active {
       background-color: #00007d;
       color: #fff;
@@ -865,6 +880,13 @@
       .cart-page__store-link {
         display: block;
         visibility: visible;
+      }
+
+      .halva-line {
+        p {
+          background: #fff;
+          color: #00094d;
+        }
       }
     }
 

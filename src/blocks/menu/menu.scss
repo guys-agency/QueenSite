@@ -61,6 +61,41 @@
   &_mega {
     max-height: 85vh;
     overflow: auto;
+
+    .menu__title {
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 16px;
+      position: relative;
+      &::after {
+        @include icon;
+        content: $i_right;
+        font-size: 16px;
+        position: absolute;
+        right: -10px;
+        transform: translateX(100%);
+      }
+    }
+
+    .column {
+      ul {
+        margin-top: 14px;
+        padding-top: 10px;
+        border-top: 2px solid #f7f6f7;
+        @include max($s) {
+          border-top: none;
+        }
+      }
+
+      .colors-in-menu {
+        h5 {
+          font-weight: 600;
+          font-size: 16px;
+          line-height: 16px;
+          color: #00094d;
+        }
+      }
+    }
   }
   .btn_prev {
     display: none;

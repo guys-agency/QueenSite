@@ -131,6 +131,7 @@ const Finish = observer(
         });
         if (this.firstView) {
           window._tmr.push(purchaseTarget);
+          window.gtag("event", "conversion", { send_to: "AW-592840699/rK8kCN_c4P4BEPuP2JoC", transaction_id: data.dbid });
         }
       }
 

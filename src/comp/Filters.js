@@ -318,7 +318,7 @@ const Filters = observer(
               <ul className={pathname.includes(elem.slug) ? "categories-block__child visible" : "categories-block__child"}>{childsPoints}</ul>
             </li>
           );
-        } else if (elem.name === "Аксесуары для стола") {
+        } else if (elem.name === "Аксессуары для стола") {
           menu[4] = (
             <li key={elem.name} className="categories-mob-block">
               <h5 className={pathname.includes(elem.slug) ? "categories-block__name active" : "categories-block__name"} onClick={this.subCat}>

@@ -9,6 +9,7 @@
   transition: all 0.2s;
   display: block;
   background-position: center;
+
   &_overlay {
     &::after {
       content: "";
@@ -25,6 +26,7 @@
       z-index: 1;
     }
   }
+
   &:hover {
     transform: translateY(-3px);
     .banner__desc {

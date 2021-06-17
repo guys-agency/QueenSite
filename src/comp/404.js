@@ -3,6 +3,7 @@ import React from "react";
 import api from "./api";
 import { Link } from "react-router-dom";
 import ProductCard from "./ProductCard";
+import Helmet from "react-helmet";
 
 const { Component } = React;
 
@@ -19,14 +20,8 @@ const PageNotFound = observer(
           Object.keys(data[0].hit).forEach((element, i) => {
             if (i <= 7) {
               hitContTime.push(
-                <div
-                  className="col col-3 col-t-4 col-s-6"
-                  key={data[0].hit[element].slug}
-                >
-                  <ProductCard
-                    data={data[0].hit[element]}
-                    store={this.props.store}
-                  />
+                <div className="col col-3 col-t-4 col-s-6" key={data[0].hit[element].slug}>
+                  <ProductCard data={data[0].hit[element]} store={this.props.store} />
                 </div>
               );
             }
@@ -81,10 +76,11 @@ const PageNotFound = observer(
 
       return (
         <div className="main-screen">
+          <Helmet meta={[{ name: "prerender-status-code", content: "404" }]} />
           <div className="container">
             <div className="row">
               <div className="col col-12">
-                <h3 className="catalog-title">Страница не найдена</h3>
+                <h1 className="catalog-title h3">Страница не найдена</h1>
                 <p>Но мы нашли, товары, которые могут вам быть интересны!</p>
               </div>
             </div>

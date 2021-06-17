@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import "semantic-ui-css/semantic.min.css";
+// import "semantic-ui-css/semantic.min.css";
 import "swiper/css/swiper.min.css";
 import "./test.scss";
 import MainScreen from "./App";

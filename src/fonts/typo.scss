@@ -17,6 +17,35 @@
 h1,
 h2 {
   font-family: "CaslonC 540 BT", "Times New Roman", Times, serif;
+
+  a,
+  .link {
+    font-family: "Excentra Pro", "Times New Roman", Times, serif;
+    font-size: 16px;
+    font-weight: normal;
+    text-transform: none;
+    color: $b_light;
+    margin-left: 10px;
+    .ic {
+      position: relative;
+      top: 2px;
+      left: 0;
+      transition: left 0.2s;
+    }
+  }
+  &:hover {
+    a,
+    .link {
+      color: $g_middle;
+      .ic {
+        left: 3px;
+      }
+    }
+  }
+}
+.h1,
+.h2 {
+  font-family: "CaslonC 540 BT", "Times New Roman", Times, serif;
   text-transform: uppercase;
   a,
   .link {
@@ -66,6 +95,28 @@ h6 {
   }
 }
 
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
+  &.dib {
+    display: inline-block;
+  }
+  &.tilda {
+    &::before {
+      @include icon;
+      display: block;
+      content: $i_line-h;
+      @include gold-txt;
+    }
+  }
+  &.white {
+    color: white;
+  }
+}
+
 h3,
 h4,
 h5,
@@ -74,6 +125,12 @@ p,
 a,
 input,
 button {
+  font-family: "Excentra Pro", "Times New Roman", Times, serif;
+}
+.h3,
+.h4,
+.h5,
+.h6 {
   font-family: "Excentra Pro", "Times New Roman", Times, serif;
 }
 
@@ -125,6 +182,54 @@ h5 {
   color: $a_dark;
 }
 
+.h1 {
+  font-size: 40px;
+  @include max($s) {
+    font-size: 24px;
+  }
+}
+
+.h2 {
+  font-size: 27px;
+  @include max($s) {
+    font-size: 21px;
+  }
+  &.tilda {
+    &::before {
+      font-size: 70px;
+      margin-bottom: -20px;
+    }
+  }
+}
+
+.h3 {
+  font-size: 24px;
+  font-weight: 500;
+  @include max($s) {
+    font-size: 18px;
+  }
+  &.tilda {
+    &::before {
+      font-size: 40px;
+      margin-bottom: -10px;
+    }
+  }
+  &.catalog-title {
+    margin-top: 20px;
+  }
+}
+
+.h4 {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.h5 {
+  font-size: 14px;
+  font-weight: 500;
+  color: $a_dark;
+}
+
 a,
 .link {
   transition: all 0.2s;
@@ -144,8 +249,9 @@ a,
     transition: top 0.2s;
   }
   &.dotted {
+    font-size: 14px;
     color: $b_light;
-    border-bottom: 1px dotted $a_dark;
+    border-bottom: 1px dotted $a_darkest;
   }
   &.underline {
     color: $b_light;

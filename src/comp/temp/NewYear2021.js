@@ -10,7 +10,6 @@ import { Formik } from "formik";
 import api from "../api";
 import { withRouter } from "react-router";
 import SuscribeSchema from "../../schemas/suscribeSchema";
-import localStorage from "mobx-localstorage";
 
 const { Component } = React;
 
@@ -415,7 +414,7 @@ const NewYear = observer(
             <div
               className="subscribe__img"
               style={{
-                backgroundImage: "url(" + "/image/subs/1.jpg" + ")",
+                backgroundImage: "url(/image/subs/1.jpg)",
               }}
             ></div>
           </div>

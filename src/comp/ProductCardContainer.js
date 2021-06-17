@@ -75,6 +75,8 @@ const ProductCardContainer = observer(
     render() {
       const { searchQ } = this.props.store;
 
+      const { descriptionInPage } = this.props;
+
       let serv =
         window.location.href.includes("/servizy/stolovye") ||
         (window.location.href.includes("/servizy") && !window.location.href.includes("/servizy/"));
@@ -95,7 +97,7 @@ const ProductCardContainer = observer(
       return (
         <div className="col col-9 col-t-12">
           <div className="row row_inner">
-            <div className="col col-12">
+            <div className="col col-12 card-container__head">
               {this.props.location.pathname.includes("/search") && (
                 <div className="search-pos search-pos_mob">
                   <form className="search-wrp">
@@ -126,7 +128,8 @@ const ProductCardContainer = observer(
                   <div className="banner__desc">Соберите сервиз сами</div>
                 </Link>
               )}
-
+              {descriptionInPage ? <div className="card-container__desc">{descriptionInPage}</div> : null}
+              {this.props.store.glassType}
               {!window.location.pathname.includes("profile") && (
                 <div className="sort">
                   <div className="dropdown">

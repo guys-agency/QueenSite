@@ -12,8 +12,8 @@ const ProductCard = observer(function ProductCard(props) {
 
   const { productInCartList, addtoCart, certInCart } = store;
 
-  const inLike = store.likeContainer.length ? store.likeContainer.indexOf(String(data.slug)) : -1;
-  let inCart = Object.keys(store.productInCartList).length ? Object.keys(store.productInCartList).indexOf(String(data.slug)) : -1;
+  const inLike = store.likeContainer.length ? store.likeContainer.indexOf(String(data.sku)) : -1;
+  let inCart = Object.keys(store.productInCartList).length ? Object.keys(store.productInCartList).indexOf(String(data.sku)) : -1;
 
   if (Object.keys(productInCartList).length) {
     if (data.name === "Электронный подарочный сертификат" && certInCart) {
@@ -43,7 +43,7 @@ const ProductCard = observer(function ProductCard(props) {
         if (data.name === "Электронный подарочный сертификат") {
           delete productInCartList[certInCart];
         } else {
-          delete productInCartList[data.slug];
+          delete productInCartList[data.sku];
         }
         if (process.env.REACT_APP_TYPE === "prod") {
           window.dataLayer.push({
@@ -51,7 +51,7 @@ const ProductCard = observer(function ProductCard(props) {
               remove: {
                 products: [
                   {
-                    id: data.slug,
+                    id: data.sku,
                     name: data.name,
                     price: data.price,
                     brand: data.brand,
@@ -63,9 +63,9 @@ const ProductCard = observer(function ProductCard(props) {
         }
       } else {
         if (data.name === "Электронный подарочный сертификат") {
-          productInCartList[data.slug] = "";
+          productInCartList[data.sku] = "";
         } else {
-          productInCartList[data.slug] = 1;
+          productInCartList[data.sku] = 1;
         }
 
         $(".tooltip_cart").find(".ic").removeClass("i_fav-f");
@@ -84,7 +84,7 @@ const ProductCard = observer(function ProductCard(props) {
                 add: {
                   products: [
                     {
-                      id: data.slug,
+                      id: data.sku,
                       name: data.name,
                       price: data.price,
                       brand: data.brand,
@@ -97,7 +97,7 @@ const ProductCard = observer(function ProductCard(props) {
 
             window._tmr.push({
               type: "itemView",
-              productid: String(data.slug),
+              productid: String(data.sku),
               pagetype: "cart",
               list: "1",
               totalvalue: String(data.price),
@@ -127,7 +127,7 @@ const ProductCard = observer(function ProductCard(props) {
           $(".tooltip_cart").removeClass("visible");
         }, 2000);
       } else {
-        likeContainer.unshift(String(data.slug));
+        likeContainer.unshift(String(data.sku));
 
         $(".tooltip_cart").addClass("visible");
         $(".tooltip_cart").find(".text").text(data.name);

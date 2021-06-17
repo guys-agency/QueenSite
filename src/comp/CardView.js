@@ -37,10 +37,10 @@ const CardView = observer(
     count = true;
     drafts = [];
 
-    inLike = this.props.store.likeContainer.length ? this.props.store.likeContainer.indexOf(String(this.props.store.cardContainer.slug)) : -1;
+    inLike = this.props.store.likeContainer.length ? this.props.store.likeContainer.indexOf(String(this.props.store.cardContainer.sku)) : -1;
 
     inCart = Object.keys(this.props.store.productInCartList).length
-      ? Object.keys(this.props.store.productInCartList).indexOf(String(this.props.store.cardContainer.slug))
+      ? Object.keys(this.props.store.productInCartList).indexOf(String(this.props.store.cardContainer.sku))
       : -1;
 
     clickHandler = (e) => {
@@ -110,9 +110,9 @@ const CardView = observer(
           $(".tooltip_cart").removeClass("visible");
         }, 2000);
         if (this.data.name === "Электронный подарочный сертификат") {
-          productInCartList[this.data.slug] = $("#mess").val();
+          productInCartList[this.data.sku] = $("#mess").val();
         } else {
-          productInCartList[this.data.slug] = store.countInProdPage;
+          productInCartList[this.data.sku] = store.countInProdPage;
         }
         api.updateCountStats(this.data._id, "cart");
         if (process.env.REACT_APP_TYPE === "prod") {
@@ -122,7 +122,7 @@ const CardView = observer(
                 add: {
                   products: [
                     {
-                      id: this.data.slug,
+                      id: this.data.sku,
                       name: this.data.name,
                       price: this.data.price,
                       brand: this.data.brand,
@@ -135,7 +135,7 @@ const CardView = observer(
 
             window._tmr.push({
               type: "itemView",
-              productid: String(this.data.slug),
+              productid: String(this.data.sku),
               pagetype: "cart",
               list: "1",
               totalvalue: String(this.data.price),
@@ -185,7 +185,7 @@ const CardView = observer(
       const { store } = this.props;
 
       const { likeContainer, addToLike } = store;
-      this.inLike = this.props.store.likeContainer.length ? this.props.store.likeContainer.indexOf(String(this.props.store.cardContainer.slug)) : -1;
+      this.inLike = this.props.store.likeContainer.length ? this.props.store.likeContainer.indexOf(String(this.props.store.cardContainer.sku)) : -1;
 
       e.target.classList.toggle("active");
       if (this.inLike !== -1) {
@@ -201,7 +201,7 @@ const CardView = observer(
           $(".tooltip_cart").removeClass("visible");
         }, 2000);
       } else {
-        likeContainer.unshift(String(this.data.slug));
+        likeContainer.unshift(String(this.data.sku));
 
         $(".tooltip_cart").addClass("visible");
         $(".tooltip_cart").find(".text").text(this.data.name);
@@ -225,7 +225,7 @@ const CardView = observer(
     clickPlus = () => {
       if (this.props.store.countInProdPage < this.data.stock_quantity) {
         if (this.inCart !== -1) {
-          this.props.store.productInCartList[this.data.slug] += 1;
+          this.props.store.productInCartList[this.data.sku] += 1;
           this.props.store.addtoCart(false);
         }
         this.props.store.countInProdPage += 1;
@@ -235,7 +235,7 @@ const CardView = observer(
     clickMinus = () => {
       if (this.props.store.countInProdPage > 1) {
         if (this.inCart !== -1) {
-          this.props.store.productInCartList[this.data.slug] -= 1;
+          this.props.store.productInCartList[this.data.sku] -= 1;
           this.props.store.addtoCart(false);
         }
         this.props.store.countInProdPage -= 1;
@@ -282,7 +282,7 @@ const CardView = observer(
         this.props.store.countInProdPage = this.props.store.productInCartList[this.props.sku];
       }
 
-      if (this.data === "" || +this.props.sku === this.props.store.cardContainer.slug) {
+      if (this.data === "" || this.props.sku === this.props.store.cardContainer.slug) {
         this.data = this.props.store.cardContainer;
       }
 
@@ -293,7 +293,7 @@ const CardView = observer(
       const { dontSaleProdCount, lastSeenProdsData, lastSeenProds, withProds, likeProds, certInCart, brandSlugs } = this.props.store;
       let { collections } = this.props.store.bannersData;
 
-      if (this.data.slug === +this.props.sku && this.count) {
+      if (this.data.slug === this.props.sku && this.count) {
         if (timeDelivery === "" && localStorage.getItem("city") !== null && localStorage.getItem("city") !== undefined && !itsSert) {
           // console.log("11 :>> ", 11);
           this.count = false;
@@ -337,17 +337,17 @@ const CardView = observer(
         }
       }
       let unvisibleProd;
-      if (this.data.slug !== +this.props.sku) {
+      if (this.data.slug !== this.props.sku) {
         this.fetchReady = false;
       } else {
         this.fetchReady = true;
-        unvisibleProd = itsSert ? false : !this.data.stock_quantity || !this.data.visible;
+        unvisibleProd = itsSert ? false : !this.data.stock_quantity || this.data.visible === false;
       }
 
       const storesAvali = [];
       let metaDesc;
 
-      if (this.data.slug === +this.props.sku) {
+      if (this.data.slug === this.props.sku) {
         metaDesc = this.data.description;
         if (metaDesc > 160 && metaDesc.includes(".")) {
           metaDesc = metaDesc.split(".");
@@ -371,10 +371,10 @@ const CardView = observer(
           });
         }
 
-        this.inLike = this.props.store.likeContainer.length ? this.props.store.likeContainer.indexOf(String(this.data.slug)) : -1;
+        this.inLike = this.props.store.likeContainer.length ? this.props.store.likeContainer.indexOf(String(this.data.sku)) : -1;
 
         this.inCart = Object.keys(this.props.store.productInCartList).length
-          ? Object.keys(this.props.store.productInCartList).indexOf(String(this.data.slug))
+          ? Object.keys(this.props.store.productInCartList).indexOf(String(this.data.sku))
           : -1;
       }
 
@@ -405,7 +405,7 @@ const CardView = observer(
       let collSlugSet = 0;
       if (collections !== undefined && this.data.kit !== undefined && this.data.kit.length !== 0) {
         collections.some((coll) => {
-          if (coll.products.includes(this.data.slug)) {
+          if (coll.products.includes(this.data.sku)) {
             collSlugSet = coll.slug;
             return true;
           }
@@ -414,7 +414,7 @@ const CardView = observer(
       }
 
       return (
-        this.data.slug === +this.props.sku && (
+        this.data.slug === this.props.sku && (
           <div
             className="card-view-container"
             onClick={(e) => {
@@ -480,15 +480,15 @@ const CardView = observer(
                 </button>
                 <div className={"row product-p " + (this.data.description ? "" : "no-desc")}>
                   <div className="col col-6 col-t-5 col-s-12">
-                    <Gallery path={this.data.path_to_photo} key={this.data.slug} video={this.data.video} alt={this.data.name} />
+                    <Gallery path={this.data.path_to_photo} key={this.data.sku} video={this.data.video} alt={this.data.name} />
                   </div>
                   <div className="col col-6 col-t-7 col-s-12">
                     <div className="product-p__description">
                       <div className="product-p__head">
-                        <h4 className="product-p__name">{this.data.name}</h4>
+                        <h1 className="product-p__name h4">{this.data.name}</h1>
                         {!itsSert && (
                           <div className="product-p__article">
-                            <p>{"Артикул: " + this.data.slug}</p>
+                            <p>{"Артикул: " + this.data.sku}</p>
                             <Link
                               className="underline"
                               to={
@@ -541,6 +541,19 @@ const CardView = observer(
                         ) : (
                           <div className={"product__price"}>{this.data.regular_price.toLocaleString()} ₽</div>
                         )}
+                        <div className="halva">
+                          <p className="i_disc-v">%</p>
+                          <p className="halva__sum">
+                            от{" "}
+                            {this.data.sale
+                              ? Math.round(this.data.sale_price * 0.1).toLocaleString()
+                              : Math.round(this.data.regular_price * 0.1).toLocaleString()}{" "}
+                            ₽/мес
+                          </p>
+                          <a href="https://halvacard.ru/shops/Razvlecheniya/QueenofBohemia" target="_blank">
+                            Халва (10 мес.)
+                          </a>
+                        </div>
                       </div>
 
                       {itsSert ? (
@@ -849,8 +862,8 @@ const CardView = observer(
                     <Swiper {...this.relativeCar}>
                       {withProds.map((el) => {
                         return (
-                          <div className="col col-3 col-t-4 col-s-6" key={el.slug}>
-                            <ProductCard key={el.slug} data={el} store={this.props.store} />
+                          <div className="col col-3 col-t-4 col-s-6" key={el.sku}>
+                            <ProductCard key={el.sku} data={el} store={this.props.store} />
                           </div>
                         );
                       })}
@@ -872,8 +885,8 @@ const CardView = observer(
                     <Swiper {...this.relativeCar}>
                       {likeProds.map((el) => {
                         return (
-                          <div className="col col-3 col-t-4 col-s-6" key={el.slug}>
-                            <ProductCard key={el.slug} data={el} store={this.props.store} />
+                          <div className="col col-3 col-t-4 col-s-6" key={el.sku}>
+                            <ProductCard key={el.sku} data={el} store={this.props.store} />
                           </div>
                         );
                       })}

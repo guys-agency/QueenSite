@@ -2,7 +2,7 @@
 // @import "./ulits/semantic-ui-css/semantic.min.css";
 // @import "./ulits/swiper.css";
 
-// @import "./ulits/norm.css";
+@import "./ulits/norm.css";
 
 //SETTINGS
 @import "./vars/size.scss";
@@ -46,6 +46,7 @@
 @import "./blocks/pvz/pvz.scss";
 @import "./blocks/black-friday/black-friday.scss";
 @import "./blocks/cyber-monday/cyber-monday.scss";
+@import "./blocks/main-about/main-about.scss";
 
 //HOME ELEMENTS
 @import "./blocks/carousel/carousel.scss";
@@ -71,6 +72,7 @@ body {
   font-family: "Excentra Pro", "Times New Roman", Times, serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   color: $b_dark;
   &.no-scroll {
     overflow-y: hidden;
@@ -864,4 +866,28 @@ code {
       cursor: auto;
     }
   }
+}
+
+.card-container__head {
+  .filter-block {
+    margin-bottom: 20px;
+    .filter__point {
+      margin-right: 10px;
+
+      &:last-child {
+        margin-bottom: 10px;
+      }
+    }
+  }
+}
+
+.card-container__desc {
+  font-family: Excentra Pro;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 24px;
+  padding-bottom: 20px;
+  margin-bottom: 40px;
+  border-bottom: 1px #f7f6f7 solid;
 }

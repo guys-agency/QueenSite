@@ -42,6 +42,13 @@ const Actions = observer(
                  */}
 
                 <div className={`head ${+nEl === 0 ? "head_big" : "head_sm head_list"}`}>
+                  {+nEl === 0 && (
+                    <div className="container">
+                      <div className="collections__head">
+                        <h1 className="h1">Акции</h1>
+                      </div>
+                    </div>
+                  )}
                   <Link
                     onClick={() => {
                       this.props.store.dataColl = [data[nEl]];
@@ -54,9 +61,9 @@ const Actions = observer(
                   >
                     <div className="text">
                       <div className="label">Акция</div>
-                      <h1>
+                      <h2 className="h2">
                         {data[nEl].name} <span className="ic i_right"></span>
-                      </h1>
+                      </h2>
                       <p>{data[nEl].description}</p>
                     </div>
                   </Link>

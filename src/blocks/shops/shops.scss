@@ -39,9 +39,12 @@
   }
   .head_big-f {
     margin-bottom: 230px;
-    margin-top: -220px;
-    // height: 570px;
-    padding-top: 230px;
+    margin-top: -320px;
+    height: 650px;
+    padding-top: 330px;
+    @include max($s) {
+      height: 450px;
+    }
   }
   &_map {
     .head-banner {

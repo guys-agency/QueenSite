@@ -153,7 +153,7 @@ const GiftsPage = observer(
           priceCont.push(
             <div className="col col-4 col-t-6 col-s-9" key={p.id}>
               <Link
-                to={`/catalog/podarki/podarki_do_${p.name}_russian_ruble`}
+                to={`/catalog/podarki/podarki-do-${p.name}`}
                 className="banner"
                 style={{
                   backgroundImage: "url(/image/banners/" + p["image-desc-large"] + ")",

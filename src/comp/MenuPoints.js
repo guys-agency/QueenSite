@@ -157,6 +157,8 @@ const MenuPoints = observer(
       e.stopPropagation();
       $(".menu_sub").removeClass("visible");
       $(".menu_mega").toggleClass("visible");
+      // $("body").toggleClass("no-scroll");
+      // $(".sidebar-overlay").toggleClass("active");
     };
 
     toggleHeader = (e) => {
@@ -166,6 +168,7 @@ const MenuPoints = observer(
       $(".menu-point").removeClass("active");
       $(".header__drop").removeClass("visible");
       $(".header__btn").removeClass("active");
+      $("body").removeClass("no-scroll");
 
       $(e.target).parent().find(".header__drop").addClass("visible");
       $(e.target).toggleClass("active");
@@ -180,6 +183,7 @@ const MenuPoints = observer(
       // e.preventDefault();
       if (!this.typeDevice) {
         $(".menu_mega").removeClass("visible");
+        $("body").removeClass("no-scroll");
       }
 
       $(".menu_sub").removeClass("visible");
@@ -203,6 +207,7 @@ const MenuPoints = observer(
       $("body").removeClass("no-scroll");
       $(".navigation").removeClass("visible");
       $(".sidebar-overlay").removeClass("active");
+
       $(".menu-point").removeClass("active");
       $(".header__btn").removeClass("active");
       var mega = $(".menu");
@@ -394,6 +399,7 @@ const MenuPoints = observer(
         if (this.props.store.loaderPercent >= 100) {
           $(".loader-page").addClass("deact");
           this.props.store.loaderPercent = 0;
+          window.prerenderReady = true;
           // $(".loader-page").remove();
           // $("body").addClass("no-scroll");
           // $("body").removeClass("no-scroll");
@@ -484,6 +490,7 @@ const MenuPoints = observer(
             }
 
             this.props.store.menuAccor[elem.slug] = elem.name;
+            this.props.store.catalogSEO[elem.slug] = { ...elem.seo, childs: {} };
 
             elem.childs.sort((prev, next) => {
               if (prev.name.includes(" до ") && next.name.includes(" до ")) {
@@ -501,6 +508,7 @@ const MenuPoints = observer(
 
             elem.childs.forEach((child, iCh) => {
               this.props.store.menuAccor[child.slug] = child.name;
+              this.props.store.catalogSEO[elem.slug].childs[child.slug] = { ...child.seo };
               //убрать tr, так как будут поля с транскрипцией в бд
               if (elem.name === "Подарки" && firstName.includes(child.name)) {
                 first.push(
@@ -546,7 +554,9 @@ const MenuPoints = observer(
               }
               return (
                 <div key={elem.name}>
-                  <h5>{elem.name}</h5>
+                  <NavLink className="menu__title" to={`/catalog/${elem.slug}`} onClick={this.closeNav}>
+                    {elem.name}
+                  </NavLink>
                   <ul>{childsPoints}</ul>
                 </div>
               );
@@ -563,19 +573,21 @@ const MenuPoints = observer(
               menu[0] = menuElem();
             } else if (elem.name === "Сервировка стола") {
               menu[1] = menuElem();
-            } else if (elem.name === "Для приготовления") {
+            } else if (elem.name === "Пикник") {
               menu[2] = menuElem();
-            } else if (elem.name === "Напитки") {
+            } else if (elem.name === "Для приготовления") {
               menu[3] = menuElem();
-            } else if (elem.name === "Кофе и чай") {
+            } else if (elem.name === "Напитки") {
               menu[4] = menuElem();
-            } else if (elem.name === "Аксессуары для стола") {
+            } else if (elem.name === "Кофе и чай") {
               menu[5] = menuElem();
-            } else if (elem.name === "Интерьер") {
+            } else if (elem.name === "Аксессуары для стола") {
               menu[6] = menuElem();
+            } else if (elem.name === "Интерьер") {
+              menu[7] = menuElem();
               this.interier.push(<ul key={elem.name}>{childsPoints}</ul>);
             } else if (elem.name === "Наборы") {
-              menu[7] = menuElem();
+              menu[8] = menuElem();
             } else if (elem.name === "Premium") {
               this.premium.push(<ul key={elem.name}>{childsPoints}</ul>);
             } else if (elem.name === "Подарки") {
@@ -641,9 +653,9 @@ const MenuPoints = observer(
             };
 
             if (this.typeDevice) {
-              menu[8] = (
+              menu[9] = (
                 <span className="menu__drop" key="colors">
-                  <Link className="menu-point">Цвета</Link>
+                  <Link className="menu-point">Цвет</Link>
                   <div className="menu menu_sub">
                     <div className="container container_f">
                       <button
@@ -677,14 +689,14 @@ const MenuPoints = observer(
                 </span>
               );
             } else {
-              menu[8] = (
+              menu[9] = (
                 <div key="colors" className="colors-in-menu">
-                  <h5>Цвета</h5>
+                  <h5>Цвет</h5>
                   <Swiper {...headCar}>
-                    {dataObj.colors.map((el) => {
+                    {dataObj.colors.map((el, i) => {
                       this.props.store.colorsObj[el.slug] = el.name;
                       return (
-                        <div>
+                        <div key={i}>
                           <NavLink to={`/colors/${el.slug}`} onClick={this.closeNav}>
                             {el.name}
                           </NavLink>
@@ -708,7 +720,7 @@ const MenuPoints = observer(
             this.menuContainer = Object.values(menu);
           } else {
             for (let index = 0; index < Object.keys(menu).length; index += 2) {
-              if (index === 2) {
+              if (index === 3 || index === 0) {
                 this.menuContainer.push(
                   <div className="column" key={index}>
                     {menu[index]}
@@ -1198,7 +1210,7 @@ const MenuPoints = observer(
                       </Link>
                     </span>
                   )} */}
-                  {
+                  {/* {
                     <span className="menu__drop">
                       <Link
                         to="/main/kollekciya_posudy_k_pashe"
@@ -1208,7 +1220,7 @@ const MenuPoints = observer(
                         Пасха
                       </Link>
                     </span>
-                  }
+                  } */}
                 </div>
                 <div className="search-pos">
                   <form className="search-wrp">
@@ -1577,7 +1589,7 @@ const MenuPoints = observer(
       );
     }
 
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
       if (!Object.keys(this.props.store.bannersData).length) {
         this.props.store.getCollections();
       }

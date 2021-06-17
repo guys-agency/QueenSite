@@ -60,6 +60,7 @@ const CartPage = observer(
     totalPrice = 0;
     totalNotSalePrice = 0;
     certInCart = 0;
+    priceWithOnline = 0;
 
     orderCancelID = {};
 
@@ -311,7 +312,7 @@ const CartPage = observer(
           .then((d) => {
             // console.log("d :>> ", d);
             if (Object.keys(d).length) {
-              if ((inMSC && this.totalPrice >= 3000) || this.totalPrice === 0 || (!inMSC && this.totalPrice >= 20000)) {
+              if ((inMSC && this.totalPrice >= 3000) || this.totalPrice === 0) {
                 Object.keys(d).forEach((parent) => {
                   d[parent].price = 0;
                 });
@@ -373,7 +374,7 @@ const CartPage = observer(
                   pvz.extra[parent].price = 0;
                 });
               }
-
+              const ttt = new Map();
               pvz.data.forEach((p, i) => {
                 if (!this.mapCoor.length) {
                   this.mapCoor = p["GPS"].split(",");
@@ -401,6 +402,8 @@ const CartPage = observer(
                   timeString.locale("ru");
                   // console.log("delVar[el].msg. :>> ", delVar[el].msg.match(/\d/));
 
+                  ttt.set(p.partner);
+
                   this.pvzDataCont.push({
                     type: "Feature",
                     id: p.partner + " " + i,
@@ -420,6 +423,9 @@ const CartPage = observer(
                     }</p><p class='popover-content__date'>${timeString.format("DD") + "-" + timeString.add(1, "days").format("DD MMMM")}</p></div> 
                     <p class='popover-content__time-name'>Время работы:</p> 
                     <p class='popover-content__time'>${p.workShedule}</p>
+                    <a href='https://queenbohemia.ru/help/delivery' target='_blank' class='popover-content__time'>${
+                      p.partner === "BOXBERRY" ? "Нельзя проверить заказ" : "Можно проверить заказ"
+                    }</a>
                     <button id=${p.id} class='popover-content__btn'>Выбрать</button>
                   `,
                       data: {
@@ -449,6 +455,7 @@ const CartPage = observer(
                 //   ></Placemark>
                 // );
               });
+              console.log("ttt :>> ", ttt);
 
               this.setState({
                 pvzDataCont: this.pvzDataCont.length ? this.pvzDataCont : false,
@@ -813,10 +820,10 @@ const CartPage = observer(
 
           const salePrice = productInCart[el].sale
             ? typeIsPREPAID && certInCart !== el
-              ? Math.floor(productInCart[el].sale_price * 0.98)
+              ? Math.floor(productInCart[el].sale_price * 0.97)
               : productInCart[el].sale_price
             : 0;
-          const regPrice = typeIsPREPAID && certInCart !== el ? Math.floor(productInCart[el].regular_price * 0.98) : productInCart[el].regular_price;
+          const regPrice = typeIsPREPAID && certInCart !== el ? Math.floor(productInCart[el].regular_price * 0.97) : productInCart[el].regular_price;
           this.totalPrice += productInCart[el].sale
             ? productInCartList[el] * salePrice
             : el !== certInCart
@@ -852,8 +859,8 @@ const CartPage = observer(
         this.totalPrice -= useBonus;
       }
 
-      Object.keys(productInCart).forEach((slug) => {
-        productInCart[slug].stores.forEach((str) => {
+      Object.keys(productInCart).forEach((sku) => {
+        productInCart[sku].stores.forEach((str) => {
           // console.log("str.name :>> ", str.name);
           if (str.name !== "ТРЦ OUTLET Белая дача" && str.name !== "ТРЦ Орджоникидзе 11" && this.stores[str.name].aval) {
             if (+str.count > 0) {
@@ -946,11 +953,11 @@ const CartPage = observer(
               Object.keys(productInCart).forEach((el) => {
                 const salePrice = productInCart[el].sale
                   ? typeIsPREPAID && certInCart !== el
-                    ? Math.floor(productInCart[el].sale_price * 0.98)
+                    ? Math.floor(productInCart[el].sale_price * 0.97)
                     : productInCart[el].sale_price
                   : 0;
                 const regPrice =
-                  typeIsPREPAID && certInCart !== el ? Math.floor(productInCart[el].regular_price * 0.98) : productInCart[el].regular_price;
+                  typeIsPREPAID && certInCart !== el ? Math.floor(productInCart[el].regular_price * 0.97) : productInCart[el].regular_price;
                 coupDisc +=
                   Math.ceil(
                     el === certInCart
@@ -1055,6 +1062,10 @@ const CartPage = observer(
 
       this.props.store.totalPrice = this.totalPrice;
 
+      if (!this.priceWithOnline) {
+        this.priceWithOnline = this.totalPrice;
+      }
+
       return (
         <div className="cart-page">
           <div className="sidebar-overlay" onClick={this.cancelPay}></div>
@@ -1073,7 +1084,7 @@ const CartPage = observer(
                 className="btn"
                 onClick={() => {
                   if (this.props.history.length) {
-                    window.history.go(-2);
+                    window.history.go(-1);
                   } else {
                     window.location.replace("/");
                   }
@@ -1121,10 +1132,13 @@ const CartPage = observer(
                         <div className="cart-page__store-info">
                           <p className="cart-page__store-name">
                             Онлайн
-                            <span className="disc_perc">скидка 2%</span>
+                            <span className="disc_perc">скидка 3%</span>
                           </p>
                           <div className="cart-page__store-adress">
                             <p>Банковскими картами Visa, Mastercard, Maestro, Мир, JCB. Apple Pay и Google Pay. Картой рассрочки Халва.</p>
+                            <p className="halva-line">
+                              Халва (10 мес.) <p>от {Math.ceil(this.priceWithOnline * 0.1)} ₽/мес</p>
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -1416,7 +1430,7 @@ const CartPage = observer(
                                             this.setState({
                                               deliveryData: {
                                                 type: "express",
-                                                price: inMSC && this.totalPrice >= 20000 ? 0 : 500,
+                                                price: inMSC && this.totalPrice >= 20000 ? 0 : 400,
                                                 time: 1,
                                               },
                                             });
@@ -1424,7 +1438,7 @@ const CartPage = observer(
                                             this.setState({
                                               deliveryData: {
                                                 type: "express",
-                                                price: inMSC && this.totalPrice >= 20000 ? 0 : 500,
+                                                price: inMSC && this.totalPrice >= 20000 ? 0 : 400,
                                                 time: 2,
                                               },
                                             });
@@ -1432,7 +1446,7 @@ const CartPage = observer(
                                         }}
                                       >
                                         {moment().hour() <= 16 ? "Завтра" : "Послезавтра"} —{" "}
-                                        {inMSC && this.totalPrice >= 20000 ? "бесплатно" : "500 ₽"}{" "}
+                                        {inMSC && this.totalPrice >= 20000 ? "бесплатно" : "400 ₽"}{" "}
                                       </div>
                                     </div>
                                   </div>
@@ -1480,7 +1494,7 @@ const CartPage = observer(
                                                 {inMSC &&
                                                 (this.totalPrice >= 3000 ||
                                                   (Object.keys(productInCart).length === 1 &&
-                                                    productInCart[Object.keys(productInCart)[0]].slug === 5637285331))
+                                                    productInCart[Object.keys(productInCart)[0]].sku === 5637285331))
                                                   ? "Бесплатно"
                                                   : (+delVar[Object.keys(delVar)[0]].price).toLocaleString() + " ₽ "}{" "}
                                               </p>
@@ -1872,7 +1886,7 @@ const CartPage = observer(
                                 : (deliveryData.price + this.totalPrice).toLocaleString()
                               : inMSC &&
                                 (this.totalPrice >= 3000 ||
-                                  (Object.keys(productInCart).length === 1 && productInCart[Object.keys(productInCart)[0]].slug === 5637285331))
+                                  (Object.keys(productInCart).length === 1 && productInCart[Object.keys(productInCart)[0]].sku === 5637285331))
                               ? this.totalPrice.toLocaleString()
                               : deliveryData.deliveryOption === undefined
                               ? (+deliveryData.price + this.totalPrice).toLocaleString()

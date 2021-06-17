@@ -95,7 +95,7 @@ const Search = observer(
           <div className="container">
             <div className="row">
               <div className="col col-12">
-                <h3 className="catalog-title">Поиск</h3>
+                <h1 className="catalog-title h3">Поиск</h1>
               </div>
             </div>
             {this.props.store.productsToRender !== null ? (

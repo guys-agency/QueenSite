@@ -51,7 +51,7 @@ const Color = observer(
           <div className="container">
             <div className="row">
               <div className="col col-12">
-                <h3 className="catalog-title">{colorsObj[this.props.slug]}</h3>
+                <h1 className="catalog-title h3">{colorsObj[this.props.slug]}</h1>
               </div>
             </div>
             <div className="row catalog">

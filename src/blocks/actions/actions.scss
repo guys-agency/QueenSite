@@ -1,9 +1,9 @@
 .actions {
   .head_big {
-    height: 470px;
+    height: 570px;
     margin-bottom: 100px;
     @include max($s) {
-      height: 300px;
+      height: 400px;
     }
   }
   .container_f {
@@ -22,6 +22,15 @@
       margin-right: auto;
       @include max($s) {
         margin-top: 0px;
+      }
+    }
+  }
+  .head {
+    &_in-col {
+      height: 470px;
+      @include max($s) {
+        height: 300px;
+        margin-bottom: 100px;
       }
     }
   }

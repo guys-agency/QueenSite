@@ -21,11 +21,11 @@ const ProductList = observer(
         return;
       } else {
         const newProductInCartList = {};
-        Object.keys(productInCartList).forEach((slug) => {
-          if (slug !== this.props.el) {
-            newProductInCartList[slug] = productInCartList[slug];
+        Object.keys(productInCartList).forEach((sku) => {
+          if (sku !== this.props.el) {
+            newProductInCartList[sku] = productInCartList[sku];
           } else {
-            newProductInCartList[elNew] = productInCartList[slug];
+            newProductInCartList[elNew] = productInCartList[sku];
           }
           this.props.store.productInCartList = newProductInCartList;
         });
@@ -51,7 +51,7 @@ const ProductList = observer(
             remove: {
               products: [
                 {
-                  id: data.slug,
+                  id: data.sku,
                   name: data.name,
                   price: data.price,
                   brand: data.brand,
@@ -78,7 +78,7 @@ const ProductList = observer(
               add: {
                 products: [
                   {
-                    id: data.slug,
+                    id: data.sku,
                     name: data.name,
                     price: data.price,
                     brand: data.brand,
@@ -91,7 +91,7 @@ const ProductList = observer(
 
           window._tmr.push({
             type: "itemView",
-            productid: String(data.slug),
+            productid: String(data.sku),
             pagetype: "cart",
             list: "1",
             totalvalue: String(data.price),
@@ -116,7 +116,7 @@ const ProductList = observer(
             remove: {
               products: [
                 {
-                  id: data.slug,
+                  id: data.sku,
                   name: data.name,
                   price: data.price,
                   brand: data.brand,
@@ -136,7 +136,7 @@ const ProductList = observer(
       let inCart;
 
       if (!cart) {
-        inCart = Object.keys(store.productInCartList).length ? Object.keys(store.productInCartList).indexOf(String(data.slug)) : -1;
+        inCart = Object.keys(store.productInCartList).length ? Object.keys(store.productInCartList).indexOf(String(data.sku)) : -1;
 
         if (data.name === "Электронный подарочный сертификат" && certInCart) {
           inCart = Object.keys(this.props.store.productInCartList).indexOf(certInCart);
@@ -156,7 +156,7 @@ const ProductList = observer(
               </div>
             </div>
             <div className="product__info">
-              <Link className="product__name" to={"/product/" + el}>
+              <Link className="product__name" to={"/product/" + data.slug}>
                 {data.name}
               </Link>
               {data.sale ? (
@@ -299,7 +299,7 @@ const ProductList = observer(
                   className={"ic i_bag" + (inCart === -1 ? "" : " active")}
                   onClick={() => {
                     if (inCart !== -1) {
-                      delete productInCartList[data.slug];
+                      delete productInCartList[data.sku];
                       try {
                         if (process.env.REACT_APP_TYPE === "prod") {
                           window.dataLayer.push({
@@ -307,7 +307,7 @@ const ProductList = observer(
                               remove: {
                                 products: [
                                   {
-                                    id: data.slug,
+                                    id: data.sku,
                                     name: data.name,
                                     price: data.price,
                                     brand: data.brand,
@@ -320,9 +320,9 @@ const ProductList = observer(
                       } catch {}
                     } else {
                       if (itsSert) {
-                        productInCartList[data.slug] = "";
+                        productInCartList[data.sku] = "";
                       } else {
-                        productInCartList[data.slug] = 1;
+                        productInCartList[data.sku] = 1;
                       }
                       try {
                         if (process.env.REACT_APP_TYPE === "prod") {
@@ -331,7 +331,7 @@ const ProductList = observer(
                               add: {
                                 products: [
                                   {
-                                    id: data.slug,
+                                    id: data.sku,
                                     name: data.name,
                                     price: data.price,
                                     brand: data.brand,
@@ -344,7 +344,7 @@ const ProductList = observer(
 
                           window._tmr.push({
                             type: "itemView",
-                            productid: String(data.slug),
+                            productid: String(data.sku),
                             pagetype: "cart",
                             list: "1",
                             totalvalue: String(data.price),

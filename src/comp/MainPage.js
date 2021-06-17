@@ -13,6 +13,7 @@ import api from "./api";
 import { withRouter } from "react-router";
 import SuscribeSchema from "../schemas/suscribeSchema";
 import moment from "moment";
+import HelmetHead from "./common/Helmet";
 import localStorage from "mobx-localstorage";
 
 const { Component } = React;
@@ -194,7 +195,7 @@ const MainPage = observer(
               className="slider-brand"
               key={i}
             >
-              <img src={"/image/brends/" + elem["image-mob-large"]} />
+              <img src={"/image/brends/" + elem["image-mob-large"]} alt="" />
             </Link>
           );
         });
@@ -276,9 +277,9 @@ const MainPage = observer(
                   >
                     <div className="text">
                       <div className="label">Акция</div>
-                      <h1>
+                      <h3 className="h2">
                         {bannersData.sale[0].name} <span className="ic i_right"></span>
-                      </h1>
+                      </h3>
                       <p>{bannersData.sale[0].description}</p>
                     </div>
                   </Link>
@@ -473,9 +474,15 @@ const MainPage = observer(
 
       return (
         <div className="main-page">
+          <HelmetHead
+            title="Queen of Bohemia интернет-магазин посуды"
+            description="Интернет-магазин чешского фарфора и хрусталя Queen of Bohemia в Москве. Большой выбор элитной посуды и товаров для сервировки стола. Доставка по всей России."
+            keywords="queen of bohemia, bohemia, bohemia crystal, богемия, богемское стекло, магазин посуды в Москве"
+          />
+
           {window.location.pathname.includes("/gift/") ? (
             <div className="head head_big gift">
-              <img className="gift__img" src={`/image/items/${this.state.certificate.sum}cert.png`}></img>
+              <img className="gift__img" src={`/image/items/${this.state.certificate.sum}cert.png`} alt=""></img>
               <div className="gift__desc">
                 <p>{this.state.certificate.message}</p>
                 <div className="gift__code-cont">
@@ -671,7 +678,7 @@ const MainPage = observer(
             <div className="container">
               <div className="title">
                 <Link to="/hits">
-                  <h2 className="tilda">
+                  <h2 className="tilda h2">
                     Хиты продаж <button className="btn btn_primary btn_in-main-page">Все хиты</button>
                   </h2>
                 </Link>
@@ -691,7 +698,7 @@ const MainPage = observer(
             <div className="carousel carousel_brand">
               <div className="container">
                 <div className="title">
-                  <h2>Бренды</h2>
+                  <h2 className="h2">Бренды</h2>
                 </div>
 
                 <div className="slider-cont slider-cont_brand">
@@ -707,7 +714,7 @@ const MainPage = observer(
                 <div className="title">
                   {/* <h2 className="tilda">Идеи</h2> */}
                   <Link to="/ideas">
-                    <h2 className="tilda">
+                    <h2 className="tilda h2">
                       Идеи <button className="btn btn_primary btn_in-main-page">Все хиты</button>
                     </h2>
                   </Link>
@@ -717,7 +724,7 @@ const MainPage = observer(
 
               <div className="title ">
                 <p>
-                  <h2 className="tilda dib">Популярные категории</h2>
+                  <h2 className="tilda dib h2">Популярные категории</h2>
                 </p>
               </div>
               <div className="gifts row gifts_price" style={{ marginBottom: "30px" }}>
@@ -745,7 +752,7 @@ const MainPage = observer(
                       <Link className="cat-elem" to="/catalog/napitki/bokaly">
                         Бокалы
                       </Link>
-                      <Link className="cat-elem" to="/catalog/napitki/stopki_i_ryumki">
+                      <Link className="cat-elem" to="/catalog/napitki/stopki-i-ryumki">
                         Стопки и рюмки
                       </Link>
                       <Link className="cat-elem" to="/catalog/napitki/stakany">
@@ -757,7 +764,7 @@ const MainPage = observer(
                       <Link className="cat-elem" to="/catalog/napitki/kuvshiny">
                         Кувшины
                       </Link>
-                      <Link className="cat-elem" to="/catalog/nabory/dlya_viski">
+                      <Link className="cat-elem" to="/catalog/nabory/dlya-viski">
                         Наборы для виски
                       </Link>
                     </div>
@@ -774,19 +781,19 @@ const MainPage = observer(
                       <Link className="cat-elem" to="/catalog/servizy">
                         Сервизы
                       </Link>
-                      <Link className="cat-elem" to="/catalog/servirovka_stola/tarelki">
+                      <Link className="cat-elem" to="/catalog/servirovka-stola/tarelki">
                         Тарелки
                       </Link>
-                      <Link className="cat-elem" to="/catalog/servirovka_stola/blyuda">
+                      <Link className="cat-elem" to="/catalog/servirovka-stola/blyuda">
                         Блюда
                       </Link>
-                      <Link className="cat-elem" to="/catalog/servirovka_stola/salatniki">
+                      <Link className="cat-elem" to="/catalog/servirovka-stola/salatniki">
                         Салатники
                       </Link>
                       <Link className="cat-elem" to="/catalog/interer/podsvechniki">
                         Подсвечники
                       </Link>
-                      <Link className="cat-elem" to="/catalog/nabory/dlya_sushi">
+                      <Link className="cat-elem" to="/catalog/nabory/dlya-sushi">
                         Наборы для суши
                       </Link>
                     </div>
@@ -802,19 +809,19 @@ const MainPage = observer(
                       <Link className="cat-elem" to="/catalog/servizy/chajnye">
                         Чайные сервизы
                       </Link>
-                      <Link className="cat-elem" to="/catalog/kofe_i_chaj/chajniki">
+                      <Link className="cat-elem" to="/catalog/kofe-i-chaj/chajniki">
                         Чайники
                       </Link>
-                      <Link className="cat-elem" to="/catalog/kofe_i_chaj/chajnaya_para">
+                      <Link className="cat-elem" to="/catalog/kofe-i-chaj/chajnaya-para">
                         Чайная пара
                       </Link>
-                      <Link className="cat-elem" to="/catalog/kofe_i_chaj/kofejnaya_para">
+                      <Link className="cat-elem" to="/catalog/kofe-i-chaj/kofejnaya-para">
                         Кофейная пара
                       </Link>
-                      <Link className="cat-elem" to="/catalog/kofe_i_chaj/chashki_i_blyudca">
+                      <Link className="cat-elem" to="/catalog/kofe-i-chaj/chashki-i-blyudca">
                         Чашки и блюдца
                       </Link>
-                      <Link className="cat-elem" to="/catalog/kofe_i_chaj/kruzhki">
+                      <Link className="cat-elem" to="/catalog/kofe-i-chaj/kruzhki">
                         Кружки
                       </Link>
                     </div>
@@ -874,31 +881,19 @@ const MainPage = observer(
               </div> */}
               <div className="title">
                 <Link to="/gifts">
-                  <h2 className="dib">
+                  <h2 className="dib h2">
                     Подарки <button className="btn btn_primary btn_in-main-page">Все подарки</button>
                   </h2>
                 </Link>
               </div>
               <div className="gifts row gifts_price ">
                 <Swiper {...giftCar}>
-                  {/* <div className="col col-4 col-t-6 col-s-9">
-                    <Link
-                      to="/catalog/podarki/uchitelyam"
-                      className="banner banner_overlay"
-                      style={{
-                        backgroundImage:
-                          "url(" + "/image/gifts/dayTeaMainPage.jpg" + ")",
-                      }}
-                    >
-                      <div className="banner__desc">Для учителей</div>
-                    </Link>
-                  </div> */}
                   <div className="col col-4 col-t-6 col-s-9">
                     <Link
                       to="catalog/podarki/sertificats"
                       className="banner"
                       style={{
-                        backgroundImage: "url(" + "/image/gifts/certMainPage.png" + ")",
+                        backgroundImage: "url(/image/gifts/certMainPage.png)",
                       }}
                     >
                       <div className="banner__desc">Сертификаты</div>
@@ -906,34 +901,33 @@ const MainPage = observer(
                   </div>
                   <div className="col col-4 col-t-6 col-s-9">
                     <Link
-                      to="/catalog/podarki/podarki_do_500_russian_ruble"
+                      to="/catalog/podarki/podarki-do-1000-russian-ruble"
                       className="banner"
                       style={{
-                        backgroundImage: "url(" + "/image/gifts/1.png" + ")",
-                      }}
-                    >
-                      <div className="banner__desc">До 500₽</div>
-                    </Link>
-                  </div>
-
-                  <div className="col col-4 col-t-6 col-s-9">
-                    <Link
-                      to="/catalog/podarki/podarki_do_1000_russian_ruble"
-                      className="banner"
-                      style={{
-                        backgroundImage: "url(" + "/image/gifts/2.png" + ")",
+                        backgroundImage: "url(/image/gifts/1.png)",
                       }}
                     >
                       <div className="banner__desc">До 1 000₽</div>
                     </Link>
                   </div>
+                  <div className="col col-4 col-t-6 col-s-9">
+                    <Link
+                      to="/catalog/podarki/podarki-do-1000-russian-ruble"
+                      className="banner"
+                      style={{
+                        backgroundImage: "url(/image/gifts/2.png)",
+                      }}
+                    >
+                      <div className="banner__desc">До 1 500₽</div>
+                    </Link>
+                  </div>
 
                   <div className="col col-4 col-t-6 col-s-9">
                     <Link
-                      to="/catalog/podarki/podarki_do_2000_russian_ruble"
+                      to="/catalog/podarki/podarki-do-2000-russian-ruble"
                       className="banner"
                       style={{
-                        backgroundImage: "url(" + "/image/gifts/3.png" + ")",
+                        backgroundImage: "url(/image/gifts/3.png)",
                       }}
                     >
                       <div className="banner__desc">До 2 000₽</div>
@@ -949,7 +943,7 @@ const MainPage = observer(
               <div className="container">
                 <div className="title">
                   <Link to="/new">
-                    <h2 className="tilda">
+                    <h2 className="tilda h2">
                       Новинки <button className="btn btn_primary btn_in-main-page">Все новинки</button>
                     </h2>
                   </Link>
@@ -968,7 +962,7 @@ const MainPage = observer(
             <div className="container">
               <div className="title">
                 <Link to="/collections">
-                  <h2 className="dib">
+                  <h2 className="dib h2">
                     Новые коллекции <button className="btn btn_primary btn_in-main-page">Все коллекции</button>
                   </h2>
                 </Link>
@@ -1048,6 +1042,32 @@ const MainPage = observer(
               </div>
             </div>
           </div> */}
+          <div className="main-about">
+            <div className="container">
+              <div className="row">
+                <div className="col col-6 col-s-12 col-middle main-about__text">
+                  <h1 className="h2">Queen of Bohemia</h1>
+                  <p>
+                    Queen of Bohemia — сеть магазинов оригинальной Богемии. Мы предлагаем большой выбор посуды и подарков из богемского стекла,
+                    хрусталя и фарфора нашим покупателям с 1993 года.
+                    <br />
+                    <br /> Знаем всё о знаменитом богемской стекле, хрустале и карловарском фарфоре и предложим нашему покупателю только лучшее!
+                  </p>
+                </div>
+                <div className="col col-6 col-s-12 col-middle main-about__logo">
+                  <div className="about__logo">
+                    <span className="i_qf"></span>
+                    <span className="logo logo_sq">
+                      <span className="i_queen"></span>
+                      <span className="i_of"></span>
+                      <span className="i_line-h"></span>
+                      <span className="i_bohemia"></span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
           <div className="subscribe">
             <div className="container">
               <div className="row">
@@ -1149,7 +1169,7 @@ const MainPage = observer(
             <div
               className="subscribe__img"
               style={{
-                backgroundImage: "url(" + "/image/subs/1.jpg" + ")",
+                backgroundImage: "url(/image/subs/1.jpg)",
               }}
             ></div>
           </div>

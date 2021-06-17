@@ -1,0 +1,55 @@
+.main-about {
+  background-image: url("/image/mainAboutBack.png");
+  background-size: 100% 100%;
+  max-width: 1300px;
+  margin-right: auto;
+  margin-left: auto;
+  padding: 50px 0px;
+  border: 2px solid #f7f6f7;
+  border-radius: 5px;
+  @include max($d) {
+    margin-right: 10px;
+    margin-left: 10px;
+  }
+  @include max($s) {
+    background-image: url("/image/mainAboutBack-m.png");
+    &__text {
+      order: 2;
+    }
+
+    &__logo {
+      order: 1;
+      margin-bottom: 40px;
+    }
+  }
+
+  .about__logo {
+    width: auto;
+    justify-content: center;
+    align-items: center;
+    @include max(430px) {
+      justify-content: flex-start;
+    }
+    .i_qf {
+      font-size: 150px;
+      @include max($s) {
+        font-size: 150px;
+      }
+      @include max(376px) {
+        font-size: 130px;
+      }
+    }
+    .logo_sq {
+      transform: scale(1.5);
+      margin-left: 80px;
+      @include max($s) {
+        transform: scale(1.5);
+        margin-left: 70px;
+      }
+      @include max(376px) {
+        transform: scale(1.2);
+        margin-left: 50px;
+      }
+    }
+  }
+}
