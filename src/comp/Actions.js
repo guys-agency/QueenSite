@@ -22,9 +22,7 @@ const Actions = observer(
     }
 
     componentDidMount() {
-      const typeDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-        navigator.userAgent
-      );
+      const typeDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
       api
         .getActions()
         .then((data) => {
@@ -43,40 +41,36 @@ const Actions = observer(
                  * ! У первой акции .head_big нет .head_list как у последующих
                  */}
 
-                <div
-                  className={`head ${
-                    +nEl === 0 ? "head_big" : "head_sm head_list"
-                  }`}
-                >
+                <div className={`head ${+nEl === 0 ? "head_big" : "head_sm head_list"}`}>
+                  {+nEl === 0 && (
+                    <div className="container">
+                      <div className="collections__head">
+                        <h1 className="h1">Акции</h1>
+                      </div>
+                    </div>
+                  )}
                   <Link
                     onClick={() => {
                       this.props.store.dataColl = [data[nEl]];
                     }}
-                    to={"actions/" + data[nEl].slug}
+                    to={"/actions/" + data[nEl].slug}
                     className="head-banner head-banner_action"
                     style={{
-                      backgroundImage: `url(/image/banners/${
-                        typeDevice
-                          ? data[nEl]["image-mob-large"]
-                          : data[nEl]["image-desc-large"]
-                      })`,
+                      backgroundImage: `url(/image/banners/${typeDevice ? data[nEl]["image-mob-large"] : data[nEl]["image-desc-large"]})`,
                     }}
                   >
                     <div className="text">
                       <div className="label">Акция</div>
-                      <h1>
+                      <h2 className="h2">
                         {data[nEl].name} <span className="ic i_right"></span>
-                      </h1>
+                      </h2>
                       <p>{data[nEl].description}</p>
                     </div>
                   </Link>
                 </div>
                 <div className="container container_f">
                   <div className="row">{prod}</div>
-                  <Link
-                    to={"actions/" + data[nEl].slug}
-                    className="btn btn_primary"
-                  >
+                  <Link to={"/actions/" + data[nEl].slug} className="btn btn_primary">
                     Посмотреть еще
                   </Link>
                 </div>

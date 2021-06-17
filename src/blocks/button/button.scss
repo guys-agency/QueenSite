@@ -41,6 +41,23 @@ button {
     font-weight: 500;
   }
 
+  &_utensil-set {
+    order: 2;
+    display: inline-flex;
+    align-self: flex-start;
+    margin-top: 20px;
+    font-weight: normal;
+
+    .i_drop {
+      transform: rotate(-90deg);
+
+      &::before {
+        right: 1px;
+        top: 10px;
+      }
+    }
+  }
+
   &_dis {
     pointer-events: none;
     background: #ffffff;
@@ -50,6 +67,16 @@ button {
     &:hover {
       box-shadow: none;
     }
+  }
+
+  &_in-main-page {
+    position: relative;
+    top: -5.5px;
+    margin-left: 25px;
+    margin-top: 0px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    margin-bottom: 7px;
   }
 
   &.close {
@@ -113,12 +140,29 @@ button {
     top: 1px;
   }
 
+  &.deactive {
+    pointer-events: none;
+
+    &::after {
+      content: ".";
+      animation: loading 1s ease alternate infinite;
+    }
+
+    &:hover {
+      box-shadow: none;
+      transform: none;
+      opacity: 1;
+    }
+  }
+
   &.error {
+    pointer-events: none;
     color: white;
     background-color: $red;
     border-color: $red;
   }
   &.success {
+    pointer-events: none;
     color: white;
     background-color: $green;
     border-color: $green;
@@ -189,7 +233,7 @@ button {
       opacity: 1;
     }
     &::before {
-      opacity: 0;
+      opacity: 1;
     }
   }
 }

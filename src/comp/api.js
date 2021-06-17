@@ -6,6 +6,7 @@ class Api {
   regist(data) {
     return fetch(SERVER_URL + "/registration", {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
@@ -187,6 +188,38 @@ class Api {
     });
   }
 
+  cancelOrder(data) {
+    return fetch(SERVER_URL + "/cancel-order", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }).then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      Promise.reject(res.json());
+    });
+  }
+
+  getPVZ(data) {
+    return fetch(SERVER_URL + "/pvz-data", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }).then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      Promise.reject(res.json());
+    });
+  }
+
   getAllCollections() {
     return fetch(SERVER_URL + "/collections", {
       method: "GET",
@@ -328,6 +361,21 @@ class Api {
     });
   }
 
+  getRepaid(id) {
+    return fetch(SERVER_URL + "/repaid/" + id, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      Promise.reject(res.json());
+    });
+  }
+
   sendQestion(data) {
     return fetch(SERVER_URL + "/question", {
       method: "POST",
@@ -349,6 +397,54 @@ class Api {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
+    }).then((res) => {
+      return res.json();
+    });
+  }
+
+  getHits() {
+    return fetch(SERVER_URL + "/hits", {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((res) => {
+      return res.json();
+    });
+  }
+
+  addSubs(email) {
+    return fetch(SERVER_URL + "/add-subs", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(email),
+    }).then((res) => {
+      return res.json();
+    });
+  }
+
+  checkBFreg(key) {
+    return fetch(SERVER_URL + "/bfcheck/" + key, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((res) => {
+      return res.json();
+    });
+  }
+  logoutbf() {
+    return fetch(SERVER_URL + "/logoutbf", {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
     }).then((res) => {
       return res.json();
     });

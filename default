@@ -1,0 +1,351 @@
+server {
+
+        server_name api.queenbohemia.ru www.api.queenbohemia.ru;
+
+    location / {
+
+        proxy_pass http://localhost:3010;
+        proxy_http_version 1.1;
+	proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/queenbohemia.com/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/queenbohemia.com/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+
+
+
+
+
+
+
+
+
+
+
+}
+
+server {
+ 
+        server_name api-dev.queenbohemia.ru;
+
+    location / {
+        proxy_pass http://localhost:3050;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/dev.queenbohemia.ru/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/dev.queenbohemia.ru/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+}
+
+
+server {
+
+        server_name wp.queenbohemia.ru www.wp.queenbohemia.ru;
+	
+	root /var/www/QWord/;
+
+
+ 
+    # Additional rules go here.
+ 
+    # Only include one of the files below.
+   
+	
+index index.php;
+ 
+    location / {
+try_files $uri $uri/ /index.php?q=$uri&$args;
+    }
+
+location /wp-json/ {
+
+    try_files $uri $uri/ /index.php?$args;
+}
+ 
+    location ~ \.php$ {
+include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/run/php/php7.2-fpm.sock;
+    }
+ 
+    #WPMU Files
+
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/queenbohemia.com/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/queenbohemia.com/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+
+
+
+
+
+
+
+
+
+
+
+}
+
+
+
+server {
+
+        server_name queenbohemia.ru www.queenbohemia.ru;
+	
+	gzip_static on;
+    gzip_disable "msie6";
+
+    gzip_vary on;
+    gzip_proxied any;
+    gzip_comp_level 6;
+    gzip_buffers 16 8k;
+    gzip_http_version 1.1;
+    gzip_min_length 0;
+    gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript application/vnd.ms-fontobject application/x-font-ttf font/opentype;
+
+	root /var/www/QFront/;
+
+	
+	
+	location / {
+	
+	try_files $uri $uri/ /index.html;
+    }
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/queenbohemia.com/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/queenbohemia.com/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed byy Certbot
+
+
+}
+
+
+server {
+
+
+        server_name dev1.queenbohemia.ru www.dev1.queenbohemia.ru;
+
+        gzip_static on;
+    gzip_disable "msie6";
+
+    gzip_vary on;
+    gzip_proxied any;
+    gzip_comp_level 6;
+    gzip_buffers 16 8k;
+    gzip_http_version 1.1;
+    gzip_min_length 0;
+    gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript application/vnd.ms-fontobject application/x-font-ttf font/opentype;
+
+        root /var/www/QDev/QDevFront/;
+
+   
+location / {
+	
+	try_files $uri $uri/ /index.html;
+    }
+
+
+    
+
+
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/queenbohemia.com/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/queenbohemia.com/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+
+
+}
+
+
+
+
+server {
+    if ($host = www.api.queenbohemia.ru) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    if ($host = api.queenbohemia.ru) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+        listen 80;
+
+        server_name api.queenbohemia.ru www.api.queenbohemia.ru;
+    return 404; # managed by Certbot
+
+
+
+
+}
+
+server {
+    if ($host = www.wp.queenbohemia.ru) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    if ($host = wp.queenbohemia.ru) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+        listen 80;
+
+        server_name wp.queenbohemia.ru www.wp.queenbohemia.ru;
+    return 404; # managed by Certbot
+
+
+
+
+}
+server {
+    if ($host = www.queenofbogemia.ru) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    if ($host = queenofbogemia.ru) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+if ($host = queenbogemia.ru) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+if ($host = www.queenbogemia.ru) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+        listen 80;
+
+        server_name queenbogemia.ru www.queenbogemia.ru queenofbogemia.ru www.queenofbogemia.ru;
+    return 404; # managed by Certbot
+
+
+
+
+}
+
+server {
+    if ($host = www.queenofbohemia.ru) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    if ($host = queenofbohemia.ru) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+if ($host = queenbohemia.ru) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+if ($host = www.queenbohemia.ru) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+        listen 80;
+
+        server_name queenbohemia.ru www.queenbohemia.ru queenofbohemia.ru www.queenofbohemia.ru;
+    return 404; # managed by Certbot
+
+
+
+
+}
+
+
+
+server {
+   
+    server_name queenbohemia.ru www.queenbohemia.ru queenbohemia.com www.queenbohemia.com queenofbohemia.ru www.queenofbohemia.ru  queenofbogemia.ru www.queenofbogemia.ru queenbogemia.ru www.queenbogemia.ru;
+    rewrite ^/(.*)$ https://queenbohemia.ru/$1 permanent;
+   
+
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/queenbohemia.com/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/queenbohemia.com/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+
+
+
+
+
+
+
+
+
+}
+
+
+
+
+server {
+    if ($host = api-dev.queenbohemia.ru) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+ 
+        server_name api-dev.queenbohemia.ru;
+    listen 80;
+    return 404; # managed by Certbot
+
+
+}
+
+
+
+server {
+    if ($host = www.dev1.queenbohemia.ru) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    if ($host = dev1.queenbohemia.ru) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+
+
+        server_name dev1.queenbohemia.ru www.dev1.queenbohemia.ru;
+    listen 80;
+    return 404; # managed by Certbot
+
+
+
+
+}

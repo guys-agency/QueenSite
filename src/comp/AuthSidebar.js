@@ -6,6 +6,9 @@ import RegistrationSchema from "../schemas/registrationSchema";
 import $ from "jquery";
 import LoginSchema from "../schemas/loginSchema";
 import RestoreSchema from "../schemas/restoreSchema";
+import { Link } from "react-router-dom";
+import localStorage from "mobx-localstorage";
+import { withRouter } from "react-router";
 
 const { Component } = React;
 
@@ -51,8 +54,8 @@ const AuthSidebar = observer(
             <div className="discond-fix_sidebar">
               <img src="/image/button/icon/gift.svg"></img>
               <p>
-                <b>Скидка 10%</b> на первую покупку.
-                <br /> Промокод придет на почту
+                <b>Скидка 10%</b> на первую покупку
+                <br /> <b>+ 200</b> бонусных баллов
               </p>
             </div>
           )}
@@ -74,6 +77,7 @@ const AuthSidebar = observer(
                     password: values.password,
                   })
                   .then((data) => {
+                    console.log("data :>> ", data);
                     if (data.status === 400) {
                       $("#loginBtn").text(data.message);
 
@@ -84,6 +88,14 @@ const AuthSidebar = observer(
                         $("#loginBtn").text("Войти");
                       }, 3000);
                     } else {
+                      // console.log("213 :>> ", 213);
+                      localStorage.setItem("auth", true);
+                      if (data.bfcheck === "ok") {
+                        localStorage.setItem("CMcheck", true);
+                      }
+                      if (!window.location.pathname.includes("/cart")) {
+                        window.location.assign("/profile");
+                      }
                       this.props.store.auth = true;
                       const lc = this.props.store.likeContainer;
                       data.likeProducts.forEach((prod) => {
@@ -109,9 +121,7 @@ const AuthSidebar = observer(
                       // this.props.store.addtoCart(true);
                       this.props.store.sideAsk = false;
                       this.props.store.sideLogin = false;
-                      document
-                        .querySelector(".sidebar-overlay")
-                        .classList.remove("active");
+                      document.querySelector(".sidebar-overlay").classList.remove("active");
                       $("body").removeClass("no-scroll");
                       $(".navigation").removeClass("visible");
                     }
@@ -122,14 +132,7 @@ const AuthSidebar = observer(
               //touched-поля формы, которые мы "затронули",
               //то есть, в которых что-то ввели
             >
-              {({
-                errors,
-                touched,
-                handleSubmit,
-                isSubmitting,
-                values,
-                handleChange,
-              }) => (
+              {({ errors, touched, handleSubmit, isSubmitting, values, handleChange }) => (
                 <>
                   <form className=" visible" onSubmit={handleSubmit}>
                     <div className="input-field">
@@ -139,7 +142,8 @@ const AuthSidebar = observer(
                       <input
                         id="email"
                         name="email"
-                        type="text"
+                        type="email"
+                        autocomplete="email"
                         onFocus={this.focusHandler}
                         onBlur={this.blurHandler}
                         value={values.email}
@@ -157,20 +161,15 @@ const AuthSidebar = observer(
                         name="password"
                         type="password"
                         id="password"
+                        autocomplete="current-password"
                         onFocus={this.focusHandler}
                         onBlur={this.blurHandler}
                         value={values.password}
                         onChange={handleChange}
                       />
-                      {errors.password && touched.password && (
-                        <div className="field-error">{errors.password}</div>
-                      )}
+                      {errors.password && touched.password && <div className="field-error">{errors.password}</div>}
                     </div>
-                    <button
-                      type="submit"
-                      className="btn btn_primary"
-                      id="loginBtn"
-                    >
+                    <button type="submit" className="btn btn_primary" id="loginBtn">
                       Войти
                     </button>
                   </form>
@@ -221,14 +220,7 @@ const AuthSidebar = observer(
               //touched-поля формы, которые мы "затронули",
               //то есть, в которых что-то ввели
             >
-              {({
-                errors,
-                touched,
-                handleSubmit,
-                isSubmitting,
-                values,
-                handleChange,
-              }) => (
+              {({ errors, touched, handleSubmit, isSubmitting, values, handleChange }) => (
                 <>
                   <form className=" visible" action="" onSubmit={handleSubmit}>
                     <div className="input-field">
@@ -238,7 +230,8 @@ const AuthSidebar = observer(
                       <input
                         id="email"
                         name="email"
-                        type="text"
+                        type="email"
+                        autocomplete="email"
                         onFocus={this.focusHandler}
                         onBlur={this.blurHandler}
                         value={values.email}
@@ -248,11 +241,7 @@ const AuthSidebar = observer(
                       <div className="field-error">{errors.email}</div>
                     </div>
 
-                    <button
-                      type="submit"
-                      className="btn btn_primary"
-                      id="restorePass"
-                    >
+                    <button type="submit" className="btn btn_primary" id="restorePass">
                       Восстановить пароль
                     </button>
                   </form>
@@ -340,7 +329,7 @@ const AuthSidebar = observer(
               //инициализируем значения input-ов
               initialValues={{
                 email: "",
-                username: "",
+                name: "",
                 password: "",
                 repassword: "",
                 acceptedTerms: true,
@@ -351,7 +340,7 @@ const AuthSidebar = observer(
               onSubmit={(values, { setSubmitting }) => {
                 api
                   .regist({
-                    name: values.username,
+                    name: values.name,
                     email: values.email.toLowerCase(),
                     password: values.password,
                   })
@@ -359,8 +348,16 @@ const AuthSidebar = observer(
                     $("#registrBtn").text(ok.message);
                     if (ok.status === 201) {
                       $("#registrBtn").addClass("success");
+                      localStorage.setItem("auth", true);
+                      if (ok.bfcheck === "ok") {
+                        localStorage.setItem("CMcheck", true);
+                      }
+                      if (!window.location.pathname.includes("/cart")) {
+                        window.location.assign("/profile");
+                      }
                       this.props.store.auth = true;
                       const lc = this.props.store.likeContainer;
+                      // window.location.assign("/profile");
                       ok.data.likeProducts.forEach((prod) => {
                         if (!this.props.store.likeContainer.includes(prod)) {
                           lc.push(prod);
@@ -384,11 +381,10 @@ const AuthSidebar = observer(
                       // this.props.store.addtoCart(true);
                       this.props.store.sideAsk = false;
                       this.props.store.sideLogin = false;
-                      document
-                        .querySelector(".sidebar-overlay")
-                        .classList.remove("active");
+                      document.querySelector(".sidebar-overlay").classList.remove("active");
                       $("body").removeClass("no-scroll");
                       $(".navigation").removeClass("visible");
+                      // window.location.assign("/profile");
                     } else {
                       $("#registrBtn").addClass("error");
                     }
@@ -407,14 +403,7 @@ const AuthSidebar = observer(
               //touched-поля формы, которые мы "затронули",
               //то есть, в которых что-то ввели
             >
-              {({
-                errors,
-                touched,
-                handleSubmit,
-                isSubmitting,
-                values,
-                handleChange,
-              }) => (
+              {({ errors, touched, handleSubmit, isSubmitting, values, handleChange }) => (
                 <form className=" visible" onSubmit={handleSubmit}>
                   <div className="input-field">
                     <label className="required" htmlFor="name">
@@ -422,8 +411,9 @@ const AuthSidebar = observer(
                     </label>
                     <input
                       id="name"
-                      name="username"
+                      name="name"
                       type="text"
+                      autocomplete="name"
                       onFocus={this.focusHandler}
                       onBlur={this.blurHandler}
                       value={values.username}
@@ -439,7 +429,8 @@ const AuthSidebar = observer(
                     <input
                       id="email"
                       name="email"
-                      type="text"
+                      type="email"
+                      autocomplete="email"
                       onFocus={this.focusHandler}
                       onBlur={this.blurHandler}
                       value={values.email}
@@ -456,6 +447,7 @@ const AuthSidebar = observer(
                       id="password"
                       name="password"
                       type="password"
+                      autocomplete="new-password"
                       onFocus={this.focusHandler}
                       onBlur={this.blurHandler}
                       value={values.password}
@@ -472,6 +464,7 @@ const AuthSidebar = observer(
                       id="password_confirm"
                       type="password"
                       name="repassword"
+                      autocomplete="new-password"
                       onFocus={this.focusHandler}
                       onBlur={this.blurHandler}
                       value={values.repassword}
@@ -479,11 +472,7 @@ const AuthSidebar = observer(
                     />
                     <div className="field-error">{errors.repassword}</div>
                   </div>
-                  <button
-                    className="btn btn_primary"
-                    type="submit"
-                    id="registrBtn"
-                  >
+                  <button className="btn btn_primary" type="submit" id="registrBtn">
                     Регистрация
                   </button>
                   <label className="checkbox checkbox_margin">
@@ -497,11 +486,14 @@ const AuthSidebar = observer(
                     />
                     <span className="checkbox-btn"></span>
                     <i>
-                      Согласен с условиями "
-                      <a className="underline" href="">
-                        Публичной оферты
-                      </a>
-                      "
+                      Согласен с{" "}
+                      <Link className="underline" to="/help/offer">
+                        "Публичной офертой"
+                      </Link>{" "}
+                      и{" "}
+                      <Link className="underline" to="/help/cppd">
+                        "Обработкой персональных данных"
+                      </Link>
                     </i>
                   </label>
                 </form>
@@ -511,7 +503,15 @@ const AuthSidebar = observer(
         </>
       );
     }
+
+    componentWillMount() {
+      if (window.location.pathname.includes("login")) {
+        this.setState({ reg: false, log: true, pass: false });
+      } else if (window.location.pathname.includes("password")) {
+        this.setState({ reg: false, log: false, pass: true });
+      }
+    }
   }
 );
 
-export default AuthSidebar;
+export default withRouter(AuthSidebar);

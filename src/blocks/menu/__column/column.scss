@@ -1,57 +1,58 @@
-    .column{
-        margin-right: 120px;
-        min-width: 200px;
-        transition: all 0.2s;
-        @include max(1210px){
-            margin-right: 60px;
-        }
-        @include max(1000px){
-            margin-right: 40px;
-            min-width: initial;
-        }
-        &:last-child{
-            margin-right: 0;
-        }
-        &>div{
-            @include max($s){
-                margin-top: 40px;
-            }
-            &:nth-child(2n){
-                margin-top: 40px;
-            }
-        }
-        h5{
-            margin-bottom: 0;
-        }
-        ul{
-            margin-top: 0;
-            list-style: none;
-            padding-left: 0;
-            li{
-                a{
-                    font-size: 16px;
-                    display: block;
-                    padding: {
-                        top: 6px;
-                        bottom: 6px;
-                    };
-                     &::after{
-                        @include icon;
-                        content: $i_right;
-                        font-size: 14px;
-                        position: relative;
-                        top: 2px;
-                        margin-left: 4px;
-                        opacity: 0;
-                        transition: opacity 0.2s;
-                    }
-                    &:hover{
-                        transform: translateX(5px);
-                        &::after{
-                            opacity: 1;
-                        }
-                    }
-                }
-            }
-        }
+.column {
+  margin-right: 120px;
+  min-width: 200px;
+  transition: all 0.2s;
+  @include max(1210px) {
+    margin-right: 60px;
+  }
+  @include max(1000px) {
+    margin-right: 40px;
+    min-width: initial;
+  }
+  &:last-child {
+    margin-right: 0;
+  }
+  & > div {
+    margin-top: 40px;
+    @include max($s) {
+      margin-top: 40px;
     }
+    &:first-child {
+      margin-top: 0px;
+    }
+  }
+  h5 {
+    margin-bottom: 0;
+  }
+  ul {
+    margin-top: 0;
+    list-style: none;
+    padding-left: 0;
+    li {
+      a {
+        font-size: 16px;
+        display: block;
+        padding: {
+          top: 6px;
+          bottom: 6px;
+        }
+        &::after {
+          @include icon;
+          content: $i_right;
+          font-size: 14px;
+          position: relative;
+          top: 2px;
+          margin-left: 4px;
+          opacity: 0;
+          transition: opacity 0.2s;
+        }
+        &:hover {
+          transform: translateX(5px);
+          &::after {
+            opacity: 1;
+          }
+        }
+      }
+    }
+  }
+}

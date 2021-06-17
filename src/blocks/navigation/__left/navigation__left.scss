@@ -24,6 +24,7 @@
   }
   > .btn-menu {
     margin-right: 20px;
+    margin-top: 0px;
     @include max($t) {
       margin-right: 15px;
       font-size: 0;
@@ -68,36 +69,6 @@
     }
   }
 
-  .menu-point {
-    font-family: Excentra Pro;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 16px;
-    line-height: 16px;
-    margin-right: 20px;
-    /* identical to box height */
-    @include max($t) {
-      font-size: 14px;
-      margin-right: 15px;
-    }
-    @include max($s) {
-      font-size: 16px;
-      display: block;
-      padding-top: 30px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid $gr_light;
-      margin-right: 0;
-      position: relative;
-      &::after {
-        @include icon;
-        content: $i_right;
-        font-size: 16px;
-        position: absolute;
-        right: 10px;
-        bottom: 13px;
-      }
-    }
-  }
   .menu__drop,
   .menu__sub {
     @include max($s) {
@@ -115,5 +86,38 @@
 
     /* Blue/Dark */
     color: $b_dark;
+    margin-right: 0px;
+  }
+}
+
+.menu-point {
+  font-family: Excentra Pro;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 16px;
+  margin-right: 15px;
+  /* identical to box height */
+
+  @include max($t) {
+    font-size: 14px;
+    margin-right: 15px;
+  }
+  @include max($s) {
+    font-size: 16px;
+    display: block;
+    padding-top: 30px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid $gr_light;
+    margin-right: 0;
+    position: relative;
+    &::after {
+      @include icon;
+      content: $i_right;
+      font-size: 16px;
+      position: absolute;
+      right: 10px;
+      bottom: 13px;
+    }
   }
 }

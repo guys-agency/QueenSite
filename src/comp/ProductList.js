@@ -4,7 +4,7 @@ import Fade from "react-reveal/Fade";
 import $ from "jquery";
 import api from "./api";
 
-import { Link, NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const { Component } = React;
 
@@ -21,11 +21,11 @@ const ProductList = observer(
         return;
       } else {
         const newProductInCartList = {};
-        Object.keys(productInCartList).forEach((slug) => {
-          if (slug !== this.props.el) {
-            newProductInCartList[slug] = productInCartList[slug];
+        Object.keys(productInCartList).forEach((sku) => {
+          if (sku !== this.props.el) {
+            newProductInCartList[sku] = productInCartList[sku];
           } else {
-            newProductInCartList[elNew] = productInCartList[slug];
+            newProductInCartList[elNew] = productInCartList[sku];
           }
           this.props.store.productInCartList = newProductInCartList;
         });
@@ -40,6 +40,9 @@ const ProductList = observer(
         delete productInCart[el];
         delete productInCartList[el];
         addtoCart(true);
+        if (this.props.clearDeliveryData) {
+          this.props.clearDeliveryData();
+        }
       }, 500);
       this.setState({ show: false });
       if (process.env.REACT_APP_TYPE === "prod") {
@@ -48,7 +51,7 @@ const ProductList = observer(
             remove: {
               products: [
                 {
-                  id: data.slug,
+                  id: data.sku,
                   name: data.name,
                   price: data.price,
                   brand: data.brand,
@@ -65,25 +68,37 @@ const ProductList = observer(
       const { data } = this.props;
       productInCartList[el] += 1;
       addtoCart(false);
-      if (process.env.REACT_APP_TYPE === "prod") {
-        window.dataLayer.push({
-          ecommerce: {
-            add: {
-              products: [
-                {
-                  id: data.slug,
-                  name: data.name,
-                  price: data.price,
-                  brand: data.brand,
-                  quantity: 1,
-                },
-              ],
-            },
-          },
-        });
-      }
       if (this.props.clearDeliveryData) {
         this.props.clearDeliveryData();
+      }
+      if (process.env.REACT_APP_TYPE === "prod") {
+        try {
+          window.dataLayer.push({
+            ecommerce: {
+              add: {
+                products: [
+                  {
+                    id: data.sku,
+                    name: data.name,
+                    price: data.price,
+                    brand: data.brand,
+                    quantity: 1,
+                  },
+                ],
+              },
+            },
+          });
+
+          window._tmr.push({
+            type: "itemView",
+            productid: String(data.sku),
+            pagetype: "cart",
+            list: "1",
+            totalvalue: String(data.price),
+          });
+        } catch (err) {
+          console.log("err :>> ", err);
+        }
       }
     };
 
@@ -92,13 +107,16 @@ const ProductList = observer(
       const { data } = this.props;
       productInCartList[el] -= 1;
       addtoCart(false);
+      if (this.props.clearDeliveryData) {
+        this.props.clearDeliveryData();
+      }
       if (process.env.REACT_APP_TYPE === "prod") {
         window.dataLayer.push({
           ecommerce: {
             remove: {
               products: [
                 {
-                  id: data.slug,
+                  id: data.sku,
                   name: data.name,
                   price: data.price,
                   brand: data.brand,
@@ -109,32 +127,19 @@ const ProductList = observer(
           },
         });
       }
-      if (this.props.clearDeliveryData) {
-        this.props.clearDeliveryData();
-      }
     };
 
     render() {
       const { data, el, store, cart } = this.props;
-      const {
-        productInCartList,
-        likeContainer,
-        addToLike,
-        addtoCart,
-        certInCart,
-      } = store;
+      const { productInCartList, likeContainer, addToLike, addtoCart, certInCart } = store;
       const itsSert = data.name === "Электронный подарочный сертификат";
       let inCart;
 
       if (!cart) {
-        inCart = Object.keys(store.productInCartList).length
-          ? Object.keys(store.productInCartList).indexOf(String(data.slug))
-          : -1;
+        inCart = Object.keys(store.productInCartList).length ? Object.keys(store.productInCartList).indexOf(String(data.sku)) : -1;
 
         if (data.name === "Электронный подарочный сертификат" && certInCart) {
-          inCart = Object.keys(this.props.store.productInCartList).indexOf(
-            certInCart
-          );
+          inCart = Object.keys(this.props.store.productInCartList).indexOf(certInCart);
         }
       }
 
@@ -146,77 +151,41 @@ const ProductList = observer(
             <div className="product__image">
               <div className="product__image-wrp">
                 <img
-                  src={
-                    data.path_to_photo !== undefined
-                      ? "/image/items/" + data.path_to_photo[0]
-                      : "/image/Category/Product-card/Placeholder.png"
-                  }
+                  src={data.path_to_photo !== undefined ? "/image/items/" + data.path_to_photo[0] : "/image/Category/Product-card/Placeholder.png"}
                 />
               </div>
             </div>
             <div className="product__info">
-              <Link className="product__name" to={"/product/" + el}>
+              <Link className="product__name" to={"/product/" + data.slug}>
                 {data.name}
               </Link>
               {data.sale ? (
                 data.sale_price !== 0 ? (
                   productInCartList[el] !== undefined ? (
                     <div className={"product__price product__price_disc"}>
-                      <span className="old">
-                        {(
-                          productInCartList[el] * data.regular_price
-                        ).toLocaleString()}{" "}
-                        ₽
-                      </span>{" "}
-                      {(
-                        productInCartList[el] * data.sale_price
-                      ).toLocaleString()}{" "}
-                      ₽{" "}
-                      <span className="disc_perc">
-                        {(
-                          (data.sale_price / data.regular_price - 1) *
-                          100
-                        ).toFixed(0)}
-                        %
+                      <span className="old">{(productInCartList[el] * data.regular_price).toLocaleString()} ₽</span>{" "}
+                      {(productInCartList[el] * data.sale_price).toLocaleString()} ₽{" "}
+                      <span className={`disc_perc ${data.bfsale ? " disc_perc-bf" : ""}`}>
+                        {((data.sale_price / data.regular_price - 1) * 100).toFixed(0)}%
                       </span>
                     </div>
                   ) : (
                     <div className={"product__price product__price_disc"}>
-                      <span className="old">
-                        {data.regular_price.toLocaleString()} ₽
-                      </span>{" "}
-                      {data.sale_price.toLocaleString()} ₽{" "}
-                      <span className="disc_perc">
-                        {(
-                          (data.sale_price / data.regular_price - 1) *
-                          100
-                        ).toFixed(0)}
-                        %
+                      <span className="old">{data.regular_price.toLocaleString()} ₽</span> {data.sale_price.toLocaleString()} ₽{" "}
+                      <span className={"disc_perc" + data.bfsale ? " disc_perc-bf" : ""}>
+                        {((data.sale_price / data.regular_price - 1) * 100).toFixed(0)}%
                       </span>
                     </div>
                   )
                 ) : (
                   <div className={"product__price product__price_text"}>
-                    <span className="old">
-                      {(
-                        productInCartList[el] * data.regular_price
-                      ).toLocaleString()}{" "}
-                      ₽
-                    </span>{" "}
-                    Бесплатно
+                    <span className="old">{(productInCartList[el] * data.regular_price).toLocaleString()} ₽</span> Бесплатно
                   </div>
                 )
               ) : productInCartList[el] !== undefined && itsNotCert ? (
-                <div className={"product__price"}>
-                  {(
-                    productInCartList[el] * data.regular_price
-                  ).toLocaleString()}{" "}
-                  ₽{" "}
-                </div>
+                <div className={"product__price"}>{(productInCartList[el] * data.regular_price).toLocaleString()} ₽ </div>
               ) : (
-                <div className={"product__price"}>
-                  {data.regular_price.toLocaleString()} ₽{" "}
-                </div>
+                <div className={"product__price"}>{data.regular_price.toLocaleString()} ₽ </div>
               )}
               {cart ? (
                 <button
@@ -246,13 +215,7 @@ const ProductList = observer(
                         }
                       }}
                     ></button>
-                    <input
-                      min="1"
-                      max="100"
-                      type="number"
-                      value={productInCartList[el]}
-                      readOnly
-                    />
+                    <input min="1" max="100" type="number" value={productInCartList[el]} readOnly />
                     <button
                       className="ic i_plus"
                       onClick={() => {
@@ -269,9 +232,7 @@ const ProductList = observer(
                         className="gift__change-text"
                         onClick={() => {
                           this.props.store.sideGift = true;
-                          document
-                            .querySelector(".sidebar-overlay")
-                            .classList.add("active");
+                          document.querySelector(".sidebar-overlay").classList.add("active");
                         }}
                       >
                         Текст поздравления
@@ -285,10 +246,7 @@ const ProductList = observer(
                         var drop = document.querySelector(".drop_shop");
 
                         $(".drop_shop").offset({
-                          top:
-                            $(".gift__drop-btn").offset().top +
-                            $(".gift__drop-btn").height() +
-                            12,
+                          top: $(".gift__drop-btn").offset().top + $(".gift__drop-btn").height() + 12,
                           left: $(".gift__drop-btn").offset().left,
                         });
                         $(".drop_shop").width($(".gift__drop-btn").width());
@@ -341,47 +299,58 @@ const ProductList = observer(
                   className={"ic i_bag" + (inCart === -1 ? "" : " active")}
                   onClick={() => {
                     if (inCart !== -1) {
-                      delete productInCartList[data.slug];
-                      if (process.env.REACT_APP_TYPE === "prod") {
-                        window.dataLayer.push({
-                          ecommerce: {
-                            remove: {
-                              products: [
-                                {
-                                  id: data.slug,
-                                  name: data.name,
-                                  price: data.price,
-                                  brand: data.brand,
-                                },
-                              ],
+                      delete productInCartList[data.sku];
+                      try {
+                        if (process.env.REACT_APP_TYPE === "prod") {
+                          window.dataLayer.push({
+                            ecommerce: {
+                              remove: {
+                                products: [
+                                  {
+                                    id: data.sku,
+                                    name: data.name,
+                                    price: data.price,
+                                    brand: data.brand,
+                                  },
+                                ],
+                              },
                             },
-                          },
-                        });
-                      }
+                          });
+                        }
+                      } catch {}
                     } else {
                       if (itsSert) {
-                        productInCartList[data.slug] = "";
+                        productInCartList[data.sku] = "";
                       } else {
-                        productInCartList[data.slug] = 1;
+                        productInCartList[data.sku] = 1;
                       }
-
-                      if (process.env.REACT_APP_TYPE === "prod") {
-                        window.dataLayer.push({
-                          ecommerce: {
-                            add: {
-                              products: [
-                                {
-                                  id: data.slug,
-                                  name: data.name,
-                                  price: data.price,
-                                  brand: data.brand,
-                                  quantity: 1,
-                                },
-                              ],
+                      try {
+                        if (process.env.REACT_APP_TYPE === "prod") {
+                          window.dataLayer.push({
+                            ecommerce: {
+                              add: {
+                                products: [
+                                  {
+                                    id: data.sku,
+                                    name: data.name,
+                                    price: data.price,
+                                    brand: data.brand,
+                                    quantity: 1,
+                                  },
+                                ],
+                              },
                             },
-                          },
-                        });
-                      }
+                          });
+
+                          window._tmr.push({
+                            type: "itemView",
+                            productid: String(data.sku),
+                            pagetype: "cart",
+                            list: "1",
+                            totalvalue: String(data.price),
+                          });
+                        }
+                      } catch {}
                     }
                     addtoCart(true);
                   }}

@@ -1,3 +1,5 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow: /wp-admin /finish /gift
+Disallow: /wp-admin/
+Disallow: /finish/
+Disallow: /gift/

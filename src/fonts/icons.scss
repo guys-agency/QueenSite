@@ -1,17 +1,13 @@
 @font-face {
   font-family: "#{$icomoon-font-family}";
   src: url("#{$icomoon-font-path}/#{$icomoon-font-family}.eot?ey37ev");
-  src: url("#{$icomoon-font-path}/#{$icomoon-font-family}.eot?ey37ev#iefix")
-      format("embedded-opentype"),
-    url("#{$icomoon-font-path}/#{$icomoon-font-family}.ttf?ey37ev")
-      format("truetype"),
-    url("#{$icomoon-font-path}/#{$icomoon-font-family}.woff?ey37ev")
-      format("woff"),
-    url("#{$icomoon-font-path}/#{$icomoon-font-family}.svg?ey37ev##{$icomoon-font-family}")
-      format("svg");
+  src: url("#{$icomoon-font-path}/#{$icomoon-font-family}.eot?ey37ev#iefix") format("embedded-opentype"),
+    url("#{$icomoon-font-path}/#{$icomoon-font-family}.ttf?ey37ev") format("truetype"),
+    url("#{$icomoon-font-path}/#{$icomoon-font-family}.woff?ey37ev") format("woff"),
+    url("#{$icomoon-font-path}/#{$icomoon-font-family}.svg?ey37ev##{$icomoon-font-family}") format("svg");
   font-weight: normal;
   font-style: normal;
-  font-display: block;
+  font-display: fallback;
 }
 
 [class^="i_"],
@@ -177,5 +173,17 @@
 .i_coin {
   &:before {
     content: $i_coin;
+  }
+}
+
+.i_play {
+  &:before {
+    content: $i_play;
+  }
+}
+
+.i_pause {
+  &:before {
+    content: $i_pause;
   }
 }

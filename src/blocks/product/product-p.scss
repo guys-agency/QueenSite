@@ -9,6 +9,7 @@
           padding: 50% 0;
           overflow: hidden;
           position: relative;
+          background-color: #fff;
           .pinch-zoom-container {
             width: 100%;
             position: absolute !important;
@@ -56,6 +57,23 @@
             left: 0;
             width: 100%;
           }
+          &.video {
+            &::before {
+              @include icon;
+              content: $i_play;
+              position: absolute;
+              color: #efd27e;
+              top: 6px;
+              right: 8px;
+              width: 15px;
+              height: 15px;
+              z-index: 2;
+              background-color: #fff;
+              border-radius: 50px;
+              display: flex;
+              margin: auto;
+            }
+          }
         }
       }
     }
@@ -76,9 +94,12 @@
     }
   }
   &__article {
-    font-size: 14px;
-    color: $a_dark;
-    margin-bottom: 15px;
+    display: flex;
+    p {
+      font-size: 14px;
+      color: $a_dark;
+      margin-bottom: 15px;
+    }
     .underline {
       margin-left: 10px;
     }
@@ -110,6 +131,7 @@
   }
 
   &__control {
+    position: relative;
     order: 2;
     margin-top: 40px;
   }

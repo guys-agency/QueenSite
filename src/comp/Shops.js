@@ -1,7 +1,8 @@
 import { observer } from "mobx-react";
 import React from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Swiper from "react-id-swiper";
+import HelmetHead from "./common/Helmet";
 
 const { Component } = React;
 
@@ -26,6 +27,16 @@ const Shops = observer(
 
       return (
         <div>
+          <HelmetHead
+            title="Магазины чешского фарфора и хрусталя Queen of Bohemia в Москве "
+            description="Магазины чешского фарфора и хрусталя Queen of Bohemia в Москве, адреса магазинов на карте"
+            keywords="адрес магазина"
+          />
+          <div className="container">
+            <div className="collections__head">
+              <h1 className="h1">Магазины</h1>
+            </div>
+          </div>
           <div className="shop__tumbler">
             <div className="tumbler">
               <Link className="tumb active" to="/shops">
@@ -49,23 +60,20 @@ const Shops = observer(
                       <div
                         className="head-banner"
                         style={{
-                          backgroundImage:
-                            "url(" + "/image/shops/o11/01.jpg" + ")",
+                          backgroundImage: "url(" + "/image/shops/o11/01.jpg" + ")",
                         }}
                       ></div>
                       <div
                         className="head-banner"
                         style={{
-                          backgroundImage:
-                            "url(" + "/image/shops/o11/02.jpg" + ")",
+                          backgroundImage: "url(" + "/image/shops/o11/02.jpg" + ")",
                         }}
                       ></div>
 
                       <div
                         className="head-banner"
                         style={{
-                          backgroundImage:
-                            "url(" + "/image/shops/o11/03.jpg" + ")",
+                          backgroundImage: "url(" + "/image/shops/o11/03.jpg" + ")",
                         }}
                       ></div>
                     </Swiper>
@@ -101,9 +109,8 @@ const Shops = observer(
                     <div className="shop__info">
                       <h2>ТЦ Орджоникидзе 11</h2>
                       <p>
-                        Данный магазин был открыт в ноябре 2018г. с того времени
-                        и по сегодняшний день в этом магазине Вы можете найти
-                        как новинки производства так и товары с большой скидкой.
+                        Данный магазин был открыт в ноябре 2018г. с того времени и по сегодняшний день в этом магазине Вы можете найти как новинки
+                        производства так и товары с большой скидкой.
                       </p>
                     </div>
                   </div>
@@ -119,9 +126,7 @@ const Shops = observer(
                       >
                         o11@queenbohemia.ru
                       </a> */}
-                      <p className="address">
-                        ул. Орджоникидзе 11, стр.1А, 4 линия, Москва
-                      </p>
+                      <p className="address">ул. Орджоникидзе 11, стр.1А, 4 линия, Москва</p>
                       <a
                         className="underline"
                         href="https://yandex.ru/maps/213/moscow/?from=tabbar&ll=37.595445%2C55.708904&mode=search&oid=205126676986&ol=biz&source=serp_navig&z=18"
@@ -146,22 +151,19 @@ const Shops = observer(
                       <div
                         className="head-banner"
                         style={{
-                          backgroundImage:
-                            "url(" + "/image/shops/salaris/01.jpg" + ")",
+                          backgroundImage: "url(" + "/image/shops/salaris/01.jpg" + ")",
                         }}
                       ></div>
                       <div
                         className="head-banner"
                         style={{
-                          backgroundImage:
-                            "url(" + "/image/shops/salaris/02.jpg" + ")",
+                          backgroundImage: "url(" + "/image/shops/salaris/02.jpg" + ")",
                         }}
                       ></div>
                       <div
                         className="head-banner"
                         style={{
-                          backgroundImage:
-                            "url(" + "/image/shops/salaris/03.jpg" + ")",
+                          backgroundImage: "url(" + "/image/shops/salaris/03.jpg" + ")",
                         }}
                       ></div>
                     </Swiper>
@@ -197,11 +199,8 @@ const Shops = observer(
                     <div className="shop__info">
                       <h2>ТРЦ Саларис</h2>
                       <p>
-                        Магазин был открыт в сентябре 2019г., здесь представлен
-                        широкий ассортимент изделий из богемского стекла,
-                        хрусталя, кристалайта, а также фарфора из Чехии и
-                        Польши. Здесь Вам предложат широкий выбор подарочных
-                        изделий.
+                        Магазин был открыт в сентябре 2019г., здесь представлен широкий ассортимент изделий из богемского стекла, хрусталя,
+                        кристалайта, а также фарфора из Чехии и Польши. Здесь Вам предложат широкий выбор подарочных изделий.
                       </p>
                     </div>
                   </div>
@@ -217,9 +216,7 @@ const Shops = observer(
                       >
                         salaris@queenbohemia.ru
                       </a> */}
-                      <p className="address">
-                        п. Московский, д. Саларьево 1, Москва
-                      </p>
+                      <p className="address">п. Московский, д. Саларьево 1, Москва</p>
                       <a
                         className="underline"
                         href="https://yandex.ru/maps/213/moscow/?from=tabbar&ll=37.424994%2C55.625218&mode=search&oid=8849034126&ol=biz&sctx=ZAAAAAgBEAAaKAoSCYrIsIo3zEJAEQR62V292ktAEhIJEGj4%2F39meT8RGQY1zaR8ZT8iBQABAgQFKAowADiSl4iM9YfN5cYBQIqfAUgBVc3MzD5YAGIpcmVsZXZfcmFua2luZ19oZWF2eV9mb3JtdWxhPW14XzY2MTUxOF8wXzdqAnJ1cACdAc3MTD2gAQCoAQC9Ad00rGXCAQWOl8b7IA%3D%3D&sll=37.424994%2C55.625218&source=serp_navig&sspn=0.049610%2C0.021028&text=Queen%20of%20Bohemia&z=15"
@@ -244,22 +241,19 @@ const Shops = observer(
                       <div
                         className="head-banner"
                         style={{
-                          backgroundImage:
-                            "url(" + "/image/shops/push/01.jpg" + ")",
+                          backgroundImage: "url(" + "/image/shops/push/01.jpg" + ")",
                         }}
                       ></div>
                       <div
                         className="head-banner"
                         style={{
-                          backgroundImage:
-                            "url(" + "/image/shops/push/02.jpg" + ")",
+                          backgroundImage: "url(" + "/image/shops/push/02.jpg" + ")",
                         }}
                       ></div>
                       <div
                         className="head-banner"
                         style={{
-                          backgroundImage:
-                            "url(" + "/image/shops/push/03.jpg" + ")",
+                          backgroundImage: "url(" + "/image/shops/push/03.jpg" + ")",
                         }}
                       ></div>
                     </Swiper>
@@ -295,11 +289,8 @@ const Shops = observer(
                     <div className="shop__info">
                       <h2>ТРЦ Пушкино парк</h2>
                       <p>
-                        Открытие было в марте 2019г., в приятной обстановке
-                        магазина Вам будут предложены уникальные изделия из из
-                        богемского стекла, хрусталя, кристалайта, а также
-                        фарфора. Наши профессиональный продавцы с радостью
-                        помогут Вам сделать свой выбор.
+                        Открытие было в марте 2019г., в приятной обстановке магазина Вам будут предложены уникальные изделия из из богемского стекла,
+                        хрусталя, кристалайта, а также фарфора. Наши профессиональный продавцы с радостью помогут Вам сделать свой выбор.
                       </p>
                     </div>
                   </div>
@@ -315,9 +306,7 @@ const Shops = observer(
                       >
                         pushkino@queenbohemia.ru
                       </a> */}
-                      <p className="address">
-                        Красноармейское шоссе, с104, Пушкино, Московская область
-                      </p>
+                      <p className="address">Красноармейское шоссе, с104, Пушкино, Московская область</p>
                       <a
                         className="underline"
                         href="https://yandex.ru/maps/10748/pushkino/?from=tabbar&ll=37.888272%2C56.011552&mode=search&oid=170903927889&ol=biz&source=serp_navig&z=14"
@@ -334,7 +323,7 @@ const Shops = observer(
              * * Outlet Village Белая Дача
              *
              */}
-            <div className="shop">
+            {/* <div className="shop">
               <div className="head head_big head_list">
                 <div className="head_shop">
                   <div className="head-car">
@@ -405,14 +394,14 @@ const Shops = observer(
                       <b>
                         <a href="tel:+79268975443">+7 926 897-54-43</a>
                       </b>
-                      <br />
-                      {/* <a
+                      <br /> */}
+            {/* <a
                         className="underline"
                         href="mailto:belayadacha@queenbohemia.ru"
                       >
                         belayadacha@queenbohemia.ru
                       </a> */}
-                      <p className="address">
+            {/* <p className="address">
                         Новорязанское шоссе 8, Котельники, Московская область
                       </p>
                       <a
@@ -425,7 +414,7 @@ const Shops = observer(
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             {/**
              * * Афимол
@@ -439,22 +428,19 @@ const Shops = observer(
                       <div
                         className="head-banner"
                         style={{
-                          backgroundImage:
-                            "url(" + "/image/shops/afimol/01.jpg" + ")",
+                          backgroundImage: "url(" + "/image/shops/afimol/01.jpg" + ")",
                         }}
                       ></div>
                       <div
                         className="head-banner"
                         style={{
-                          backgroundImage:
-                            "url(" + "/image/shops/afimol/02.jpg" + ")",
+                          backgroundImage: "url(" + "/image/shops/afimol/02.jpg" + ")",
                         }}
                       ></div>
                       <div
                         className="head-banner"
                         style={{
-                          backgroundImage:
-                            "url(" + "/image/shops/afimol/03.jpg" + ")",
+                          backgroundImage: "url(" + "/image/shops/afimol/03.jpg" + ")",
                         }}
                       ></div>
                     </Swiper>
@@ -490,11 +476,8 @@ const Shops = observer(
                     <div className="shop__info">
                       <h2>ТРЦ Афимол</h2>
                       <p>
-                        Открытие магазина состоялось 30 марта 2020г. В магазине
-                        всегда в наличии новые коллекции стекла, хрусталя,
-                        фарфора. Продавцы с удовольствием помогут сделать выбор
-                        по Вашим запросам, Вам предложат оригинальную богемию по
-                        оптовой цене.
+                        Открытие магазина состоялось 30 марта 2020г. В магазине всегда в наличии новые коллекции стекла, хрусталя, фарфора. Продавцы с
+                        удовольствием помогут сделать выбор по Вашим запросам, Вам предложат оригинальную богемию по оптовой цене.
                       </p>
                     </div>
                   </div>

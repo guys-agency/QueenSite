@@ -1,16 +1,10 @@
 import { observer } from "mobx-react";
 import React from "react";
-import $ from "jquery";
 import { Link } from "react-router-dom";
 // import Slider from "react-slick";
 // import "slick-carousel/slick/slick.css";
 // import "slick-carousel/slick/slick-theme.css";
 import Swiper from "react-id-swiper";
-import ProductCard from "./ProductCard";
-import { SERVER_URL } from "../constants";
-import { Formik } from "formik";
-import api from "./api";
-import RestoreSchema from "../schemas/restoreSchema";
 import { withRouter } from "react-router";
 
 const { Component } = React;
@@ -27,13 +21,12 @@ const GiftsPage = observer(
 
     render() {
       const { bannersData } = this.props.store;
-      const typeDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-        navigator.userAgent
-      );
+      const typeDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
       const ideasCon = [];
 
       const priceCont = [];
+      const mainBanner = [];
       const forTypeData = {
         muzhchinam: "dlya_muzhchin",
         vlyublennym: "dlya_vlyublennyh",
@@ -47,6 +40,28 @@ const GiftsPage = observer(
         const occasion = [];
 
         const lastCont = [];
+
+        // mainBanner.push(
+        //   <Link
+        //     className="head-banner"
+        //     to="catalog/podarki/uchitelyam"
+        //     style={{
+        //       backgroundImage: `url(/image/banners/${
+        //         typeDevice ? "dayTeaMobile" : "dayTea"
+        //       }.jpg`,
+        //     }}
+        //   ></Link>
+        // );
+        mainBanner.push(
+          <Link
+            className="head-banner"
+            to="/catalog/podarki/sertificats"
+            style={{
+              backgroundImage: `url(/image/banners/${bannersData["podarki_sert"][0]["image-desc-large"]})`,
+            }}
+          ></Link>
+        );
+
         bannersData.podarki_occasion.forEach((o, i) => {
           if (i > 2) {
             lastCont.push(
@@ -55,9 +70,7 @@ const GiftsPage = observer(
                   to={"/catalog/podarki/" + o.slug}
                   className="banner banner_overlay large"
                   style={{
-                    backgroundImage: `url(/image/banners/${
-                      typeDevice ? o["image-mob-large"] : o["image-desc-large"]
-                    })`,
+                    backgroundImage: `url(/image/banners/${typeDevice ? o["image-mob-large"] : o["image-desc-large"]})`,
                   }}
                 >
                   <div className="banner__desc">{o.name}</div>
@@ -68,65 +81,46 @@ const GiftsPage = observer(
         });
 
         ideasCon.push(
-          <div
-            className="row ideas-block"
-            key={bannersData.podarki_occasion[0].slug}
-          >
+          <div className="row ideas-block" key={bannersData.podarki_occasion[0].slug}>
             <div className="col col-5 col-t-12">
               <Link
                 to={"/catalog/podarki/" + bannersData.podarki_occasion[0].slug}
                 className="banner banner_overlay main-idea"
                 style={{
                   backgroundImage: `url(/image/banners/${
-                    typeDevice
-                      ? bannersData.podarki_occasion[0]["image-mob-large"]
-                      : bannersData.podarki_occasion[0]["image-desc-large"]
+                    typeDevice ? bannersData.podarki_occasion[0]["image-mob-large"] : bannersData.podarki_occasion[0]["image-desc-large"]
                   })`,
                 }}
               >
-                <div className="banner__desc">
-                  {bannersData.podarki_occasion[0].name}
-                </div>
+                <div className="banner__desc">{bannersData.podarki_occasion[0].name}</div>
               </Link>
             </div>
             <div className="ideas col col-7 col-t-12">
               <div className="row row_inner">
                 <div className="col col-12 col-s-12">
                   <Link
-                    to={
-                      "/catalog/podarki/" + bannersData.podarki_occasion[1].slug
-                    }
+                    to={"/catalog/podarki/" + bannersData.podarki_occasion[1].slug}
                     className="banner banner_overlay small"
                     style={{
                       backgroundImage: `url(/image/banners/${
-                        typeDevice
-                          ? bannersData.podarki_occasion[1]["image-mob-large"]
-                          : bannersData.podarki_occasion[1]["image-desc-large"]
+                        typeDevice ? bannersData.podarki_occasion[1]["image-mob-large"] : bannersData.podarki_occasion[1]["image-desc-large"]
                       })`,
                     }}
                   >
-                    <div className="banner__desc">
-                      {bannersData.podarki_occasion[1].name}
-                    </div>
+                    <div className="banner__desc">{bannersData.podarki_occasion[1].name}</div>
                   </Link>
                 </div>
                 <div className="col col-12 col-s-12">
                   <Link
-                    to={
-                      "/catalog/podarki/" + bannersData.podarki_occasion[2].slug
-                    }
+                    to={"/catalog/podarki/" + bannersData.podarki_occasion[2].slug}
                     className="banner banner_overlay large"
                     style={{
                       backgroundImage: `url(/image/banners/${
-                        typeDevice
-                          ? bannersData.podarki_occasion[2]["image-mob-large"]
-                          : bannersData.podarki_occasion[2]["image-desc-large"]
+                        typeDevice ? bannersData.podarki_occasion[2]["image-mob-large"] : bannersData.podarki_occasion[2]["image-desc-large"]
                       })`,
                     }}
                   >
-                    <div className="banner__desc">
-                      {bannersData.podarki_occasion[2].name}
-                    </div>
+                    <div className="banner__desc">{bannersData.podarki_occasion[2].name}</div>
                   </Link>
                 </div>
               </div>
@@ -141,11 +135,10 @@ const GiftsPage = observer(
           forType.push(
             <div className="col col-4 col-t-6  col-s-9" key={d.id}>
               <Link
-                to={`/catalog/podarki/${forTypeData[d.slug]}`}
+                to={`/catalog/podarki/${d.slug}`}
                 className="banner banner_overlay"
                 style={{
-                  backgroundImage:
-                    "url(/image/banners/" + d["image-desc-large"] + ")",
+                  backgroundImage: "url(/image/banners/" + d["image-desc-large"] + ")",
                 }}
               >
                 <div className="banner__desc" style={{ color: "#fff" }}>
@@ -160,16 +153,13 @@ const GiftsPage = observer(
           priceCont.push(
             <div className="col col-4 col-t-6 col-s-9" key={p.id}>
               <Link
-                to={`/catalog/podarki/podarki_do_${p.name}_russian_ruble`}
+                to={`/catalog/podarki/podarki-do-${p.name}`}
                 className="banner"
                 style={{
-                  backgroundImage:
-                    "url(/image/banners/" + p["image-desc-large"] + ")",
+                  backgroundImage: "url(/image/banners/" + p["image-desc-large"] + ")",
                 }}
               >
-                <div className="banner__desc">
-                  До {p.name.toLocaleString()}₽
-                </div>
+                <div className="banner__desc">До {p.name.toLocaleString()}₽</div>
               </Link>
             </div>
           );
@@ -206,19 +196,38 @@ const GiftsPage = observer(
           },
         },
       };
+      const headCar = {
+        slidesPerView: 1,
+        effect: "fade",
+        speed: 500,
+        draggable: true,
+        autoplay: {
+          delay: 5000,
+        },
+        pagination: {
+          el: ".swiper-pagination",
+          type: "bullets",
+          clickable: true,
+        },
+        navigation: {
+          nextEl: ".swiper-button-next",
+          prevEl: ".swiper-button-prev",
+        },
+      };
 
       return (
         forType.length !== 0 && (
           <div className="main-page">
             <div className="head head_big ">
               <div className="head-car">
-                <Link
+                <Swiper {...headCar}>{mainBanner}</Swiper>
+                {/* <Link
                   className="head-banner"
-                  to="catalog/podarki/sertificats"
+                  to="/catalog/podarki/sertificats"
                   style={{
                     backgroundImage: `url(/image/banners/${bannersData["podarki_sert"][0]["image-desc-large"]})`,
                   }}
-                ></Link>
+                ></Link> */}
               </div>
             </div>
 

@@ -9,6 +9,7 @@
   transition: all 0.2s;
   display: block;
   background-position: center;
+
   &_overlay {
     &::after {
       content: "";
@@ -17,11 +18,7 @@
       width: 100%;
       left: 0;
       top: 0;
-      background: linear-gradient(
-        180deg,
-        rgba(0, 0, 0, 0) 0%,
-        rgba(0, 0, 0, 0.4) 100%
-      );
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.4) 100%);
       border-radius: 5px;
     }
     .banner__desc {
@@ -29,6 +26,7 @@
       z-index: 1;
     }
   }
+
   &:hover {
     transform: translateY(-3px);
     .banner__desc {

@@ -1,10 +1,7 @@
 import { observer } from "mobx-react";
 import React from "react";
 import ProductList from "./ProductList";
-import LikeButton from "./LikeButton";
 import { withRouter } from "react-router";
-import num2str from "../ulits/nm2wrd";
-import { Link } from "react-router-dom";
 
 const { Component } = React;
 
@@ -56,7 +53,7 @@ const CartSidebar = observer(
             <b>Итого:</b>{" "}
             <b className="price">{totalPrice.toLocaleString()} ₽</b>
           </div>
-          {dontSaleProdCount !== 0 && dontSaleProdCount % 3 !== 0 ? (
+          {/* {dontSaleProdCount !== 0 && dontSaleProdCount % 3 !== 0 ? (
             <Link
               to="/main/1+13"
               className="one-plus-one"
@@ -70,7 +67,7 @@ const CartSidebar = observer(
               )}{" "}
               из акции <p className="disc_perc">1 + 1 = 3</p>
             </Link>
-          ) : null}
+          ) : null} */}
 
           <div className="sidebar__over">
             <div className="cart__list">{productList}</div>
@@ -79,6 +76,7 @@ const CartSidebar = observer(
             <a
               href="/cart"
               className="btn btn_yellow btn_wide btn_bottom"
+              style={{ minHeight: "50px" }}
               // onClick={() => {
               //   this.props.history.push("/cart");
               //   this.props.closeSidebar();

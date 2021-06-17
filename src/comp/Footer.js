@@ -22,11 +22,8 @@ const Footer = observer(
               <div className="footer__column">
                 <h4 className="white">Наши новости</h4>
                 <div className="social">
-                  {/* <a className="ic i_fb" href="https://www.instagram.com/queenbohemia.ru/"></a> */}
-                  <a
-                    className="ic i_inst"
-                    href="https://www.instagram.com/queenbohemia.ru/"
-                  ></a>
+                  <a className="ic i_fb" href="https://www.facebook.com/queenbohemia.ru" target="_blank"></a>
+                  <a className="ic i_inst" href="https://www.instagram.com/queenbohemia.ru/" target="_blank"></a>
                 </div>
                 <Link to="/" className="logo logo_sq">
                   <span className="i_queen"></span>
@@ -71,7 +68,7 @@ const Footer = observer(
                 <div className="footer__links-column">
                   <ul className="footer__links">
                     <li>
-                      <Link to="/about">О нас</Link>
+                      <Link to="/help/vacancy">Вакансии</Link>
                     </li>
                     <li>
                       <Link to="/help/delivery">Доставка</Link>
@@ -95,8 +92,8 @@ const Footer = observer(
                       <Link to="/help/offer">Публичная оферта</Link>
                     </li>
                     <li>
-                      <Link to="/help/certificate" onClick={this.closeNav}>
-                        Сертификат
+                      <Link to="/help/policy" onClick={this.closeNav}>
+                        Политика конфиденциальности
                       </Link>
                     </li>
                     <li>
@@ -115,9 +112,7 @@ const Footer = observer(
                 <button
                   className="link dotted ask"
                   onClick={() => {
-                    document
-                      .querySelector(".sidebar-overlay")
-                      .classList.add("active");
+                    document.querySelector(".sidebar-overlay").classList.add("active");
 
                     document.querySelector("body").classList.add("no-scroll");
 
@@ -137,12 +132,10 @@ const Footer = observer(
           <div className="footer__bottom">
             <div className="container container_f ">
               <div className="footer__column">
-                <p>queenbohemia.ru © 1993 – 2020. Все права защищены</p>
+                <p>queenbohemia.ru © 1993 – 2021. Все права защищены</p>
               </div>
               <div className="footer__column">
-                <p>
-                  105082, г. Москва, Переведёновский переулок, д. 13, стр. 18
-                </p>
+                <p>105082, г. Москва, Переведёновский переулок, д. 13, стр. 18</p>
               </div>
             </div>
           </div>

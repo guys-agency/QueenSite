@@ -1,22 +1,24 @@
 import { observer } from "mobx-react";
 import React from "react";
 import { withRouter } from "react-router";
+import $ from "jquery";
 const { Component } = React;
 
 const FilterPoint = observer(
   class FilterPoint extends Component {
     state = {
       inFilter: false,
-      classStyle: this.props.store.activeFilters.choosePoint.includes(
-        this.props.objectName
-      ),
+      classStyle: this.props.store.activeFilters.choosePoint.includes(this.props.objectName),
     };
 
     clickHandler = (filterPoint) => {
       const { objectName, name } = this.props;
-      const { activeFilters } = this.props.store;
-      const start = new Date();
+      const { activeFilters, searchText } = this.props.store;
+
       let searchQt = "";
+      if (searchText.length) {
+        searchQt = "search=" + encodeURIComponent(searchText);
+      }
       if (objectName === "measure") {
         const number = Object.keys(activeFilters[objectName]).indexOf(name);
         if (number === -1) {
@@ -26,9 +28,7 @@ const FilterPoint = observer(
           activeFilters.choosePoint.push(objectName);
           // console.log("number :>> ", number);
         } else {
-          const valueNumber = activeFilters[objectName][name].indexOf(
-            String(filterPoint)
-          );
+          const valueNumber = activeFilters[objectName][name].indexOf(String(filterPoint));
           // console.log("valueNumber :>> ", valueNumber);
           if (valueNumber === -1) {
             activeFilters[objectName][name].push(String(filterPoint));
@@ -44,20 +44,21 @@ const FilterPoint = observer(
         }
       } else {
         const number = activeFilters[objectName].indexOf(filterPoint);
-
+        if (objectName === "glassType") {
+          activeFilters[objectName] = [];
+          const numberInChoose = activeFilters.choosePoint.indexOf(objectName);
+          if (numberInChoose !== -1) activeFilters.choosePoint.splice(numberInChoose, 1);
+        }
         if (number === -1) {
           activeFilters[objectName].push(filterPoint);
           activeFilters.count += 1;
-          if (activeFilters.choosePoint.indexOf(objectName) === -1)
-            activeFilters.choosePoint.push(objectName);
+          if (activeFilters.choosePoint.indexOf(objectName) === -1) activeFilters.choosePoint.push(objectName);
         } else {
           activeFilters.count -= 1;
           activeFilters[objectName].splice(number, 1);
 
           if (!activeFilters[objectName].length) {
-            const numberInChoose = activeFilters.choosePoint.indexOf(
-              objectName
-            );
+            const numberInChoose = activeFilters.choosePoint.indexOf(objectName);
             activeFilters.choosePoint.splice(numberInChoose, 1);
           }
         }
@@ -67,13 +68,11 @@ const FilterPoint = observer(
         activeFilters.choosePoint.forEach((filterName) => {
           if (filterName !== "choosePoint") {
             if (filterName !== "measure") {
-              if (activeFilters[filterName].length) {
+              if (activeFilters[filterName].length && !(filterName === "color" && window.location.pathname.includes("colors"))) {
                 if (!searchQt.length) {
-                  searchQt =
-                    filterName + "=" + activeFilters[filterName].join();
+                  searchQt = filterName + "=" + activeFilters[filterName].join();
                 } else {
-                  searchQt +=
-                    "&&" + filterName + "=" + activeFilters[filterName].join();
+                  searchQt += "&&" + filterName + "=" + activeFilters[filterName].join();
                 }
               }
             } else {
@@ -82,20 +81,9 @@ const FilterPoint = observer(
                 Object.keys(activeFilters[filterName]).forEach((ind) => {
                   // console.log("ind :>> ", activeFilters[filterName][ind]);
                   if (!searchQt.length) {
-                    searchQt =
-                      filterName +
-                      "=" +
-                      ind +
-                      "!~" +
-                      activeFilters[filterName][ind].join(",");
+                    searchQt = filterName + "=" + ind + "!~" + activeFilters[filterName][ind].join(",");
                   } else {
-                    searchQt +=
-                      "&&" +
-                      filterName +
-                      "=" +
-                      ind +
-                      "!~" +
-                      activeFilters[filterName][ind].join(",");
+                    searchQt += "&&" + filterName + "=" + ind + "!~" + activeFilters[filterName][ind].join(",");
                   }
                 });
               }
@@ -124,14 +112,15 @@ const FilterPoint = observer(
 
       let act = false;
       const filterPoints = [];
+
       data.forEach((filterPoint) => {
         if (filterPoint !== "") {
           let number;
           if (objectName === "measure") {
             if (Object.keys(activeFilters[objectName]).includes(name)) {
-              number = activeFilters[objectName][name].includes(
-                String(filterPoint)
-              );
+              number = activeFilters[objectName][name].includes(String(filterPoint));
+            } else {
+              number = false;
             }
           } else {
             number = activeFilters[objectName].includes(filterPoint);
@@ -139,11 +128,17 @@ const FilterPoint = observer(
           if (number) {
             activeFilt.push(filterPoint);
           }
+
           filterPoints.push(
             <span
               className={!number ? "filter__point" : "filter__point active"}
               onClick={(e) => {
-                e.target.classList.toggle("active");
+                if (objectName === "glassType") {
+                  $(e.target).siblings().removeClass("acive");
+                  e.target.classList.add("active");
+                } else {
+                  e.target.classList.toggle("active");
+                }
                 this.clickHandler(filterPoint);
               }}
               key={filterPoint}
@@ -158,24 +153,21 @@ const FilterPoint = observer(
         filterPoints.length > 0 && (
           <div className="filter-block">
             {/* {active ? this.setState({ classStyle: "filter__container" }) : this.setState({ classStyle: "filter__container active" })} */}
-            <h3
-              className={classStyle ? "filter__name active" : "filter__name"}
-              onClick={(e) => {
-                e.target.classList.toggle("active");
-                // e.target.nextElementSibling.classList.toggle("active");
-                this.setState({ classStyle: !classStyle });
-              }}
-            >
-              {name}{" "}
-              <p className="filter__active-filt">{activeFilt.join(", ")}</p>
-              <div className="ic i_drop"></div>
-            </h3>
+            {name !== "Тип бокалов" && (
+              <h3
+                className={classStyle ? "filter__name active" : "filter__name"}
+                onClick={(e) => {
+                  e.target.classList.toggle("active");
+                  // e.target.nextElementSibling.classList.toggle("active");
+                  this.setState({ classStyle: !classStyle });
+                }}
+              >
+                {name} <p className="filter__active-filt">{activeFilt.join(", ")}</p>
+                <div className="ic i_drop"></div>
+              </h3>
+            )}
 
-            <div
-              className={"filter__container " + (classStyle ? "active" : "")}
-            >
-              {filterPoints}
-            </div>
+            <div className={"filter__container " + (classStyle ? "active" : "")}>{filterPoints}</div>
           </div>
         )
       );

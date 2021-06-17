@@ -29,31 +29,25 @@ const Paginat = observer(
                 $("html, body").animate({ scrollTop: 0 }, 500);
 
                 let searchQt = window.location.href.split("?")[1];
-                if (
-                  searchQt !== "undefined" &&
-                  searchQt !== "" &&
-                  searchQt !== undefined
-                ) {
+                if (searchQt !== "undefined" && searchQt !== "" && searchQt !== undefined) {
                   if (searchQt.includes("page=")) {
-                    const searchQtParts = searchQt.split(
-                      "page=" + this.props.store.startPag / 42
-                    );
+                    const searchQtParts = searchQt.split("page=" + this.props.store.startPag / 42);
 
                     searchQt = searchQtParts[0] + `page=0` + searchQtParts[1];
                   } else {
                     searchQt += `&&page=0`;
                   }
 
-                  this.props.history.replace({ search: searchQt });
+                  this.props.history.push({ search: searchQt });
                 } else {
-                  this.props.history.replace({
+                  this.props.history.push({
                     search: `page=0`,
                   });
                 }
                 this.props.store.startPag = 0;
                 this.props.store.stopPag = 42;
 
-                filtration();
+                // filtration();
                 this.setState({ midlPage: countPage });
               }}
             >
@@ -64,39 +58,25 @@ const Paginat = observer(
         );
       }
 
-      for (
-        let i = page;
-        i < (countPage > 5 + page ? 5 + page : countPage);
-        i++
-      ) {
+      for (let i = page; i < (countPage > 5 + page ? 5 + page : countPage); i++) {
         pointCont.push(
           <div
-            className={
-              i === this.props.store.startPag / 42
-                ? "pagination__page active"
-                : "pagination__page"
-            }
+            className={i === this.props.store.startPag / 42 ? "pagination__page active" : "pagination__page"}
             key={i}
             onClick={() => {
               let searchQt = window.location.href.split("?")[1];
-              if (
-                searchQt !== "undefined" &&
-                searchQt !== "" &&
-                searchQt !== undefined
-              ) {
+              if (searchQt !== "undefined" && searchQt !== "" && searchQt !== undefined) {
                 if (searchQt.includes("page=")) {
-                  const searchQtParts = searchQt.split(
-                    "page=" + this.props.store.startPag / 42
-                  );
+                  const searchQtParts = searchQt.split("page=" + this.props.store.startPag / 42);
 
                   searchQt = searchQtParts[0] + `page=${i}` + searchQtParts[1];
                 } else {
                   searchQt += `&&page=${i}`;
                 }
 
-                this.props.history.replace({ search: searchQt });
+                this.props.history.push({ search: searchQt });
               } else {
-                this.props.history.replace({ search: `page=${i}` });
+                this.props.history.push({ search: `page=${i}` });
               }
               if (i === countPage - 1) {
                 this.props.store.startPag = 42 * i;
@@ -107,7 +87,7 @@ const Paginat = observer(
               }
               $("html, body").animate({ scrollTop: 0 }, 500);
               this.setState({ midlPage: i + 1 < 3 ? 3 : i + 1 });
-              filtration();
+              // filtration();
             }}
           >
             {i + 1}
@@ -126,34 +106,25 @@ const Paginat = observer(
                 $("html, body").animate({ scrollTop: 0 }, 500);
 
                 let searchQt = window.location.href.split("?")[1];
-                if (
-                  searchQt !== "undefined" &&
-                  searchQt !== "" &&
-                  searchQt !== undefined
-                ) {
+                if (searchQt !== "undefined" && searchQt !== "" && searchQt !== undefined) {
                   if (searchQt.includes("page=")) {
-                    const searchQtParts = searchQt.split(
-                      "page=" + this.props.store.startPag / 42
-                    );
+                    const searchQtParts = searchQt.split("page=" + this.props.store.startPag / 42);
 
-                    searchQt =
-                      searchQtParts[0] +
-                      `page=${countPage - 1}` +
-                      searchQtParts[1];
+                    searchQt = searchQtParts[0] + `page=${countPage - 1}` + searchQtParts[1];
                   } else {
                     searchQt += `&&page=${countPage - 1}`;
                   }
 
-                  this.props.history.replace({ search: searchQt });
+                  this.props.history.push({ search: searchQt });
                 } else {
-                  this.props.history.replace({
+                  this.props.history.push({
                     search: `page=${countPage - 1}`,
                   });
                 }
                 this.props.store.startPag = 42 * (countPage - 1);
                 this.props.store.stopPag = productValue;
 
-                filtration();
+                // filtration();
                 this.setState({ midlPage: countPage });
               }}
             >
@@ -162,11 +133,7 @@ const Paginat = observer(
           </>
         );
       }
-      return (
-        productsToRender.length !== 0 && (
-          <div className="pagination">{pointCont}</div>
-        )
-      );
+      return productsToRender.length !== 0 && <div className="pagination">{pointCont}</div>;
     }
   }
 );

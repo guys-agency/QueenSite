@@ -5,7 +5,7 @@
   top: 0;
   right: 0;
   background-color: #fff;
-  z-index: 101;
+  z-index: 9999999999;
   padding: 30px;
   box-shadow: -6px 0px 16px rgba(0, 9, 77, 0.05);
   transform: translateX(500px);
@@ -101,6 +101,12 @@
         // transform: translateX(0px);
       }
     }
+    &.city {
+      display: flex;
+      &::after {
+        display: none;
+      }
+    }
     &::after {
       @include icon;
       content: none;
@@ -193,4 +199,14 @@
       margin-left: 10px;
     }
   }
+}
+
+.city-check {
+  display: flex;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 0px;
+  left: 0px;
+  z-index: 120;
 }

@@ -12,6 +12,10 @@ import { SERVER_URL } from "../constants";
 import ChangeSidebar from "./ChangeProfileData";
 import CityCh from "./CityCh";
 import api from "./api";
+import localStorage from "mobx-localstorage";
+import store from "../MobxStore";
+import moment from "moment";
+import Swiper from "react-id-swiper";
 
 const { Component } = React;
 
@@ -23,7 +27,7 @@ const MenuPoints = observer(
       popreg: false,
 
       reg: false,
-      log: true,
+      log: false,
       login: "",
       password: "",
       name: "",
@@ -41,7 +45,7 @@ const MenuPoints = observer(
 
     phone = (
       <div className="header__right">
-        <button
+        {/* <button
           className="link dotted ask"
           onClick={() => {
             document.querySelector(".sidebar-overlay").classList.add("active");
@@ -52,15 +56,18 @@ const MenuPoints = observer(
           }}
         >
           Задать вопрос
-        </button>
+        </button> */}
+        <CityCh store={this.props.store} />
         <a href="tel:88006003421" className="phone">
           8 800 600-34-21
         </a>
       </div>
     );
 
+    typeDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
     service = (
-      <div className="header__drop">
+      <div className="header__drop" style={{ width: "160px" }}>
         <button
           className="btn btn_wide vis-s"
           onClick={(e) => {
@@ -70,7 +77,7 @@ const MenuPoints = observer(
           <span className="ic i_left"></span> Назад
         </button>
         <ul>
-          <li>
+          {/* <li>
             <Link to="/help/delivery" onClick={this.closeNav}>
               Доставка
             </Link>
@@ -84,10 +91,26 @@ const MenuPoints = observer(
             <Link to="/help/garantie" onClick={this.closeNav}>
               Гарантия
             </Link>
+          </li> */}
+          <li>
+            <Link to="/help/garantie" onClick={this.closeNav}>
+              Гарантия
+            </Link>
           </li>
           <li>
             <Link to="/help/return" onClick={this.closeNav}>
               Возврат
+            </Link>
+          </li>
+          <li>
+            <Link to="/shops" onClick={this.closeNav}>
+              Магазины
+            </Link>
+          </li>
+
+          <li>
+            <Link to="/about" onClick={this.closeNav}>
+              О нас
             </Link>
           </li>
           <li>
@@ -96,6 +119,16 @@ const MenuPoints = observer(
             </Link>
           </li>
           <li>
+            <Link to="/help/policy" onClick={this.closeNav}>
+              Конфиденциальность
+            </Link>
+          </li>
+          {/* <li>
+            <Link to="/help/cppd" onClick={this.closeNav}>
+              Согласие на обработку персональных данных
+            </Link>
+          </li> */}
+          <li>
             <Link to="/help/certificate" onClick={this.closeNav}>
               Сертификат
             </Link>
@@ -103,6 +136,11 @@ const MenuPoints = observer(
           <li>
             <Link to="/help/bonus" onClick={this.closeNav}>
               Бонусы
+            </Link>
+          </li>
+          <li>
+            <Link to="/help/vacancy" onClick={this.closeNav}>
+              Вакансии
             </Link>
           </li>
 
@@ -119,6 +157,8 @@ const MenuPoints = observer(
       e.stopPropagation();
       $(".menu_sub").removeClass("visible");
       $(".menu_mega").toggleClass("visible");
+      // $("body").toggleClass("no-scroll");
+      // $(".sidebar-overlay").toggleClass("active");
     };
 
     toggleHeader = (e) => {
@@ -128,6 +168,7 @@ const MenuPoints = observer(
       $(".menu-point").removeClass("active");
       $(".header__drop").removeClass("visible");
       $(".header__btn").removeClass("active");
+      $("body").removeClass("no-scroll");
 
       $(e.target).parent().find(".header__drop").addClass("visible");
       $(e.target).toggleClass("active");
@@ -140,7 +181,11 @@ const MenuPoints = observer(
 
     toggleDrop = (e) => {
       // e.preventDefault();
-      $(".menu_mega").removeClass("visible");
+      if (!this.typeDevice) {
+        $(".menu_mega").removeClass("visible");
+        $("body").removeClass("no-scroll");
+      }
+
       $(".menu_sub").removeClass("visible");
       $(".menu-point").removeClass("active");
       $(".header__drop").removeClass("visible");
@@ -148,12 +193,8 @@ const MenuPoints = observer(
       $(e.target).toggleClass("active");
       $(e.target).parent().find(".menu_sub").toggleClass("visible");
       if ($(window).width() <= 760) {
-        if (e.target.textContent === "Коллекции") {
-          this.closeNav(e);
-          return;
-        }
-        e.stopPropagation();
         e.preventDefault();
+        e.stopPropagation();
       }
     };
 
@@ -166,6 +207,7 @@ const MenuPoints = observer(
       $("body").removeClass("no-scroll");
       $(".navigation").removeClass("visible");
       $(".sidebar-overlay").removeClass("active");
+
       $(".menu-point").removeClass("active");
       $(".header__btn").removeClass("active");
       var mega = $(".menu");
@@ -187,8 +229,11 @@ const MenuPoints = observer(
       }
 
       var mega = $(".menu");
-      var trgClass = $(e.target).hasClass("menu");
-      if (!trgClass) {
+      var trgClass =
+        $(e.target).is(
+          ".menu, .container_f, .swiper-container, .swiper-wrapper, .swiper-slide, .colors-in-menu, .column, .swiper-button-color-next, .swiper-button-color-prev"
+        ) || $(e.target).parent().hasClass(".swiper-slide");
+      if (!trgClass && !this.typeDevice) {
         mega.removeClass("visible");
       }
 
@@ -216,12 +261,12 @@ const MenuPoints = observer(
 
     scrollNav = () => {
       var scroll = $(window).scrollTop();
+
       if (scroll > 55) {
         $(".header__drop").removeClass("visible");
         $(".header").addClass("header_scroll");
         $(".navigation").addClass("navigation_scroll");
-      }
-      if (scroll < 55) {
+      } else if (scroll < 55) {
         $(".header").removeClass("header_scroll");
         $(".navigation").removeClass("navigation_scroll");
       }
@@ -234,13 +279,26 @@ const MenuPoints = observer(
           .getUserData()
           .then((data) => {
             // this.props.store.addToLike(true);
-            this.props.store.userData = data;
+            if (data.status === 404 || data.status === 401) {
+              localStorage.removeItem("auth");
+              api
+                .logout()
+                .then(() => {})
+                .catch((err) => {
+                  console.log("err :>> ", err);
+                });
+            } else {
+              this.props.store.userData = data;
+            }
+
             // console.log(
             //   "this.props.store.userData :>> ",
             //   this.props.store.userData
             // );
           })
           .catch((err) => {
+            // localStorage.removeItem("auth");
+            // this.auth = false;
             console.log("err :>> ", err);
           });
       }
@@ -293,7 +351,20 @@ const MenuPoints = observer(
             $(".menu-point_collections").on("click", self.closeNav);
             $(".menu-point_gifts").off("click", self.toggleDrop);
             $(".menu-point_gifts").on("click", self.closeNav);
+            $(".sale-point").off("click", self.toggleDrop);
+            $(".sale-point").on("click", self.closeNav);
             $(".menu_sub").off("click", self.toggleDrop);
+            if (
+              document.body.clientWidth < 760 &&
+              localStorage.getItem("city") !== null &&
+              localStorage.getItem("city") !== undefined &&
+              document.querySelector(".sidebar-overlay") !== null &&
+              localStorage.getItem("city").sourse === "Y"
+            ) {
+              document.querySelector(".sidebar-overlay").classList.add("active");
+              document.querySelector(".sidebar-overlay").classList.add("city");
+              document.querySelector("body").classList.add("no-scroll");
+            }
           }
         })
         .resize();
@@ -316,7 +387,78 @@ const MenuPoints = observer(
       }
     }
 
+    loaderIncPlus = () => {
+      const intLoader = setInterval(() => {
+        // console.log(
+        //   "this.props.store.loaderPercent :>> ",
+        //   this.props.store.loaderPercent
+        // );
+        if (this.props.store.loaderPercent <= this.props.store.loaderInc + 1) {
+          this.props.store.loaderPercent += 3;
+        }
+        if (this.props.store.loaderPercent >= 100) {
+          $(".loader-page").addClass("deact");
+          this.props.store.loaderPercent = 0;
+          window.prerenderReady = true;
+          // $(".loader-page").remove();
+          // $("body").addClass("no-scroll");
+          // $("body").removeClass("no-scroll");
+          clearInterval(intLoader);
+        }
+      }, 50);
+
+      // if (this.props.store.loaderPercent <= this.props.store.loaderInc) {
+      //   this.props.store.loaderPercent += 1;
+      //   setTimeout(() => {
+      //     this.loaderIncPlus();
+      //   }, this.props.store.loaderPercent * 500);
+      // }
+    };
+
     createMenu = () => {
+      this.props.store.loaderInc = 50;
+      if (
+        window.location.pathname.includes("/cart") ||
+        window.location.pathname.includes("/finish/")
+        // ||
+        // window.location.pathname.includes("/product/")
+      ) {
+        this.props.store.loaderPercent = 100;
+      }
+
+      //http://127.0.0.1:3000/product/5637281928
+
+      // if (
+      //   window.location.pathname.includes("/product/") &&
+      //   window.location.pathname.includes("&")
+      // ) {
+      //   console.log("12312 :>> ", 12312);
+      //   fetch(
+      //     SERVER_URL + "/prodbfcheck/" + window.location.pathname.split("&")[1],
+      //     {
+      //       method: "GET",
+      //       credentials: "include",
+      //       headers: {
+      //         "Content-Type": "application/json",
+      //       },
+      //     }
+      //   )
+      //     .then((res) => {
+      //       return res.json();
+      //     })
+      //     .then((s) => {
+      //       console.log("s :>> ", s);
+      //       if (s.stasus === 201) {
+      //         this.props.history.push(
+      //           "/product/" +
+      //             window.location.pathname.split("&")[0].split("/product/")[1]
+      //         );
+      //       }
+      //     })
+      //     .catch((err) => console.log("err", err));
+      // }
+
+      this.loaderIncPlus();
       fetch(SERVER_URL + "/categories", {
         method: "GET",
         headers: {
@@ -326,30 +468,34 @@ const MenuPoints = observer(
         .then((res) => {
           return res.json();
         })
-        .then((data) => {
+        .then((dataObj) => {
+          const data = dataObj.cats;
+
+          dataObj.colors.sort((prev, next) => {
+            if (prev.name < next.name) return -1;
+            if (prev.name > next.name) return 1;
+            return 1;
+          });
+
           const menu = {};
           // console.log("data :>> ", data);
 
           data.forEach((elem, i) => {
             const childsPoints = [];
             if (elem.name === "Подарки") {
-              elem.childs.push({ name: "Сертификаты", slug: "sertificats" });
+              elem.childs.push({
+                name: "Сертификаты",
+                slug: "sertificats",
+              });
             }
 
             this.props.store.menuAccor[elem.slug] = elem.name;
+            this.props.store.catalogSEO[elem.slug] = { ...elem.seo, childs: {} };
 
             elem.childs.sort((prev, next) => {
               if (prev.name.includes(" до ") && next.name.includes(" до ")) {
-                if (
-                  +prev.name.split(" до ")[1].split(" ")[0] <
-                  +next.name.split(" до ")[1].split(" ")[0]
-                )
-                  return -1;
-                if (
-                  +prev.name.split(" до ")[1].split(" ")[0] >
-                  +next.name.split(" до ")[1].split(" ")[0]
-                )
-                  return 1;
+                if (+prev.name.split(" до ")[1].split(" ")[0] < +next.name.split(" до ")[1].split(" ")[0]) return -1;
+                if (+prev.name.split(" до ")[1].split(" ")[0] > +next.name.split(" до ")[1].split(" ")[0]) return 1;
                 return 1;
               } else {
                 if (prev.name < next.name) return -1;
@@ -357,85 +503,99 @@ const MenuPoints = observer(
                 return 1;
               }
             });
+            const firstName = ["Учителям", "Влюбленным", "Женщинам", "Мужчинам", "Родителям"];
+            const first = [];
+
             elem.childs.forEach((child, iCh) => {
               this.props.store.menuAccor[child.slug] = child.name;
+              this.props.store.catalogSEO[elem.slug].childs[child.slug] = { ...child.seo };
               //убрать tr, так как будут поля с транскрипцией в бд
-              childsPoints.push(
-                <li key={child.name}>
-                  <NavLink
-                    to={`/catalog/${elem.slug}/${child.slug}`}
-                    onClick={this.closeNav}
-                  >
-                    {child.name}
+              if (elem.name === "Подарки" && firstName.includes(child.name)) {
+                first.push(
+                  <li key={child.name}>
+                    <NavLink to={`/catalog/${elem.slug}/${child.slug}`} onClick={this.closeNav}>
+                      {child.name}
+                    </NavLink>
+                  </li>
+                );
+              } else {
+                childsPoints.push(
+                  <li key={child.name}>
+                    <NavLink to={`/catalog/${elem.slug}/${child.slug}`} onClick={this.closeNav}>
+                      {child.name}
+                    </NavLink>
+                  </li>
+                );
+              }
+            });
+
+            const menuElem = () => {
+              if (this.typeDevice) {
+                return (
+                  <span className="menu__drop" key={elem.name}>
+                    <Link className="menu-point">{elem.name}</Link>
+                    <div className="menu menu_sub">
+                      <div className="container container_f">
+                        <button
+                          className="btn btn_prev"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            e.target.closest(".menu_sub").classList.remove("visible");
+                          }}
+                        >
+                          <span className="ic i_left"></span> Назад
+                        </button>
+                        <div className="column">{<ul>{childsPoints}</ul>}</div>
+                      </div>
+                    </div>
+                  </span>
+                );
+              }
+              return (
+                <div key={elem.name}>
+                  <NavLink className="menu__title" to={`/catalog/${elem.slug}`} onClick={this.closeNav}>
+                    {elem.name}
+                  </NavLink>
+                  <ul>{childsPoints}</ul>
+                </div>
+              );
+            };
+
+            if (elem.name === "Сервизы") {
+              childsPoints.unshift(
+                <li key={"Собрать сервиз"}>
+                  <NavLink to={`/sborka-serviza`} onClick={this.closeNav}>
+                    Собрать сервиз
                   </NavLink>
                 </li>
               );
-            });
-
-            if (elem.name === "Сервировка стола") {
-              menu[0] = (
-                <div key={elem.name}>
-                  <h5>{elem.name}</h5>
-                  <ul>{childsPoints}</ul>
-                </div>
-              );
+              menu[0] = menuElem();
+            } else if (elem.name === "Сервировка стола") {
+              menu[1] = menuElem();
+            } else if (elem.name === "Пикник") {
+              menu[2] = menuElem();
             } else if (elem.name === "Для приготовления") {
-              menu[1] = (
-                <div key={elem.name}>
-                  <h5>{elem.name}</h5>
-                  <ul>{childsPoints}</ul>
-                </div>
-              );
+              menu[3] = menuElem();
             } else if (elem.name === "Напитки") {
-              menu[2] = (
-                <div key={elem.name}>
-                  <h5>{elem.name}</h5>
-                  <ul>{childsPoints}</ul>
-                </div>
-              );
+              menu[4] = menuElem();
             } else if (elem.name === "Кофе и чай") {
-              menu[3] = (
-                <div key={elem.name}>
-                  <h5>{elem.name}</h5>
-                  <ul>{childsPoints}</ul>
-                </div>
-              );
+              menu[5] = menuElem();
             } else if (elem.name === "Аксессуары для стола") {
-              menu[4] = (
-                <div key={elem.name}>
-                  <h5>{elem.name}</h5>
-                  <ul>{childsPoints}</ul>
-                </div>
-              );
+              menu[6] = menuElem();
             } else if (elem.name === "Интерьер") {
-              menu[5] = (
-                <div key={elem.name}>
-                  <h5>{elem.name}</h5>
-                  <ul>{childsPoints}</ul>
-                </div>
-              );
+              menu[7] = menuElem();
               this.interier.push(<ul key={elem.name}>{childsPoints}</ul>);
             } else if (elem.name === "Наборы") {
-              menu[6] = (
-                <div key={elem.name}>
-                  <h5>{elem.name}</h5>
-                  <ul>{childsPoints}</ul>
-                </div>
-              );
-            } else if (elem.name === "Сервизы") {
-              menu[7] = (
-                <div key={elem.name}>
-                  <h5>{elem.name}</h5>
-                  <ul>{childsPoints}</ul>
-                </div>
-              );
+              menu[8] = menuElem();
             } else if (elem.name === "Premium") {
               this.premium.push(<ul key={elem.name}>{childsPoints}</ul>);
             } else if (elem.name === "Подарки") {
               let ind = 0;
               let sum = 0;
-              let key = 0;
+              let key = 1;
               let timeCont = [];
+
               // childsPoints.sort((prev, next) => {
               //   console.log("object :>> ", prev, next);
               //   if (prev.name.includes(" до ") && next.name.includes(" до ")) {
@@ -449,6 +609,13 @@ const MenuPoints = observer(
               //     return 1;
               //   }
               // });
+              if (first.length) {
+                this.gifts.push(
+                  <div className="column" key="0">
+                    <ul>{first}</ul>
+                  </div>
+                );
+              }
               childsPoints.forEach((elem) => {
                 if (ind < 4 && sum < childsPoints.length - 1) {
                   timeCont.push(elem);
@@ -469,6 +636,78 @@ const MenuPoints = observer(
               });
             }
 
+            const headCar = {
+              direction: "vertical",
+              slidesPerGroup: 7,
+              slidesPerView: 7,
+              shortSwipes: false,
+              preventClicksPropagation: true,
+              preventClicks: true,
+              mousewheel: true,
+              draggable: false,
+              height: 210,
+              navigation: {
+                nextEl: ".swiper-button-color-next",
+                prevEl: ".swiper-button-color-prev",
+              },
+            };
+
+            if (this.typeDevice) {
+              menu[9] = (
+                <span className="menu__drop" key="colors">
+                  <Link className="menu-point">Цвет</Link>
+                  <div className="menu menu_sub">
+                    <div className="container container_f">
+                      <button
+                        className="btn btn_prev"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          e.target.closest(".menu_sub").classList.remove("visible");
+                        }}
+                      >
+                        <span className="ic i_left"></span> Назад
+                      </button>
+                      <div className="column">
+                        {
+                          <ul>
+                            {dataObj.colors.map((el) => {
+                              this.props.store.colorsObj[el.slug] = el.name;
+                              return (
+                                <li key={el.slug}>
+                                  <NavLink to={`/colors/${el.slug}`} onClick={this.closeNav}>
+                                    {el.name}
+                                  </NavLink>
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                </span>
+              );
+            } else {
+              menu[9] = (
+                <div key="colors" className="colors-in-menu">
+                  <h5>Цвет</h5>
+                  <Swiper {...headCar}>
+                    {dataObj.colors.map((el, i) => {
+                      this.props.store.colorsObj[el.slug] = el.name;
+                      return (
+                        <div key={i}>
+                          <NavLink to={`/colors/${el.slug}`} onClick={this.closeNav}>
+                            {el.name}
+                          </NavLink>
+                        </div>
+                      );
+                    })}
+                  </Swiper>
+                </div>
+              );
+            }
+
             // this.menuContainer.push(
             //   <Dropdown key={i} text={elem.name} pointing className="link item">
             //     <Dropdown.Menu>{childsPoints}</Dropdown.Menu>
@@ -477,14 +716,33 @@ const MenuPoints = observer(
           });
 
           this.props.store.fullCats = data;
-          for (let index = 0; index < Object.keys(menu).length; index += 2) {
-            this.menuContainer.push(
-              <div className="column" key={index}>
-                {menu[index]}
-                {menu[index + 1]}
-              </div>
-            );
+          if (this.typeDevice) {
+            this.menuContainer = Object.values(menu);
+          } else {
+            for (let index = 0; index < Object.keys(menu).length; index += 2) {
+              if (index === 3 || index === 0) {
+                this.menuContainer.push(
+                  <div className="column" key={index}>
+                    {menu[index]}
+                    {menu[index + 1]}
+                    {menu[index + 2]}
+                  </div>
+                );
+                index += 1;
+              } else {
+                this.menuContainer.push(
+                  <div className="column" key={index}>
+                    {menu[index]}
+                    {menu[index + 1]}
+                  </div>
+                );
+              }
+            }
           }
+
+          this.props.store.loaderInc = 100;
+
+          // this.loaderIncPlus();
           this.setState({ ready: true });
         })
         .catch((err) => {
@@ -531,7 +789,11 @@ const MenuPoints = observer(
     };
 
     render() {
-      const { collInMenu } = this.props.store;
+      const { collInMenu, onePlusOneSlug, oneEqTwo } = this.props.store;
+
+      const inBF = moment().utcOffset("+03:00").month() === 0 && moment().utcOffset("+03:00").date() >= 24;
+      // const inVD = moment().utcOffset("+03:00").month() === 1 && moment().utcOffset("+03:00").date() <= 14;
+      const inEiMarch = moment().utcOffset("+03:00").month() === 2 && moment().utcOffset("+03:00").date() <= 8;
 
       // const { store } = this.props;
       // const { collectionsData } = store;
@@ -574,6 +836,11 @@ const MenuPoints = observer(
       return (
         this.state.ready && (
           <>
+            {moment("01.02.2021", "DD.MM.YYYY").isAfter(moment()) && !this.props.location.pathname.includes("/cart") && (
+              <div className="ny-warning">
+                <p>Баланс бонусов удвоен до 01.02</p>
+              </div>
+            )}
             {/* <Menu>{this.menuContainer}</Menu> */}
             <div
               className={
@@ -583,16 +850,17 @@ const MenuPoints = observer(
                 this.props.location.pathname.includes("/about") ||
                 this.props.location.pathname.includes("/product") ||
                 this.props.location.pathname.includes("/closeout") ||
+                this.props.location.pathname.includes("/sets") ||
+                this.props.location.pathname.includes("/colors") ||
+                this.props.location.pathname.includes("/404") ||
                 this.props.location.pathname.includes("/ideas") ||
                 this.props.location.pathname.includes("/hits") ||
-                this.props.location.pathname.includes("/new") ||
-                this.props.location.pathname.includes("/help")
+                (this.props.location.pathname.includes("/new") && !this.props.location.pathname.includes("/new-")) ||
+                this.props.location.pathname.includes("/help") ||
+                this.props.location.pathname.includes("/search")
                   ? "header_w "
                   : " ") +
-                (this.props.location.pathname.includes("/finish") ||
-                this.props.location.pathname.includes("/cart")
-                  ? "header_dn "
-                  : " ")
+                (this.props.location.pathname.includes("/finish") || this.props.location.pathname.includes("/cart") ? "header_dn " : " ")
               }
             >
               <div className="container container_f">
@@ -604,17 +872,33 @@ const MenuPoints = observer(
                     $(".sidebar-overlay").toggleClass("active");
                   }}
                 ></button>
+                <Link className="logo logo_vl" to="/">
+                  <span className="i_queen"></span>
+                  <span className="i_of"></span>
+                  <span className="i_bohemia"></span>
+                  <span className="i_qd"></span>
+                </Link>
                 <div className="header__left">
-                  <Link to="/about" onClick={this.closeNav}>
-                    О нас
+                  <Link to="/help/delivery" onClick={this.closeNav}>
+                    Доставка
                   </Link>
+                  <Link to="/help/payment" onClick={this.closeNav}>
+                    Оплата
+                  </Link>
+                  <Link to="/help/garantie" onClick={this.closeNav}>
+                    Гарантия
+                  </Link>
+                  <Link to="/help/return" onClick={this.closeNav}>
+                    Возврат
+                  </Link>
+
                   <Link to="/shops" onClick={this.closeNav}>
                     Магазины
                   </Link>
                   {$(window).width() > 760 ? (
                     <span>
                       <span className="link header__btn">
-                        Помощь <span className="ic i_drop"></span>
+                        Еще <span className="ic i_drop"></span>
                       </span>
                       {this.service}
                     </span>
@@ -632,18 +916,17 @@ const MenuPoints = observer(
                   {/* <Link className="header__left-bonus" to="/help/bonus">
                     Бонусы
                   </Link> */}
-                  <CityCh store={this.props.store} />
                 </div>
                 {/* <Link className="logo" to="/">
 
                   <img src="/image/logo.svg" />
                 </Link> */}
-                <Link className="logo logo_vl" to="/">
+                {/* <Link className="logo logo_vl" to="/">
                   <span className="i_queen"></span>
                   <span className="i_of"></span>
                   <span className="i_bohemia"></span>
                   <span className="i_qd"></span>
-                </Link>
+                </Link> */}
 
                 {this.phone}
 
@@ -676,9 +959,7 @@ const MenuPoints = observer(
                 <button
                   className="cart ic i_bag"
                   onClick={() => {
-                    document
-                      .querySelector(".sidebar-overlay")
-                      .classList.add("active");
+                    document.querySelector(".sidebar-overlay").classList.add("active");
 
                     document.querySelector("body").classList.add("no-scroll");
 
@@ -687,11 +968,7 @@ const MenuPoints = observer(
                 >
                   {this.props.store.cartCount !== 0 && (
                     <span className="i_bag__counter">
-                      {this.props.store.cartCount > 9
-                        ? 9
-                        : this.props.store.cartCount === 0
-                        ? ""
-                        : this.props.store.cartCount}
+                      {this.props.store.cartCount > 9 ? 9 : this.props.store.cartCount === 0 ? "" : this.props.store.cartCount}
                     </span>
                   )}
                 </button>
@@ -699,9 +976,7 @@ const MenuPoints = observer(
                 <div className="tooltip tooltip_cart">
                   <div className="tooltip__content">
                     <span className="ic i_plus"></span>
-                    <div className="text">
-                      Кружка 370 мл Модерн, черная матовая
-                    </div>
+                    <div className="text">Кружка 370 мл Модерн, черная матовая</div>
                   </div>
                 </div>
               </div>
@@ -714,16 +989,14 @@ const MenuPoints = observer(
                 this.props.location.pathname.includes("/about") ||
                 this.props.location.pathname.includes("/product") ||
                 this.props.location.pathname.includes("/closeout") ||
+                this.props.location.pathname.includes("/colors") ||
                 this.props.location.pathname.includes("/ideas") ||
                 this.props.location.pathname.includes("/hits") ||
-                this.props.location.pathname.includes("/new") ||
+                (this.props.location.pathname.includes("/new") && !this.props.location.pathname.includes("/new-")) ||
                 this.props.location.pathname.includes("/help")
                   ? "navigation_w "
                   : " ") +
-                (this.props.location.pathname.includes("/finish") ||
-                this.props.location.pathname.includes("/cart")
-                  ? "navigation_dn "
-                  : " ")
+                (this.props.location.pathname.includes("/finish") || this.props.location.pathname.includes("/cart") ? "navigation_dn " : " ")
               }
             >
               <div className="container container_f">
@@ -739,10 +1012,7 @@ const MenuPoints = observer(
                     <span className="ic i_menu"></span> Каталог
                   </button>
                   <span className="menu__sub ">
-                    <Link
-                      to="/collections"
-                      className="menu-point menu-point_collections"
-                    >
+                    <Link to="/collections" className="menu-point menu-point_collections">
                       Коллекции
                     </Link>
                     <div className="menu menu_sub menu_collection">
@@ -750,9 +1020,7 @@ const MenuPoints = observer(
                         <button
                           className="btn btn_prev"
                           onClick={(e) => {
-                            e.target
-                              .closest(".menu")
-                              .classList.remove("visible");
+                            e.target.closest(".menu").classList.remove("visible");
                           }}
                         >
                           <span className="ic i_left"></span> Назад
@@ -762,7 +1030,7 @@ const MenuPoints = observer(
                     </div>
                   </span>
 
-                  <span className="menu__drop">
+                  {/* <span className="menu__drop">
                     <Link to="/catalog/premium" className="menu-point">
                       Премиум
                     </Link>
@@ -771,9 +1039,7 @@ const MenuPoints = observer(
                         <button
                           className="btn btn_prev"
                           onClick={(e) => {
-                            e.target
-                              .closest(".menu")
-                              .classList.remove("visible");
+                            e.target.closest(".menu").classList.remove("visible");
                             $(".navigation").scrollTop(0);
                           }}
                         >
@@ -782,7 +1048,7 @@ const MenuPoints = observer(
                         <div className="column">{this.premium}</div>
                       </div>
                     </div>
-                  </span>
+                  </span> */}
 
                   {/* <span className="menu__drop">
                     <Link className="menu-point">Милениум</Link>
@@ -806,9 +1072,7 @@ const MenuPoints = observer(
                         <button
                           className="btn btn_prev"
                           onClick={(e) => {
-                            e.target
-                              .closest(".menu")
-                              .classList.remove("visible");
+                            e.target.closest(".menu").classList.remove("visible");
                           }}
                         >
                           <span className="ic i_left"></span> Назад
@@ -834,9 +1098,7 @@ const MenuPoints = observer(
                         <button
                           className="btn btn_prev"
                           onClick={(e) => {
-                            e.target
-                              .closest(".menu")
-                              .classList.remove("visible");
+                            e.target.closest(".menu").classList.remove("visible");
                           }}
                         >
                           <span className="ic i_left"></span> Назад
@@ -846,50 +1108,119 @@ const MenuPoints = observer(
                     </div>
                   </span>
 
-                  <span className="menu__drop">
-                    <Link to="/new" className="menu-point menu-point_news">
-                      Новинки
-                    </Link>
-                  </span>
+                  {$(window).width() > 840 && (
+                    <span className="menu__drop">
+                      <Link to="/new" className="menu-point menu-point_news">
+                        Новинки
+                      </Link>
+                    </span>
+                  )}
 
-                  <span className="menu__drop">
-                    <Link to="/actions" className="menu-point sale-point">
-                      Акции
+                  {/* <span className="menu__drop">
+                    <Link to="/catalog/interer" className="menu-point">
+                      Интерьер
                     </Link>
                     <div className="menu menu_sub">
                       <div className="container container_f">
                         <button
                           className="btn btn_prev"
                           onClick={(e) => {
-                            e.target
-                              .closest(".menu")
-                              .classList.remove("visible");
+                            e.target.closest(".menu").classList.remove("visible");
                           }}
                         >
                           <span className="ic i_left"></span> Назад
                         </button>
-                        <div className="column">
-                          <ul>
-                            <li>
-                              <NavLink to="/closeout" onClick={this.closeNav}>
-                                Распродажа
-                              </NavLink>
-                            </li>
-                            <li>
-                              <NavLink to="/actions" onClick={this.closeNav}>
-                                Акции
-                              </NavLink>
-                            </li>
-                            <li>
-                              <NavLink to="/main/1+13" onClick={this.closeNav}>
-                                1 + 1 = 3
-                              </NavLink>
-                            </li>
-                          </ul>
-                        </div>
+                        <div className="column">{this.interier}</div>
                       </div>
                     </div>
-                  </span>
+                  </span> */}
+
+                  {!inBF && (
+                    <span className="menu__drop">
+                      <Link
+                        to="/actions"
+                        className="menu-point"
+                        onClick={(e) => {
+                          // this.toggleDrop(e);
+                          // e.preventDefault();
+                        }}
+                      >
+                        Акции
+                      </Link>
+                      <div className="menu menu_sub">
+                        <div className="container container_f">
+                          <button
+                            className="btn btn_prev"
+                            onClick={(e) => {
+                              e.target.closest(".menu").classList.remove("visible");
+                            }}
+                          >
+                            <span className="ic i_left"></span> Назад
+                          </button>
+                          <div className="column">
+                            <ul>
+                              <li>
+                                <NavLink to="/closeout" onClick={this.closeNav}>
+                                  Распродажа
+                                </NavLink>
+                              </li>
+                              <li>
+                                <NavLink to="/actions" onClick={this.closeNav}>
+                                  Акции
+                                </NavLink>
+                              </li>
+                              {onePlusOneSlug && (
+                                <li>
+                                  <NavLink to={`/main/${onePlusOneSlug}`} onClick={this.closeNav}>
+                                    1 + 1 = 3
+                                  </NavLink>
+                                </li>
+                              )}
+                              {oneEqTwo && (
+                                <li>
+                                  <NavLink to={`/sets`} onClick={this.closeNav}>
+                                    1 = 2
+                                  </NavLink>
+                                </li>
+                              )}
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </span>
+                  )}
+
+                  {/* {inBF && (
+                    <span className="menu__drop">
+                      {localStorage.getItem("CMcheck") === true || localStorage.getItem("CMcheck") === "true" ? (
+                        <Link to="/close-sale" className="menu-point menu-point_news" style={{ color: "#BA250D", fontWeight: "600" }}>
+                          Закрытая распродажа
+                        </Link>
+                      ) : (
+                        <Link to="/cyber-monday" className="menu-point menu-point_news" style={{ color: "#BA250D", fontWeight: "600" }}>
+                          КиберПонедельник
+                        </Link>
+                      )}
+                    </span>
+                  )}
+                  {inVD && (
+                    <span className="menu__drop">
+                      <Link to="/main/podarki_vlyublennym" className="menu-point menu-point_news" style={{ color: "#BA250D", fontWeight: "600" }}>
+                        День Валентина
+                      </Link>
+                    </span>
+                  )} */}
+                  {/* {
+                    <span className="menu__drop">
+                      <Link
+                        to="/main/kollekciya_posudy_k_pashe"
+                        className="menu-point menu-point_news"
+                        style={{ color: "#BA250D", fontWeight: "600" }}
+                      >
+                        Пасха
+                      </Link>
+                    </span>
+                  } */}
                 </div>
                 <div className="search-pos">
                   <form className="search-wrp">
@@ -905,8 +1236,13 @@ const MenuPoints = observer(
                     <button
                       className="ic i_search"
                       onClick={(e) => {
-                        this.props.store.searchText = this.searchValue;
-                        this.props.history.push("/search");
+                        // this.props.store.searchText = this.searchValue;
+
+                        if (!window.location.pathname.includes("search")) {
+                          this.props.store.productsToRender = [];
+                        }
+
+                        this.props.history.push(`/search?search=${encodeURIComponent(this.searchValue)}`);
 
                         e.preventDefault();
                         this.closeNav(e);
@@ -918,9 +1254,7 @@ const MenuPoints = observer(
                   <button
                     className="liked ic i_fav"
                     onClick={() => {
-                      document
-                        .querySelector(".sidebar-overlay")
-                        .classList.add("active");
+                      document.querySelector(".sidebar-overlay").classList.add("active");
 
                       document.querySelector("body").classList.add("no-scroll");
 
@@ -929,34 +1263,11 @@ const MenuPoints = observer(
                   >
                     <span className="vis-s">Избранное</span>
                   </button>
-                  <button
-                    className="cart ic i_bag"
-                    onClick={() => {
-                      document
-                        .querySelector(".sidebar-overlay")
-                        .classList.add("active");
 
-                      document.querySelector("body").classList.add("no-scroll");
-
-                      this.setState({ popCart: true });
-                    }}
-                  >
-                    {this.props.store.cartCount !== 0 && (
-                      <span className="i_bag__counter">
-                        {this.props.store.cartCount > 9
-                          ? 9
-                          : this.props.store.cartCount === 0
-                          ? ""
-                          : this.props.store.cartCount}
-                      </span>
-                    )}
-                  </button>
                   <div className="tooltip tooltip_cart">
                     <div className="tooltip__content">
                       <span className="ic i_plus"></span>
-                      <div className="text">
-                        Кружка 370 мл Модерн, черная матовая
-                      </div>
+                      <div className="text">Кружка 370 мл Модерн, черная матовая</div>
                     </div>
                   </div>
                   <button
@@ -965,13 +1276,9 @@ const MenuPoints = observer(
                       if (this.props.store.auth) {
                         this.props.history.push("/profile");
                       } else {
-                        document
-                          .querySelector(".sidebar-overlay")
-                          .classList.add("active");
+                        document.querySelector(".sidebar-overlay").classList.add("active");
 
-                        document
-                          .querySelector("body")
-                          .classList.add("no-scroll");
+                        document.querySelector("body").classList.add("no-scroll");
 
                         this.props.store.sideLogin = true;
                       }
@@ -979,14 +1286,57 @@ const MenuPoints = observer(
                   >
                     <span className="vis-s">Войти</span>
                   </button>
+                  <button
+                    className="cart ic i_bag"
+                    onClick={() => {
+                      document.querySelector(".sidebar-overlay").classList.add("active");
+
+                      document.querySelector("body").classList.add("no-scroll");
+
+                      this.setState({ popCart: true });
+                    }}
+                  >
+                    {this.props.store.cartCount !== 0 && (
+                      <span className="i_bag__counter">
+                        {this.props.store.cartCount > 9 ? 9 : this.props.store.cartCount === 0 ? "" : this.props.store.cartCount}
+                      </span>
+                    )}
+                  </button>
                 </div>
                 <div className="navigation__service">
-                  <Link to="/about" onClick={this.closeNav}>
-                    О нас
+                  <Link to="/help/delivery" onClick={this.closeNav}>
+                    Доставка
                   </Link>
+                  <Link to="/help/payment" onClick={this.closeNav}>
+                    Оплата
+                  </Link>
+                  <Link to="/help/garantie" onClick={this.closeNav}>
+                    Гарантия
+                  </Link>
+                  <Link to="/help/return" onClick={this.closeNav}>
+                    Возврат
+                  </Link>
+
                   <Link to="/shops" onClick={this.closeNav}>
                     Магазины
                   </Link>
+
+                  <Link to="/about" onClick={this.closeNav}>
+                    О нас
+                  </Link>
+
+                  <Link to="/help/offer" onClick={this.closeNav}>
+                    Публичная оферта
+                  </Link>
+
+                  <Link to="/help/certificate" onClick={this.closeNav}>
+                    Сертификат
+                  </Link>
+
+                  <Link to="/help/bonus" onClick={this.closeNav}>
+                    Бонусы
+                  </Link>
+
                   {$(window).width() > 760 ? (
                     <span>
                       <span className="link header__btn">
@@ -994,11 +1344,7 @@ const MenuPoints = observer(
                       </span>
                       {this.service}
                     </span>
-                  ) : (
-                    <Link to="/help/payment" onClick={this.closeNav}>
-                      Помощь
-                    </Link>
-                  )}
+                  ) : null}
                   {/* <span>
                     <span className="link header__btn">
                       Помощь <span className="ic i_drop"></span>
@@ -1059,54 +1405,26 @@ const MenuPoints = observer(
                   </button>
                 )}
               </div>
-              {this.state.popLike && (
-                <LikeSidebar
-                  store={this.props.store}
-                  closeSidebar={this.closeSidebar}
-                />
-              )}
-              {this.props.store.sideAsk && (
-                <AskSidebar
-                  store={this.props.store}
-                  closeSidebar={this.closeSidebar}
-                />
-              )}
-              {this.props.store.changeSide && (
-                <ChangeSidebar
-                  store={this.props.store}
-                  closeSidebar={this.closeSidebar}
-                />
-              )}
-              {this.props.store.sideLogin && (
-                <AuthSidebar
-                  closeSidebar={this.closeSidebar}
-                  store={this.props.store}
-                />
-              )}
-              {this.props.store.sideGift && (
-                <GiftSidebar
-                  closeSidebar={this.closeSidebar}
-                  store={this.props.store}
-                />
-              )}
-              {this.state.popCart && (
-                <CartSidebar
-                  store={this.props.store}
-                  closeSidebar={this.closeSidebar}
-                />
-              )}
+              {this.state.popLike && <LikeSidebar store={this.props.store} closeSidebar={this.closeSidebar} />}
+              {this.props.store.sideAsk && <AskSidebar store={this.props.store} closeSidebar={this.closeSidebar} />}
+              {this.props.store.changeSide && <ChangeSidebar store={this.props.store} closeSidebar={this.closeSidebar} />}
+              {this.props.store.sideLogin && <AuthSidebar closeSidebar={this.closeSidebar} store={this.props.store} />}
+              {this.props.store.sideGift && <GiftSidebar closeSidebar={this.closeSidebar} store={this.props.store} />}
+              {this.state.popCart && <CartSidebar store={this.props.store} closeSidebar={this.closeSidebar} />}
             </div>
 
             <div
-              className="sidebar-overlay"
+              className={"sidebar-overlay" + (this.props.store.sideLogin ? " active" : "")}
               onClick={(e) => {
                 this.setState({
                   popCart: false,
                   popLike: false,
                 });
+
                 this.props.store.sideLogin = false;
                 this.props.store.sideAsk = false;
                 this.props.store.sideGift = false;
+                this.props.store.changeSide = false;
                 $("body").removeClass("no-scroll");
                 $(".navigation").removeClass("visible");
                 $(".header__drop_city").removeClass("active");
@@ -1114,40 +1432,175 @@ const MenuPoints = observer(
                 e.target.classList.remove("active");
                 document.querySelector(".sidebar").classList.remove("visible");
                 if (document.querySelector(".catalog__bar")) {
-                  document
-                    .querySelector(".catalog__bar")
-                    .classList.remove("visible");
-                  document
-                    .querySelector(".i_filter")
-                    .classList.remove("active");
+                  document.querySelector(".catalog__bar").classList.remove("visible");
+                  document.querySelector(".i_filter").classList.remove("active");
                 }
               }}
             ></div>
-            {!this.props.store.auth && (
-              <div
-                className="discond-fix"
-                onClick={() => {
-                  document
-                    .querySelector(".sidebar-overlay")
-                    .classList.add("active");
 
-                  document.querySelector("body").classList.add("no-scroll");
+            {document.body.clientWidth < 760 &&
+              localStorage.getItem("city") !== null &&
+              localStorage.getItem("city") !== undefined &&
+              localStorage.getItem("city").sourse === "Y" && (
+                <div
+                  className="city-check"
+                  onClick={(e) => {
+                    if (e.target.classList.contains("city-check")) {
+                      const cityData = localStorage.getItem("city");
+                      cityData.sourse = "U";
+                      document.querySelector(".sidebar-overlay").classList.remove("active");
+                      document.querySelector(".sidebar-overlay").classList.remove("city");
+                      document.querySelector("body").classList.remove("no-scroll");
+                      localStorage.setItem("city", cityData);
+                    }
+                  }}
+                >
+                  <div className="header__drop header__drop_city-check">
+                    <p>
+                      {" "}
+                      Регион доставки:
+                      <b> {this.props.store.city} ?</b>
+                    </p>
+                    <div>
+                      <button
+                        className="btn"
+                        onClick={() => {
+                          $(".header__drop_city-check").addClass("deactiv");
+                          $(".header__drop_city-overlay").addClass("vis");
+                        }}
+                      >
+                        Выбрать другой
+                      </button>
+                      <button
+                        className=" btn_yellow btn"
+                        onClick={() => {
+                          const cityData = localStorage.getItem("city");
+                          cityData.sourse = "U";
+                          document.querySelector(".sidebar-overlay").classList.remove("active");
+                          document.querySelector(".sidebar-overlay").classList.remove("city");
+                          document.querySelector("body").classList.remove("no-scroll");
+                          localStorage.setItem("city", cityData);
+                        }}
+                      >
+                        Да
+                      </button>
+                    </div>
+                  </div>
+                  <form className="header__drop header__drop_city header__drop_city-overlay">
+                    <div className="input-field">
+                      <label className="active" htmlFor="citySearch">
+                        Населенный пункт
+                      </label>
+                      <input
+                        id="citySearch"
+                        placeholder="Поиск"
+                        type="text"
+                        onInput={(e) => {
+                          if (e.target.value.length >= 3) {
+                            const renderCities = [];
+                            api
+                              .getCity(e.target.value)
+                              .then((c) => {
+                                c.forEach((one) => {
+                                  if (one.addressComponents.length <= 6) {
+                                    renderCities.push(
+                                      <li key={one.geoId}>
+                                        <button
+                                          type="submit"
+                                          onClick={(e) => {
+                                            e.preventDefault();
+                                            $(".header__drop").removeClass("visible");
+                                            document.querySelector(".sidebar-overlay").classList.remove("active");
+                                            document.querySelector(".sidebar-overlay").classList.remove("city");
+                                            document.querySelector("body").classList.remove("no-scroll");
+                                            localStorage.setItem("city", {
+                                              name: one.addressComponents[one.addressComponents.length - 1].name,
+                                              geoId: one.geoId,
+                                              region: one.addressComponents[2].name,
+                                              sourse: "U",
+                                            });
+                                          }}
+                                        >
+                                          {one.addressComponents[one.addressComponents.length - 2].name +
+                                            ", " +
+                                            one.addressComponents[one.addressComponents.length - 1].name}
+                                        </button>
+                                      </li>
+                                    );
+                                  }
+                                });
+                                this.setState({
+                                  cities: renderCities,
+                                });
+                              })
+                              .catch((err) => {
+                                console.log("err :>> ", err);
+                              });
+                          }
+                        }}
+                        onFocus={(e) => {
+                          $(e.target).parent().find("label").addClass("active");
+                        }}
+                        onBlur={(e) => {
+                          if (e.target.value === "") {
+                            // $(e.target).parent().find('label').removeClass('active');
+                          }
+                        }}
+                      />
+                    </div>
+                    <ul>{this.state.cities}</ul>
+                  </form>
+                </div>
+              )}
 
-                  this.props.store.sideLogin = true;
-                }}
-              >
-                <img src="/image/button/icon/gift.svg"></img>
-              </div>
-            )}
+            <div className="bottom-fix">
+              {!this.props.store.auth && !window.location.pathname.includes("/cart") && !window.location.pathname.includes("/finish/") && (
+                <div
+                  className="discond-fix"
+                  onClick={() => {
+                    document.querySelector(".sidebar-overlay").classList.add("active");
+
+                    document.querySelector("body").classList.add("no-scroll");
+
+                    this.props.store.sideLogin = true;
+                  }}
+                >
+                  <img src="/image/button/icon/gift.svg"></img>
+                </div>
+              )}
+
+              {(localStorage.getItem("cookie-close") === undefined || localStorage.getItem("cookie-close") === null) && (
+                <div className="cookie-message">
+                  <p>Наш сайт использует cookie</p>
+                  <button
+                    className="ic i_close"
+                    onClick={() => {
+                      $(".bottom-fix").addClass("hide");
+                      setTimeout(() => {
+                        localStorage.setItem("cookie-close", "true");
+                      }, 1000);
+                    }}
+                  ></button>
+                </div>
+              )}
+            </div>
           </>
         )
       );
     }
 
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
       if (!Object.keys(this.props.store.bannersData).length) {
         this.props.store.getCollections();
       }
+      //   if (
+      //     document.body.clientWidth < 760 &&
+      //     (localStorage.get("city") !== null &&
+      //       localStorage.get("city") !== undefined) &&
+      //     localStorage.get("city").sourse === "Y"
+      //   ) {
+
+      //   }
     }
   }
 );

@@ -59,10 +59,7 @@ const Breadcrumbs = observer(
         </Link>
       );
 
-      if (
-        window.location.pathname.includes("collections") ||
-        this.props.name === "collections"
-      ) {
+      if (window.location.pathname.includes("collections") || this.props.name === "collections") {
         this.props.store.firstBread = "collections";
 
         if (this.props.name) {
@@ -78,10 +75,7 @@ const Breadcrumbs = observer(
             </NavLink>
           );
         }
-      } else if (
-        window.location.pathname.includes("closeout") ||
-        this.props.name === "closeout"
-      ) {
+      } else if (window.location.pathname.includes("closeout") || this.props.name === "closeout") {
         this.props.store.firstBread = "actions";
         if (this.props.name) {
           brRend.push(
@@ -96,10 +90,7 @@ const Breadcrumbs = observer(
             </NavLink>
           );
         }
-      } else if (
-        window.location.pathname.includes("actions") ||
-        this.props.name === "actions"
-      ) {
+      } else if (window.location.pathname.includes("actions") || this.props.name === "actions") {
         this.props.store.firstBread = "actions";
         if (this.props.name) {
           brRend.push(
@@ -141,32 +132,19 @@ const Breadcrumbs = observer(
 
       let inPath = "";
 
-      if (
-        window.location.pathname.includes("collections") ||
-        this.props.name === "collections"
-      ) {
+      if (window.location.pathname.includes("collections") || this.props.name === "collections") {
         inPath = "/collections/";
-      } else if (
-        window.location.pathname.includes("closeout") ||
-        this.props.name === "closeout"
-      ) {
+      } else if (window.location.pathname.includes("closeout") || this.props.name === "closeout") {
         inPath = "/closeout/";
-      } else if (
-        window.location.pathname.includes("actions") ||
-        this.props.name === "actions"
-      ) {
+      } else if (window.location.pathname.includes("actions") || this.props.name === "actions") {
         inPath = "/actions/";
-      } else if (
-        window.location.pathname.includes("ideas") ||
-        this.props.name === "ideas"
-      ) {
+      } else if (window.location.pathname.includes("ideas") || this.props.name === "ideas") {
         this.props.store.firstBread = "ideas";
         inPath = "/ideas/";
-      } else if (
-        window.location.pathname.includes("/brand/") ||
-        this.props.name === "ideas"
-      ) {
+      } else if (window.location.pathname.includes("/brand/") || this.props.name === "ideas") {
         inPath = "/brand/";
+      } else if (window.location.pathname.includes("/main/") || this.props.name === "main") {
+        inPath = "/main/";
       } else {
         inPath = "/catalog/";
       }
@@ -191,19 +169,13 @@ const Breadcrumbs = observer(
       ) {
         if (this.props.child) {
           brRend.push(
-            <Link
-              to={inPath + this.props.name}
-              key={this.props.store.menuAccor[this.props.name]}
-            >
+            <Link to={inPath + this.props.name} key={this.props.store.menuAccor[this.props.name]}>
               {this.props.store.menuAccor[this.props.name]}
             </Link>
           );
         } else {
           brRend.push(
-            <NavLink
-              to={inPath + this.props.name}
-              key={this.props.store.menuAccor[this.props.name]}
-            >
+            <NavLink to={inPath + this.props.name} key={this.props.store.menuAccor[this.props.name]}>
               {this.props.store.menuAccor[this.props.name]}
             </NavLink>
           );
@@ -220,19 +192,13 @@ const Breadcrumbs = observer(
           this.props.store.secondBread = this.props.child;
           if (!this.props.prod) {
             brRend.push(
-              <NavLink
-                to={"/catalog/" + this.props.name + "/" + this.props.child}
-                key={this.props.store.menuAccor[this.props.child]}
-              >
+              <NavLink to={"/catalog/" + this.props.name + "/" + this.props.child} key={this.props.store.menuAccor[this.props.child]}>
                 {this.props.store.menuAccor[this.props.child]}
               </NavLink>
             );
           } else {
             brRend.push(
-              <Link
-                to={"/catalog/" + this.props.name + "/" + this.props.child}
-                key={this.props.store.menuAccor[this.props.child]}
-              >
+              <Link to={"/catalog/" + this.props.name + "/" + this.props.child} key={this.props.store.menuAccor[this.props.child]}>
                 {this.props.store.menuAccor[this.props.child]}
               </Link>
             );
@@ -243,19 +209,13 @@ const Breadcrumbs = observer(
           }
           if (!this.props.prod) {
             brRend.push(
-              <NavLink
-                to={this.props.name + "/" + this.props.child}
-                key={this.props.store.menuAccor[this.props.child]}
-              >
+              <NavLink to={this.props.name + "/" + this.props.child} key={this.props.store.menuAccor[this.props.child]}>
                 {this.props.store.menuAccor[this.props.child]}
               </NavLink>
             );
           } else {
             brRend.push(
-              <Link
-                to={"/" + this.props.name + "/" + this.props.child}
-                key={this.props.store.menuAccor[this.props.child]}
-              >
+              <Link to={"/" + this.props.name + "/" + this.props.child} key={this.props.store.menuAccor[this.props.child]}>
                 {this.props.store.menuAccor[this.props.child]}
               </Link>
             );

@@ -3,7 +3,6 @@ import React from "react";
 import { withRouter } from "react-router";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
-import localStorage from "mobx-localstorage";
 import { Link, NavLink } from "react-router-dom";
 import $ from "jquery";
 import api from "./api";
@@ -13,12 +12,8 @@ const ProductCard = observer(function ProductCard(props) {
 
   const { productInCartList, addtoCart, certInCart } = store;
 
-  const inLike = store.likeContainer.length
-    ? store.likeContainer.indexOf(String(data.slug))
-    : -1;
-  let inCart = Object.keys(store.productInCartList).length
-    ? Object.keys(store.productInCartList).indexOf(String(data.slug))
-    : -1;
+  const inLike = store.likeContainer.length ? store.likeContainer.indexOf(String(data.sku)) : -1;
+  let inCart = Object.keys(store.productInCartList).length ? Object.keys(store.productInCartList).indexOf(String(data.sku)) : -1;
 
   if (Object.keys(productInCartList).length) {
     if (data.name === "Электронный подарочный сертификат" && certInCart) {
@@ -48,7 +43,7 @@ const ProductCard = observer(function ProductCard(props) {
         if (data.name === "Электронный подарочный сертификат") {
           delete productInCartList[certInCart];
         } else {
-          delete productInCartList[data.slug];
+          delete productInCartList[data.sku];
         }
         if (process.env.REACT_APP_TYPE === "prod") {
           window.dataLayer.push({
@@ -56,7 +51,7 @@ const ProductCard = observer(function ProductCard(props) {
               remove: {
                 products: [
                   {
-                    id: data.slug,
+                    id: data.sku,
                     name: data.name,
                     price: data.price,
                     brand: data.brand,
@@ -68,9 +63,9 @@ const ProductCard = observer(function ProductCard(props) {
         }
       } else {
         if (data.name === "Электронный подарочный сертификат") {
-          productInCartList[data.slug] = "";
+          productInCartList[data.sku] = "";
         } else {
-          productInCartList[data.slug] = 1;
+          productInCartList[data.sku] = 1;
         }
 
         $(".tooltip_cart").find(".ic").removeClass("i_fav-f");
@@ -83,21 +78,33 @@ const ProductCard = observer(function ProductCard(props) {
           $(".tooltip_cart").removeClass("visible");
         }, 2000);
         if (process.env.REACT_APP_TYPE === "prod") {
-          window.dataLayer.push({
-            ecommerce: {
-              add: {
-                products: [
-                  {
-                    id: data.slug,
-                    name: data.name,
-                    price: data.price,
-                    brand: data.brand,
-                    quantity: 1,
-                  },
-                ],
+          try {
+            window.dataLayer.push({
+              ecommerce: {
+                add: {
+                  products: [
+                    {
+                      id: data.sku,
+                      name: data.name,
+                      price: data.price,
+                      brand: data.brand,
+                      quantity: 1,
+                    },
+                  ],
+                },
               },
-            },
-          });
+            });
+
+            window._tmr.push({
+              type: "itemView",
+              productid: String(data.sku),
+              pagetype: "cart",
+              list: "1",
+              totalvalue: String(data.price),
+            });
+          } catch (err) {
+            console.log("err :>> ", err);
+          }
         }
       }
       api.updateCountStats(data._id, "cart");
@@ -120,7 +127,7 @@ const ProductCard = observer(function ProductCard(props) {
           $(".tooltip_cart").removeClass("visible");
         }, 2000);
       } else {
-        likeContainer.unshift(String(data.slug));
+        likeContainer.unshift(String(data.sku));
 
         $(".tooltip_cart").addClass("visible");
         $(".tooltip_cart").find(".text").text(data.name);
@@ -151,44 +158,47 @@ const ProductCard = observer(function ProductCard(props) {
 
   return (
     // <Link className="product" to={`/product/${data.slug}`}>
-    <Link
-      className="product"
-      to={`/product/${data.slug}`}
-      onClick={clickHandler}
-    >
+    <Link className="product" to={`/product/${data.slug}`} onClick={clickHandler}>
       <div className="product__image">
         <div className="product__image-wrp">
           <LazyLoadImage effect="blur" src={imagePath} />
           <div className="product__attr-cont">
+            {data.BFclose && (
+              <div
+                className="product__sale"
+                style={{
+                  background: "#F6E8FB",
+                  color: "#000636",
+                }}
+              >
+                Закрытый раздел
+              </div>
+            )}
             {data.hit && <div className="product__hit">Хит</div>}
-            {data.sale && <div className="product__sale">Акция</div>}
-            {!data.sale &&
-              data.categories[0].childsSlug[0] !== "sertificats" && (
-                <div className="product__sale">1 + 1 = 3</div>
-              )}
+            {data.sale && !data.NY2021 && <div className="product__sale">Акция</div>}
+            {data.NY2021 && <div className="product__sale">Новый год</div>}
+
+            {data.onePlusOne && <div className="product__sale">1 + 1 = 3</div>}
+            {data.isSet && <div className="product__sale">1 = 2</div>}
             {/* {data.new && <div className="product__new">Новинка</div>} */}
           </div>
         </div>
         <div className="product__action">
-          <button
-            className={"ic i_fav" + (inLike === -1 ? "" : " active")}
-          ></button>
-          <button
-            className={"ic i_bag" + (inCart === -1 ? "" : " active")}
-          ></button>
+          <button className={"ic i_fav" + (inLike === -1 ? "" : " active")}></button>
+          <button className={"ic i_bag" + (inCart === -1 ? "" : " active")}></button>
         </div>
       </div>
       <h3 className="product__name">{data.name}</h3>
       {data.sale ? (
         <div className={"product__price product__price_disc"}>
-          <span className="old">{data.regular_price.toLocaleString()} ₽</span>{" "}
-          {data.sale_price.toLocaleString()} ₽{" "}
-          <span className="disc_perc">
-            {((data.sale_price / data.regular_price - 1) * 100).toFixed(0)}%
-          </span>
+          <span className="old">{data.regular_price.toLocaleString()} ₽</span> {data.sale_price.toLocaleString()} ₽{" "}
+          <span className="disc_perc">{((data.sale_price / data.regular_price - 1) * 100).toFixed(0)}%</span>
         </div>
+      ) : data.name === "Электронный подарочный сертификат" ? (
+        <div className={"product__price"}>{data.regular_price.toLocaleString()} ₽ </div>
       ) : (
         <div className={"product__price"}>
+          {/* <span className="old">{data.regular_price.toLocaleString()} ₽</span>{" "} */}
           {data.regular_price.toLocaleString()} ₽{" "}
         </div>
       )}

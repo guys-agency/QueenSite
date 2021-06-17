@@ -1,21 +1,16 @@
 import { observer } from "mobx-react";
 import React from "react";
 import { withRouter } from "react-router";
-import ProductCard from "./ProductCard";
-
-import Paginat from "./paginat";
+import { Link } from "react-router-dom";
 
 const ProductCardContainer = observer(
   class ProductCardContainer extends React.Component {
     state = {
       ready: false,
-      sortLabel:
-        this.props.store.sortInProd === ""
-          ? "По умолчанию"
-          : this.props.store.sortInProd,
+      sortLabel: this.props.store.sortInProd === "" ? "По умолчанию" : this.props.store.sortInProd,
     };
 
-    searchValue = "";
+    searchValue = this.props.store.searchText;
 
     testContainer = [];
 
@@ -55,10 +50,21 @@ const ProductCardContainer = observer(
       });
 
       e.target.classList.toggle("active");
+      let page = this.props.store.startPag / 42;
       this.props.store.startPag = 0;
       this.props.store.stopPag = 42;
       this.props.store.sortInProd = e.target.textContent;
-      this.props.store.resetPage = true;
+
+      let decodSearch = decodeURIComponent(window.location.href.split("?")[1]);
+
+      if (decodSearch.includes("&&page=")) {
+        decodSearch = decodSearch.split(`&&page=${page}`).join("");
+        this.props.history.replace({ search: decodSearch });
+      } else if (decodSearch.includes("page=")) {
+        decodSearch = decodSearch.split(`page=${page}`).join("");
+        this.props.history.replace({ search: decodSearch });
+      }
+
       this.props.store.filtration();
       this.setState({ sortLabel: e.target.textContent });
 
@@ -68,6 +74,13 @@ const ProductCardContainer = observer(
 
     render() {
       const { searchQ } = this.props.store;
+
+      const { descriptionInPage } = this.props;
+
+      let serv =
+        window.location.href.includes("/servizy/stolovye") ||
+        (window.location.href.includes("/servizy") && !window.location.href.includes("/servizy/"));
+
       // console.log(
       //   "decodeURIComponent :>> ",
       //   decodeURIComponent(this.props.history.location.search),
@@ -84,11 +97,12 @@ const ProductCardContainer = observer(
       return (
         <div className="col col-9 col-t-12">
           <div className="row row_inner">
-            <div className="col col-12">
+            <div className="col col-12 card-container__head">
               {this.props.location.pathname.includes("/search") && (
                 <div className="search-pos search-pos_mob">
                   <form className="search-wrp">
                     <input
+                      key={this.props.store.searchText}
                       type="text"
                       className="search"
                       placeholder="Поиск"
@@ -100,8 +114,7 @@ const ProductCardContainer = observer(
                     <button
                       className="ic i_search"
                       onClick={(e) => {
-                        this.props.store.searchText = this.searchValue;
-                        this.props.history.push("/search");
+                        this.props.history.push(`/search?search=${encodeURIComponent(this.searchValue)}`);
 
                         e.preventDefault();
                       }}
@@ -110,6 +123,13 @@ const ProductCardContainer = observer(
                 </div>
               )}
 
+              {serv && (
+                <Link className="banner banner_overlay banner-service" to="/sborka-serviza">
+                  <div className="banner__desc">Соберите сервиз сами</div>
+                </Link>
+              )}
+              {descriptionInPage ? <div className="card-container__desc">{descriptionInPage}</div> : null}
+              {this.props.store.glassType}
               {!window.location.pathname.includes("profile") && (
                 <div className="sort">
                   <div className="dropdown">
@@ -129,34 +149,19 @@ const ProductCardContainer = observer(
                     >
                       Сначала новые
                     </button> */}
-                      <button
-                        className="dropdown__list-item item"
-                        onClick={this.sortClick}
-                      >
+                      <button className="dropdown__list-item item" onClick={this.sortClick}>
                         По умолчанию
                       </button>
-                      <button
-                        className="dropdown__list-item item"
-                        onClick={this.sortClick}
-                      >
+                      <button className="dropdown__list-item item" onClick={this.sortClick}>
                         Сначала дороже
                       </button>
-                      <button
-                        className="dropdown__list-item item"
-                        onClick={this.sortClick}
-                      >
+                      <button className="dropdown__list-item item" onClick={this.sortClick}>
                         Сначала дешевле
                       </button>
-                      <button
-                        className="dropdown__list-item item"
-                        onClick={this.sortClick}
-                      >
+                      <button className="dropdown__list-item item" onClick={this.sortClick}>
                         Сначала новые
                       </button>
-                      <button
-                        className="dropdown__list-item item"
-                        onClick={this.sortClick}
-                      >
+                      <button className="dropdown__list-item item" onClick={this.sortClick}>
                         Сначала акционные
                       </button>
                     </div>
@@ -165,17 +170,11 @@ const ProductCardContainer = observer(
                     className="ic i_filter btn"
                     onClick={(e) => {
                       e.target.classList.toggle("active");
-                      document
-                        .querySelector(".catalog__bar")
-                        .classList.toggle("visible");
+                      document.querySelector(".catalog__bar").classList.toggle("visible");
 
                       if (document.body.clientWidth < 760) {
-                        document
-                          .querySelector(".sidebar-overlay")
-                          .classList.add("active");
-                        document
-                          .querySelector("body")
-                          .classList.add("no-scroll");
+                        document.querySelector(".sidebar-overlay").classList.add("active");
+                        document.querySelector("body").classList.add("no-scroll");
                       }
                     }}
                   >
@@ -185,9 +184,7 @@ const ProductCardContainer = observer(
               )}
             </div>
             {this.props.store.productsToRender}
-            {window.location.pathname.includes("profile")
-              ? null
-              : this.props.store.paginatCont}
+            {window.location.pathname.includes("profile") ? null : this.props.store.paginatCont}
           </div>
         </div>
       );
