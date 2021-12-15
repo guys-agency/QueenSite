@@ -14,10 +14,10 @@ if (process.env.REACT_APP_TYPE === "prod" && typeof window.__REACT_DEVTOOLS_GLOB
   window.__REACT_DEVTOOLS_GLOBAL_HOOK__.inject = function () {};
 }
 window.dataLayer = window.dataLayer || [];
+window.dataLayerYA = window.dataLayerYA || [];
 window._tmr = window._tmr || [];
 console.log("> ", process.env.REACT_APP_TYPE.charAt(0));
 if (process.env.REACT_APP_TYPE === "prod") {
-  // console.log("123123 :>> ", 123123);
   //YANDEX
   (function (m, e, t, r, i, k, a) {
     m[i] =
@@ -38,7 +38,7 @@ if (process.env.REACT_APP_TYPE === "prod") {
     trackHash: true,
     accurateTrackBounce: true,
     webvisor: true,
-    ecommerce: "dataLayer",
+    ecommerce: "dataLayerYA",
   });
 
   //MAIL.RU
@@ -62,11 +62,36 @@ if (process.env.REACT_APP_TYPE === "prod") {
   })(document, window, "topmailru-code");
 }
 
-if (getCookie("BFcheck") === "true" || getCookie("BFcheck") === true) {
-  localStorage.setItem("CMcheck", true);
-} else if (localStorage.getItem("CMcheck") !== null) {
-  localStorage.removeItem("CMcheck");
+function setCookie(name, value, options = {}) {
+  options = {
+    path: "/",
+    // при необходимости добавьте другие значения по умолчанию
+    ...options,
+  };
+
+  if (options.expires instanceof Date) {
+    options.expires = options.expires.toUTCString();
+  }
+
+  let updatedCookie = encodeURIComponent(name) + "=" + encodeURIComponent(value);
+
+  for (let optionKey in options) {
+    updatedCookie += "; " + optionKey;
+    let optionValue = options[optionKey];
+    if (optionValue !== true) {
+      updatedCookie += "=" + optionValue;
+    }
+  }
+
+  document.cookie = updatedCookie;
 }
+
+if (getCookie("BFcheck2021") === "true" || getCookie("BFcheck2021") === true) localStorage.setItem("BF2021Check", true);
+else if (localStorage.getItem("BF2021Check"))
+  setCookie("BFclose", "true", { secure: true, "max-age": 3600000 * 24 * 30, domain: ".queenbohemia.ru" });
+// } else if (localStorage.getItem("BF2021Check") !== null) {
+//   localStorage.removeItem("BF2021Check");
+// }
 
 // var _tmr = window._tmr || (window._tmr = []);
 //       _tmr.push({

@@ -5,6 +5,7 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import { Link, NavLink } from "react-router-dom";
 import $ from "jquery";
+import moment from "moment";
 import api from "./api";
 
 const ProductCard = observer(function ProductCard(props) {
@@ -46,20 +47,45 @@ const ProductCard = observer(function ProductCard(props) {
           delete productInCartList[data.sku];
         }
         if (process.env.REACT_APP_TYPE === "prod") {
-          window.dataLayer.push({
-            ecommerce: {
-              remove: {
-                products: [
-                  {
-                    id: data.sku,
-                    name: data.name,
-                    price: data.price,
-                    brand: data.brand,
-                  },
-                ],
+          try {
+            window.dataLayerYA.push({
+              ecommerce: {
+                remove: {
+                  products: [
+                    {
+                      id: data.sku,
+                      name: data.name,
+                      price: data.price,
+                      brand: data.brand,
+                    },
+                  ],
+                },
               },
-            },
-          });
+            });
+            window.gtag("event", "remove_from_cart", {
+              ecomm_prodid: String(data.sku),
+              ecomm_totalvalue: data.price,
+              currency: "RUB",
+              items: [
+                {
+                  item_id: String(data.sku),
+                  id: String(data.sku),
+                  item_name: data.name,
+                  name: data.name,
+                  discount: data.regular_price - data.price,
+                  brand: data.brand,
+                  item_brand: data.brand,
+                  price: data.price,
+                  currency: "RUB",
+                  quantity: 1,
+                  google_business_vertical: "retail",
+                },
+              ],
+              value: data.price,
+            });
+          } catch (error) {
+            console.log("error :>> ", error);
+          }
         }
       } else {
         if (data.name === "Электронный подарочный сертификат") {
@@ -79,7 +105,7 @@ const ProductCard = observer(function ProductCard(props) {
         }, 2000);
         if (process.env.REACT_APP_TYPE === "prod") {
           try {
-            window.dataLayer.push({
+            window.dataLayerYA.push({
               ecommerce: {
                 add: {
                   products: [
@@ -93,6 +119,28 @@ const ProductCard = observer(function ProductCard(props) {
                   ],
                 },
               },
+            });
+
+            window.gtag("event", "add_to_cart", {
+              ecomm_prodid: String(data.sku),
+              ecomm_totalvalue: data.price,
+              currency: "RUB",
+              items: [
+                {
+                  item_id: String(data.sku),
+                  id: String(data.sku),
+                  item_name: data.name,
+                  name: data.name,
+                  discount: data.regular_price - data.price,
+                  brand: data.brand,
+                  item_brand: data.brand,
+                  price: data.price,
+                  currency: "RUB",
+                  quantity: 1,
+                  google_business_vertical: "retail",
+                },
+              ],
+              value: data.price,
             });
 
             window._tmr.push({
@@ -177,6 +225,9 @@ const ProductCard = observer(function ProductCard(props) {
             {data.hit && <div className="product__hit">Хит</div>}
             {data.sale && !data.NY2021 && <div className="product__sale">Акция</div>}
             {data.NY2021 && <div className="product__sale">Новый год</div>}
+            {moment().utcOffset("+03:00").month() === 10 && moment().utcOffset("+03:00").date() >= 13 && !data.sale && (
+              <div className="product__sale">-20%</div>
+            )}
 
             {data.onePlusOne && <div className="product__sale">1 + 1 = 3</div>}
             {data.isSet && <div className="product__sale">1 = 2</div>}
@@ -184,8 +235,8 @@ const ProductCard = observer(function ProductCard(props) {
           </div>
         </div>
         <div className="product__action">
-          <button className={"ic i_fav" + (inLike === -1 ? "" : " active")}></button>
-          <button className={"ic i_bag" + (inCart === -1 ? "" : " active")}></button>
+          <button className={"ic i_fav add_to_fav" + (inLike === -1 ? "" : " active")}></button>
+          <button className={"ic i_bag add_to_cart" + (inCart === -1 ? "" : " active")}></button>
         </div>
       </div>
       <h3 className="product__name">{data.name}</h3>

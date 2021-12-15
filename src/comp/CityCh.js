@@ -78,7 +78,10 @@ const CityCh = observer(
                       .getCity(e.target.value)
                       .then((c) => {
                         c.forEach((one) => {
-                          if (one.addressComponents.length <= 6) {
+                          let region = one.address.state;
+                          let city =
+                            "city" in one.address ? one.address.city : "natural" in one.address ? one.address.natural : one.address.municipality;
+                          if (city) {
                             renderCities.push(
                               <li key={one.geoId}>
                                 <button
@@ -86,27 +89,50 @@ const CityCh = observer(
                                   onClick={(e) => {
                                     e.preventDefault();
                                     $(".header__drop").removeClass("visible");
-                                    let region = one.addressComponents[2].name;
-                                    one.addressComponents.forEach((l) => {
-                                      if (l.kind === "PROVINCE") {
-                                        region = l.name;
-                                      }
-                                    });
+
                                     localStorage.setItem("city", {
-                                      name: one.addressComponents[one.addressComponents.length - 1].name,
-                                      geoId: one.geoId,
+                                      name: city,
+                                      geoId: one.place_id,
                                       region: region,
                                       sourse: "U",
                                     });
                                   }}
                                 >
-                                  {one.addressComponents[one.addressComponents.length - 2].name +
-                                    ", " +
-                                    one.addressComponents[one.addressComponents.length - 1].name}
+                                  {city + ", " + region}
                                 </button>
                               </li>
                             );
                           }
+
+                          // if (one.addressComponents.length <= 6) {
+                          //   renderCities.push(
+                          //     <li key={one.geoId}>
+                          //       <button
+                          //         type="submit"
+                          //         onClick={(e) => {
+                          //           e.preventDefault();
+                          //           $(".header__drop").removeClass("visible");
+                          //           let region = one.addressComponents[2].name;
+                          //           one.addressComponents.forEach((l) => {
+                          //             if (l.kind === "PROVINCE") {
+                          //               region = l.name;
+                          //             }
+                          //           });
+                          //           localStorage.setItem("city", {
+                          //             name: one.addressComponents[one.addressComponents.length - 1].name,
+                          //             geoId: one.geoId,
+                          //             region: region,
+                          //             sourse: "U",
+                          //           });
+                          //         }}
+                          //       >
+                          //         {one.addressComponents[one.addressComponents.length - 2].name +
+                          //           ", " +
+                          //           one.addressComponents[one.addressComponents.length - 1].name}
+                          //       </button>
+                          //     </li>
+                          //   );
+                          // }
                         });
                         this.setState({ cities: renderCities });
                       })

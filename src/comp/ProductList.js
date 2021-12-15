@@ -46,7 +46,7 @@ const ProductList = observer(
       }, 500);
       this.setState({ show: false });
       if (process.env.REACT_APP_TYPE === "prod") {
-        window.dataLayer.push({
+        window.dataLayerYA.push({
           ecommerce: {
             remove: {
               products: [
@@ -73,7 +73,7 @@ const ProductList = observer(
       }
       if (process.env.REACT_APP_TYPE === "prod") {
         try {
-          window.dataLayer.push({
+          window.dataLayerYA.push({
             ecommerce: {
               add: {
                 products: [
@@ -87,6 +87,28 @@ const ProductList = observer(
                 ],
               },
             },
+          });
+
+          window.gtag("event", "add_to_cart", {
+            ecomm_prodid: String(data.sku),
+            ecomm_totalvalue: data.price,
+            currency: "RUB",
+            items: [
+              {
+                item_id: String(data.sku),
+                id: String(data.sku),
+                item_name: data.name,
+                name: data.name,
+                discount: data.regular_price - data.price,
+                brand: data.brand,
+                item_brand: data.brand,
+                price: data.price,
+                currency: "RUB",
+                quantity: 1,
+                google_business_vertical: "retail",
+              },
+            ],
+            value: data.price,
           });
 
           window._tmr.push({
@@ -111,21 +133,46 @@ const ProductList = observer(
         this.props.clearDeliveryData();
       }
       if (process.env.REACT_APP_TYPE === "prod") {
-        window.dataLayer.push({
-          ecommerce: {
-            remove: {
-              products: [
-                {
-                  id: data.sku,
-                  name: data.name,
-                  price: data.price,
-                  brand: data.brand,
-                  quantity: 1,
-                },
-              ],
+        try {
+          window.dataLayerYA.push({
+            ecommerce: {
+              remove: {
+                products: [
+                  {
+                    id: data.sku,
+                    name: data.name,
+                    price: data.price,
+                    brand: data.brand,
+                    quantity: 1,
+                  },
+                ],
+              },
             },
-          },
-        });
+          });
+          window.gtag("event", "remove_from_cart", {
+            ecomm_prodid: String(data.sku),
+            ecomm_totalvalue: data.price,
+            currency: "RUB",
+            items: [
+              {
+                item_id: String(data.sku),
+                id: String(data.sku),
+                item_name: data.name,
+                name: data.name,
+                discount: data.regular_price - data.price,
+                brand: data.brand,
+                item_brand: data.brand,
+                price: data.price,
+                currency: "RUB",
+                quantity: 1,
+                google_business_vertical: "retail",
+              },
+            ],
+            value: data.price,
+          });
+        } catch (error) {
+          console.log("error :>> ", error);
+        }
       }
     };
 
@@ -302,7 +349,7 @@ const ProductList = observer(
                       delete productInCartList[data.sku];
                       try {
                         if (process.env.REACT_APP_TYPE === "prod") {
-                          window.dataLayer.push({
+                          window.dataLayerYA.push({
                             ecommerce: {
                               remove: {
                                 products: [
@@ -326,7 +373,7 @@ const ProductList = observer(
                       }
                       try {
                         if (process.env.REACT_APP_TYPE === "prod") {
-                          window.dataLayer.push({
+                          window.dataLayerYA.push({
                             ecommerce: {
                               add: {
                                 products: [

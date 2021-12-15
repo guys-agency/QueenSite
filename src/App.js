@@ -166,7 +166,7 @@ const MainScreen = observer(
         })
         .then((data) => {
           if (data.bfcheck === "ok") {
-            localStorage.setItem("CMcheck", true);
+            localStorage.setItem("BF2021Check", true);
           }
           if (slug !== this.props.store.cardContainer.slug) {
             this.props.store.cardContainer = data.product[0];
@@ -174,7 +174,7 @@ const MainScreen = observer(
             if (process.env.REACT_APP_TYPE === "prod") {
               try {
                 if (this.props.store.cardContainer.slug !== undefined) {
-                  window.dataLayer.push({
+                  window.dataLayerYA.push({
                     ecommerce: {
                       detail: {
                         products: [
@@ -205,6 +205,27 @@ const MainScreen = observer(
           this.props.store.likeProds.replace(data.addProd[0].like);
 
           api.updateCountStats(data.product[0]._id, "view");
+
+          window.gtag("event", "view_item", {
+            ecomm_prodid: String(data.product[0].sku),
+            ecomm_totalvalue: data.product[0].price,
+            currency: "RUB",
+            items: [
+              {
+                item_id: String(data.product[0].sku),
+                item_name: data.product[0].name,
+                item_brand: data.product[0].brand,
+                name: data.product[0].name,
+                brand: data.product[0].brand,
+                price: data.product[0].price,
+                currency: "RUB",
+                discount: data.product[0].regular_price - data.product[0].price,
+                quantity: 1,
+                id: String(data.product[0].sku),
+                google_business_vertical: "retail",
+              },
+            ],
+          });
 
           let timeLastSeenProds = lastSeenProds.slice();
           // console.log("object :>> ", this.props.store.lastSeenProds.values());
@@ -273,8 +294,10 @@ const MainScreen = observer(
     checkBFregistration = (key) => {
       api.checkBFreg(key).then((ok) => {
         if (ok.status === 201) {
-          localStorage.setItem("CMcheck", true);
-          window.location.replace("/close-sale");
+          localStorage.setItem("BF2021Check", "true");
+          setTimeout(() => {
+            window.location.replace("/close-sale");
+          }, 3000);
         }
       });
     };
@@ -435,33 +458,37 @@ const MainScreen = observer(
                 )
               )}
             />
-            {/* <Route
-              path="/black-friday/:id"
-              render={(propsRout) => (
-                this.checkBFregistration(propsRout.match.params.id),
-                $("html, body").animate({ scrollTop: 0 }, 500),
-                $("#root").addClass("black-friday"),
-                (document.querySelector("title").textContent = "Черная пятница - Queen of Bohemia"),
-                (
-                  <div className="main-screen">
-                    <BlackFriday store={this.props.store} />
-                  </div>
-                )
-              )}
-            />
-            <Route
-              path="/black-friday"
-              render={() => (
-                $("html, body").animate({ scrollTop: 0 }, 500),
-                $("#root").addClass("black-friday"),
-                (document.querySelector("title").textContent = "Черная пятница - Queen of Bohemia"),
-                (
-                  <div className="main-screen">
-                    <BlackFriday store={this.props.store} />
-                  </div>
-                )
-              )}
-            /> */}
+            {moment().utcOffset("+03:00").month() === 10 && moment().utcOffset("+03:00").date() >= 13 && (
+              <Route
+                path="/black-friday/:id"
+                render={(propsRout) => (
+                  this.checkBFregistration(propsRout.match.params.id),
+                  $("html, body").animate({ scrollTop: 0 }, 500),
+                  $("#root").addClass("black-friday"),
+                  (document.querySelector("title").textContent = "Черная пятница - Queen of Bohemia"),
+                  (
+                    <div className="main-screen">
+                      <BlackFriday store={this.props.store} />
+                    </div>
+                  )
+                )}
+              />
+            )}
+            {moment().utcOffset("+03:00").month() === 10 && moment().utcOffset("+03:00").date() >= 13 && (
+              <Route
+                path="/black-friday"
+                render={() => (
+                  $("html, body").animate({ scrollTop: 0 }, 500),
+                  $("#root").addClass("black-friday"),
+                  (document.querySelector("title").textContent = "Черная пятница - Queen of Bohemia"),
+                  (
+                    <div className="main-screen">
+                      <BlackFriday store={this.props.store} />
+                    </div>
+                  )
+                )}
+              />
+            )}
             {/* <Route
               path="/new-year"
               render={() => (
@@ -474,7 +501,7 @@ const MainScreen = observer(
                 )
               )}
             /> */}
-            {moment().utcOffset("+03:00").month() === 0 && moment().utcOffset("+03:00").date() >= 24 && (
+            {/* {moment().utcOffset("+03:00").month() === 0 && moment().utcOffset("+03:00").date() >= 24 && (
               <Route
                 path="/cyber-monday/:id"
                 render={(propsRout) => (
@@ -502,31 +529,29 @@ const MainScreen = observer(
                   )
                 )}
               />
-            )}
+            )} */}
 
-            {moment().utcOffset("+03:00").month() === 0 &&
-              moment().utcOffset("+03:00").date() >= 24 &&
-              (localStorage.getItem("CMcheck") === true || localStorage.getItem("CMcheck") === "true") && (
-                <Route
-                  path="/close-sale"
-                  render={(propsRout) => (
-                    (this.props.store.nameMainCat = ""),
-                    (this.props.store.nameSecondCat = ""),
-                    this.props.store.bannerFilter.slug !== propsRout.match.params.slug ? this.props.store.cleaningActiveFilters() : null,
-                    this.props.store.bannerFilter.slug !== propsRout.match.params.slug ? $("html, body").animate({ scrollTop: 0 }, 500) : null,
-                    (this.props.store.bannerFilter = {
-                      type: "closeBanner",
-                      slug: "kiberponedelnik",
-                    }),
-                    this.props.store.filtration(),
-                    (
-                      <div className="main-screen">
-                        <Collection store={this.props.store} slug={propsRout.match.params.slug} />
-                      </div>
-                    )
-                  )}
-                />
-              )}
+            {moment().utcOffset("+03:00").month() === 10 && moment().utcOffset("+03:00").date() >= 13 && (
+              <Route
+                path="/close-sale"
+                render={(propsRout) => (
+                  (this.props.store.nameMainCat = ""),
+                  (this.props.store.nameSecondCat = ""),
+                  this.props.store.bannerFilter.slug !== propsRout.match.params.slug ? this.props.store.cleaningActiveFilters() : null,
+                  this.props.store.bannerFilter.slug !== propsRout.match.params.slug ? $("html, body").animate({ scrollTop: 0 }, 500) : null,
+                  (this.props.store.bannerFilter = {
+                    type: "closeBanner",
+                    slug: "chernaya-pyatnica-2021",
+                  }),
+                  this.props.store.filtration(),
+                  (
+                    <div className="main-screen">
+                      <Collection store={this.props.store} slug={propsRout.match.params.slug} />
+                    </div>
+                  )
+                )}
+              />
+            )}
             <Route
               path={["/product/:id&:t", "/product/:id"]}
               render={(propsRout) => (
@@ -558,7 +583,7 @@ const MainScreen = observer(
               render={() => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
                 (document.querySelector("title").textContent = "Профиль - Queen of Bohemia"),
-                api.logoutbf().then((ok) => localStorage.removeItem("CMcheck")),
+                api.logoutbf().then((ok) => localStorage.removeItem("BF2021Check")),
                 (<div></div>)
               )}
             />
@@ -958,12 +983,12 @@ const MainScreen = observer(
               path="/finish/:id"
               render={(routProps) => (
                 $("html, body").animate({ scrollTop: 0 }, 500),
-                this.chekFinishDelete(),
+                // this.chekFinishDelete(),
                 (document.querySelector("title").textContent = "Поздравляем с покупкой - Queen of Bohemia"),
                 (
                   <Suspense fallback={<div></div>}>
                     <div className="main-screen">
-                      <Finish id={routProps.match.params.id} store={this.props.store} />
+                      <Finish id={routProps.match.params.id} store={this.props.store} chekFinishDelete={this.chekFinishDelete} />
                     </div>
                   </Suspense>
                 )

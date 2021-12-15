@@ -37,6 +37,9 @@
       @include max($m) {
         background: transparent;
       }
+      @include max($s) {
+        height: auto;
+      }
     }
 
     &_in-col {

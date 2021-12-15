@@ -420,7 +420,7 @@ const Shops = observer(
              * * Афимол
              *
              */}
-            <div className="shop">
+            {/* <div className="shop">
               <div className="head head_big head_list">
                 <div className="head_shop">
                   <div className="head-car">
@@ -487,12 +487,7 @@ const Shops = observer(
                         <a href="tel:+79853480584">+7 985 348-05-84</a>
                       </b>
                       <br />
-                      {/* <a
-                        className="underline"
-                        href="mailto:belayadacha@queenbohemia.ru"
-                      >
-                        belayadacha@queenbohemia.ru
-                      </a> */}
+                  
                       <p className="address">
                         Пресненская наб., д. 2, а-65, Москва
                         <br />1 этаж, напротив входа в магазин Hoff Home
@@ -507,7 +502,7 @@ const Shops = observer(
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       );

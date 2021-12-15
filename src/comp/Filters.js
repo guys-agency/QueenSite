@@ -31,7 +31,23 @@ const Filters = observer(
     typeDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
     checkBoxHandler = (name, value) => {
-      const { activeFilters, filtration, searchText } = this.props.store;
+      const { activeFilters, filtration, searchText, prodCats } = this.props.store;
+
+      let searchQtForCat = window.location.href.split("?")[1];
+      let mainCat = "";
+      let secondCat = "";
+
+      if (searchQtForCat !== undefined && searchQtForCat !== null && searchQtForCat !== "" && searchQtForCat.includes("mainCat=")) {
+        let value = searchQtForCat.split("mainCat=")[1];
+        value = value.includes("&&") ? value.split("&&")[0] : value;
+        mainCat = value;
+
+        if (searchQtForCat.includes("secondCat=")) {
+          let value = searchQtForCat.split("secondCat=")[1];
+          value = value.includes("&&") ? value.split("&&")[0] : value;
+          secondCat = value;
+        }
+      }
       // console.log("value :>> ", value);
       if (value) {
         // console.log(" :>> test");
@@ -104,6 +120,14 @@ const Filters = observer(
           }
         }
       });
+
+      if (prodCats.length) {
+        if (mainCat && secondCat) searchQt += `${searchQt ? "&&" : ""}mainCat=${mainCat}&&secondCat=${secondCat}`;
+        else {
+          if (mainCat) searchQt += `${searchQt ? "&&" : ""}mainCat=${mainCat}`;
+          else searchQt += `${searchQt ? "&&" : ""}secondCat=${secondCat}`;
+        }
+      }
       // console.log("searchQt :>> ", searchQt);
       this.props.history.replace({ search: searchQt });
     };
@@ -118,21 +142,64 @@ const Filters = observer(
       if (searchQt !== "undefined" && searchQt !== "" && searchQt !== undefined) {
         if (searchQt.includes("page=")) {
           const searchQtParts = searchQt.split("page=" + this.props.store.startPag / 42);
+          if (!choose) {
+            searchQt = searchQtParts[0] + `page=0` + searchQtParts[1];
+          } else {
+            searchQt = searchQtParts[0] + `page=0`;
+          }
+        } else {
+          if (choose) {
+            searchQt = "";
+          }
+        }
+        if (!choose) {
+          // if (searchQt.includes("mainCat=")) {
+          //   const searchQtParts = searchQt.split("mainCat=");
 
-          searchQt = searchQtParts[0] + `page=0` + searchQtParts[1];
+          //   if (searchQtParts[1].includes("&&")) {
+          //     const secondPart = searchQtParts[1].split("&&");
+          //     secondPart.shift();
+
+          //     searchQt = searchQtParts[0] + `${searchQtParts[0] ? "&&" : ""}mainCat=${main}` + secondPart.join("&&");
+          //   } else {
+          //     searchQt = searchQtParts[0] + `${searchQtParts[0] ? "&&" : ""}mainCat=${main}`;
+          //   }
+          // } else {
+          //   searchQt = searchQt + `${searchQt ? "&&" : ""}mainCat=${main}`;
+          // }
+
+          // if (searchQt.includes("secondCat=")) {
+          //   const searchQtParts = searchQt.split("secondCat=");
+
+          //   if (searchQtParts[1].includes("&&")) {
+          //     const secondPart = searchQtParts[1].split("&&");
+          //     secondPart.shift();
+
+          //     searchQt = searchQtParts[0] + `${searchQtParts[0] ? "&&" : ""}secondCat=${child}` + secondPart.join("&&");
+          //   } else {
+          //     searchQt = searchQtParts[0] + `${searchQtParts[0] ? "&&" : ""}secondCat=${child}`;
+          //   }
+          // } else {
+          //   searchQt = searchQt + `${searchQt ? "&&" : ""}secondCat=${child}`;
+          // }
+
+          searchQt = `mainCat=${main}&&secondCat=${child}`;
         }
 
         this.props.history.replace({ search: searchQt });
+      } else {
+        searchQt = `mainCat=${main}&&secondCat=${child}`;
+        this.props.history.replace({ search: searchQt });
       }
       if (choose) {
-        this.props.store.nameMainCat = "";
-        this.props.store.nameSecondCat = "";
+        // this.props.store.nameMainCat = "";
+        // this.props.store.nameSecondCat = "";
         this.props.store.startPag = 0;
         this.props.store.stopPag = 42;
         this.props.store.filtration();
       } else {
-        this.props.store.nameMainCat = main;
-        this.props.store.nameSecondCat = child;
+        // this.props.store.nameMainCat = main;
+        // this.props.store.nameSecondCat = child;
         this.props.store.startPag = 0;
         this.props.store.stopPag = 42;
         this.props.store.filtration();
@@ -237,7 +304,7 @@ const Filters = observer(
         elem.childs.forEach((child, iCh) => {
           //убрать tr, так как будут поля с транскрипцией в бд
           childsPoints.push(
-            <li key={child.name} className={child.slug === childName ? "active" : ""}>
+            <li key={child.name} className={child.slug === childName || pathname.includes(`secondCat=${child.slug}`) ? "active" : ""}>
               {prodCats.length ? (
                 <a
                   onClick={(e) => {

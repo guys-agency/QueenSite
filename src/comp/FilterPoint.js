@@ -13,7 +13,23 @@ const FilterPoint = observer(
 
     clickHandler = (filterPoint) => {
       const { objectName, name } = this.props;
-      const { activeFilters, searchText } = this.props.store;
+      const { activeFilters, searchText, prodCats } = this.props.store;
+
+      let searchQtForCat = window.location.href.split("?")[1];
+      let mainCat = "";
+      let secondCat = "";
+
+      if (searchQtForCat !== undefined && searchQtForCat !== null && searchQtForCat !== "" && searchQtForCat.includes("mainCat=")) {
+        let value = searchQtForCat.split("mainCat=")[1];
+        value = value.includes("&&") ? value.split("&&")[0] : value;
+        mainCat = value;
+
+        if (searchQtForCat.includes("secondCat=")) {
+          let value = searchQtForCat.split("secondCat=")[1];
+          value = value.includes("&&") ? value.split("&&")[0] : value;
+          secondCat = value;
+        }
+      }
 
       let searchQt = "";
       if (searchText.length) {
@@ -91,6 +107,14 @@ const FilterPoint = observer(
           }
         });
         // console.log("onePointFilter :>> ", onePointFilter);
+      }
+
+      if (prodCats.length) {
+        if (mainCat && secondCat) searchQt += `${searchQt ? "&&" : ""}mainCat=${mainCat}&&secondCat=${secondCat}`;
+        else {
+          if (mainCat) searchQt += `${searchQt ? "&&" : ""}mainCat=${mainCat}`;
+          else searchQt += `${searchQt ? "&&" : ""}secondCat=${secondCat}`;
+        }
       }
       this.props.store.startPag = 0;
       this.props.store.stopPag = 42;

@@ -485,7 +485,7 @@ const MenuPoints = observer(
             if (elem.name === "Подарки") {
               elem.childs.push({
                 name: "Сертификаты",
-                slug: "sertificats",
+                slug: "sertifikaty",
               });
             }
 
@@ -791,7 +791,7 @@ const MenuPoints = observer(
     render() {
       const { collInMenu, onePlusOneSlug, oneEqTwo } = this.props.store;
 
-      const inBF = moment().utcOffset("+03:00").month() === 0 && moment().utcOffset("+03:00").date() >= 24;
+      const inBF = moment().utcOffset("+03:00").month() === 10 && moment().utcOffset("+03:00").date() >= 3;
       // const inVD = moment().utcOffset("+03:00").month() === 1 && moment().utcOffset("+03:00").date() <= 14;
       const inEiMarch = moment().utcOffset("+03:00").month() === 2 && moment().utcOffset("+03:00").date() <= 8;
 
@@ -1144,6 +1144,7 @@ const MenuPoints = observer(
                           // this.toggleDrop(e);
                           // e.preventDefault();
                         }}
+                        style={{ color: "#BA250D", fontWeight: "600" }}
                       >
                         Акции
                       </Link>
@@ -1190,37 +1191,34 @@ const MenuPoints = observer(
                     </span>
                   )}
 
-                  {/* {inBF && (
+                  {inBF && (
                     <span className="menu__drop">
-                      {localStorage.getItem("CMcheck") === true || localStorage.getItem("CMcheck") === "true" ? (
+                      {(localStorage.getItem("BF2021Check") === true || localStorage.getItem("BF2021Check") === "true") &&
+                      moment().utcOffset("+03:00").month() === 10 &&
+                      moment().utcOffset("+03:00").date() >= 13 ? (
                         <Link to="/close-sale" className="menu-point menu-point_news" style={{ color: "#BA250D", fontWeight: "600" }}>
                           Закрытая распродажа
                         </Link>
                       ) : (
-                        <Link to="/cyber-monday" className="menu-point menu-point_news" style={{ color: "#BA250D", fontWeight: "600" }}>
-                          КиберПонедельник
+                        <Link to="/black-friday" className="menu-point menu-point_news" style={{ color: "#BA250D", fontWeight: "600" }}>
+                          Черная пятница
                         </Link>
                       )}
                     </span>
                   )}
-                  {inVD && (
+                  {/* {inVD && (
                     <span className="menu__drop">
                       <Link to="/main/podarki_vlyublennym" className="menu-point menu-point_news" style={{ color: "#BA250D", fontWeight: "600" }}>
                         День Валентина
                       </Link>
                     </span>
                   )} */}
-                  {/* {
-                    <span className="menu__drop">
-                      <Link
-                        to="/main/kollekciya_posudy_k_pashe"
-                        className="menu-point menu-point_news"
-                        style={{ color: "#BA250D", fontWeight: "600" }}
-                      >
-                        Пасха
-                      </Link>
-                    </span>
-                  } */}
+
+                  <span className="menu__drop">
+                    <Link to="/main/novogodnij-assortiment" className="menu-point menu-point_news" style={{ color: "#BA250D", fontWeight: "600" }}>
+                      Новый год
+                    </Link>
+                  </span>
                 </div>
                 <div className="search-pos">
                   <form className="search-wrp">
@@ -1502,7 +1500,14 @@ const MenuPoints = observer(
                               .getCity(e.target.value)
                               .then((c) => {
                                 c.forEach((one) => {
-                                  if (one.addressComponents.length <= 6) {
+                                  let region = one.address.state;
+                                  let city =
+                                    "city" in one.address
+                                      ? one.address.city
+                                      : "natural" in one.address
+                                      ? one.address.natural
+                                      : one.address.municipality;
+                                  if (city) {
                                     renderCities.push(
                                       <li key={one.geoId}>
                                         <button
@@ -1510,20 +1515,16 @@ const MenuPoints = observer(
                                           onClick={(e) => {
                                             e.preventDefault();
                                             $(".header__drop").removeClass("visible");
-                                            document.querySelector(".sidebar-overlay").classList.remove("active");
-                                            document.querySelector(".sidebar-overlay").classList.remove("city");
-                                            document.querySelector("body").classList.remove("no-scroll");
+
                                             localStorage.setItem("city", {
-                                              name: one.addressComponents[one.addressComponents.length - 1].name,
-                                              geoId: one.geoId,
-                                              region: one.addressComponents[2].name,
+                                              name: city,
+                                              geoId: one.place_id,
+                                              region: region,
                                               sourse: "U",
                                             });
                                           }}
                                         >
-                                          {one.addressComponents[one.addressComponents.length - 2].name +
-                                            ", " +
-                                            one.addressComponents[one.addressComponents.length - 1].name}
+                                          {city + ", " + region}
                                         </button>
                                       </li>
                                     );

@@ -17,6 +17,7 @@ import moment from "moment";
 const mainAdressServ = "http://134.122.81.119";
 
 window.dataLayer = window.dataLayer || [];
+window.dataLayerYA = window.dataLayerYA || [];
 window._tmr = window._tmr || [];
 
 class Store {
@@ -182,7 +183,7 @@ class Store {
           } else {
             this.userData = data;
             if (data.bfcheck === "ok") {
-              localStorage.setItem("CMcheck", true);
+              localStorage.setItem("BF2021Check", true);
             }
           }
         })
@@ -371,14 +372,6 @@ class Store {
   };
 
   addtoCart = (give) => {
-    // console.log(
-    //   'localStorage.get("productInCart") :>> ',
-    //   this.productInCartList
-    // );
-    // console.log(
-    //   'localStorage.get("productInCart") :>> ',
-    //   localStorage.get("productInCart")
-    // );
     const productInCartListOld = localStorage.get("productInCart");
     localStorage.setItem("productInCart", this.productInCartList);
     this.cartCount = Object.keys(this.productInCartList).length;
@@ -442,13 +435,13 @@ class Store {
             });
             this.dontSaleProdCount = dontSaleProdCount;
 
-            // if (dontSaleProd.length && moment().utcOffset("+03:00").month() === 10 && moment().utcOffset("+03:00").date() >= 20) {
-            //   dontSaleProd.forEach((el, i) => {
-            //     timeCont[el.slug].sale_price = Math.floor(el.regular_price * 0.8);
-            //     timeCont[el.slug].sale = true;
-            //     timeCont[el.slug].bfsale = true;
-            //   });
-            // }
+            if (dontSaleProd.length && moment().utcOffset("+03:00").month() === 10 && moment().utcOffset("+03:00").date() >= 13) {
+              dontSaleProd.forEach((el, i) => {
+                timeCont[el.sku].sale_price = Math.floor(el.regular_price * 0.8);
+                timeCont[el.sku].sale = true;
+                timeCont[el.sku].bfsale = true;
+              });
+            }
 
             if (onePlusOneProdsCount > 0 && Math.floor(onePlusOneProdsCount / 3) > 0) {
               // let minProdSlug = 0;
@@ -772,17 +765,31 @@ class Store {
             .getCity(geolocation.region + " " + geolocation.city)
             .then((data) => {
               if (data.length) {
+                let region = data[0].address.state;
+                let city =
+                  "city" in data[0].address
+                    ? data[0].address.city
+                    : "natural" in data[0].address
+                    ? data[0].address.natural
+                    : data[0].address.municipality;
+                // localStorage.setItem("city", {
+                //   name: data[0].addressComponents[data[0].addressComponents.length - 1].name,
+                //   geoId: data[0].geoId,
+                //   region: data[0].addressComponents[2].name,
+                //   sourse: "Y",
+                // });
+                // this.city = data[0].addressComponents[data[0].addressComponents.length - 1].name;
                 localStorage.setItem("city", {
-                  name: data[0].addressComponents[data[0].addressComponents.length - 1].name,
-                  geoId: data[0].geoId,
-                  region: data[0].addressComponents[2].name,
+                  name: city,
+                  geoId: data[0].place_id,
+                  region: region,
                   sourse: "Y",
                 });
-                this.city = data[0].addressComponents[data[0].addressComponents.length - 1].name;
+                this.city = city;
               } else {
                 localStorage.setItem("city", {
                   name: "Москва",
-                  geoId: 213,
+                  geoId: 258808740,
                   region: "Москва",
                   sourse: "Y",
                 });
@@ -1016,7 +1023,10 @@ class Store {
           this.createFilterPointsContainers(sortData);
 
           //КАТЕГОРИИ БАННЕРА
-          if (data[0].cats !== undefined && (!this.prodCats.length || window.location.pathname.includes("/search"))) {
+          if (
+            data[0].cats !== undefined &&
+            (!this.prodCats.length || window.location.pathname.includes("/search") || window.location.pathname.includes("/podarki"))
+          ) {
             const cats = {};
             data[0].cats[0].cats.forEach((elemMain) => {
               elemMain.forEach((elem) => {
@@ -1074,7 +1084,7 @@ class Store {
             }
 
             // console.log("data :>> ", data);
-            // console.log("cats :>> ", catsArr);
+
             this.prodCats = catsArr;
             this.activeCats = this.prodCats;
           }
@@ -1151,6 +1161,9 @@ class Store {
 
     let findPage = false;
 
+    let nameMainCatPodarki = "";
+    let nameSecondCatPodarki = "";
+
     let decodSearch = decodeURIComponent(window.location.href.split("?")[1]);
     // console.log("ddecodSearche :>> ", decodSearch);
     if (decodSearch !== "undefined" && decodSearch !== "" && !window.location.href.includes("?yclid")) {
@@ -1160,28 +1173,38 @@ class Store {
       }
       decodSearch.split("&&").forEach((elem) => {
         const elemSp = elem.split("=");
-        if (elemSp[0] !== "measure") {
-          if (elemSp[0] === "minPrice" || elemSp[0] === "maxPrice" || elemSp[0] === "premium" || elemSp[0] === "sale" || elemSp[0] === "hit") {
-            this.activeFilters[elemSp[0]] = elemSp[1];
-          } else if (elemSp[0] === "page") {
-            if (!this.resetPage) {
-              this.startPag = +elemSp[1] * 42;
-              this.stopPag = (+elemSp[1] + 1) * 42;
-            }
-            this.resetPage = false;
-            findPage = true;
-          } else if (elemSp[0] === "search") {
-            this.searchText = elemSp[1];
+        if (elemSp[0] === "mainCat" || elemSp[0] === "secondCat") {
+          if (pathname.includes("podarki")) {
+            if (elemSp[0] === "mainCat") nameMainCatPodarki = elemSp[1];
+            else nameSecondCatPodarki = elemSp[1];
           } else {
-            this.activeFilters[elemSp[0]] = elemSp[1].split(",");
-            this.activeFilters.choosePoint.push(elemSp[0]);
-            this.activeFilters.count += elemSp.length;
+            if (elemSp[0] === "mainCat") this.nameMainCat = elemSp[1];
+            else this.nameSecondCat = elemSp[1];
           }
         } else {
-          const measEl = elemSp[1].split("!~");
-          this.activeFilters.measure[measEl[0]] = measEl[1].split(",");
-          this.activeFilters.count += measEl[1].split(",").length;
-          this.activeFilters.choosePoint.push("measure");
+          if (elemSp[0] !== "measure") {
+            if (elemSp[0] === "minPrice" || elemSp[0] === "maxPrice" || elemSp[0] === "premium" || elemSp[0] === "sale" || elemSp[0] === "hit") {
+              this.activeFilters[elemSp[0]] = elemSp[1];
+            } else if (elemSp[0] === "page") {
+              if (!this.resetPage) {
+                this.startPag = +elemSp[1] * 42;
+                this.stopPag = (+elemSp[1] + 1) * 42;
+              }
+              this.resetPage = false;
+              findPage = true;
+            } else if (elemSp[0] === "search") {
+              this.searchText = elemSp[1];
+            } else {
+              this.activeFilters[elemSp[0]] = elemSp[1].split(",");
+              this.activeFilters.choosePoint.push(elemSp[0]);
+              this.activeFilters.count += elemSp.length;
+            }
+          } else {
+            const measEl = elemSp[1].split("!~");
+            this.activeFilters.measure[measEl[0]] = measEl[1].split(",");
+            this.activeFilters.count += measEl[1].split(",").length;
+            this.activeFilters.choosePoint.push("measure");
+          }
         }
       });
       // console.log(" this.activeFilters:>> ", this.activeFilters);
@@ -1255,6 +1278,7 @@ class Store {
             }
           }
         }
+
         // this.searchQ = searchQt;
         if (onePointFilter.length) {
           filterArray.push({ $or: onePointFilter });
@@ -1319,6 +1343,21 @@ class Store {
     const clearJSON = {};
     clearJSON.prod = Object.assign({ ...bodyJSON }, prodJSON);
 
+    if (pathname.includes("podarki")) {
+      if (nameMainCatPodarki && nameSecondCatPodarki) {
+        const filtCat = {
+          $and: [
+            {
+              "categories.slugName": nameMainCatPodarki,
+            },
+            { "categories.childsSlug": nameSecondCatPodarki },
+          ],
+        };
+        filterArray.push(filtCat);
+        // clearJSON.prod["$and"] = filtCat;
+      }
+    }
+
     if (!filterArray.length) {
       bodyJSON.prod = prodJSON;
     } else {
@@ -1351,8 +1390,6 @@ class Store {
       bodyJSON.withCat = true;
       bodyJSON.search = this.searchText;
     } else if (pathname.includes("premium")) {
-      bodyJSON.withCat = true;
-    } else if (pathname.includes("podarki")) {
       bodyJSON.withCat = true;
     } else if (pathname.includes("podarki")) {
       bodyJSON.withCat = true;

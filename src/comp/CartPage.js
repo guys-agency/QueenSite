@@ -23,6 +23,7 @@ momLoc.locale("ru");
 const CartPage = observer(
   class CartPage extends Component {
     state = {
+      sendToGoogleBool: false,
       cities: [],
       deliveryData: {},
       adress: "",
@@ -39,7 +40,7 @@ const CartPage = observer(
       delChoose: true,
       pickUpChoose: false,
       pickUpStoreChoose: false,
-      payment: "PREPAID",
+      payment: "CASH",
       pickUpStore: "",
       coupon: { count: 0, type: "", code: "", id: "" },
       delVar: [],
@@ -69,6 +70,9 @@ const CartPage = observer(
 
     mapCoor = [];
 
+    addressRef = React.createRef();
+    flatRef = React.createRef();
+
     // pickUpStore = "";
 
     order = {};
@@ -88,6 +92,47 @@ const CartPage = observer(
       3: 50000,
       4: 80000,
       5: 100000,
+    };
+
+    itemsToGoogle = [];
+    itemsSkuToGoogle = [];
+    sumToGoogle = 0;
+
+    sendToGoogle = (type) => {
+      try {
+        const { productInCart, productInCartList } = this.props.store;
+
+        if (!this.itemsToGoogle.length || !this.sumToGoogle) {
+          Object.keys(productInCart).forEach((el, i) => {
+            this.itemsToGoogle.push({
+              item_id: String(el),
+              id: String(el),
+              item_name: productInCart[el].name,
+              name: productInCart[el].name,
+              price: productInCart[el].sale ? productInCart[el].sale_price : productInCart[el].regular_price,
+              currency: "RUB",
+              quantity: productInCartList[el],
+              google_business_vertical: "retail",
+            });
+
+            this.sumToGoogle += productInCart[el].sale
+              ? productInCart[el].sale_price * productInCartList[el]
+              : productInCart[el].regular_price * productInCartList[el];
+
+            this.itemsSkuToGoogle.push(String(el));
+          });
+        }
+
+        window.gtag("event", type, {
+          ecomm_prodid: this.itemsSkuToGoogle,
+          ecomm_totalvalue: this.sumToGoogle,
+          currency: "RUB",
+          items: this.itemsToGoogle,
+          value: this.sumToGoogle,
+        });
+      } catch (err) {
+        console.log("err :>> ", err);
+      }
     };
 
     // BalloonContentLayout = window.ymaps.templateLayoutFactory.createClass(
@@ -135,24 +180,24 @@ const CartPage = observer(
       //   coor: "55.661176,37.880312",
       //   aval: true,
       // },
-      "ТРЦ CАЛАРИС": {
-        name: "ТРЦ САЛАРИС",
-        address: "Москва, Киевское шоссе, 23-й километр, 1",
-        coor: "55.623788,37.422027",
-        aval: true,
-      },
+      // "ТРЦ CАЛАРИС": {
+      //   name: "ТРЦ САЛАРИС",
+      //   address: "Москва, Киевское шоссе, 23-й километр, 1",
+      //   coor: "55.623788,37.422027",
+      //   aval: true,
+      // },
       "ТРЦ Пушкино парк": {
         name: "ТРЦ ПУШКИНО ПАРК",
         address: "Московская область, Пушкино, Красноармейское шоссе, 1, 104",
         coor: "56.013291,37.888010",
         aval: true,
       },
-      "ТРЦ Афимолл": {
-        name: "ТРЦ АФИМОЛЛ",
-        address: "Москва, Пресненская наб., д.2, А-65",
-        coor: "55.749299, 37.539644",
-        aval: true,
-      },
+      // "ТРЦ Афимолл": {
+      //   name: "ТРЦ АФИМОЛЛ",
+      //   address: "Москва, Пресненская наб., д.2, А-65",
+      //   coor: "55.749299, 37.539644",
+      //   aval: true,
+      // },
     };
 
     deteleProduct = (el) => {
@@ -251,7 +296,7 @@ const CartPage = observer(
 
       if (heightSumm > 150) {
         heightSumm = Math.ceil(heightSumm / 2);
-        if (widthMax < lengthMax) {
+        if (widthMax > lengthMax) {
           widthMax *= 2;
         } else {
           lengthMax *= 2;
@@ -292,7 +337,7 @@ const CartPage = observer(
       //   },
       // }
       const { geoMap, revertMap, checkData, addObject } = window;
-      const inMSC = cityLocal.geoId === 213;
+      const inMSC = cityLocal.geoId === 258808740 || cityLocal?.name === "Москва";
 
       // this.setState({ deliveryData: {} });
       // $("#map").removeClass("choose");
@@ -366,9 +411,9 @@ const CartPage = observer(
               this.pvzDataCont = [];
 
               if (
-                (cityLocal.geoId === 213 && this.totalPrice >= 3000) ||
+                ((cityLocal.geoId === 258808740 || cityLocal?.name === "Москва") && this.totalPrice >= 3000) ||
                 this.totalPrice === 0 ||
-                (cityLocal.geoId !== 213 && this.totalPrice >= 20000)
+                (cityLocal.geoId !== 258808740 && this.totalPrice >= 20000)
               ) {
                 Object.keys(pvz.extra).forEach((parent) => {
                   pvz.extra[parent].price = 0;
@@ -519,8 +564,16 @@ const CartPage = observer(
     tokenDa = "bb2ff0528fa21286110aa5d28409ab10c5a2f287";
     typeDa = "ADDRESS";
 
+    shippingToGoogleSend = false;
+
     componentDidUpdate(prevProps, prevState) {
-      if (this.state.deliveryData.deliveryType === "COURIER") {
+      const { productInCart } = this.props.store;
+      const prodInCartLength = Object.keys(productInCart).length;
+      if (!this.state.sendToGoogleBool && prodInCartLength) {
+        this.sendToGoogle("begin_checkout");
+        this.setState({ sendToGoogleBool: true });
+      }
+      if (this.state.deliveryData.deliveryType === "COURIER" && this.addressRef.current !== null) {
         const $street = $("#address");
         const $house = $("#flat");
         if (!this.dadataInit) {
@@ -565,6 +618,13 @@ const CartPage = observer(
         //   console.log("this.props.store.city :>> ", localStorage.get("city"));
         //   this.setState({ adress: $street.val(), house: $house.val() });
         // }
+      }
+
+      if (!this.shippingToGoogleSend && prodInCartLength) {
+        if (Object.keys(this.state.deliveryData).length) {
+          this.sendToGoogle("add_shipping_info");
+          this.shippingToGoogleSend = true;
+        }
       }
     }
 
@@ -689,7 +749,7 @@ const CartPage = observer(
 
       const delVarRender = [];
       const htmlStore = [];
-      const inMSC = cityLocal.geoId === 213;
+      const inMSC = cityLocal.geoId === 258808740 || cityLocal?.name === "Москва";
 
       const chooseCityBtns = (
         <div className="row city-choose_cart">
@@ -737,7 +797,10 @@ const CartPage = observer(
                           .then((c) => {
                             // console.log("c :>> ", c);
                             c.forEach((one) => {
-                              if (one.addressComponents.length <= 6) {
+                              let region = one.address.state;
+                              let city =
+                                "city" in one.address ? one.address.city : "natural" in one.address ? one.address.natural : one.address.municipality;
+                              if (city) {
                                 renderCities.push(
                                   <li key={one.geoId}>
                                     <button
@@ -761,12 +824,11 @@ const CartPage = observer(
                                         this.setState(changeData);
 
                                         localStorage.setItem("city", {
-                                          name: one.addressComponents[one.addressComponents.length - 1].name,
-                                          geoId: one.geoId,
-                                          region: one.addressComponents[2].name,
+                                          name: city,
+                                          geoId: one.place_id,
+                                          region: region,
                                           sourse: "U",
                                         });
-
                                         if ($(window).width() < 760) {
                                           $(".sidebar-overlay").removeClass("active");
                                         }
@@ -778,13 +840,59 @@ const CartPage = observer(
                                         this.choosePaymentType(undefined, this.state.payment);
                                       }}
                                     >
-                                      {one.addressComponents[one.addressComponents.length - 2].name +
-                                        ", " +
-                                        one.addressComponents[one.addressComponents.length - 1].name}
+                                      {city + ", " + region}
                                     </button>
                                   </li>
                                 );
                               }
+                              // if (one.addressComponents.length <= 6) {
+                              //   renderCities.push(
+                              //     <li key={one.geoId}>
+                              //       <button
+                              //         type="submit"
+                              //         onClick={(e) => {
+                              //           e.preventDefault();
+                              //           $(".header__drop").removeClass("visible");
+
+                              //           this.mapCoor = [];
+
+                              //           const changeData = {
+                              //             deliveryData: {},
+                              //             pvzDataCont: [],
+                              //           };
+
+                              //           if (this.state.pickUpStoreChoose) {
+                              //             changeData.pickUpStoreChoose = false;
+                              //             changeData.delChoose = true;
+                              //           }
+
+                              //           this.setState(changeData);
+
+                              //           localStorage.setItem("city", {
+                              //             name: one.addressComponents[one.addressComponents.length - 1].name,
+                              //             geoId: one.geoId,
+                              //             region: one.addressComponents[2].name,
+                              //             sourse: "U",
+                              //           });
+
+                              //           if ($(window).width() < 760) {
+                              //             $(".sidebar-overlay").removeClass("active");
+                              //           }
+                              //           this.dadataInit = false;
+
+                              //           $(".drop_cart.visible").toggleClass("visible");
+                              //           // $(".categories-block__child").find(".active").removeClass("active");
+
+                              //           this.choosePaymentType(undefined, this.state.payment);
+                              //         }}
+                              //       >
+                              //         {one.addressComponents[one.addressComponents.length - 2].name +
+                              //           ", " +
+                              //           one.addressComponents[one.addressComponents.length - 1].name}
+                              //       </button>
+                              //     </li>
+                              //   );
+                              // }
                             });
                             this.setState({
                               cities: renderCities,
@@ -862,7 +970,12 @@ const CartPage = observer(
       Object.keys(productInCart).forEach((sku) => {
         productInCart[sku].stores.forEach((str) => {
           // console.log("str.name :>> ", str.name);
-          if (str.name !== "ТРЦ OUTLET Белая дача" && str.name !== "ТРЦ Орджоникидзе 11" && this.stores[str.name].aval) {
+          if (
+            str.name !== "ТРЦ OUTLET Белая дача" &&
+            str.name !== "ТРЦ CАЛАРИС" &&
+            str.name !== "ТРЦ Орджоникидзе 11" &&
+            this.stores[str.name].aval
+          ) {
             if (+str.count > 0) {
               this.stores[str.name].aval = true;
             } else {
@@ -1123,25 +1236,20 @@ const CartPage = observer(
                         ></button>
                       </div>
                       <div
-                        className="cart-page__list-elem active"
+                        className={`cart-page__list-elem ${certInCart ? "deactiv" : "active"}`}
                         id="payment"
                         onClick={(e) => {
-                          this.choosePaymentType(e, "PREPAID");
+                          this.choosePaymentType(e, "CASH");
                         }}
                       >
                         <div className="cart-page__store-info">
-                          <p className="cart-page__store-name">
-                            Онлайн
-                            <span className="disc_perc">скидка 3%</span>
-                          </p>
+                          <p className="cart-page__store-name">Наличными при получении</p>
                           <div className="cart-page__store-adress">
-                            <p>Банковскими картами Visa, Mastercard, Maestro, Мир, JCB. Apple Pay и Google Pay. Картой рассрочки Халва.</p>
-                            <p className="halva-line">
-                              Халва (10 мес.) <p>от {Math.ceil(this.priceWithOnline * 0.1)} ₽/мес</p>
-                            </p>
+                            <p>Мы свяжемся с вами для уточнения понадобится ли курьеру сдача.</p>
                           </div>
                         </div>
                       </div>
+
                       <div
                         className={`cart-page__list-elem ${certInCart ? "deactiv" : ""}`}
                         id="payment"
@@ -1157,16 +1265,22 @@ const CartPage = observer(
                         </div>
                       </div>
                       <div
-                        className={`cart-page__list-elem ${certInCart ? "deactiv" : ""}`}
+                        className={`cart-page__list-elem ${certInCart ? "active" : ""}`}
                         id="payment"
                         onClick={(e) => {
-                          this.choosePaymentType(e, "CASH");
+                          this.choosePaymentType(e, "PREPAID");
                         }}
                       >
                         <div className="cart-page__store-info">
-                          <p className="cart-page__store-name">Наличными при получении</p>
+                          <p className="cart-page__store-name">
+                            Онлайн
+                            <span className="disc_perc">скидка 3%</span>
+                          </p>
                           <div className="cart-page__store-adress">
-                            <p>Мы свяжемся с вами для уточнения понадобится ли курьеру сдача.</p>
+                            <p>Банковскими картами Visa, Mastercard, Maestro, Мир, JCB. Apple Pay и Google Pay. Картой рассрочки Халва.</p>
+                            <p className="halva-line">
+                              Халва (10 мес.) <p>от {Math.ceil(this.priceWithOnline * 0.1)} ₽/мес</p>
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -1275,6 +1389,7 @@ const CartPage = observer(
                                         </label>
                                         <input
                                           id="address"
+                                          ref={this.addressRef}
                                           type="text"
                                           value={adress}
                                           onFocus={(e) => {
@@ -1430,7 +1545,7 @@ const CartPage = observer(
                                             this.setState({
                                               deliveryData: {
                                                 type: "express",
-                                                price: inMSC && this.totalPrice >= 20000 ? 0 : 400,
+                                                price: inMSC && this.totalPrice >= 20000 ? 0 : 500,
                                                 time: 1,
                                               },
                                             });
@@ -1438,7 +1553,7 @@ const CartPage = observer(
                                             this.setState({
                                               deliveryData: {
                                                 type: "express",
-                                                price: inMSC && this.totalPrice >= 20000 ? 0 : 400,
+                                                price: inMSC && this.totalPrice >= 20000 ? 0 : 500,
                                                 time: 2,
                                               },
                                             });
@@ -1446,7 +1561,7 @@ const CartPage = observer(
                                         }}
                                       >
                                         {moment().hour() <= 16 ? "Завтра" : "Послезавтра"} —{" "}
-                                        {inMSC && this.totalPrice >= 20000 ? "бесплатно" : "400 ₽"}{" "}
+                                        {inMSC && this.totalPrice >= 20000 ? "бесплатно" : "500 ₽"}{" "}
                                       </div>
                                     </div>
                                   </div>
@@ -2159,7 +2274,15 @@ const CartPage = observer(
                           // console.log("object :>> ", delivery, dataToSend);
                           // return;
                           if (process.env.REACT_APP_TYPE === "prod") {
-                            window.ym(65097901, "reachGoal", "Checkout");
+                            try {
+                              window.ym(65097901, "reachGoal", "Checkout");
+                              window.fbq("track", "Purchase", {
+                                value: this.totalPrice,
+                                currency: "RUB",
+                              });
+                            } catch (error) {
+                              console.log("error :>> ", error);
+                            }
                           }
 
                           api
@@ -2170,7 +2293,7 @@ const CartPage = observer(
                             .then((data) => {
                               this.orderCancelID = data.id;
                               if (process.env.REACT_APP_TYPE === "prod") {
-                                window.dataLayer.push({
+                                window.dataLayerYA.push({
                                   ecommerce: {
                                     purchase: {
                                       actionField: {
@@ -2293,17 +2416,26 @@ const CartPage = observer(
                             .then((data) => {
                               this.orderCancelID = data.id;
                               if (process.env.REACT_APP_TYPE === "prod") {
-                                window.ym(65097901, "reachGoal", "Checkout");
-                                window.dataLayer.push({
-                                  ecommerce: {
-                                    purchase: {
-                                      actionField: {
-                                        id: String(data.orderId),
+                                try {
+                                  window.ym(65097901, "reachGoal", "Checkout");
+                                  window.dataLayerYA.push({
+                                    ecommerce: {
+                                      purchase: {
+                                        actionField: {
+                                          id: String(data.orderId),
+                                        },
+                                        products: ecomProd,
                                       },
-                                      products: ecomProd,
                                     },
-                                  },
-                                });
+                                  });
+
+                                  window.fbq("track", "Purchase", {
+                                    value: this.totalPrice,
+                                    currency: "RUB",
+                                  });
+                                } catch (error) {
+                                  console.log("error :>> ", error);
+                                }
                               }
 
                               localStorage.setItem("deleteCart", true);
@@ -2652,7 +2784,7 @@ const CartPage = observer(
 
     runLoadDelivCost = () => {
       if (Object.keys(this.props.store.productInCart).length !== 0) {
-        this.choosePaymentType(undefined, "PREPAID");
+        this.choosePaymentType(undefined, "CASH");
       } else {
         setTimeout(() => {
           this.runLoadDelivCost();
@@ -2661,8 +2793,7 @@ const CartPage = observer(
     };
 
     componentDidMount() {
-      try {
-      } catch {}
+      this.sendToGoogle("begin_checkout");
 
       setInterval(() => {
         window.location.reload();
