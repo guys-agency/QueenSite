@@ -55,7 +55,7 @@ const GiftsPage = observer(
         mainBanner.push(
           <Link
             className="head-banner"
-            to="/catalog/podarki/sertificats"
+            to="/catalog/podarki/sertifikaty"
             style={{
               backgroundImage: `url(/image/banners/${bannersData["podarki_sert"][0]["image-desc-large"]})`,
             }}

@@ -117,7 +117,7 @@ const CardView = observer(
         api.updateCountStats(this.data._id, "cart");
         if (process.env.REACT_APP_TYPE === "prod") {
           try {
-            window.dataLayer.push({
+            window.dataLayerYA.push({
               ecommerce: {
                 add: {
                   products: [
@@ -131,6 +131,28 @@ const CardView = observer(
                   ],
                 },
               },
+            });
+
+            window.gtag("event", "add_to_cart", {
+              ecomm_prodid: String(this.data.sku),
+              ecomm_totalvalue: this.data.price * store.countInProdPage,
+              currency: "RUB",
+              items: [
+                {
+                  item_id: String(this.data.sku),
+                  id: String(this.data.sku),
+                  item_name: this.data.name,
+                  name: this.data.name,
+                  discount: this.data.regular_price - this.data.price,
+                  item_brand: this.data.brand,
+                  brand: this.data.brand,
+                  price: this.data.price,
+                  currency: "RUB",
+                  quantity: store.countInProdPage,
+                  google_business_vertical: "retail",
+                },
+              ],
+              value: this.data.price * store.countInProdPage,
             });
 
             window._tmr.push({
@@ -294,47 +316,45 @@ const CardView = observer(
       let { collections } = this.props.store.bannersData;
 
       if (this.data.slug === this.props.sku && this.count) {
-        if (timeDelivery === "" && localStorage.getItem("city") !== null && localStorage.getItem("city") !== undefined && !itsSert) {
-          // console.log("11 :>> ", 11);
-          this.count = false;
-
-          const dataDeliv = {
-            senderId: 500001936,
-            from: {
-              geoId: 213,
-            },
-            to: {
-              geoId: localStorage.getItem("city").geoId,
-            },
-            dimensions: {
-              length: +this.data.dimensions.length,
-              width: +this.data.dimensions.width,
-              height: +this.data.dimensions.height,
-              weight: +this.data.weight,
-            },
-            deliveryType: "COURIER",
-          };
-
-          api
-            .timeDelivery({ data: dataDeliv })
-            .then((ok) => {
-              // console.log("ok :>> ", ok);
-              ok.forEach((del) => {
-                if (del.tags.includes("FASTEST")) {
-                  const time = moment(del.delivery.calculatedDeliveryDateMin).diff(moment(), "days");
-                  this.setState({ timeDelivery: time + 1 });
-                  return;
-                }
-              });
-              if (this.state.timeDelivery === "") {
-                const time = moment(ok[0].delivery.calculatedDeliveryDateMin).diff(moment(), "days");
-                this.setState({ timeDelivery: time + 1 });
-              }
-            })
-            .catch((err) => {
-              console.log("err :>> ", err);
-            });
-        }
+        // if (timeDelivery === "" && localStorage.getItem("city") !== null && localStorage.getItem("city") !== undefined && !itsSert) {
+        //   // console.log("11 :>> ", 11);
+        //   this.count = false;
+        //   const dataDeliv = {
+        //     senderId: 500001936,
+        //     from: {
+        //       geoId: 213,
+        //     },
+        //     to: {
+        //       geoId: localStorage.getItem("city").geoId,
+        //     },
+        //     dimensions: {
+        //       length: +this.data.dimensions.length,
+        //       width: +this.data.dimensions.width,
+        //       height: +this.data.dimensions.height,
+        //       weight: +this.data.weight,
+        //     },
+        //     deliveryType: "COURIER",
+        //   };
+        //   api
+        //     .timeDelivery({ data: dataDeliv })
+        //     .then((ok) => {
+        //       // console.log("ok :>> ", ok);
+        //       ok.forEach((del) => {
+        //         if (del.tags.includes("FASTEST")) {
+        //           const time = moment(del.delivery.calculatedDeliveryDateMin).diff(moment(), "days");
+        //           this.setState({ timeDelivery: time + 1 });
+        //           return;
+        //         }
+        //       });
+        //       if (this.state.timeDelivery === "") {
+        //         const time = moment(ok[0].delivery.calculatedDeliveryDateMin).diff(moment(), "days");
+        //         this.setState({ timeDelivery: time + 1 });
+        //       }
+        //     })
+        //     .catch((err) => {
+        //       console.log("err :>> ", err);
+        //     });
+        // }
       }
       let unvisibleProd;
       if (this.data.slug !== this.props.sku) {
@@ -413,6 +433,19 @@ const CardView = observer(
         });
       }
 
+      const seo = { title: "", description: "" };
+
+      if (this.data.slug === this.props.sku) {
+        if (this.data.seo) {
+          seo.title = this.data.seo.title !== "" && this.data.seo.title !== undefined ? this.data.seo.title : this.data.name + " - Queen of Bohemia";
+          seo.description = this.data.seo.description !== "" && this.data.seo.description !== undefined ? this.data.seo.description : metaDesc;
+          if (this.data.seo.keywords !== "" && this.data.seo.keywords !== undefined) seo.keywords = this.data.seo.keywords;
+        } else {
+          seo.title = this.data.name + " - Queen of Bohemia";
+          seo.description = metaDesc;
+        }
+      }
+
       return (
         this.data.slug === this.props.sku && (
           <div
@@ -430,20 +463,21 @@ const CardView = observer(
             }}
           >
             <Helmet
-              title={this.data.name + " - Queen of Bohemia"}
+              title={seo.title}
               meta={[
-                { name: "description", content: metaDesc },
+                { name: "description", content: seo.description },
+                seo.keywords ? { name: "keywords", content: seo.keywords } : {},
                 {
                   property: "og:image",
                   content: `https://queenbohemia.ru/image/items/${this.data.path_to_photo[0]}`,
                 },
                 {
                   property: "og:title",
-                  content: this.data.name + " - Queen of Bohemia",
+                  content: seo.title,
                 },
                 {
                   property: "og:description",
-                  content: metaDesc,
+                  content: seo.description,
                 },
                 {
                   property: "og:type",
@@ -653,7 +687,10 @@ const CardView = observer(
                           <p>Заполните все данные</p>
                         </div>
                         <div className={"product-p__buttons " + (itsSert ? " gift__buttons" : "")}>
-                          <button className={"btn btn_yellow btn_primary " + (unvisibleProd ? " btn_dis" : "")} onClick={this.clickHandler}>
+                          <button
+                            className={"btn btn_yellow btn_primary add_to_cart " + (unvisibleProd ? " btn_dis" : "")}
+                            onClick={this.clickHandler}
+                          >
                             <span className={"ic i_bag " + (this.inCart === -1 ? "" : " active")}></span>{" "}
                             {this.inCart === -1 ? "В корзину" : " В корзинe"}
                           </button>
@@ -701,7 +738,7 @@ const CardView = observer(
                               </div>
                             </>
                           )}
-                          <button className={"ic i_fav" + (this.inLike === -1 ? "" : " active")} onClick={this.clickFav}></button>
+                          <button className={"ic i_fav add_to_fav" + (this.inLike === -1 ? "" : " active")} onClick={this.clickFav}></button>
                         </div>
                         {!itsSert && (
                           <div className="product-p__available">

@@ -24,8 +24,7 @@ const Finish = observer(
 
     statusToCheck = ["Created", "Ожидает оплаты", "Создан"];
 
-    firstView =
-      (localStorage.getItem("deleteCart") === true || localStorage.getItem("deleteCart") === "true") && process.env.REACT_APP_TYPE === "prod";
+    firstView = localStorage.getItem("deleteCart") === true || localStorage.getItem("deleteCart") === "true"; //&& process.env.REACT_APP_TYPE === "prod"
 
     copy = (str) => {
       let tmp = document.createElement("INPUT"), // Создаём новый текстовой input
@@ -64,6 +63,79 @@ const Finish = observer(
         }, 1000);
       }
     };
+
+    oneCallFunc = (purchaseTarget, itemsToGoogle, itemsToYA, itemsSkuToGoogle) => {
+      const { data } = this.state;
+      const { chekFinishDelete } = this.props;
+      if (data.payment === "PREPAID") {
+        window.ym(65097901, "reachGoal", "Checkout");
+        window.dataLayerYA.push({
+          ecommerce: {
+            purchase: {
+              actionField: {
+                id: String(data.dbid),
+              },
+              products: itemsToYA,
+            },
+          },
+        });
+      }
+      window._tmr.push(purchaseTarget);
+      // window.gtag("event", "conversion", { send_to: "AW-592840699/rK8kCN_c4P4BEPuP2JoC", transaction_id: String(data.dbid) });
+      window.gtag("event", "purchase", {
+        ecomm_prodid: itemsSkuToGoogle,
+        ecomm_totalvalue: data.sum,
+        currency: "RUB",
+        items: itemsToGoogle,
+        transaction_id: String(data.dbid),
+        value: data.sum,
+      });
+      this.firstView = false;
+      chekFinishDelete();
+    };
+
+    componentDidUpdate(prevProps, prevState) {
+      const { ready, data } = this.state;
+      if (ready && this.firstView) {
+        const purchaseTarget = {
+          type: "itemView",
+          productid: [],
+          pagetype: "purchase",
+          totalvalue: String(data.sum),
+          list: "1",
+        };
+        const itemsToGoogle = [];
+        const itemsSkuToGoogle = [];
+        const itemsToYa = [];
+        Object.keys(data.products).forEach((prod) => {
+          purchaseTarget.productid.push(String(prod));
+          itemsToYa.push({
+            id: String(prod),
+            name: data.products[prod].name,
+            price: data.products[prod].sale ? data.products[prod].sale_price : data.products[prod].regular_price,
+            brand: data.products[prod].brand,
+            quantity: data.products[prod].countIn,
+          });
+          itemsToGoogle.push({
+            item_id: String(prod),
+            id: String(prod),
+            item_name: data.products[prod].name,
+            name: data.products[prod].name,
+            price: data.products[prod].sale ? data.products[prod].sale_price : data.products[prod].regular_price,
+            currency: "RUB",
+            quantity: data.products[prod].countIn,
+            google_business_vertical: "retail",
+          });
+          itemsSkuToGoogle.push(String(prod));
+        });
+        try {
+          this.oneCallFunc(purchaseTarget, itemsToGoogle, itemsToYa, itemsSkuToGoogle);
+        } catch (error) {
+          console.log("error :>> ", error);
+        }
+      }
+    }
+
     render() {
       const { ready, data, startCheck } = this.state;
       const products = [];
@@ -109,13 +181,14 @@ const Finish = observer(
           checkPay = true;
           rePaid = true;
         }
-        const purchaseTarget = {
-          type: "itemView",
-          productid: [],
-          pagetype: "purchase",
-          totalvalue: String(data.sum),
-          list: "1",
-        };
+        // const purchaseTarget = {
+        //   type: "itemView",
+        //   productid: [],
+        //   pagetype: "purchase",
+        //   totalvalue: String(data.sum),
+        //   list: "1",
+        // };
+        // const itemsToGoogle = [];
         Object.keys(data.products).forEach((prod) => {
           products.push(
             <div className="item">
@@ -125,14 +198,34 @@ const Finish = observer(
               </span>
             </div>
           );
-          if (this.firstView) {
-            purchaseTarget.productid.push(String(prod));
-          }
+          // if (this.firstView) {
+          //   purchaseTarget.productid.push(String(prod));
+          //   itemsToGoogle.push({
+          //     item_id: String(prod),
+          //     item_name: data.products[prod].name,
+          //     price: data.products[prod].sale ? data.products[prod].sale_price : data.products[prod].regular_price,
+          //     currency: "RUB",
+          //     quantity: data.products[prod].countIn,
+          //   });
+          // }
         });
-        if (this.firstView) {
-          window._tmr.push(purchaseTarget);
-          window.gtag("event", "conversion", { send_to: "AW-592840699/rK8kCN_c4P4BEPuP2JoC", transaction_id: data.dbid });
-        }
+        // if (this.firstView) {
+        //   try {
+        //     this.oneCallFunc(purchaseTarget, itemsToGoogle);
+        //   } catch (error) {
+        //     console.log("error :>> ", error);
+        //   }
+        //   this.firstView = false;
+
+        //   // window._tmr.push(purchaseTarget);
+        //   // window.gtag("event", "conversion", { send_to: "AW-592840699/rK8kCN_c4P4BEPuP2JoC", transaction_id: data.dbid });
+        //   // window.gtag("event", "purchase", {
+        //   //   currency: "RUB",
+        //   //   items: itemsToGoogle,
+        //   //   transaction_id: data.dbid,
+        //   //   value: data.sum,
+        //   // });
+        // }
       }
 
       return (

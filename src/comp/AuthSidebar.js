@@ -91,7 +91,7 @@ const AuthSidebar = observer(
                       // console.log("213 :>> ", 213);
                       localStorage.setItem("auth", true);
                       if (data.bfcheck === "ok") {
-                        localStorage.setItem("CMcheck", true);
+                        localStorage.setItem("BF2021Check", true);
                       }
                       if (!window.location.pathname.includes("/cart")) {
                         window.location.assign("/profile");
@@ -350,7 +350,7 @@ const AuthSidebar = observer(
                       $("#registrBtn").addClass("success");
                       localStorage.setItem("auth", true);
                       if (ok.bfcheck === "ok") {
-                        localStorage.setItem("CMcheck", true);
+                        localStorage.setItem("BF2021Check", true);
                       }
                       if (!window.location.pathname.includes("/cart")) {
                         window.location.assign("/profile");
@@ -472,7 +472,7 @@ const AuthSidebar = observer(
                     />
                     <div className="field-error">{errors.repassword}</div>
                   </div>
-                  <button className="btn btn_primary" type="submit" id="registrBtn">
+                  <button className="btn btn_primary registration_submit" type="submit" id="registrBtn">
                     Регистрация
                   </button>
                   <label className="checkbox checkbox_margin">

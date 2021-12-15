@@ -110,7 +110,7 @@ const BlackFriday = observer(
     };
 
     YBrender = () => {
-      const nR = Math.floor(Math.random() * 17) + 1;
+      const nR = Math.floor(Math.random() * 3) + 1;
       const YBContTime = [];
 
       for (let i = nR; i < nR + 4; i++) {
@@ -129,7 +129,7 @@ const BlackFriday = observer(
               }}
             >
               <img
-                src={`/image/BF/YB/${i}.png`}
+                src={`/image/BF/BF2021/YB/${i}.png`}
                 alt=""
                 style={{
                   height: "100%",
@@ -157,12 +157,12 @@ const BlackFriday = observer(
               <div
                 className="head-banner black-friday__banner"
                 style={{
-                  backgroundImage: `url(/image/BF/${this.typeDevice ? "BF-pl-m" : "BF-pl"}.jpg)`,
+                  backgroundImage: `url(/image/BF/BF2021/${this.typeDevice ? "BF-pl-m" : "BF-pl"}.png?v3)`,
                 }}
               >
                 {/* <img className="gift__img" src={`/image/BF/BF-pl.jpg`}></img> */}
 
-                <div className="black-friday__timer-cont">
+                {/* <div className="black-friday__timer-cont">
                   <h3>До завершения акции</h3>
                   <div className="black-friday__timer">
                     <div className="days">
@@ -182,7 +182,7 @@ const BlackFriday = observer(
                       <p className="str">секунд</p>
                     </div>
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
@@ -194,7 +194,7 @@ const BlackFriday = observer(
                   <div className="col col-6 col-t-12 col-s-12 col-middle subscribe__form">
                     <h3>Доступ в закрытый раздел</h3>
                     <p>
-                      Закрытый раздел на <b>286 товаров</b> со <b>скидками до 78%</b>
+                      Закрытый раздел со <b>скидками до 68%</b>
                       <br /> для наших подписчиков!
                     </p>
                     <Formik
@@ -226,8 +226,9 @@ const BlackFriday = observer(
                               $("#subscription").removeClass("error");
                               $("#subscription").text("Подписаться");
                               if (data.bfok !== undefined && data.bfok) {
-                                localStorage.setItem("BFcheck", true);
-                                window.location.replace("/close-sale");
+                                localStorage.setItem("BF2021Check", true);
+                                if (moment().utcOffset("+03:00").month() === 10 && moment().utcOffset("+03:00").date() >= 13)
+                                  window.location.replace("/close-sale");
                               }
                             }, 2000);
                           });
@@ -298,11 +299,11 @@ const BlackFriday = observer(
                 className="subscribe__img"
                 style={{
                   // backgroundImage: "url(" + "/image/plate.png" + ")",
-                  background: "linear-gradient(90.22deg, #dab958 -140.48%, #efd27e 99.78%)",
+                  background: "#DFC36F",
                 }}
               >
-                <img className="disc" src="/image/BF/disc.png"></img>
-                <img className="plate" src="/image/BF/plate.png" />
+                <img className="plate" src="/image/BF/BF2021/offerSusc.png"></img>
+                {/* <img className="plate" src="/image/BF/plate.png" /> */}
               </div>
             </div>
           </div>
@@ -363,7 +364,7 @@ const BlackFriday = observer(
                   </h2>
                 </Link>
                 <p className="subtitle" style={{ marginTop: "5px" }}>
-                  На все товары без акций с 20.11 по 30.11!
+                  На все товары без акций с 13.11 по 30.11!
                 </p>
               </div>
             </div>
@@ -419,7 +420,7 @@ const BlackFriday = observer(
                 <div className="col col-6 col-s-12 col-t-12 col-middle subscribe__form">
                   <h3>Доступ в закрытый раздел</h3>
                   <p>
-                    Закрытый раздел на <b>286 товаров</b> со <b>скидками до 78%</b>
+                    Закрытый раздел со <b>скидками до 68%</b>
                     <br /> для наших подписчиков!
                   </p>
                   <Formik
@@ -451,8 +452,9 @@ const BlackFriday = observer(
                             $("#subscription").removeClass("error");
                             $("#subscription").text("Подписаться");
                             if (data.bfok !== undefined && data.bfok) {
-                              localStorage.setItem("BFcheck", true);
-                              window.location.replace("/close-sale");
+                              localStorage.setItem("BF2021Check", true);
+                              if (moment().utcOffset("+03:00").month() === 10 && moment().utcOffset("+03:00").date() >= 13)
+                                window.location.replace("/close-sale");
                             }
                           }, 2000);
                         });

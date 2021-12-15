@@ -570,7 +570,15 @@ const Profile = observer(
                                   {this.props.store.likeData[Object.keys(this.props.store.likeData)[0]].regular_price.toLocaleString()} ₽{" "}
                                 </div>
                               )}
-                              <button className="ic i_close"></button>
+                              <button
+                                className="ic i_close"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  const { likeContainer, addToLike } = this.props.store;
+                                  likeContainer.splice(0, 1);
+                                  addToLike();
+                                }}
+                              ></button>
                             </div>
                           </div>
                         </>

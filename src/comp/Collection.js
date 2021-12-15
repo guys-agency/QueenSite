@@ -44,12 +44,12 @@ const Collection = observer(
         } else if (dataColl[0].type === "closeBanner") {
           collRender.push(
             <React.Fragment key={dataColl[0].slug}>
-              <div className="head head_big">
+              <div className="head head_big head_in-col">
                 <div className="head-cont">
                   <div
                     className="head-banner"
                     style={{
-                      backgroundImage: `url(/image/CM/${typeDevice ? "banner-m.jpg" : "banner.jpg"})`,
+                      backgroundImage: `url(/image/BF/BF2021/${typeDevice ? "BF-pl-m" : "BF-pl"}.png?v3)`,
                     }}
                   ></div>
                 </div>
@@ -60,8 +60,7 @@ const Collection = observer(
                   <div className="col col-3 col-s-1"></div>
                   <div className="col col-8 col-s-10">
                     <div className="collections__desc">
-                      Мы подготовили для вас закрытый раздел на 
-                      <b>239 товаров</b> со скидками <b>до 67%</b>.
+                      Мы подготовили для вас закрытый раздел со скидками <b>до 68%</b>.
                     </div>
                   </div>
                   <div className="col col-s-1"></div>
