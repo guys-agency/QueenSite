@@ -1214,11 +1214,11 @@ const MenuPoints = observer(
                     </span>
                   )} */}
 
-                  <span className="menu__drop">
+                  {/* <span className="menu__drop">
                     <Link to="/main/novogodnij-assortiment" className="menu-point menu-point_news" style={{ color: "#BA250D", fontWeight: "600" }}>
                       Новый год
                     </Link>
-                  </span>
+                  </span> */}
                 </div>
                 <div className="search-pos">
                   <form className="search-wrp">

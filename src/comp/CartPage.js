@@ -410,11 +410,7 @@ const CartPage = observer(
               // console.log("pvz :>> ", pvz);
               this.pvzDataCont = [];
 
-              if (
-                ((cityLocal.geoId === 258808740 || cityLocal?.name === "Москва") && this.totalPrice >= 3000) ||
-                this.totalPrice === 0 ||
-                (cityLocal.geoId !== 258808740 && this.totalPrice >= 20000)
-              ) {
+              if ((inMSC && this.totalPrice >= 3000) || this.totalPrice === 0) {
                 Object.keys(pvz.extra).forEach((parent) => {
                   pvz.extra[parent].price = 0;
                 });
